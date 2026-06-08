@@ -1,0 +1,421 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>水分分析 Moisture Analysis · Nielsen Ch15</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script><style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{font-size:18px}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;background:var(--bg);
+  color:var(--ink);overflow:hidden;height:100vh;width:100vw}
+:root{
+  --bg:#eef2f8;--surface:#ffffff;--surface-2:#f6f9fd;
+  --ink:#15233f;--ink-2:#48597a;--ink-3:#8493ad;--line:#dde5f0;
+  --accent:#1f6feb;--accent-soft:#e7f0fe;
+  --accent-2:#d9822b;--accent-2-soft:#fbeede;
+  --ok:#1f9d6b;--ok-soft:#e3f6ee;--bad:#d94f4f;--bad-soft:#fbe7e7;--warn:#d9a32b;
+  --t2:clamp(1.4rem,3vw,2.3rem);
+  --shadow:0 10px 30px rgba(20,40,80,.10);--shadow-sm:0 3px 12px rgba(20,40,80,.08)}
+#progress{position:fixed;top:0;left:0;height:4px;width:0;z-index:50;
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .5s ease}
+#section-tag{position:fixed;top:16px;left:24px;z-index:40;font-size:.78rem;letter-spacing:.18em;
+  color:var(--accent);font-weight:700;font-family:"JetBrains Mono",monospace}
+#pageInfo{position:fixed;right:22px;bottom:16px;z-index:40;font-size:.82rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+#hint{position:fixed;left:24px;bottom:16px;z-index:40;font-size:.72rem;color:var(--ink-3)}
+#brand{position:fixed;right:22px;top:14px;z-index:40;font-size:.72rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:64px 84px;opacity:0;pointer-events:none;
+  transition:opacity .55s ease,transform .55s ease;transform:translateY(14px)}
+.slide.active{opacity:1;pointer-events:auto;transform:translateY(0)}
+.slide-inner{width:100%;max-width:1280px}
+.kicker{font-family:"JetBrains Mono",monospace;font-size:.8rem;letter-spacing:.16em;color:var(--accent);
+  font-weight:700;text-transform:uppercase;margin-bottom:10px}
+.slide-title{font-size:var(--t2);font-weight:900;line-height:1.18;color:var(--ink);letter-spacing:-.01em}
+.slide-title .hi{color:var(--accent-2)}
+.subtitle{font-size:clamp(.95rem,1.5vw,1.2rem);color:var(--ink-2);margin-top:12px;line-height:1.6}
+p,li{font-size:clamp(.92rem,1.4vw,1.12rem);line-height:1.68;color:var(--ink-2)}
+.lead{font-size:clamp(1.05rem,1.8vw,1.35rem);color:var(--ink);line-height:1.6}
+strong,b{color:var(--ink);font-weight:800}.em{color:var(--accent-2);font-weight:800}
+.divider{height:3px;width:64px;background:var(--accent-2);border-radius:2px;margin:18px 0}
+ul.clean{list-style:none}ul.clean li{position:relative;padding-left:26px;margin:10px 0}
+ul.clean li:before{content:"";position:absolute;left:4px;top:.62em;width:8px;height:8px;border-radius:2px;
+  background:var(--accent);transform:rotate(45deg)}
+.mono{font-family:"JetBrains Mono",monospace}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.grid2-1{display:grid;grid-template-columns:1.15fr .85fr;gap:34px;align-items:center}
+.flow6{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow-sm)}
+.card .ic{font-size:1.6rem;margin-bottom:8px}
+.card .ct{font-weight:800;color:var(--ink);font-size:clamp(1rem,1.5vw,1.2rem);margin-bottom:6px}
+.card .cb{font-size:clamp(.85rem,1.25vw,1rem);color:var(--ink-2);line-height:1.55}
+.card.b{border-top:4px solid var(--accent)}.card.a{border-top:4px solid var(--accent-2)}
+.card.g{border-top:4px solid var(--ok)}
+.tag{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:.7rem;padding:3px 9px;border-radius:999px;
+  background:var(--accent-soft);color:var(--accent);font-weight:700}
+.tag.a{background:var(--accent-2-soft);color:var(--accent-2)}
+.pill{display:inline-block;padding:5px 12px;border-radius:999px;background:var(--surface);border:1px solid var(--line);
+  font-size:.82rem;color:var(--ink-2);margin:3px 4px}
+.note{background:var(--accent-2-soft);border-left:4px solid var(--accent-2);border-radius:8px;padding:14px 18px;
+  color:var(--ink);font-size:clamp(.9rem,1.3vw,1.05rem);line-height:1.6}
+.eq{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 22px;
+  font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,1.7vw,1.4rem);color:var(--ink);text-align:center;box-shadow:var(--shadow-sm)}
+.eq .frac{display:inline-flex;flex-direction:column;text-align:center;vertical-align:middle;margin:0 6px}
+.eq .frac b{border-bottom:2px solid var(--ink);padding-bottom:3px}
+table.cmp{width:100%;border-collapse:collapse;font-size:clamp(.82rem,1.2vw,1.02rem)}
+table.cmp th,table.cmp td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line)}
+table.cmp thead th{color:var(--accent);font-weight:800;border-bottom:2px solid var(--accent);cursor:pointer;
+  user-select:none;white-space:nowrap}
+table.cmp thead th .ar{opacity:.4;font-size:.8em}
+table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--ink);font-weight:700}
+.cover{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 100px;
+  background:radial-gradient(1200px 600px at 80% 20%,var(--accent-2-soft),transparent 60%),
+  radial-gradient(900px 500px at 10% 90%,var(--accent-soft),transparent 55%),linear-gradient(135deg,#ffffff,#eef2f8)}
+.cover h1{font-size:clamp(2.4rem,6vw,4.6rem);font-weight:900;line-height:1.05;letter-spacing:-.02em;color:var(--ink)}
+.cover .en{font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,2vw,1.5rem);color:var(--accent);letter-spacing:.1em;margin-top:6px}
+.cover .meta{margin-top:26px;color:var(--ink-2);font-size:clamp(.9rem,1.4vw,1.1rem)}
+.hook{font-size:clamp(2rem,5vw,3.6rem);font-weight:900;color:var(--ink);line-height:1.2;letter-spacing:-.01em}
+.hook .hi{color:var(--accent)}
+.svgwrap{display:flex;align-items:center;justify-content:center}
+.svgwrap svg{max-width:100%;max-height:62vh;height:auto}
+.lbl{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink-2)}
+.lblb{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink);font-weight:700}
+.game{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 24px;box-shadow:var(--shadow)}
+.game-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.game-head .gt{font-weight:900;font-size:clamp(1.05rem,1.7vw,1.35rem);color:var(--ink)}
+.game-head .score{margin-left:auto;font-family:"JetBrains Mono",monospace;font-weight:700;color:var(--accent);
+  background:var(--accent-soft);padding:5px 13px;border-radius:999px;font-size:.9rem}
+.game-q{font-size:clamp(.95rem,1.5vw,1.18rem);color:var(--ink);font-weight:700;margin:6px 0 14px;line-height:1.5}
+.buckets{display:grid;gap:16px;margin-top:14px}
+.bucket{min-height:120px;border:2px dashed var(--line);border-radius:14px;padding:12px;background:var(--surface-2);transition:.2s}
+.bucket .bh{font-weight:800;color:var(--ink);text-align:center;margin-bottom:8px;font-size:.95rem}
+.pool{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;min-height:54px}
+.chip{padding:9px 15px;border-radius:10px;background:var(--surface);border:1px solid var(--line);font-weight:700;
+  color:var(--ink);cursor:pointer;box-shadow:var(--shadow-sm);font-size:.92rem;transition:.15s}
+.chip:hover{border-color:var(--accent);transform:translateY(-1px)}
+.chip.sel{background:var(--accent);color:#fff;border-color:var(--accent)}
+.chip.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.chip.no{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+.opt{padding:14px 18px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);cursor:pointer;
+  font-weight:700;color:var(--ink);font-size:clamp(.88rem,1.3vw,1.05rem);transition:.15s}
+.opt:hover{border-color:var(--accent);background:var(--accent-soft)}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.opt.no{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}.opt.dim{opacity:.5}
+.fb{margin-top:14px;padding:12px 16px;border-radius:10px;font-weight:700;display:none;
+  font-size:clamp(.85rem,1.3vw,1.02rem);line-height:1.5}
+.fb.show{display:block}.fb.good{background:var(--ok-soft);color:var(--ok)}
+.fb.bad{background:var(--bad-soft);color:var(--bad)}.fb.info{background:var(--accent-soft);color:var(--accent)}
+.btn{padding:10px 20px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-weight:800;cursor:pointer;
+  font-size:.92rem;font-family:inherit;box-shadow:var(--shadow-sm)}
+.btn:hover{filter:brightness(1.06)}.btn.ghost{background:var(--surface);color:var(--accent);border:1.5px solid var(--accent)}
+.btnrow{display:flex;gap:12px;margin-top:16px;align-items:center}
+.sortlist{display:flex;flex-direction:column;gap:6px;margin-top:6px;max-height:44vh;overflow-y:auto;padding-right:4px}
+.sortrow{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:7px 14px;box-shadow:var(--shadow-sm)}
+.sortrow .idx{font-family:"JetBrains Mono",monospace;font-weight:800;color:var(--accent);width:24px}
+.sortrow .txt{flex:1;font-weight:700;color:var(--ink);font-size:clamp(.85rem,1.25vw,1.02rem)}
+.sortrow .ud{display:flex;flex-direction:column;gap:3px}
+.sortrow .ud button{border:none;background:var(--accent-soft);color:var(--accent);border-radius:6px;width:30px;height:20px;
+  cursor:pointer;font-weight:900;line-height:1}
+.sortrow.ok{border-color:var(--ok);background:var(--ok-soft)}.sortrow.no{border-color:var(--bad)}
+.numin{font-family:"JetBrains Mono",monospace;font-size:1.2rem;font-weight:800;padding:10px 14px;border:1.5px solid var(--line);
+  border-radius:10px;width:140px;color:var(--ink);text-align:center}
+.numin:focus{outline:none;border-color:var(--accent)}
+.checklist{list-style:none}
+.checklist li{display:flex;align-items:center;gap:12px;padding:11px 14px;border:1px solid var(--line);border-radius:10px;
+  margin:8px 0;background:var(--surface);cursor:pointer;font-weight:700;color:var(--ink-2);font-size:clamp(.9rem,1.35vw,1.08rem);transition:.15s}
+.checklist li .bx{width:24px;height:24px;border-radius:6px;border:2px solid var(--accent);display:flex;align-items:center;
+  justify-content:center;color:#fff;font-weight:900;flex:0 0 auto}
+.checklist li.done{background:var(--ok-soft);border-color:var(--ok);color:var(--ink)}
+.checklist li.done .bx{background:var(--ok);border-color:var(--ok)}
+.chartbox{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow-sm);
+  height:60vh;max-height:520px;position:relative}
+.cap{font-size:.82rem;color:var(--ink-3);text-align:center;margin-top:8px}
+</style></head><body><div id="progress"></div><div id="section-tag"></div><div id="brand">MOISTURE · CH15</div><div id="pageInfo"></div><div id="hint">← → / 空白鍵切頁　·　F 全螢幕　·　點兩側翻頁</div><section class="slide" data-slide="1" data-section="引起動機" data-cover="1"><div class="slide-inner"><div class="cover"><div class="kicker">NIELSEN'S FOOD ANALYSIS · CHAPTER 15</div><h1>水分<span style='color:var(--accent-2)'>分析</span></h1><div class="en">Moisture & Total Solids Analysis</div><div class="meta">食品分析　·　3 小時課程　·　含 6 個互動小遊戲<br>烘箱乾燥 · Karl Fischer · 蒸餾法 · NIR · 水活性</div><div style="margin-top:24px"><span class="pill">烘箱乾燥</span><span class="pill">Karl Fischer</span><span class="pill">甲苯蒸餾</span><span class="pill">NIR</span><span class="pill">折射率</span></div></div></div></section><section class="slide" data-slide="2" data-section="引起動機"><div class="slide-inner"><div style="text-align:center">
+  <div class="kicker" style="justify-content:center">先想一想</div>
+  <div class="hook">一片洋芋片為何要<span class="hi">控制到 1.5% 水？</span></div>
+  <p class="subtitle" style="max-width:780px;margin:22px auto 0">水分含量決定食品的<strong>保存性、口感、重量與合法性</strong>。<br>
+  但水分子小又無所不在——是最重要、卻也最難測準的分析之一。</p>
+  <div style="margin-top:24px"><span class="pill">保存性</span><span class="pill">品質</span>
+  <span class="pill">包裝運輸</span><span class="pill">法規標準</span><span class="pill">營養計算</span></div></div></div></section><section class="slide" data-slide="3" data-section="引起動機"><div class="slide-inner"><div class="kicker">15.1.1 為什麼重要</div><h2 class="slide-title">為什麼要分析水分</h2><div class="grid2" style="margin-top:22px"><div class="card b"><div class="ic">🛡️</div><div class="ct">保存與穩定</div><div class="cb">脫水蔬果、奶粉、香料：水高易壞、結塊</div></div><div class="card a"><div class="ic">⭐</div><div class="ct">品質因子</div><div class="cb">果醬抑制糖結晶、穀片 4–8% 水控制口感</div></div><div class="card g"><div class="ic">📦</div><div class="ct">包裝運輸</div><div class="cb">濃縮乳汁、糖漿降水分以利包裝運送</div></div><div class="card b"><div class="ic">⚖️</div><div class="ct">法規標準</div><div class="cb">切達起司 ≤39% 水、濃縮麵粉 ≤15% 水</div></div></div></div></section><section class="slide" data-slide="4" data-section="引起動機"><div class="slide-inner"><div class="kicker">15.1.2 水的形式</div><h2 class="slide-title">食品裡的<span class='hi'>水</span></h2><div class="grid2" style="margin-top:18px"><div><ul class="clean"><li><strong>自由水</strong>：表面、毛細、可流動，最易蒸發</li><li><strong>結合水</strong>：以氫鍵、離子吸引依附在 −OH、=O、−NH₂</li><li><strong>包埋水</strong>：陷在膠體或緻密基質中，最難移除</li><li>幾乎<span class='em'>無法</span>把食品中所有水分完全去除</li></ul></div><div class="note"><strong>關鍵：水分子小、極性高、會跑。</strong><br>取樣到秤重的每一步都可能得水或失水 → 控制溫度與時間最重要。</div></div></div></section><section class="slide" data-slide="5" data-section="引起動機" data-chart="moist"><div class="slide-inner"><div class="kicker">15.2.1 食物中的含量</div><h2 class="slide-title">食物裡的<span class='hi'>水分</span>含量</h2><div class="chartbox"><canvas id="chart_moist"></canvas></div><div class="cap">資料：USDA (2023)，Table 15.3，% 水分（濕基）。</div></div></section><section class="slide" data-slide="6" data-section="引起動機"><div class="slide-inner"><div class="kicker">15.1.3 取樣與處理</div><h2 class="slide-title">誤差，常常在<span class='hi'>秤之前</span>就發生</h2><div class="grid2" style="margin-top:18px"><div><ul class="clean"><li>暴露大氣的時間要<strong>越短越好</strong></li><li>研磨摩擦生熱會趕走水分，須避免</li><li>儲存容器<strong>頂空要小</strong>，水會在樣品與容器間移轉</li><li>控制溫度波動——水會往樣品的<strong>較冷處</strong>遷移</li></ul></div><div class="note"><strong>取樣與處理是任何分析中最大的潛在誤差來源。</strong><br>整批取出、快速重新拌勻後再分取，才有代表性。</div></div></div></section><section class="slide" data-slide="7" data-section="引起動機"><div class="slide-inner"><div style="text-align:center">
+  <div class="kicker" style="justify-content:center">核心命題</div>
+  <div class="hook" style="font-size:clamp(1.7rem,4vw,3rem)">秤水，<span class="hi">就是秤失重</span></div>
+  <p class="lead" style="max-width:820px;margin:20px auto 0">多數<strong>直接法</strong>的根基：把水蒸乾，<strong>失去的重量</strong>就是水。剩下的固體＝<strong>總固形物</strong>。</p>
+  <div class="eq" style="max-width:600px;margin:24px auto 0">% 水分 = <span class="frac"><b>濕重 − 乾重</b><span>濕重</span></span> × 100<br>
+  <span style="font-size:.8em;color:var(--ink-2)">% 總固形物 = 100 − % 水分</span></div></div></div></section><section class="slide" data-slide="8" data-section="引起動機" data-game="g1"><div class="slide-inner"><div class="game no-nav" data-game="g1"><div class="game-head"><span class="tag a">小遊戲 ①</span><span class="gt">水的三種形式</span><span class="score" id="g1score">0 / 6</span></div><div class="game-q">把 6 個描述分到「自由水 / 結合水 / 包埋水」三類。</div><div class="pool" id="g1pool"></div><div class="buckets" id="g1buckets"></div><div class="fb" id="g1fb"></div><div class="btnrow"><button class="btn" id="g1check">檢查答案</button><button class="btn ghost" id="g1reset">重來</button></div></div></div></section><section class="slide" data-slide="9" data-section="維持注意"><div class="slide-inner"><div class="kicker">方法全覽</div><h2 class="slide-title">直接法 vs 間接法</h2><div class="grid2" style="margin-top:22px"><div class="card b"><div class="ic">🔥</div><div class="ct">直接法 · 去水</div><div class="cb">烘箱乾燥、蒸餾、Karl Fischer：把水移除或反應掉</div></div><div class="card a"><div class="ic">📡</div><div class="ct">間接法 · 測性質</div><div class="cb">介電、密度、折射率、NIR、冰點：測與水有關的物性</div></div><div class="card g"><div class="ic">⚖️</div><div class="ct">測量方式</div><div class="cb">直接法靠秤重 / 體積 / 滴定量化</div></div><div class="card b"><div class="ic">🎯</div><div class="ct">校正需求</div><div class="cb">間接法快速非破壞，但須對直接法建檢量線</div></div></div></div></section><section class="slide" data-slide="10" data-section="維持注意"><div class="slide-inner"><div class="kicker">15.2.2 烘箱乾燥</div><h2 class="slide-title">烘箱乾燥：簡單可靠</h2><div class="grid2-1" style="margin-top:8px"><div class="svgwrap">
+<svg viewBox="0 0 320 300">
+ <defs><linearGradient id="go" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eaf2ff"/><stop offset="1" stop-color="#cfe0f6"/></linearGradient></defs>
+ <rect x="40" y="40" width="240" height="200" rx="14" fill="url(#go)" stroke="#1f6feb" stroke-width="3"/>
+ <rect x="58" y="60" width="204" height="150" rx="8" fill="#ffffff" stroke="#1f6feb" stroke-width="2"/>
+ <line x1="58" y1="118" x2="262" y2="118" stroke="#cfe0f6" stroke-width="2"/>
+ <line x1="58" y1="160" x2="262" y2="160" stroke="#cfe0f6" stroke-width="2"/>
+ <rect x="92" y="92" width="48" height="20" rx="4" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
+ <rect x="178" y="92" width="48" height="20" rx="4" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
+ <rect x="92" y="134" width="48" height="20" rx="4" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
+ <text x="160" y="80" text-anchor="middle" class="lblb">乾燥皿 + 樣品</text>
+ <path d="M150 178 q5 -14 10 0 M170 178 q5 -14 10 0" fill="none" stroke="#d9822b" stroke-width="2.4"/>
+ <circle cx="252" cy="50" r="9" fill="#d9822b"/>
+ <text x="252" y="36" text-anchor="middle" class="lbl">風扇</text>
+ <rect x="120" y="240" width="80" height="16" rx="5" fill="#48597a"/>
+ <text x="160" y="288" text-anchor="middle" class="lbl">強制對流烘箱 forced-draft oven</text>
+</svg></div><div><ul class="clean"><li><strong>強制對流烘箱</strong>：風扇強制循環，溫差最小(≤1°C)</li><li><strong>真空烘箱</strong>：減壓(25–100 mmHg)下低溫(60–70°C)快乾</li><li><strong>對流(常壓)烘箱</strong>：無風扇、溫差可達 10°C，精度差</li><li>失重 = 水分；需控制<span class='em'>時間與溫度</span></li></ul><div class="note" style="margin-top:14px">高糖樣品改用真空烘箱 ≤70°C，避免梅納褐變與糖水解。</div></div></div></div></section><section class="slide" data-slide="11" data-section="維持注意" data-chart="dry"><div class="slide-inner"><div class="kicker">15.2.2 溫度控制</div><h2 class="slide-title">不同烘箱的<span class='hi'>溫度差異</span></h2><div class="chartbox" style="height:52vh"><canvas id="chart_dry"></canvas></div><div class="cap">整合 Table 15.4／15.5：烘箱內最大溫差越小越精準。</div></div></section><section class="slide" data-slide="12" data-section="維持注意"><div class="slide-inner"><div class="kicker">15.2.2 時間與溫度</div><h2 class="slide-title">乾燥是一場<span class='hi'>取捨</span></h2><div class="grid2" style="margin-top:16px"><div class="card b"><div class="ic">⏱️</div><div class="ct">乾不夠</div><div class="cb">時間太短、溫度太低 → 水沒走完 → <strong>低估</strong>水分</div></div><div class="card a"><div class="ic">🔥</div><div class="ct">過頭了</div><div class="cb">時間太長、溫度太高 → 成分分解生水或揮發物流失 → 誤差</div></div></div><div class="note" style="margin-top:18px">技巧：液體(果汁/牛奶)先在<strong>蒸氣浴預乾</strong>避免噴濺；黏結樣品用<strong>砂皿法</strong>(乾砂+玻棒)分散、防結殼。乾燥到<strong>恆重</strong>(兩次秤重相差 < 0.1–0.2 mg)。</div></div></section><section class="slide" data-slide="13" data-section="維持注意" data-game="g2"><div class="slide-inner"><div class="game no-nav" data-game="g2"><div class="game-head"><span class="tag a">小遊戲 ②</span><span class="gt">烘箱乾燥即時測驗</span><span class="score" id="g2score">0 / 4</span></div><div class="game-q" id="g2q"></div><div class="opts" id="g2opts"></div><div class="fb" id="g2fb"></div><div class="btnrow"><button class="btn ghost" id="g2next" style="display:none">下一題 →</button></div></div></div></section><section class="slide" data-slide="14" data-section="維持注意"><div class="slide-inner"><div class="kicker">15.2.4 Karl Fischer</div><h2 class="slide-title">KF 滴定：微量水專家</h2><div class="svgwrap" style="margin-top:10px">
+<svg viewBox="0 0 420 300">
+ <defs><linearGradient id="gkf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbeede"/><stop offset="1" stop-color="#f3d6b0"/></linearGradient></defs>
+ <rect x="22" y="40" width="120" height="74" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
+ <text x="82" y="70" text-anchor="middle" class="lblb">滴定管</text>
+ <text x="82" y="90" text-anchor="middle" class="lbl">KF 試劑(I₂)</text>
+ <path d="M82 114 v40" stroke="#1f6feb" stroke-width="3"/>
+ <path d="M120 200 a72 72 0 1 0 -76 0 z" fill="url(#gkf)" stroke="#1f6feb" stroke-width="3" transform="translate(0,-6)"/>
+ <ellipse cx="120" cy="206" rx="74" ry="20" fill="#f3d6b0" stroke="#1f6feb" stroke-width="2"/>
+ <text x="120" y="172" text-anchor="middle" class="lblb">密閉反應槽</text>
+ <text x="120" y="194" text-anchor="middle" class="lbl">樣品 + 甲醇</text>
+ <circle cx="120" cy="252" r="8" fill="#d9822b"/>
+ <text x="120" y="288" text-anchor="middle" class="lbl">攪拌子 · 隔絕大氣水分</text>
+ <g font-size="13">
+  <rect x="276" y="60" width="126" height="56" rx="10" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
+  <text x="339" y="84" text-anchor="middle" class="lblb">電位偵測</text>
+  <text x="339" y="104" text-anchor="middle" class="lbl">過量 I₂ → 終點</text>
+  <path d="M276 88 h-66" stroke="#8493ad" stroke-width="2.5" fill="none" marker-end="url(#arkf)"/>
+  <defs><marker id="arkf" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto">
+   <path d="M0 0 L8 4 L0 8 z" fill="#8493ad"/></marker></defs>
+ </g>
+ <text x="210" y="28" text-anchor="middle" class="lblb" font-size="15">Karl Fischer 滴定</text>
+</svg></div><div class="note" style="margin-top:16px">每 1 mol 水耗 1 mol I₂：水把 SO₂ 還原碘 → 過量碘到達終點。<strong>不加熱、快速、最準</strong>，是低水分高糖/高蛋白食品的首選。</div></div></section><section class="slide" data-slide="15" data-section="維持注意"><div class="slide-inner"><div class="kicker">15.2.3 蒸餾法</div><h2 class="slide-title">甲苯共沸：直接量水</h2><div class="svgwrap" style="margin-top:10px">
+<svg viewBox="0 0 420 300">
+ <defs><linearGradient id="gd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbeede"/><stop offset="1" stop-color="#f3d6b0"/></linearGradient></defs>
+ <path d="M70 230 a58 58 0 1 0 -4 0 z" fill="url(#gd)" stroke="#1f6feb" stroke-width="3"/>
+ <text x="68" y="200" text-anchor="middle" class="lblb">樣品</text>
+ <text x="68" y="220" text-anchor="middle" class="lbl">+ 甲苯</text>
+ <path d="M50 246 q4 -12 8 0 M70 246 q4 -12 8 0" fill="none" stroke="#d9822b" stroke-width="2.4"/>
+ <text x="68" y="284" text-anchor="middle" class="lbl">加熱共沸</text>
+ <path d="M68 116 v-44 h120" stroke="#1f6feb" stroke-width="3" fill="none"/>
+ <rect x="188" y="56" width="34" height="120" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
+ <text x="205" y="48" text-anchor="middle" class="lbl">水分收集管</text>
+ <rect x="190" y="120" width="30" height="52" fill="#cfe0f6"/>
+ <text x="205" y="150" text-anchor="middle" class="lblb" font-size="12">水</text>
+ <path d="M222 80 h70" stroke="#1f6feb" stroke-width="3" fill="none"/>
+ <rect x="292" y="50" width="110" height="60" rx="10" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
+ <text x="347" y="76" text-anchor="middle" class="lblb" font-size="13">冷凝管</text>
+ <text x="347" y="96" text-anchor="middle" class="lbl" font-size="12">回流甲苯</text>
+ <text x="210" y="28" text-anchor="middle" class="lblb" font-size="15">甲苯共沸蒸餾（Bidwell–Sterling）</text>
+</svg></div><div class="note" style="margin-top:16px">樣品與<strong>甲苯</strong>共沸，水被帶出冷凝、在收集管<strong>直接讀體積</strong>。熱分解比高溫烘箱少，是香料的官方法；須注意乳化與管壁殘水。</div></div></section><section class="slide" data-slide="16" data-section="維持注意" data-game="g4"><div class="slide-inner"><div class="game no-nav" data-game="g4"><div class="game-head"><span class="tag a">小遊戲 ③</span><span class="gt">烘箱乾燥流程排序</span><span class="score" id="g4score">— / 6</span></div><div class="game-q">用 ▲▼ 把烘箱乾燥法的 6 個步驟排成正確順序。</div><div class="sortlist" id="g4list"></div><div class="fb" id="g4fb"></div><div class="btnrow"><button class="btn" id="g4check">檢查順序</button><button class="btn ghost" id="g4reset">打亂重排</button></div></div></div></section><section class="slide" data-slide="17" data-section="維持注意"><div class="slide-inner"><div class="kicker">15.2.5 物理(間接)法</div><h2 class="slide-title">不去水，也能測水</h2><div class="grid3" style="margin-top:22px"><div class="card b"><div class="ic">⚡</div><div class="ct">介電/微波</div><div class="cb">水介電常數 80 ≫ 乾物 10；測電容變化。穀物、線上品管(≤35%水)</div></div><div class="card a"><div class="ic">💧</div><div class="ct">密度/折射率</div><div class="cb">比重計、糖度計(°Brix)、折射儀；測液體糖漿/果汁的固形物</div></div><div class="card g"><div class="ic">📡</div><div class="ct">NIR 近紅外</div><div class="cb">水的 −OH 在 1400／1920 nm 吸收；快速非破壞，穀物乾蔬官方法</div></div></div></div></section><section class="slide" data-slide="18" data-section="維持注意"><div class="slide-inner"><div class="kicker">15.2.2 快速熱重法</div><h2 class="slide-title">幾分鐘 vs 幾小時</h2><div class="grid2" style="margin-top:16px"><div class="card b"><div class="ic">📶</div><div class="ct">微波乾燥</div><div class="cb">微波能加熱蒸水，4–8 分鐘；起司/肉製品線上調整</div></div><div class="card a"><div class="ic">🔦</div><div class="ct">紅外/鹵素乾燥</div><div class="cb">紅外燈或鹵素加熱穿透樣品，10–25 分鐘快速品管</div></div></div><div class="note" style="margin-top:18px"><strong>熱重分析(TGA)</strong>：連續秤質量、控溫控氣氛，可定水分、水合物計量與分解——精準但設備貴。</div></div></section><section class="slide" data-slide="19" data-section="維持注意"><div class="slide-inner"><div class="kicker">15.2.6 取樣的陷阱</div><h2 class="slide-title">為什麼水分<span class='hi'>最難測準</span>？</h2><div class="note" style="margin-top:14px">起司在天平上 50% RH 只要 <strong>5 秒就失 0.01% 水</strong>；乾燥粉末則會從空氣<strong>吸水</strong>。取樣到秤重必須又快又密閉。</div><div class="grid2" style="margin-top:18px"><div class="card b"><div class="ic">📉</div><div class="ct">會失水</div><div class="cb">高水分樣品暴露空氣 → 低估水分</div></div><div class="card a"><div class="ic">📈</div><div class="ct">會吸水</div><div class="cb">低 a_w 的脆片/粉末吸收濕氣 → 高估水分</div></div></div></div></section><section class="slide" data-slide="20" data-section="維持注意" data-game="g3"><div class="slide-inner"><div class="game no-nav" data-game="g3"><div class="game-head"><span class="tag a">小遊戲 ④</span><span class="gt">各方法「測什麼」分類</span><span class="score" id="g3score">0 / 6</span></div><div class="game-q">同樣的方法，換個角度——它們實際量測的是什麼訊號？分到三類。</div><div class="pool" id="g3pool"></div><div class="buckets" id="g3buckets"></div><div class="fb" id="g3fb"></div><div class="btnrow"><button class="btn" id="g3check">檢查答案</button><button class="btn ghost" id="g3reset">重來</button></div></div></div></section><section class="slide" data-slide="21" data-section="維持注意"><div class="slide-inner"><div class="kicker">15.3 水活性 a_w</div><h2 class="slide-title">水分量 ≠ 水的活性</h2><div class="grid2" style="margin-top:16px"><div><ul class="clean"><li>a_w = 食品水蒸氣壓 p ÷ 純水蒸氣壓 p₀（0–1）</li><li>a_w = ERH/100，與平衡相對濕度相關</li><li>影響<strong>微生物生長、化學/酵素反應、質地</strong></li><li>同樣水分含量，a_w 不同 → 穩定性不同</li></ul></div><div class="note"><strong>a_w 0.85</strong> 是法規對病原菌生長的分界。水分『遷移』是順著 a_w 由高到低，而非水分含量。</div></div></div></section><section class="slide" data-slide="22" data-section="維持注意"><div class="slide-inner"><div class="kicker">摻假與盲點</div><h2 class="slide-title">水分造假怎麼<span class='hi'>抓</span>？</h2><div class="note" style="margin-top:14px">牛奶<strong>加水</strong>會抬高水分、稀釋固形物。因冰點是牛奶最穩定的物性，AOAC 961.07 用<strong>冰點儀</strong>(正常乳 −0.527°C)偵測加水。</div><div class="grid2" style="margin-top:18px"><div class="card b"><div class="ic">🧊</div><div class="ct">冰點法</div><div class="cb">加水使冰點上升 → 算出加水量；FDA 拒收 > −0.507°C 的乳</div></div><div class="card a"><div class="ic">⚠️</div><div class="ct">分解陷阱</div><div class="cb">碳水高溫分解會『生水』→ 高估；蔗糖水解會『耗水』→ 低估</div></div></div></div></section><section class="slide" data-slide="23" data-section="維持注意" data-game="g5"><div class="slide-inner"><div class="game no-nav" data-game="g5"><div class="game-head"><span class="tag a">小遊戲 ⑤</span><span class="gt">決策挑戰：選對方法</span><span class="score" id="g5score">0 / 5</span></div><div class="game-q" id="g5q"></div><div class="opts" id="g5opts"></div><div class="fb" id="g5fb"></div><div class="btnrow"><button class="btn ghost" id="g5next" style="display:none">下一題 →</button></div></div></div></section><section class="slide" data-slide="24" data-section="喚起行動" data-game="cmp"><div class="slide-inner"><div class="kicker">15.2.6 方法比較</div><h2 class="slide-title">一張表選方法（點欄位排序）</h2><table class="cmp" id="cmpTable" style="margin-top:14px"><thead><tr><th data-k="m" data-t="s">方法 <span class="ar">⇅</span></th><th data-k="meas" data-t="s">量測對象 <span class="ar">⇅</span></th><th data-k="speed" data-t="n">速度 <span class="ar">⇅</span></th><th data-k="app" data-t="s">主要應用 <span class="ar">⇅</span></th></tr></thead><tbody></tbody></table><div class="cap">速度：★ 越多越快。整合自 Table 15.5／15.6。</div></div></section><section class="slide" data-slide="25" data-section="喚起行動"><div class="slide-inner"><div class="kicker">方法選擇</div><h2 class="slide-title">跟著決策樹走</h2><div class="svgwrap" style="margin-top:10px">
+<svg viewBox="0 0 980 360">
+ <rect x="380" y="14" width="220" height="56" rx="12" fill="#1f6feb"/>
+ <text x="490" y="40" text-anchor="middle" fill="#fff" font-weight="800" font-size="16">你的樣品是什麼？</text>
+ <text x="490" y="60" text-anchor="middle" fill="#cfe0f6" font-size="12">選擇水分分析方法</text>
+ <g stroke="#8493ad" stroke-width="2" fill="none">
+  <path d="M420 70 C 200 110,130 120,120 150"/><path d="M470 70 C 400 120,380 120,375 150"/>
+  <path d="M510 70 C 590 120,610 120,625 150"/><path d="M560 70 C 800 110,860 120,875 150"/></g>
+ <g font-size="14" font-weight="800">
+  <rect x="30" y="150" width="190" height="120" rx="12" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
+  <text x="125" y="178" text-anchor="middle" fill="#15233f">一般食品?</text>
+  <text x="125" y="206" text-anchor="middle" fill="#d9822b" font-size="16">烘箱乾燥</text>
+  <text x="125" y="232" text-anchor="middle" fill="#48597a" font-size="12">官方法、可多樣品</text>
+  <text x="125" y="252" text-anchor="middle" fill="#48597a" font-size="12">高糖改真空 ≤70°C</text>
+  <rect x="280" y="150" width="190" height="120" rx="12" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
+  <text x="375" y="178" text-anchor="middle" fill="#15233f">低水分·高糖油?</text>
+  <text x="375" y="206" text-anchor="middle" fill="#1f6feb" font-size="16">Karl Fischer</text>
+  <text x="375" y="232" text-anchor="middle" fill="#48597a" font-size="12">不加熱、最準</text>
+  <text x="375" y="252" text-anchor="middle" fill="#48597a" font-size="12">巧克力·油脂·乾果</text>
+  <rect x="530" y="150" width="190" height="120" rx="12" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
+  <text x="625" y="178" text-anchor="middle" fill="#15233f">香料·揮發物?</text>
+  <text x="625" y="206" text-anchor="middle" fill="#1f9d6b" font-size="16">甲苯蒸餾</text>
+  <text x="625" y="232" text-anchor="middle" fill="#48597a" font-size="12">熱分解少、直接測水</text>
+  <text x="625" y="252" text-anchor="middle" fill="#48597a" font-size="12">香料官方法</text>
+  <rect x="780" y="150" width="190" height="120" rx="12" fill="#f6f9fd" stroke="#48597a" stroke-width="2"/>
+  <text x="875" y="178" text-anchor="middle" fill="#15233f">線上快速品管?</text>
+  <text x="875" y="206" text-anchor="middle" fill="#15233f" font-size="16">NIR / 微波</text>
+  <text x="875" y="232" text-anchor="middle" fill="#48597a" font-size="12">快速、非破壞</text>
+  <text x="875" y="252" text-anchor="middle" fill="#48597a" font-size="12">需先校正</text>
+ </g>
+</svg></div><p class="subtitle" style="text-align:center;margin-top:14px">下一頁實戰：算一份液體樣品的水分與固形物 →</p></div></section><section class="slide" data-slide="26" data-section="喚起行動"><div class="slide-inner"><div class="kicker">15.3 水活性應用</div><h2 class="slide-title">為什麼要<span class='hi'>同時</span>量 a_w</h2><div class="grid2" style="margin-top:18px"><div class="card b"><div class="ic">🦠</div><div class="ct">控制微生物</div><div class="cb">各菌種有 a_w 生長下限；a_w 0.85 是低酸/酸化食品法規分界</div></div><div class="card a"><div class="ic">🔄</div><div class="ct">防止水分遷移</div><div class="cb">派皮與內餡之間，水順 a_w 由高往低跑 → 影響質地保存</div></div><div class="card g"><div class="ic">📊</div><div class="ct">穩定性地圖</div><div class="cb">Labuza 圖：脂質氧化、梅納反應、酵素速率隨 a_w 變化</div></div></div><div class="note" style="margin-top:16px">水分含量 + 水活性 = 完整的水分分析。<strong>降 a_w 不是殺菌步驟</strong>，只是抑制生長。</div></div></section><section class="slide" data-slide="27" data-section="喚起行動"><div class="slide-inner"><div class="kicker">15.2.2.1.7 計算</div><h2 class="slide-title">從秤重到 % 水分與固形物</h2><div class="grid2" style="margin-top:14px"><div class="eq">% 水分 = <span class="frac"><b>濕重 − 乾重</b><span>濕重</span></span> × 100</div><div><ul class="clean"><li>先扣除<strong>乾皿+玻纖蓋</strong>的重量</li><li>濕重 − 乾重 = 失去的水重</li><li>% 總固形物 = 乾重 ÷ 濕重 × 100</li><li>% 水分 + % 固形物 = 100</li></ul></div></div></div></section><section class="slide" data-slide="28" data-section="喚起行動" data-game="g6"><div class="slide-inner"><div class="game no-nav" data-game="g6"><div class="game-head"><span class="tag a">小遊戲 ⑥</span><span class="gt">計算闖關</span><span class="score" id="g6score">未作答</span></div><div class="game-q">液體樣品（Practice Problem 3）：乾皿+玻纖蓋 1.0376 g，皿+液體樣品 4.6274 g，皿+烘乾後 1.7321 g。求<strong>% 水分（濕基）</strong>。</div><div class="btnrow"><input class="numin" id="g6in" type="number" step="any" placeholder="?"> <span style="font-weight:800;color:var(--ink)">%</span><button class="btn" id="g6check">對答案</button><button class="btn ghost" id="g6hint">提示</button></div><div class="fb" id="g6fb"></div></div></div></section><section class="slide" data-slide="29" data-section="喚起行動"><div class="slide-inner"><div class="kicker">延伸應用</div><h2 class="slide-title">濃縮：還要<span class='hi'>再蒸掉</span>多少水？</h2><div class="grid2-1" style="margin-top:14px"><div><ul class="clean"><li>濃縮湯起始 1000 gal、8.67% 固形物</li><li>濃到 26.54% 固形物 → 體積 = (8.67/26.54)×1000 = <strong>326.7 gal</strong></li><li>標準要 28.63% → 體積 = (8.67/28.63)×1000 = <strong>302.8 gal</strong></li><li>還要蒸掉 326.7 − 302.8 = <span class='em'>23.9 gal</span> 水</li></ul></div><div class="note">關鍵觀念：濃縮過程<strong>固形物總量不變</strong>，用『固形物守恆』反推體積，差值就是要再移除的水。(Practice Problem 1)</div></div></div></section><section class="slide" data-slide="30" data-section="喚起行動"><div class="slide-inner"><div class="kicker">重點整理</div><h2 class="slide-title">今天的五個關鍵</h2><div class="grid2" style="margin-top:18px"><ul class="clean"><li><strong>秤水＝秤失重</strong>；% 水分=(濕−乾)/濕×100，固形物=100−水分</li><li>水有<strong>自由/結合/包埋</strong>三形式，難完全去除</li><li>直接法：烘箱(官方·多樣品) vs <strong>Karl Fischer</strong>(微量·不加熱)</li></ul><ul class="clean"><li>間接法：NIR/介電/折射率快速，<strong>須先校正</strong></li><li><strong>a_w</strong> 比水分更能預測微生物與穩定性(0.85 分界)</li></ul></div></div></section><section class="slide" data-slide="31" data-section="喚起行動"><div class="slide-inner"><div class="kicker">自我檢核</div><h2 class="slide-title">今天結束，你應該會…</h2><ul class="checklist no-nav" id="selfcheck" style="margin-top:18px;max-width:980px"><li data-k><span class="bx">✓</span>說出水的三種形式與其去除難易</li><li data-k><span class="bx">✓</span>解釋『秤水就是秤失重』與總固形物的關係</li><li data-k><span class="bx">✓</span>比較強制對流、真空、微波烘箱的差異</li><li data-k><span class="bx">✓</span>說明 Karl Fischer 為何適合低水分高糖/油食品</li><li data-k><span class="bx">✓</span>判斷該用哪種方法（一般/低水分/香料/線上品管）</li><li data-k><span class="bx">✓</span>由秤重數據算出 % 水分與 % 固形物</li><li data-k><span class="bx">✓</span>區分水分含量與水活性 a_w 的意義</li></ul><p class="subtitle" style="margin-top:12px">點一下打勾——確認自己真的會了。</p></div></section><section class="slide" data-slide="32" data-section="喚起行動" data-cover="1"><div class="slide-inner"><div class="cover"><div class="kicker">下一步 · NEXT</div><h1>把水分分析<br><span style='color:var(--accent-2)'>用起來</span></h1><div class="en"></div><div class="meta">📌 課後練習：Study Questions、Practice Problems<br>🔜 銜接章節：<strong>灰分分析 (Ch16)</strong>、<strong>蛋白質分析 (Ch18)</strong><br>🧪 思考：你的樣品水分高嗎？含糖油嗎？要官方法還是快速品管？該選哪種方法？</div><div style="margin-top:24px"><span class="pill">烘箱乾燥</span><span class="pill">Karl Fischer</span><span class="pill">甲苯蒸餾</span><span class="pill">NIR</span><span class="pill">水活性 a_w</span></div></div></div></section><script>window.CFG={"charts": {"moist": {"type": "bar", "yTitle": "% 水分", "labels": ["西瓜", "柳橙", "蘋果", "牛奶(2%)", "雞胸肉", "切達起司", "白麵包", "葡萄乾", "奶油", "玉米片", "花生"], "datasets": [{"label": "% 水分(濕基)", "data": [91.5, 86.3, 85.6, 89.3, 68.6, 36.8, 13.4, 15.3, 15.9, 3.5, 1.6], "color": "#1f6feb"}]}, "dry": {"type": "bar", "yTitle": "烘箱最大溫差 (°C)", "labels": ["對流(常壓)", "強制對流", "真空", "微波", "紅外"], "datasets": [{"label": "內部最大溫差", "data": [10, 1, 4, 2, 3], "color": "#d9822b"}]}}, "bucket": {"g1": {"cats": ["自由水", "結合水", "包埋水"], "items": [{"t": "表面、毛細水可流動", "c": "自由水"}, {"t": "最易蒸發", "c": "自由水"}, {"t": "以氫鍵依附 −OH／=O", "c": "結合水"}, {"t": "形成有序水合殼層", "c": "結合水"}, {"t": "陷在膠體/緻密基質", "c": "包埋水"}, {"t": "最難移除", "c": "包埋水"}], "ok": "🎉 全對！自由水最好蒸、結合水靠氫鍵、包埋水最難去。", "tip": "提示：氫鍵依附＝結合水；卡在凝膠/油炸緻密結構＝包埋水。"}, "g3": {"cats": ["測重量變化", "測體積/滴定量", "測物理性質(間接)"], "items": [{"t": "強制對流烘箱", "c": "測重量變化"}, {"t": "微波乾燥", "c": "測重量變化"}, {"t": "甲苯蒸餾", "c": "測體積/滴定量"}, {"t": "Karl Fischer", "c": "測體積/滴定量"}, {"t": "折射率(°Brix)", "c": "測物理性質(間接)"}, {"t": "NIR 近紅外", "c": "測物理性質(間接)"}], "ok": "🎉 正確！烘箱/微波測失重、蒸餾讀體積、KF 看滴定量、折射率與 NIR 是間接物性。", "tip": "提示：蒸餾讀水的體積、KF 讀試劑用量；折射率/NIR 測的是與水相關的物性。"}}, "mcq": {"g2": [{"q": "哪一種烘箱的內部溫差最小、最精準？", "o": ["對流(常壓)烘箱", "強制對流烘箱", "玻璃門真空烘箱", "沒有差別"], "a": 1, "e": "強制對流有風扇強制循環，溫差通常 ≤1°C。"}, {"q": "% 水分（濕基）的正確算式是？", "o": ["(乾重−濕重)/乾重×100", "(濕重−乾重)/濕重×100", "乾重/濕重×100", "濕重/乾重×100"], "a": 1, "e": "水重=濕重−乾重，再除以濕重。"}, {"q": "高糖食品為何改用真空烘箱、且溫度 ≤70°C？", "o": ["乾得比較慢", "避免梅納褐變與糖水解", "因為比較便宜", "為了多放樣品"], "a": 1, "e": "減壓可低溫蒸水，降低高糖產品的分解誤差。"}, {"q": "碳水化合物在高溫『分解生水』，會使結果如何？", "o": ["低估水分", "高估水分", "不影響", "只影響固形物"], "a": 1, "e": "分解釋出的水被算進去 → 高估水分含量。"}], "g5": [{"q": "巧克力、油脂等低水分高糖/油樣品，最準的選擇？", "o": ["強制對流烘箱", "Karl Fischer", "折射率", "冰點法"], "a": 1, "e": "KF 不加熱、快速、對低水分食品最準，是首選。"}, {"q": "香料含揮發性成分，官方建議用哪種方法？", "o": ["甲苯共沸蒸餾", "高溫對流烘箱", "比重計", "微波"], "a": 0, "e": "蒸餾熱分解少、直接量水，是香料(986.21)官方法。"}, {"q": "穀物工廠要快速、非破壞地監測水分，選？", "o": ["甲苯蒸餾", "NIR 近紅外", "Karl Fischer", "真空烘箱"], "a": 1, "e": "NIR 快速非破壞、適合線上品管，但須先校正。"}, {"q": "純糖漿/果汁(單一溶質液體)測固形物，最簡便？", "o": ["折射率(°Brix)", "凱氏定氮", "TGA", "蒸餾"], "a": 0, "e": "折射率/比重計快速便宜，適合單一溶質的液體固形物。"}, {"q": "懷疑牛奶被加水稀釋，最佳偵測法？", "o": ["烘箱乾燥", "NIR", "冰點(冰點儀)", "折射率"], "a": 2, "e": "冰點是牛奶最穩定物性；加水使冰點上升，冰點儀可偵測。"}]}, "sort": {"g4": {"steps": ["乾燥皿+玻纖蓋先烘乾，置乾燥器冷卻後精秤", "快速秤入樣品(濕重)、蓋好", "放入烘箱於規定溫度/時間乾燥", "取出移入乾燥器冷卻", "精秤乾燥後的皿+樣品(乾重)", "由(濕重−乾重)/濕重×100 算 % 水分"], "shuffle": [3, 0, 5, 1, 4, 2], "ok": "🎉 順序正確！先備皿→秤濕重→烘乾→冷卻→秤乾重→計算。", "tip": "提示：一定先把空皿烘乾秤重，最後才計算 % 水分。"}}, "calc": {"g6": {"answer": 80.65, "tol": 0.5, "ok": "🎉 正確！扣皿後濕重 3.5898 g、乾重 0.6945 g，水=2.8953 g；2.8953/3.5898×100 = <b>80.65%<\/b> 水分（固形物 19.35%）。", "bad": "再算算：先各扣 1.0376 g → 濕重 3.5898 g、乾重 0.6945 g，水重 2.8953 g，再 ÷ 濕重 ×100。", "hint": "提示：濕重=4.6274−1.0376=3.5898 g；乾重=1.7321−1.0376=0.6945 g；水/濕重×100≈80.65%。"}}, "cmp": {"cols": [{"k": "m"}, {"k": "meas"}, {"k": "speed"}, {"k": "app"}], "rows": [{"m": "強制對流烘箱", "meas": "重量變化", "speed": 2, "app": "多種食品·官方法"}, {"m": "真空烘箱", "meas": "重量變化", "speed": 2, "app": "高糖/熱敏食品·官方法"}, {"m": "微波乾燥", "meas": "重量變化", "speed": 4, "app": "液體/起司·快速品管"}, {"m": "紅外/鹵素乾燥", "meas": "重量變化", "speed": 4, "app": "快速品管(單樣品)"}, {"m": "甲苯蒸餾", "meas": "水的體積", "speed": 2, "app": "香料·乾果(官方法)"}, {"m": "Karl Fischer", "meas": "滴定量(I₂)", "speed": 3, "app": "低水分高糖/油(最準)"}, {"m": "折射率", "meas": "折射率(°Brix)", "speed": 5, "app": "糖漿·果汁·乳(固形物)"}, {"m": "NIR 近紅外", "meas": "−OH 吸收", "speed": 5, "app": "穀物·乳品線上品管"}]}};</script><script>
+var CFG=window.CFG||{};
+var slides=[].slice.call(document.querySelectorAll('.slide'));
+var total=slides.length,cur=0;
+var prog=document.getElementById('progress'),pageInfo=document.getElementById('pageInfo'),secTag=document.getElementById('section-tag');
+function show(i){
+  cur=Math.max(0,Math.min(total-1,i));
+  slides.forEach(function(s,k){s.classList.toggle('active',k===cur)});
+  prog.style.width=((cur+1)/total*100)+'%';
+  pageInfo.textContent=(cur+1)+' / '+total;
+  secTag.textContent='— '+(slides[cur].dataset.section||'')+' —';
+  var ch=slides[cur].dataset.chart; if(ch) initChart(ch);
+  var g=slides[cur].dataset.game; if(g) initGame(g);
+}
+function next(){show(cur+1)} function prev(){show(cur-1)}
+function toggleFs(){if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()}else{document.exitFullscreen&&document.exitFullscreen()}}
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next()}
+  else if(e.key==='ArrowLeft'){prev()}
+  else if(e.key==='f'||e.key==='F'){toggleFs()}
+});
+document.addEventListener('click',function(e){
+  if(e.target.closest('.no-nav')) return;
+  if(e.target.closest('button,input,select,textarea,a,.chip,.opt,.bucket')) return;
+  var x=e.clientX/window.innerWidth;
+  if(x>0.72) next(); else if(x<0.28) prev();
+});
+
+/* ---------- charts ---------- */
+var chartDone={};
+function initChart(id){
+  if(chartDone[id]||typeof Chart==='undefined'||!CFG.charts||!CFG.charts[id]) return; chartDone[id]=1;
+  Chart.defaults.font.family="'Noto Sans TC',sans-serif"; Chart.defaults.color='#48597a';
+  var c=CFG.charts[id];
+  var el=document.getElementById('chart_'+id); if(!el) return;
+  var ds=c.datasets.map(function(d){return {label:d.label,data:d.data,
+    backgroundColor:d.color||'#1f6feb',borderColor:d.color||'#1f6feb',borderRadius:5,
+    fill:(c.type==='line'?false:true),tension:.3}});
+  new Chart(el,{type:c.type||'bar',data:{labels:c.labels,datasets:ds},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:(c.datasets.length>1),position:'top'}},
+      scales:{y:{beginAtZero:(c.zero!==false),title:{display:!!c.yTitle,text:c.yTitle||''}}}}});
+}
+
+/* ---------- games ---------- */
+var gameDone={};
+function setScore(el,v){var e=document.getElementById(el);if(e)e.textContent=v}
+function fb(el,msg,type){var f=document.getElementById(el);if(!f)return;f.className='fb show '+type;f.innerHTML=msg}
+function initGame(g){
+  if(gameDone[g])return; gameDone[g]=1;
+  if(CFG.bucket&&CFG.bucket[g]) return initBucket(g);
+  if(CFG.mcq&&CFG.mcq[g]) return initMCQ(g);
+  if(CFG.sort&&CFG.sort[g]) return initSort(g);
+  if(CFG.calc&&CFG.calc[g]) return initCalc(g);
+  if(g==='cmp') return initCmp();
+}
+
+function initBucket(g){
+  var cfg=CFG.bucket[g];
+  var data=cfg.items.map(function(x){return {t:x.t,c:x.c,at:null}});
+  var cats=cfg.cats, N=data.length;
+  var pool=document.getElementById(g+'pool'), bk=document.getElementById(g+'buckets');
+  var sel=null;
+  bk.style.gridTemplateColumns='repeat('+cats.length+',1fr)';
+  function paint(){[].slice.call(pool.children).forEach(function(c){c.classList.toggle('sel',+c.dataset.i===sel)})}
+  function render(){
+    pool.innerHTML=''; bk.innerHTML='';
+    var placed={}; cats.forEach(function(c){placed[c]=[]});
+    data.forEach(function(d,i){if(d.at)placed[d.at].push(i)});
+    data.forEach(function(d,i){ if(d.at) return;
+      var c=document.createElement('div');c.className='chip';c.textContent=d.t;c.dataset.i=i;
+      c.onclick=function(){sel=(sel===i?null:i);paint()}; pool.appendChild(c);
+    });
+    cats.forEach(function(cat){
+      var b=document.createElement('div');b.className='bucket';b.innerHTML='<div class="bh">'+cat+'</div>';
+      placed[cat].forEach(function(i){
+        var c=document.createElement('div');c.className='chip';c.textContent=data[i].t;
+        c.onclick=function(){data[i].at=null;sel=null;render()}; b.appendChild(c);
+      });
+      b.onclick=function(e){ if(e.target!==b&&!e.target.classList.contains('bh'))return;
+        if(sel!=null){data[sel].at=cat;sel=null;render()} };
+      bk.appendChild(b);
+    });
+    paint();
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; data.forEach(function(d){if(d.at===d.c)ok++});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 全對！','good');
+    else fb(g+'fb','答對 '+ok+'/'+N+'。'+(cfg.tip||'再調整看看。'),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    data.forEach(function(d){d.at=null}); sel=null; render(); setScore(g+'score','0 / '+N);
+    var f=document.getElementById(g+'fb'); if(f) f.className='fb';
+  };
+}
+
+function initMCQ(g){
+  var DATA=CFG.mcq[g], nq=DATA.length, idx=0, score=0, locked=false;
+  var qEl=document.getElementById(g+'q'), opEl=document.getElementById(g+'opts'), nextBtn=document.getElementById(g+'next');
+  function render(){
+    locked=false; var d=DATA[idx];
+    qEl.innerHTML='<span style="color:var(--accent)">Q'+(idx+1)+'.</span> '+d.q;
+    opEl.innerHTML=''; var f=document.getElementById(g+'fb'); if(f)f.className='fb'; if(nextBtn)nextBtn.style.display='none';
+    d.o.forEach(function(t,i){
+      var o=document.createElement('div');o.className='opt';o.textContent=t;
+      o.onclick=function(){
+        if(locked)return; locked=true; var ok=(i===d.a);
+        if(ok){o.classList.add('ok');score++}else{o.classList.add('no');opEl.children[d.a].classList.add('ok')}
+        [].slice.call(opEl.children).forEach(function(c,k){if(k!==i&&k!==d.a)c.classList.add('dim')});
+        setScore(g+'score',score+' / '+nq);
+        var done=(idx>=DATA.length-1);
+        var msg=(ok?'✅ 答對！':'❌ 正解：'+d.o[d.a]+'。')+'<br>'+d.e+(done?'<br><b>完成！總分 '+score+'/'+nq+'</b>':'');
+        fb(g+'fb',msg,ok?'good':'bad');
+        if(nextBtn) nextBtn.style.display=done?'none':'inline-block';
+      };
+      opEl.appendChild(o);
+    });
+  }
+  if(nextBtn) nextBtn.onclick=function(){if(idx<DATA.length-1){idx++;render()}};
+  render();
+}
+
+function initSort(g){
+  var cfg=CFG.sort[g], steps=cfg.steps, N=steps.length;
+  var order=(cfg.shuffle||steps.map(function(_,i){return i})).slice();
+  var list=document.getElementById(g+'list');
+  function render(){
+    list.innerHTML='';
+    order.forEach(function(stepIdx,pos){
+      var row=document.createElement('div');row.className='sortrow';
+      row.innerHTML='<div class="idx">'+(pos+1)+'</div><div class="txt">'+steps[stepIdx]+'</div>';
+      var ud=document.createElement('div');ud.className='ud';
+      var up=document.createElement('button');up.textContent='▲';
+      up.onclick=function(){if(pos>0){var t=order[pos-1];order[pos-1]=order[pos];order[pos]=t;render()}};
+      var dn=document.createElement('button');dn.textContent='▼';
+      dn.onclick=function(){if(pos<order.length-1){var t=order[pos+1];order[pos+1]=order[pos];order[pos]=t;render()}};
+      ud.appendChild(up);ud.appendChild(dn);row.appendChild(ud);list.appendChild(row);
+    });
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; order.forEach(function(v,i){if(v===i)ok++});
+    [].slice.call(list.children).forEach(function(r,i){r.classList.toggle('ok',order[i]===i);r.classList.toggle('no',order[i]!==i)});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 順序完全正確！','good');
+    else fb(g+'fb','對了 '+ok+'/'+N+' 個位置。'+(cfg.tip||''),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    order=(cfg.shuffle||steps.map(function(_,i){return i})).slice().reverse(); render();
+    var f=document.getElementById(g+'fb'); if(f)f.className='fb'; setScore(g+'score','— / '+N);
+  };
+}
+
+function initCalc(g){
+  var cfg=CFG.calc[g];
+  document.getElementById(g+'check').onclick=function(){
+    var v=parseFloat(document.getElementById(g+'in').value);
+    if(isNaN(v)){fb(g+'fb','請先輸入一個數字。','info');return}
+    if(Math.abs(v-cfg.answer)<=(cfg.tol||0.05)){
+      setScore(g+'score','✓ 答對'); fb(g+'fb',cfg.ok||('🎉 正確！答案是 '+cfg.answer),'good');
+    } else { setScore(g+'score','再試一次'); fb(g+'fb',cfg.bad||'再算算看。','bad'); }
+  };
+  var hb=document.getElementById(g+'hint');
+  if(hb) hb.onclick=function(){fb(g+'fb',cfg.hint||'提示：對照公式逐步代入。','info')};
+}
+
+function stars(n){return '★★★★★'.slice(0,n)+'☆☆☆☆☆'.slice(0,5-n)}
+function initCmp(){
+  if(!CFG.cmp) return;
+  var cols=CFG.cmp.cols, rows=CFG.cmp.rows.slice(), dir={};
+  var tb=document.querySelector('#cmpTable tbody');
+  function draw(){ tb.innerHTML=''; rows.forEach(function(r){
+    var tr=document.createElement('tr');
+    tr.innerHTML=cols.map(function(c,ci){
+      var v=r[c.k];
+      if(c.star) return '<td style="color:var(--accent-2)">'+stars(v)+'</td>';
+      return '<td'+(ci===0?' class="c"':'')+'>'+v+'</td>';
+    }).join(''); tb.appendChild(tr); }); }
+  draw();
+  document.querySelectorAll('#cmpTable thead th').forEach(function(th){
+    th.onclick=function(){var k=th.dataset.k,t=th.dataset.t;dir[k]=!dir[k];
+      rows.sort(function(a,b){var x=a[k],y=b[k];
+        if(t==='n')return dir[k]?x-y:y-x;
+        return dir[k]?String(x).localeCompare(String(y),'zh-Hant'):String(y).localeCompare(String(x),'zh-Hant')});
+      draw();};
+  });
+}
+show(0);
+</script>
+<script>document.addEventListener('click',function(e){var li=e.target.closest('#selfcheck li');if(li)li.classList.toggle('done')});</script>
+</body></html>

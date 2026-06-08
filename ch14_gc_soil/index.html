@@ -1,0 +1,415 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>氣相層析 GC · Nielsen Ch14</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script><style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{font-size:18px}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;background:var(--bg);
+  color:var(--ink);overflow:hidden;height:100vh;width:100vw}
+:root{
+  --bg:#eef2f8;--surface:#ffffff;--surface-2:#f6f9fd;
+  --ink:#15233f;--ink-2:#48597a;--ink-3:#8493ad;--line:#dde5f0;
+  --accent:#1f6feb;--accent-soft:#e7f0fe;
+  --accent-2:#d9822b;--accent-2-soft:#fbeede;
+  --ok:#1f9d6b;--ok-soft:#e3f6ee;--bad:#d94f4f;--bad-soft:#fbe7e7;--warn:#d9a32b;
+  --t2:clamp(1.4rem,3vw,2.3rem);
+  --shadow:0 10px 30px rgba(20,40,80,.10);--shadow-sm:0 3px 12px rgba(20,40,80,.08)}
+#progress{position:fixed;top:0;left:0;height:4px;width:0;z-index:50;
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .5s ease}
+#section-tag{position:fixed;top:16px;left:24px;z-index:40;font-size:.78rem;letter-spacing:.18em;
+  color:var(--accent);font-weight:700;font-family:"JetBrains Mono",monospace}
+#pageInfo{position:fixed;right:22px;bottom:16px;z-index:40;font-size:.82rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+#hint{position:fixed;left:24px;bottom:16px;z-index:40;font-size:.72rem;color:var(--ink-3)}
+#brand{position:fixed;right:22px;top:14px;z-index:40;font-size:.72rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:64px 84px;opacity:0;pointer-events:none;
+  transition:opacity .55s ease,transform .55s ease;transform:translateY(14px)}
+.slide.active{opacity:1;pointer-events:auto;transform:translateY(0)}
+.slide-inner{width:100%;max-width:1280px}
+.kicker{font-family:"JetBrains Mono",monospace;font-size:.8rem;letter-spacing:.16em;color:var(--accent);
+  font-weight:700;text-transform:uppercase;margin-bottom:10px}
+.slide-title{font-size:var(--t2);font-weight:900;line-height:1.18;color:var(--ink);letter-spacing:-.01em}
+.slide-title .hi{color:var(--accent-2)}
+.subtitle{font-size:clamp(.95rem,1.5vw,1.2rem);color:var(--ink-2);margin-top:12px;line-height:1.6}
+p,li{font-size:clamp(.92rem,1.4vw,1.12rem);line-height:1.68;color:var(--ink-2)}
+.lead{font-size:clamp(1.05rem,1.8vw,1.35rem);color:var(--ink);line-height:1.6}
+strong,b{color:var(--ink);font-weight:800}.em{color:var(--accent-2);font-weight:800}
+.divider{height:3px;width:64px;background:var(--accent-2);border-radius:2px;margin:18px 0}
+ul.clean{list-style:none}ul.clean li{position:relative;padding-left:26px;margin:10px 0}
+ul.clean li:before{content:"";position:absolute;left:4px;top:.62em;width:8px;height:8px;border-radius:2px;
+  background:var(--accent);transform:rotate(45deg)}
+.mono{font-family:"JetBrains Mono",monospace}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.grid2-1{display:grid;grid-template-columns:1.15fr .85fr;gap:34px;align-items:center}
+.flow6{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow-sm)}
+.card .ic{font-size:1.6rem;margin-bottom:8px}
+.card .ct{font-weight:800;color:var(--ink);font-size:clamp(1rem,1.5vw,1.2rem);margin-bottom:6px}
+.card .cb{font-size:clamp(.85rem,1.25vw,1rem);color:var(--ink-2);line-height:1.55}
+.card.b{border-top:4px solid var(--accent)}.card.a{border-top:4px solid var(--accent-2)}
+.card.g{border-top:4px solid var(--ok)}
+.tag{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:.7rem;padding:3px 9px;border-radius:999px;
+  background:var(--accent-soft);color:var(--accent);font-weight:700}
+.tag.a{background:var(--accent-2-soft);color:var(--accent-2)}
+.pill{display:inline-block;padding:5px 12px;border-radius:999px;background:var(--surface);border:1px solid var(--line);
+  font-size:.82rem;color:var(--ink-2);margin:3px 4px}
+.note{background:var(--accent-2-soft);border-left:4px solid var(--accent-2);border-radius:8px;padding:14px 18px;
+  color:var(--ink);font-size:clamp(.9rem,1.3vw,1.05rem);line-height:1.6}
+.eq{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 22px;
+  font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,1.7vw,1.4rem);color:var(--ink);text-align:center;box-shadow:var(--shadow-sm)}
+.eq .frac{display:inline-flex;flex-direction:column;text-align:center;vertical-align:middle;margin:0 6px}
+.eq .frac b{border-bottom:2px solid var(--ink);padding-bottom:3px}
+table.cmp{width:100%;border-collapse:collapse;font-size:clamp(.82rem,1.2vw,1.02rem)}
+table.cmp th,table.cmp td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line)}
+table.cmp thead th{color:var(--accent);font-weight:800;border-bottom:2px solid var(--accent);cursor:pointer;
+  user-select:none;white-space:nowrap}
+table.cmp thead th .ar{opacity:.4;font-size:.8em}
+table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--ink);font-weight:700}
+.cover{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 100px;
+  background:radial-gradient(1200px 600px at 80% 20%,var(--accent-2-soft),transparent 60%),
+  radial-gradient(900px 500px at 10% 90%,var(--accent-soft),transparent 55%),linear-gradient(135deg,#ffffff,#eef2f8)}
+.cover h1{font-size:clamp(2.4rem,6vw,4.6rem);font-weight:900;line-height:1.05;letter-spacing:-.02em;color:var(--ink)}
+.cover .en{font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,2vw,1.5rem);color:var(--accent);letter-spacing:.1em;margin-top:6px}
+.cover .meta{margin-top:26px;color:var(--ink-2);font-size:clamp(.9rem,1.4vw,1.1rem)}
+.hook{font-size:clamp(2rem,5vw,3.6rem);font-weight:900;color:var(--ink);line-height:1.2;letter-spacing:-.01em}
+.hook .hi{color:var(--accent)}
+.svgwrap{display:flex;align-items:center;justify-content:center}
+.svgwrap svg{max-width:100%;max-height:62vh;height:auto}
+.lbl{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink-2)}
+.lblb{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink);font-weight:700}
+.game{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 24px;box-shadow:var(--shadow)}
+.game-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.game-head .gt{font-weight:900;font-size:clamp(1.05rem,1.7vw,1.35rem);color:var(--ink)}
+.game-head .score{margin-left:auto;font-family:"JetBrains Mono",monospace;font-weight:700;color:var(--accent);
+  background:var(--accent-soft);padding:5px 13px;border-radius:999px;font-size:.9rem}
+.game-q{font-size:clamp(.95rem,1.5vw,1.18rem);color:var(--ink);font-weight:700;margin:6px 0 14px;line-height:1.5}
+.buckets{display:grid;gap:16px;margin-top:14px}
+.bucket{min-height:120px;border:2px dashed var(--line);border-radius:14px;padding:12px;background:var(--surface-2);transition:.2s}
+.bucket .bh{font-weight:800;color:var(--ink);text-align:center;margin-bottom:8px;font-size:.95rem}
+.pool{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;min-height:54px}
+.chip{padding:9px 15px;border-radius:10px;background:var(--surface);border:1px solid var(--line);font-weight:700;
+  color:var(--ink);cursor:pointer;box-shadow:var(--shadow-sm);font-size:.92rem;transition:.15s}
+.chip:hover{border-color:var(--accent);transform:translateY(-1px)}
+.chip.sel{background:var(--accent);color:#fff;border-color:var(--accent)}
+.chip.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.chip.no{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+.opt{padding:14px 18px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);cursor:pointer;
+  font-weight:700;color:var(--ink);font-size:clamp(.88rem,1.3vw,1.05rem);transition:.15s}
+.opt:hover{border-color:var(--accent);background:var(--accent-soft)}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.opt.no{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}.opt.dim{opacity:.5}
+.fb{margin-top:14px;padding:12px 16px;border-radius:10px;font-weight:700;display:none;
+  font-size:clamp(.85rem,1.3vw,1.02rem);line-height:1.5}
+.fb.show{display:block}.fb.good{background:var(--ok-soft);color:var(--ok)}
+.fb.bad{background:var(--bad-soft);color:var(--bad)}.fb.info{background:var(--accent-soft);color:var(--accent)}
+.btn{padding:10px 20px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-weight:800;cursor:pointer;
+  font-size:.92rem;font-family:inherit;box-shadow:var(--shadow-sm)}
+.btn:hover{filter:brightness(1.06)}.btn.ghost{background:var(--surface);color:var(--accent);border:1.5px solid var(--accent)}
+.btnrow{display:flex;gap:12px;margin-top:16px;align-items:center}
+.sortlist{display:flex;flex-direction:column;gap:6px;margin-top:6px;max-height:44vh;overflow-y:auto;padding-right:4px}
+.sortrow{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:7px 14px;box-shadow:var(--shadow-sm)}
+.sortrow .idx{font-family:"JetBrains Mono",monospace;font-weight:800;color:var(--accent);width:24px}
+.sortrow .txt{flex:1;font-weight:700;color:var(--ink);font-size:clamp(.85rem,1.25vw,1.02rem)}
+.sortrow .ud{display:flex;flex-direction:column;gap:3px}
+.sortrow .ud button{border:none;background:var(--accent-soft);color:var(--accent);border-radius:6px;width:30px;height:20px;
+  cursor:pointer;font-weight:900;line-height:1}
+.sortrow.ok{border-color:var(--ok);background:var(--ok-soft)}.sortrow.no{border-color:var(--bad)}
+.numin{font-family:"JetBrains Mono",monospace;font-size:1.2rem;font-weight:800;padding:10px 14px;border:1.5px solid var(--line);
+  border-radius:10px;width:140px;color:var(--ink);text-align:center}
+.numin:focus{outline:none;border-color:var(--accent)}
+.checklist{list-style:none}
+.checklist li{display:flex;align-items:center;gap:12px;padding:11px 14px;border:1px solid var(--line);border-radius:10px;
+  margin:8px 0;background:var(--surface);cursor:pointer;font-weight:700;color:var(--ink-2);font-size:clamp(.9rem,1.35vw,1.08rem);transition:.15s}
+.checklist li .bx{width:24px;height:24px;border-radius:6px;border:2px solid var(--accent);display:flex;align-items:center;
+  justify-content:center;color:#fff;font-weight:900;flex:0 0 auto}
+.checklist li.done{background:var(--ok-soft);border-color:var(--ok);color:var(--ink)}
+.checklist li.done .bx{background:var(--ok);border-color:var(--ok)}
+.chartbox{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow-sm);
+  height:60vh;max-height:520px;position:relative}
+.cap{font-size:.82rem;color:var(--ink-3);text-align:center;margin-top:8px}
+</style></head><body><div id="progress"></div><div id="section-tag"></div><div id="brand">GC · CH14</div><div id="pageInfo"></div><div id="hint">← → / 空白鍵切頁　·　F 全螢幕　·　點兩側翻頁</div><section class="slide" data-slide="1" data-section="引起動機" data-cover="1"><div class="slide-inner"><div class="cover"><div class="kicker">NIELSEN'S FOOD ANALYSIS · CHAPTER 14</div><h1>氣相<span style='color:var(--accent-2)'>層析</span></h1><div class="en">Gas Chromatography (GC)</div><div class="meta">食品分析　·　3 小時課程　·　含 6 個互動小遊戲<br>樣品前處理 · 管柱 · 載氣 · 注射 · 偵測器 · 定性定量</div><div style="margin-top:24px"><span class="pill">FID</span><span class="pill">TCD</span><span class="pill">ECD</span><span class="pill">MS</span><span class="pill">SPME</span><span class="pill">毛細管柱</span></div></div></div></section><section class="slide" data-slide="2" data-section="引起動機"><div class="slide-inner"><div style="text-align:center">
+  <div class="kicker" style="justify-content:center">先想一想</div>
+  <div class="hook">咖啡的香氣有上百種分子，<span class="hi">怎麼一一分開？</span></div>
+  <p class="subtitle" style="max-width:800px;margin:22px auto 0">食品香氣、脂肪酸、殘留溶劑都是<strong>揮發性</strong>小分子的混合物。<br>
+  氣相層析 (GC) 能把它們<strong>逐一分離</strong>，再用偵測器一個個量出來。</p>
+  <div style="margin-top:24px"><span class="pill">香氣分析</span><span class="pill">脂肪酸組成</span>
+  <span class="pill">殘留農藥</span><span class="pill">包裝溶劑</span><span class="pill">攙假檢測</span></div></div></div></section><section class="slide" data-slide="3" data-section="引起動機"><div class="slide-inner"><div class="kicker">14.1 為什麼用 GC</div><h2 class="slide-title">GC 適合分析什麼</h2><div class="grid2" style="margin-top:22px"><div class="card b"><div class="ic">💨</div><div class="ct">揮發性</div><div class="cb">樣品要能氣化——常溫或加熱下成為氣體</div></div><div class="card a"><div class="ic">🔥</div><div class="ct">熱穩定</div><div class="cb">在高溫注射口/管柱中不會分解</div></div><div class="card g"><div class="ic">🍳</div><div class="ct">食品應用</div><div class="cb">脂肪酸、膽固醇、風味、溶劑、農藥、PCB</div></div><div class="card b"><div class="ic">🧪</div><div class="ct">不合適的</div><div class="cb">糖、胺基酸、維生素 → 需先衍生化或改用 HPLC</div></div></div></div></section><section class="slide" data-slide="4" data-section="引起動機"><div class="slide-inner"><div class="kicker">14.1 核心原理</div><h2 class="slide-title">兩種力量<span class='hi'>共同</span>分離</h2><div class="grid2" style="margin-top:18px"><div><ul class="clean"><li><strong>移動相</strong>：載氣 (He/H₂/N₂) 帶著樣品前進</li><li><strong>固定相</strong>：管柱內壁的液膜，與分析物作用</li><li>與固定相作用越強 → 滯留越久、越晚出峰</li><li>GC 還額外靠<span class='em'>沸點</span>分離 → 解析力極強</li></ul></div><div class="note"><strong>關鍵：分配 (partition) 是 GC 的主力。</strong><br>依「與固定相親和力 + 沸點」差異，讓各成分在不同時間流出 → 得到層析圖。</div></div></div></section><section class="slide" data-slide="5" data-section="引起動機" data-chart="chrom"><div class="slide-inner"><div class="kicker">14.4 層析圖</div><h2 class="slide-title">層析圖長<span class='hi'>什麼樣子</span>？</h2><div class="chartbox"><canvas id="chart_chrom"></canvas></div><div class="cap">示意層析圖：x = 滯留時間 (min)，y = 訊號。峰位 = 定性，峰面積 = 定量。</div></div></section><section class="slide" data-slide="6" data-section="引起動機"><div class="slide-inner"><div style="text-align:center">
+  <div class="kicker" style="justify-content:center">核心命題</div>
+  <div class="hook" style="font-size:clamp(1.7rem,4vw,3rem)">先<span class="hi">分離</span>，再<span class="hi">偵測</span></div>
+  <p class="lead" style="max-width:820px;margin:20px auto 0">一台 GC = 管柱負責<strong>分離</strong>、偵測器負責<strong>感應</strong>。<br>
+  五大組件：<strong>載氣 → 注射口 → 烘箱/管柱 → 偵測器 → 數據</strong>。</p>
+  <div class="eq" style="max-width:620px;margin:24px auto 0">峰位置 → 定性 (是什麼)<br>
+  <span style="font-size:.8em;color:var(--ink-2)">峰面積 → 定量 (有多少)</span></div></div></div></section><section class="slide" data-slide="7" data-section="引起動機" data-game="g1"><div class="slide-inner"><div class="game no-nav" data-game="g1"><div class="game-head"><span class="tag a">小遊戲 ①</span><span class="gt">偵測器測什麼</span><span class="score" id="g1score">0 / 6</span></div><div class="game-q">把 6 個分析物丟給最合適的偵測器。分到三類。</div><div class="pool" id="g1pool"></div><div class="buckets" id="g1buckets"></div><div class="fb" id="g1fb"></div><div class="btnrow"><button class="btn" id="g1check">檢查答案</button><button class="btn ghost" id="g1reset">重來</button></div></div></div></section><section class="slide" data-slide="8" data-section="維持注意"><div class="slide-inner"><div class="kicker">儀器全覽</div><h2 class="slide-title">GC 五大組件</h2><div class="svgwrap" style="margin-top:10px">
+<svg viewBox="0 0 620 240">
+ <g font-size="13">
+  <rect x="12" y="92" width="104" height="62" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
+  <text x="64" y="116" text-anchor="middle" class="lblb">載氣鋼瓶</text>
+  <text x="64" y="136" text-anchor="middle" class="lbl">He / H₂ / N₂</text>
+  <rect x="152" y="92" width="104" height="62" rx="10" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
+  <text x="204" y="112" text-anchor="middle" class="lblb">注射口</text>
+  <text x="204" y="130" text-anchor="middle" class="lbl">汽化·分流</text>
+  <text x="204" y="146" text-anchor="middle" class="lbl">250°C</text>
+  <rect x="292" y="80" width="120" height="86" rx="12" fill="#f6f9fd" stroke="#48597a" stroke-width="2"/>
+  <text x="352" y="104" text-anchor="middle" class="lblb">烘箱 + 管柱</text>
+  <text x="352" y="124" text-anchor="middle" class="lbl">毛細管柱</text>
+  <text x="352" y="142" text-anchor="middle" class="lbl">溫度程式</text>
+  <path d="M312 150 q12 -10 24 0 t24 0 t24 0" fill="none" stroke="#1f6feb" stroke-width="2"/>
+  <rect x="448" y="92" width="104" height="62" rx="10" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
+  <text x="500" y="116" text-anchor="middle" class="lblb">偵測器</text>
+  <text x="500" y="136" text-anchor="middle" class="lbl">FID/TCD/MS</text>
+  <rect x="556" y="100" width="52" height="46" rx="8" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
+  <text x="582" y="120" text-anchor="middle" class="lbl">數據</text>
+  <text x="582" y="136" text-anchor="middle" class="lbl">層析圖</text>
+  <g stroke="#8493ad" stroke-width="2.5" fill="none" marker-end="url(#arg)">
+   <path d="M116 123 h34"/><path d="M256 123 h34"/><path d="M412 123 h34"/><path d="M552 123 h2"/></g>
+  <defs><marker id="arg" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto">
+   <path d="M0 0 L8 4 L0 8 z" fill="#8493ad"/></marker></defs>
+  <text x="310" y="40" text-anchor="middle" class="lblb" font-size="15">氣相層析儀 (GC) 五大組件</text>
+  <text x="310" y="58" text-anchor="middle" class="lbl">載氣 → 注射 → 分離 → 偵測 → 數據</text>
+ </g>
+</svg></div><p class="subtitle" style="text-align:center;margin-top:12px">記錄必備：注射方式、管柱規格、各區溫度、載氣種類與流速、偵測器。</p></div></section><section class="slide" data-slide="9" data-section="維持注意"><div class="slide-inner"><div class="kicker">14.2 樣品前處理</div><h2 class="slide-title">為什麼不能直接打進去</h2><div class="grid2" style="margin-top:18px"><div><ul class="clean"><li>注射口高溫會把<strong>非揮發物分解</strong> → 產生假峰</li><li>目標物常需先<strong>分離濃縮</strong>到可偵測濃度</li><li>研磨/均質可能讓酵素或微生物改變組成</li><li>要先<strong>滅活、冷凍、乾燥</strong>保存樣品</li></ul></div><div class="note"><strong>前處理決定成敗。</strong><br>分離方法選錯或操作不當，後面再好的 GC 也救不回來。</div></div></div></section><section class="slide" data-slide="10" data-section="維持注意"><div class="slide-inner"><div class="kicker">14.2.2 揮發物分離</div><h2 class="slide-title">把香氣從食物裡<span class='hi'>抓出來</span></h2><div class="grid2" style="margin-top:16px"><div class="card b"><div class="ic">🫧</div><div class="ct">頂空 Headspace</div><div class="cb">靜態(直接取上方氣體)/動態(吹掃捕集 Purge&Trap)，低沸點物快速</div></div><div class="card a"><div class="ic">💧</div><div class="ct">蒸餾</div><div class="cb">水蒸氣蒸餾、同步蒸餾萃取 (SDE/Likens–Nickerson)；高溫易生假峰</div></div><div class="card g"><div class="ic">🧴</div><div class="ct">溶劑萃取</div><div class="cb">二氯甲烷/乙醚萃取；不可含脂肪；SAFE 真空低溫去非揮發物</div></div><div class="card b"><div class="ic">🧵</div><div class="ct">固相萃取</div><div class="cb">SPE / SPME 纖維 / SBSE 攪拌子；少溶劑、可自動化</div></div></div></div></section><section class="slide" data-slide="11" data-section="維持注意" data-game="g2"><div class="slide-inner"><div class="game no-nav" data-game="g2"><div class="game-head"><span class="tag a">小遊戲 ②</span><span class="gt">前處理與注射即時測驗</span><span class="score" id="g2score">0 / 4</span></div><div class="game-q" id="g2q"></div><div class="opts" id="g2opts"></div><div class="fb" id="g2fb"></div><div class="btnrow"><button class="btn ghost" id="g2next" style="display:none">下一題 →</button></div></div></div></section><section class="slide" data-slide="12" data-section="維持注意"><div class="slide-inner"><div class="kicker">14.2.3 衍生化</div><h2 class="slide-title">讓「不揮發」變「揮發」</h2><div class="grid2" style="margin-top:16px"><div class="card b"><div class="ic">🧬</div><div class="ct">為何要做</div><div class="cb">糖、胺基酸太不揮發或熱不穩；酚、酸太極性 → 出峰差</div></div><div class="card a"><div class="ic">🔧</div><div class="ct">三大常用</div><div class="cb">矽烷化(糖/膽固醇)、酯化(脂肪酸→FAME)、肟化(醛酮)</div></div></div><div class="note" style="margin-top:18px">脂肪酸常用 <strong>BF₃/甲醇酯化</strong>成脂肪酸甲酯 (FAME) 再上 GC；農藥、香氣、PCB 本身夠揮發穩定，<strong>不必</strong>衍生化。</div></div></section><section class="slide" data-slide="13" data-section="維持注意"><div class="slide-inner"><div class="kicker">14.3.2 注射模式</div><h2 class="slide-title">分流 vs 不分流</h2><div class="svgwrap" style="margin-top:10px">
+<svg viewBox="0 0 560 240">
+ <g font-size="13">
+  <rect x="220" y="14" width="120" height="34" rx="8" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
+  <text x="280" y="36" text-anchor="middle" class="lblb">注射口 250°C</text>
+  <path d="M280 48 v34" stroke="#8493ad" stroke-width="2.5" marker-end="url(#ars)"/>
+  <rect x="40" y="96" width="220" height="120" rx="12" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
+  <text x="150" y="120" text-anchor="middle" class="lblb">分流 Split</text>
+  <text x="150" y="142" text-anchor="middle" class="lbl">分流閥開，1:50~1:100</text>
+  <text x="150" y="162" text-anchor="middle" class="lbl">僅少量上管柱→尖峰</text>
+  <text x="150" y="184" text-anchor="middle" class="lbl">適高濃度樣品</text>
+  <text x="150" y="204" text-anchor="middle" class="lbl">多數樣品排出分流口</text>
+  <rect x="300" y="96" width="220" height="120" rx="12" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
+  <text x="410" y="120" text-anchor="middle" class="lblb">不分流 Splitless</text>
+  <text x="410" y="142" text-anchor="middle" class="lbl">分流閥關，全量上管柱</text>
+  <text x="410" y="162" text-anchor="middle" class="lbl">靈敏度高→微量分析</text>
+  <text x="410" y="184" text-anchor="middle" class="lbl">起始柱溫低於溶劑沸點</text>
+  <text x="410" y="204" text-anchor="middle" class="lbl">利用溶劑效應聚焦</text>
+  <defs><marker id="ars" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto">
+   <path d="M0 0 L8 4 L0 8 z" fill="#8493ad"/></marker></defs>
+ </g>
+</svg></div><div class="note" style="margin-top:14px">注射口溫度約比柱溫上限高 <strong>20°C</strong>(常 250°C)。高濃度用<strong>分流</strong>(尖峰)；微量用<strong>不分流</strong>(高靈敏)。另有 PTV、管柱內注射、熱脫附。</div></div></section><section class="slide" data-slide="14" data-section="維持注意"><div class="slide-inner"><div class="kicker">14.3.4 管柱</div><h2 class="slide-title">填充柱 vs 毛細管柱</h2><div class="grid2" style="margin-top:16px"><div class="card b"><div class="ic">🧱</div><div class="ct">填充柱 Packed</div><div class="cb">不鏽鋼/玻璃，2–3 m；矽藻土載體塗液相 1–10%；效率低，幾乎被淘汰</div></div><div class="card a"><div class="ic">🧵</div><div class="ct">毛細管柱 Capillary</div><div class="cb">熔融石英中空管 5–100 m；內徑 0.1–0.53 mm；液膜鍵結交聯，高解析</div></div></div><div class="note" style="margin-top:18px">最通用：<strong>5% 苯基-95% 甲基聚矽氧烷</strong>(DB-5)，−60~325°C 範圍廣；極性物用 WAX(聚乙二醇)；trans 脂肪酸用氰丙基柱 (SP-2560)。</div></div></section><section class="slide" data-slide="15" data-section="維持注意" data-game="g3"><div class="slide-inner"><div class="game no-nav" data-game="g3"><div class="game-head"><span class="tag a">小遊戲 ③</span><span class="gt">元件功能配對</span><span class="score" id="g3score">0 / 6</span></div><div class="game-q">每個 GC 元件負責什麼？把 6 個元件配到三大功能。</div><div class="pool" id="g3pool"></div><div class="buckets" id="g3buckets"></div><div class="fb" id="g3fb"></div><div class="btnrow"><button class="btn" id="g3check">檢查答案</button><button class="btn ghost" id="g3reset">重來</button></div></div></div></section><section class="slide" data-slide="16" data-section="維持注意"><div class="slide-inner"><div class="kicker">14.3.1 載氣</div><h2 class="slide-title">三種載氣怎麼選</h2><div class="grid2" style="margin-top:16px"><div class="card b"><div class="ic">🎈</div><div class="ct">N₂ 氮氣</div><div class="cb">HETP 最低(最有效率)，但最佳流速很慢 → 分析太久</div></div><div class="card a"><div class="ic">🟢</div><div class="ct">He 氦氣</div><div class="cb">流速 40 cm/s 仍維持好解析；最常用、安全</div></div><div class="card g"><div class="ic">⚡</div><div class="ct">H₂ 氫氣</div><div class="cb">曲線最平坦、分析最快；可燃但實務少出事</div></div></div><div class="note" style="margin-top:18px">載氣須高純度，並加<strong>水分/氧氣/碳氫捕集器</strong>。權衡速度與安全，He/H₂ 常勝過理論最佳的 N₂。</div></div></section><section class="slide" data-slide="17" data-section="維持注意" data-chart="vand"><div class="slide-inner"><div class="kicker">14.4.2 分離效率</div><h2 class="slide-title">載氣與流速：<span class='hi'>van Deemter</span></h2><div class="chartbox" style="height:52vh"><canvas id="chart_vand"></canvas></div><div class="cap">示意 van Deemter 曲線：HETP 越低分離越好。N₂ 谷底最低但落在低流速；He/H₂ 較平坦適合快速分析。</div></div></section><section class="slide" data-slide="18" data-section="維持注意"><div class="slide-inner"><div class="kicker">14.3.5 偵測器</div><h2 class="slide-title">四大常用偵測器</h2><div class="grid2" style="margin-top:16px"><div class="card b"><div class="ic">🔥</div><div class="ct">FID 火焰離子化</div><div class="cb">燒有機物產生離子；靈敏、線性最廣；食品最常用主力</div></div><div class="card a"><div class="ic">🌡️</div><div class="ct">TCD 熱導</div><div class="cb">測熱導差異；通用(含水/氣體)、非破壞；靈敏度低</div></div><div class="card g"><div class="ic">⚛️</div><div class="ct">ECD 電子捕獲</div><div class="cb">放射源；對含鹵/農藥極靈敏(pg)；線性窄、易飽和</div></div><div class="card b"><div class="ic">🔬</div><div class="ct">MS 質譜</div><div class="cb">碎片離子=指紋；可鑑定未知物，亦作選擇性偵測</div></div></div></div></section><section class="slide" data-slide="19" data-section="維持注意"><div class="slide-inner"><div class="kicker">偵測器專長</div><h2 class="slide-title">選擇性 vs 靈敏度</h2><div class="grid3" style="margin-top:22px"><div class="card b"><div class="ic">🟣</div><div class="ct">FPD / PFPD</div><div class="cb">燒後測特定波長光，專測<strong>硫 S / 磷 P</strong>；風味硫化物、有機磷農藥</div></div><div class="card a"><div class="ic">🔆</div><div class="ct">PID 光離子化</div><div class="cb">UV 光游離，靈敏、非破壞、可調選擇性；風味嗅聞</div></div><div class="card g"><div class="ic">🟢</div><div class="ct">NPD 熱離子</div><div class="cb">改良 FID，專測<strong>氮 N / 磷 P</strong>；亞硝胺、胺、農藥</div></div></div></div></section><section class="slide" data-slide="20" data-section="維持注意" data-game="g4"><div class="slide-inner"><div class="game no-nav" data-game="g4"><div class="game-head"><span class="tag a">小遊戲 ④</span><span class="gt">GC 分析流程排序</span><span class="score" id="g4score">— / 7</span></div><div class="game-q">用 ▲▼ 把一次完整的 GC 分析排成正確順序（7 步）。</div><div class="sortlist" id="g4list"></div><div class="fb" id="g4fb"></div><div class="btnrow"><button class="btn" id="g4check">檢查順序</button><button class="btn ghost" id="g4reset">打亂重排</button></div></div></div></section><section class="slide" data-slide="21" data-section="維持注意" data-chart="sens"><div class="slide-inner"><div class="kicker">14.3.5 偵測下限</div><h2 class="slide-title">偵測器<span class='hi'>靈敏度</span>大不同</h2><div class="chartbox" style="height:52vh"><canvas id="chart_sens"></canvas></div><div class="cap">資料：Table 14.5 偵測下限 (pg，數值越小越靈敏)。ECD/FPD 屬痕量等級。</div></div></section><section class="slide" data-slide="22" data-section="維持注意"><div class="slide-inner"><div class="kicker">14.4.2 分離效率</div><h2 class="slide-title">Van Deemter 三項</h2><div class="grid2" style="margin-top:14px"><div class="eq">HETP = A + B/u + C·u</div><div><ul class="clean"><li><strong>A 渦流擴散</strong>：流路不均(毛細管很小)</li><li><strong>B/u 縱向擴散</strong>：流速太慢時變大</li><li><strong>C·u 質傳阻抗</strong>：流速太快來不及平衡</li><li>HETP 越小越好；存在<span class='em'>最佳流速</span></li></ul></div></div><div class="note" style="margin-top:16px">毛細管柱每公尺約 3000–4000 塔板，總數可達 10⁵~5×10⁵；解析力遠勝填充柱。</div></div></section><section class="slide" data-slide="23" data-section="維持注意"><div class="slide-inner"><div class="kicker">14.4 取捨金字塔</div><h2 class="slide-title">四個性質<span class='hi'>不可兼得</span></h2><div class="grid2" style="margin-top:16px"><div class="card b"><div class="ic">🎯</div><div class="ct">解析 Resolution</div><div class="cb">細內徑、薄膜、長柱、最佳流速 → 分得開</div></div><div class="card a"><div class="ic">📦</div><div class="ct">容量 Capacity</div><div class="cb">大內徑、厚膜 → 載量大但解析差</div></div><div class="card g"><div class="ic">⚡</div><div class="ct">速度 Speed</div><div class="cb">薄膜、高流速、短柱 → 快但犧牲解析</div></div><div class="card b"><div class="ic">🔍</div><div class="ct">靈敏度 Sensitivity</div><div class="cb">偵測器與注射方式決定</div></div></div><div class="note" style="margin-top:16px">優化其一必犧牲其他——依分析需求折衷選柱與條件。</div></div></section><section class="slide" data-slide="24" data-section="維持注意" data-game="g5"><div class="slide-inner"><div class="game no-nav" data-game="g5"><div class="game-head"><span class="tag a">小遊戲 ⑤</span><span class="gt">決策挑戰：選偵測器/管柱</span><span class="score" id="g5score">0 / 5</span></div><div class="game-q" id="g5q"></div><div class="opts" id="g5opts"></div><div class="fb" id="g5fb"></div><div class="btnrow"><button class="btn ghost" id="g5next" style="display:none">下一題 →</button></div></div></div></section><section class="slide" data-slide="25" data-section="喚起行動" data-game="cmp"><div class="slide-inner"><div class="kicker">14.3.5 偵測器比較</div><h2 class="slide-title">一張表選偵測器（點欄位排序）</h2><table class="cmp" id="cmpTable" style="margin-top:14px"><thead><tr><th data-k="d" data-t="s">偵測器 <span class="ar">⇅</span></th><th data-k="meas" data-t="s">專測對象 <span class="ar">⇅</span></th><th data-k="sens" data-t="n">靈敏度 <span class="ar">⇅</span></th><th data-k="app" data-t="s">主要應用 <span class="ar">⇅</span></th></tr></thead><tbody></tbody></table><div class="cap">靈敏度：★ 越多越靈敏（偵測下限越低）。整合自 Table 14.5。</div></div></section><section class="slide" data-slide="26" data-section="喚起行動"><div class="slide-inner"><div class="kicker">方法選擇</div><h2 class="slide-title">跟著決策樹選偵測器</h2><div class="svgwrap" style="margin-top:10px">
+<svg viewBox="0 0 980 360">
+ <rect x="380" y="14" width="220" height="56" rx="12" fill="#1f6feb"/>
+ <text x="490" y="40" text-anchor="middle" fill="#fff" font-weight="800" font-size="16">你要測什麼？</text>
+ <text x="490" y="60" text-anchor="middle" fill="#cfe0f6" font-size="12">選 GC 偵測器 / 管柱</text>
+ <g stroke="#8493ad" stroke-width="2" fill="none">
+  <path d="M420 70 C 200 110,130 120,120 150"/><path d="M470 70 C 400 120,380 120,375 150"/>
+  <path d="M510 70 C 590 120,610 120,625 150"/><path d="M560 70 C 800 110,860 120,875 150"/></g>
+ <g font-size="14" font-weight="800">
+  <rect x="30" y="150" width="190" height="120" rx="12" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
+  <text x="125" y="178" text-anchor="middle" fill="#15233f">一般有機物?</text>
+  <text x="125" y="206" text-anchor="middle" fill="#d9822b" font-size="16">FID</text>
+  <text x="125" y="232" text-anchor="middle" fill="#48597a" font-size="12">靈敏、線性廣</text>
+  <text x="125" y="252" text-anchor="middle" fill="#48597a" font-size="12">脂肪酸·風味通用</text>
+  <rect x="280" y="150" width="190" height="120" rx="12" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
+  <text x="375" y="178" text-anchor="middle" fill="#15233f">永久氣體/水?</text>
+  <text x="375" y="206" text-anchor="middle" fill="#1f6feb" font-size="16">TCD</text>
+  <text x="375" y="232" text-anchor="middle" fill="#48597a" font-size="12">通用、非破壞</text>
+  <text x="375" y="252" text-anchor="middle" fill="#48597a" font-size="12">CO₂·O₂·N₂ 包裝氣體</text>
+  <rect x="530" y="150" width="190" height="120" rx="12" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
+  <text x="625" y="178" text-anchor="middle" fill="#15233f">農藥/含鹵?</text>
+  <text x="625" y="206" text-anchor="middle" fill="#1f9d6b" font-size="16">ECD</text>
+  <text x="625" y="232" text-anchor="middle" fill="#48597a" font-size="12">極靈敏(pg)</text>
+  <text x="625" y="252" text-anchor="middle" fill="#48597a" font-size="12">PCB·殘留農藥</text>
+  <rect x="780" y="150" width="190" height="120" rx="12" fill="#f6f9fd" stroke="#48597a" stroke-width="2"/>
+  <text x="875" y="178" text-anchor="middle" fill="#15233f">未知物鑑定?</text>
+  <text x="875" y="206" text-anchor="middle" fill="#15233f" font-size="16">MS</text>
+  <text x="875" y="232" text-anchor="middle" fill="#48597a" font-size="12">質譜=指紋</text>
+  <text x="875" y="252" text-anchor="middle" fill="#48597a" font-size="12">配 LRI 確認身分</text>
+ </g>
+</svg></div><p class="subtitle" style="text-align:center;margin-top:14px">下一頁實戰：用滯留時間算未知物的線性滯留指標 →</p></div></section><section class="slide" data-slide="27" data-section="喚起行動"><div class="slide-inner"><div class="kicker">14.5.2 定性</div><h2 class="slide-title">用滯留指標<span class='hi'>確認身分</span></h2><div class="grid2" style="margin-top:14px"><div class="eq">LRI = 100·n + 100 × <span class="frac"><b>t<sub>未知</sub> − t<sub>n</sub></b><span>t<sub>n+1</sub> − t<sub>n</sub></span></span></div><div><ul class="clean"><li>加入一系列正<strong>烷類 (C5–C25)</strong>當標尺</li><li>n = 較早出峰那支烷類的碳數</li><li>LRI 與柱相有關，但<strong>不受溫度程式影響</strong></li><li>配合 MS，LRI 差 ±10 內即可確認</li></ul></div></div><div class="note" style="margin-top:14px">例：恰在 C7、C8 正中間出峰的化合物 → LRI = 750。</div></div></section><section class="slide" data-slide="28" data-section="喚起行動" data-game="g6"><div class="slide-inner"><div class="game no-nav" data-game="g6"><div class="game-head"><span class="tag a">小遊戲 ⑥</span><span class="gt">計算闖關</span><span class="score" id="g6score">未作答</span></div><div class="game-q">某香氣化合物在 C8 與 C9 之間出峰：t(C8)=8.00 min、t(C9)=10.00 min、t(未知)=8.50 min。求其<strong>線性滯留指標 LRI</strong>。</div><div class="btnrow"><input class="numin" id="g6in" type="number" step="any" placeholder="?"> <span style="font-weight:800;color:var(--ink)">LRI</span><button class="btn" id="g6check">對答案</button><button class="btn ghost" id="g6hint">提示</button></div><div class="fb" id="g6fb"></div></div></div></section><section class="slide" data-slide="29" data-section="喚起行動"><div class="slide-inner"><div class="kicker">重點整理</div><h2 class="slide-title">今天的五個關鍵</h2><div class="grid2" style="margin-top:18px"><ul class="clean"><li>GC 專測<strong>揮發、熱穩定</strong>的小分子；不合適者先衍生化</li><li>前處理(頂空/蒸餾/萃取/SPME)<strong>決定成敗</strong></li><li>毛細管柱解析遠勝填充柱；DB-5 最通用</li></ul><ul class="clean"><li>載氣 He/H₂ 比理論最佳的 N₂ 更實用(快)</li><li>偵測器：FID 通用、TCD 測氣體、ECD 測農藥、MS 鑑定；定性靠 LRI、定量靠內標</li></ul></div></div></section><section class="slide" data-slide="30" data-section="喚起行動"><div class="slide-inner"><div class="kicker">自我檢核</div><h2 class="slide-title">今天結束，你應該會…</h2><ul class="checklist no-nav" id="selfcheck" style="margin-top:18px;max-width:980px"><li data-k><span class="bx">✓</span>說出 GC 適合分析哪類化合物(揮發、熱穩定)</li><li data-k><span class="bx">✓</span>說出 GC 五大組件與訊號流向</li><li data-k><span class="bx">✓</span>比較頂空、蒸餾、溶劑萃取、SPME 的適用時機</li><li data-k><span class="bx">✓</span>解釋為何糖/脂肪酸要衍生化</li><li data-k><span class="bx">✓</span>區分分流與不分流注射、填充柱與毛細管柱</li><li data-k><span class="bx">✓</span>依需求選對偵測器(FID/TCD/ECD/MS)</li><li data-k><span class="bx">✓</span>由滯留時間算出線性滯留指標 LRI</li></ul><p class="subtitle" style="margin-top:12px">點一下打勾——確認自己真的會了。</p></div></section><section class="slide" data-slide="31" data-section="喚起行動" data-cover="1"><div class="slide-inner"><div class="cover"><div class="kicker">下一步 · NEXT</div><h1>把氣相層析<br><span style='color:var(--accent-2)'>用起來</span></h1><div class="en"></div><div class="meta">📌 課後練習：Study Questions、Practice Problems<br>🔜 銜接章節：<strong>液相層析 HPLC (Ch13)</strong>、<strong>質譜法 (Ch11)</strong><br>🧪 思考：你的樣品揮發嗎？需要衍生化嗎？該選哪種偵測器？</div><div style="margin-top:24px"><span class="pill">FID</span><span class="pill">TCD</span><span class="pill">ECD</span><span class="pill">MS</span><span class="pill">SPME</span><span class="pill">LRI</span></div></div></div></section><script>window.CFG={"charts": {"chrom": {"type": "line", "yTitle": "訊號 (a.u.)", "zero": true, "labels": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"], "datasets": [{"label": "層析訊號", "data": [2, 3, 28, 6, 4, 15, 5, 3, 40, 7, 4, 22, 3], "color": "#1f6feb"}]}, "vand": {"type": "line", "yTitle": "HETP (mm)", "zero": true, "labels": ["10", "20", "30", "40", "50", "60", "70"], "datasets": [{"label": "N₂ 氮", "data": [0.25, 0.4, 0.58, 0.78, 1.0, 1.24, 1.5], "color": "#1f6feb"}, {"label": "He 氦", "data": [0.5, 0.4, 0.36, 0.35, 0.38, 0.43, 0.5], "color": "#d9822b"}, {"label": "H₂ 氫", "data": [0.48, 0.38, 0.34, 0.33, 0.34, 0.36, 0.39], "color": "#1f9d6b"}]}, "sens": {"type": "bar", "yTitle": "偵測下限 (pg，越小越靈敏)", "labels": ["TCD", "FID", "PID", "FPD(P)", "FPD(S)", "ECD"], "datasets": [{"label": "偵測下限 (pg)", "data": [400, 50, 5, 0.9, 2, 0.5], "color": "#d9822b"}]}}, "bucket": {"g1": {"cats": ["FID(一般有機物)", "TCD(永久氣體/水)", "ECD(含鹵/農藥)"], "items": [{"t": "脂肪酸甲酯 FAME", "c": "FID(一般有機物)"}, {"t": "風味醛酮", "c": "FID(一般有機物)"}, {"t": "包裝頂空 O₂/CO₂", "c": "TCD(永久氣體/水)"}, {"t": "水分", "c": "TCD(永久氣體/水)"}, {"t": "殘留農藥", "c": "ECD(含鹵/農藥)"}, {"t": "PCB 多氯聯苯", "c": "ECD(含鹵/農藥)"}], "ok": "🎉 全對！FID 測一般有機物、TCD 測氣體/水、ECD 對含鹵農藥極靈敏。", "tip": "提示：含鹵或農藥殘留→ECD；永久氣體與水→TCD；其餘有機物→FID。"}, "g3": {"cats": ["移動相/輸送", "樣品導入", "分離/偵測"], "items": [{"t": "載氣鋼瓶", "c": "移動相/輸送"}, {"t": "壓力調節器/捕集器", "c": "移動相/輸送"}, {"t": "注射口(汽化分流)", "c": "樣品導入"}, {"t": "自動進樣器", "c": "樣品導入"}, {"t": "毛細管柱+烘箱", "c": "分離/偵測"}, {"t": "FID/TCD 偵測器", "c": "分離/偵測"}], "ok": "🎉 正確！載氣與調節器負責輸送、注射口/進樣器負責導入、管柱與偵測器負責分離與感應。", "tip": "提示：先想這個元件在『載氣→注射→分離→偵測』哪一段。"}}, "mcq": {"g2": [{"q": "為什麼食品通常不能直接打進 GC？", "o": ["太便宜", "非揮發物在注射口分解產生假峰", "顏色太深", "太冷"], "a": 1, "e": "高溫注射口會裂解非揮發成分，形成假峰並污染管柱。"}, {"q": "動態頂空(Purge & Trap)用吸附阱的主要優點？", "o": ["產生大量水", "得到不含水的揮發物且可自動化", "需要強酸", "破壞樣品"], "a": 1, "e": "吸附阱(如 Tenax)對水親和力低，得無水揮發物且易自動化。"}, {"q": "分流(split)注射相較不分流，特性是？", "o": ["靈敏度最高", "僅少量上管柱、峰較尖、適高濃度", "全量上管柱", "只能測氣體"], "a": 1, "e": "分流閥開、多數樣品排出，少量上柱得尖峰，適高濃度樣品。"}, {"q": "脂肪酸為何常要先衍生化才上 GC？", "o": ["增加顏色", "太極性/揮發性差，酯化成 FAME 改善層析", "降低成本", "讓它變紅"], "a": 1, "e": "游離脂肪酸極性高、出峰差，酯化成脂肪酸甲酯後揮發性與分離大幅改善。"}], "g5": [{"q": "要分析食品包裝頂空的 O₂、CO₂、N₂，選哪個偵測器？", "o": ["FID", "TCD", "ECD", "FPD"], "a": 1, "e": "永久氣體與水 FID 沒反應，TCD 通用且非破壞，最合適。"}, {"q": "分析蔬果中痕量含氯殘留農藥，最佳偵測器？", "o": ["TCD", "FID", "ECD", "PID"], "a": 2, "e": "ECD 對含鹵化合物極靈敏(0.05–1 pg)，是農藥/PCB 首選。"}, {"q": "要鑑定未知香氣化合物的身分，最該用？", "o": ["TCD", "ECD", "MS 質譜", "FPD"], "a": 2, "e": "MS 提供碎片指紋，配合 LRI 可確認未知物身分。"}, {"q": "分離極性的游離脂肪酸與醇類，該選哪種管柱？", "o": ["100% 甲基聚矽氧烷", "WAX(聚乙二醇)極性柱", "非極性 DB-1", "填充柱"], "a": 1, "e": "極性分析物需極性柱(如 WAX/FFAP)才有好分離。"}, {"q": "想縮短分析時間又維持解析，載氣多選？", "o": ["N₂(谷底在低流速)", "He 或 H₂", "空氣", "CO₂"], "a": 1, "e": "He/H₂ 在高流速仍維持低 HETP，分析快；N₂ 最佳流速太慢。"}]}, "sort": {"g4": {"steps": ["樣品前處理：研磨/均質並滅活", "分離濃縮揮發物(頂空/萃取/SPME)", "(必要時)衍生化使分析物揮發穩定", "注射口汽化、分流/不分流導入管柱", "烘箱溫度程式，毛細管柱分離", "偵測器(FID/MS)產生訊號", "由峰位定性、峰面積定量"], "shuffle": [3, 0, 6, 1, 4, 2, 5], "ok": "🎉 順序正確！前處理→分離→(衍生化)→注射→分離→偵測→定性定量。", "tip": "提示：一定先把揮發物從食物中分離出來，最後才讀峰做定性定量。"}}, "calc": {"g6": {"answer": 825, "tol": 1, "ok": "🎉 正確！LRI = 100×8 + 100×(8.50−8.00)/(10.00−8.00) = 800 + 100×0.25 = <b>825<\/b>。", "bad": "再算算：LRI = 100·n + 100×(t未知−t_n)/(t_{n+1}−t_n)，n=8(C8)，分數=(8.50−8.00)/(10.00−8.00)=0.25。", "hint": "提示：n=8；分數 = 0.50/2.00 = 0.25；LRI = 800 + 25 = 825。"}}, "cmp": {"cols": [{"k": "d"}, {"k": "meas"}, {"k": "sens"}, {"k": "app"}], "rows": [{"d": "TCD 熱導", "meas": "幾乎全部(含水/氣體)", "sens": 2, "app": "永久氣體·包裝氣體·非破壞"}, {"d": "FID 火焰離子", "meas": "多數有機物", "sens": 4, "app": "脂肪酸·風味·通用主力"}, {"d": "ECD 電子捕獲", "meas": "含鹵/硝基/雙鍵", "sens": 5, "app": "殘留農藥·PCB"}, {"d": "FPD 火焰光度", "meas": "硫 S / 磷 P", "sens": 4, "app": "有機磷農藥·硫化物風味"}, {"d": "PID 光離子化", "meas": "視游離能", "sens": 4, "app": "風味·嗅聞·非破壞"}, {"d": "NPD 熱離子", "meas": "氮 N / 磷 P", "sens": 4, "app": "亞硝胺·胺·農藥"}, {"d": "MS 質譜", "meas": "碎片離子指紋", "sens": 4, "app": "未知物鑑定·選擇性偵測"}]}};</script><script>
+var CFG=window.CFG||{};
+var slides=[].slice.call(document.querySelectorAll('.slide'));
+var total=slides.length,cur=0;
+var prog=document.getElementById('progress'),pageInfo=document.getElementById('pageInfo'),secTag=document.getElementById('section-tag');
+function show(i){
+  cur=Math.max(0,Math.min(total-1,i));
+  slides.forEach(function(s,k){s.classList.toggle('active',k===cur)});
+  prog.style.width=((cur+1)/total*100)+'%';
+  pageInfo.textContent=(cur+1)+' / '+total;
+  secTag.textContent='— '+(slides[cur].dataset.section||'')+' —';
+  var ch=slides[cur].dataset.chart; if(ch) initChart(ch);
+  var g=slides[cur].dataset.game; if(g) initGame(g);
+}
+function next(){show(cur+1)} function prev(){show(cur-1)}
+function toggleFs(){if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()}else{document.exitFullscreen&&document.exitFullscreen()}}
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next()}
+  else if(e.key==='ArrowLeft'){prev()}
+  else if(e.key==='f'||e.key==='F'){toggleFs()}
+});
+document.addEventListener('click',function(e){
+  if(e.target.closest('.no-nav')) return;
+  if(e.target.closest('button,input,select,textarea,a,.chip,.opt,.bucket')) return;
+  var x=e.clientX/window.innerWidth;
+  if(x>0.72) next(); else if(x<0.28) prev();
+});
+
+/* ---------- charts ---------- */
+var chartDone={};
+function initChart(id){
+  if(chartDone[id]||typeof Chart==='undefined'||!CFG.charts||!CFG.charts[id]) return; chartDone[id]=1;
+  Chart.defaults.font.family="'Noto Sans TC',sans-serif"; Chart.defaults.color='#48597a';
+  var c=CFG.charts[id];
+  var el=document.getElementById('chart_'+id); if(!el) return;
+  var ds=c.datasets.map(function(d){return {label:d.label,data:d.data,
+    backgroundColor:d.color||'#1f6feb',borderColor:d.color||'#1f6feb',borderRadius:5,
+    fill:(c.type==='line'?false:true),tension:.3}});
+  new Chart(el,{type:c.type||'bar',data:{labels:c.labels,datasets:ds},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:(c.datasets.length>1),position:'top'}},
+      scales:{y:{beginAtZero:(c.zero!==false),title:{display:!!c.yTitle,text:c.yTitle||''}}}}});
+}
+
+/* ---------- games ---------- */
+var gameDone={};
+function setScore(el,v){var e=document.getElementById(el);if(e)e.textContent=v}
+function fb(el,msg,type){var f=document.getElementById(el);if(!f)return;f.className='fb show '+type;f.innerHTML=msg}
+function initGame(g){
+  if(gameDone[g])return; gameDone[g]=1;
+  if(CFG.bucket&&CFG.bucket[g]) return initBucket(g);
+  if(CFG.mcq&&CFG.mcq[g]) return initMCQ(g);
+  if(CFG.sort&&CFG.sort[g]) return initSort(g);
+  if(CFG.calc&&CFG.calc[g]) return initCalc(g);
+  if(g==='cmp') return initCmp();
+}
+
+function initBucket(g){
+  var cfg=CFG.bucket[g];
+  var data=cfg.items.map(function(x){return {t:x.t,c:x.c,at:null}});
+  var cats=cfg.cats, N=data.length;
+  var pool=document.getElementById(g+'pool'), bk=document.getElementById(g+'buckets');
+  var sel=null;
+  bk.style.gridTemplateColumns='repeat('+cats.length+',1fr)';
+  function paint(){[].slice.call(pool.children).forEach(function(c){c.classList.toggle('sel',+c.dataset.i===sel)})}
+  function render(){
+    pool.innerHTML=''; bk.innerHTML='';
+    var placed={}; cats.forEach(function(c){placed[c]=[]});
+    data.forEach(function(d,i){if(d.at)placed[d.at].push(i)});
+    data.forEach(function(d,i){ if(d.at) return;
+      var c=document.createElement('div');c.className='chip';c.textContent=d.t;c.dataset.i=i;
+      c.onclick=function(){sel=(sel===i?null:i);paint()}; pool.appendChild(c);
+    });
+    cats.forEach(function(cat){
+      var b=document.createElement('div');b.className='bucket';b.innerHTML='<div class="bh">'+cat+'</div>';
+      placed[cat].forEach(function(i){
+        var c=document.createElement('div');c.className='chip';c.textContent=data[i].t;
+        c.onclick=function(){data[i].at=null;sel=null;render()}; b.appendChild(c);
+      });
+      b.onclick=function(e){ if(e.target!==b&&!e.target.classList.contains('bh'))return;
+        if(sel!=null){data[sel].at=cat;sel=null;render()} };
+      bk.appendChild(b);
+    });
+    paint();
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; data.forEach(function(d){if(d.at===d.c)ok++});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 全對！','good');
+    else fb(g+'fb','答對 '+ok+'/'+N+'。'+(cfg.tip||'再調整看看。'),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    data.forEach(function(d){d.at=null}); sel=null; render(); setScore(g+'score','0 / '+N);
+    var f=document.getElementById(g+'fb'); if(f) f.className='fb';
+  };
+}
+
+function initMCQ(g){
+  var DATA=CFG.mcq[g], nq=DATA.length, idx=0, score=0, locked=false;
+  var qEl=document.getElementById(g+'q'), opEl=document.getElementById(g+'opts'), nextBtn=document.getElementById(g+'next');
+  function render(){
+    locked=false; var d=DATA[idx];
+    qEl.innerHTML='<span style="color:var(--accent)">Q'+(idx+1)+'.</span> '+d.q;
+    opEl.innerHTML=''; var f=document.getElementById(g+'fb'); if(f)f.className='fb'; if(nextBtn)nextBtn.style.display='none';
+    d.o.forEach(function(t,i){
+      var o=document.createElement('div');o.className='opt';o.textContent=t;
+      o.onclick=function(){
+        if(locked)return; locked=true; var ok=(i===d.a);
+        if(ok){o.classList.add('ok');score++}else{o.classList.add('no');opEl.children[d.a].classList.add('ok')}
+        [].slice.call(opEl.children).forEach(function(c,k){if(k!==i&&k!==d.a)c.classList.add('dim')});
+        setScore(g+'score',score+' / '+nq);
+        var done=(idx>=DATA.length-1);
+        var msg=(ok?'✅ 答對！':'❌ 正解：'+d.o[d.a]+'。')+'<br>'+d.e+(done?'<br><b>完成！總分 '+score+'/'+nq+'</b>':'');
+        fb(g+'fb',msg,ok?'good':'bad');
+        if(nextBtn) nextBtn.style.display=done?'none':'inline-block';
+      };
+      opEl.appendChild(o);
+    });
+  }
+  if(nextBtn) nextBtn.onclick=function(){if(idx<DATA.length-1){idx++;render()}};
+  render();
+}
+
+function initSort(g){
+  var cfg=CFG.sort[g], steps=cfg.steps, N=steps.length;
+  var order=(cfg.shuffle||steps.map(function(_,i){return i})).slice();
+  var list=document.getElementById(g+'list');
+  function render(){
+    list.innerHTML='';
+    order.forEach(function(stepIdx,pos){
+      var row=document.createElement('div');row.className='sortrow';
+      row.innerHTML='<div class="idx">'+(pos+1)+'</div><div class="txt">'+steps[stepIdx]+'</div>';
+      var ud=document.createElement('div');ud.className='ud';
+      var up=document.createElement('button');up.textContent='▲';
+      up.onclick=function(){if(pos>0){var t=order[pos-1];order[pos-1]=order[pos];order[pos]=t;render()}};
+      var dn=document.createElement('button');dn.textContent='▼';
+      dn.onclick=function(){if(pos<order.length-1){var t=order[pos+1];order[pos+1]=order[pos];order[pos]=t;render()}};
+      ud.appendChild(up);ud.appendChild(dn);row.appendChild(ud);list.appendChild(row);
+    });
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; order.forEach(function(v,i){if(v===i)ok++});
+    [].slice.call(list.children).forEach(function(r,i){r.classList.toggle('ok',order[i]===i);r.classList.toggle('no',order[i]!==i)});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 順序完全正確！','good');
+    else fb(g+'fb','對了 '+ok+'/'+N+' 個位置。'+(cfg.tip||''),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    order=(cfg.shuffle||steps.map(function(_,i){return i})).slice().reverse(); render();
+    var f=document.getElementById(g+'fb'); if(f)f.className='fb'; setScore(g+'score','— / '+N);
+  };
+}
+
+function initCalc(g){
+  var cfg=CFG.calc[g];
+  document.getElementById(g+'check').onclick=function(){
+    var v=parseFloat(document.getElementById(g+'in').value);
+    if(isNaN(v)){fb(g+'fb','請先輸入一個數字。','info');return}
+    if(Math.abs(v-cfg.answer)<=(cfg.tol||0.05)){
+      setScore(g+'score','✓ 答對'); fb(g+'fb',cfg.ok||('🎉 正確！答案是 '+cfg.answer),'good');
+    } else { setScore(g+'score','再試一次'); fb(g+'fb',cfg.bad||'再算算看。','bad'); }
+  };
+  var hb=document.getElementById(g+'hint');
+  if(hb) hb.onclick=function(){fb(g+'fb',cfg.hint||'提示：對照公式逐步代入。','info')};
+}
+
+function stars(n){return '★★★★★'.slice(0,n)+'☆☆☆☆☆'.slice(0,5-n)}
+function initCmp(){
+  if(!CFG.cmp) return;
+  var cols=CFG.cmp.cols, rows=CFG.cmp.rows.slice(), dir={};
+  var tb=document.querySelector('#cmpTable tbody');
+  function draw(){ tb.innerHTML=''; rows.forEach(function(r){
+    var tr=document.createElement('tr');
+    tr.innerHTML=cols.map(function(c,ci){
+      var v=r[c.k];
+      if(c.star) return '<td style="color:var(--accent-2)">'+stars(v)+'</td>';
+      return '<td'+(ci===0?' class="c"':'')+'>'+v+'</td>';
+    }).join(''); tb.appendChild(tr); }); }
+  draw();
+  document.querySelectorAll('#cmpTable thead th').forEach(function(th){
+    th.onclick=function(){var k=th.dataset.k,t=th.dataset.t;dir[k]=!dir[k];
+      rows.sort(function(a,b){var x=a[k],y=b[k];
+        if(t==='n')return dir[k]?x-y:y-x;
+        return dir[k]?String(x).localeCompare(String(y),'zh-Hant'):String(y).localeCompare(String(x),'zh-Hant')});
+      draw();};
+  });
+}
+show(0);
+</script>
+<script>document.addEventListener('click',function(e){var li=e.target.closest('#selfcheck li');if(li)li.classList.toggle('done')});</script>
+</body></html>

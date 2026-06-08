@@ -1,0 +1,847 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>油脂分析 Fat Analysis · Nielsen Ch17</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script><style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{font-size:18px}
+body{
+  font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;
+  background:var(--bg); color:var(--ink);
+  overflow:hidden; height:100vh; width:100vw;
+}
+:root{
+  --bg:#eef2f8; --surface:#ffffff; --surface-2:#f6f9fd;
+  --ink:#15233f; --ink-2:#48597a; --ink-3:#8493ad; --line:#dde5f0;
+  --accent:#1f6feb;        /* academic blue */
+  --accent-soft:#e7f0fe;
+  --accent-2:#d9822b;      /* amber = oil/fat */
+  --accent-2-soft:#fbeede;
+  --ok:#1f9d6b; --ok-soft:#e3f6ee;
+  --bad:#d94f4f; --bad-soft:#fbe7e7;
+  --warn:#d9a32b;
+  --t1:clamp(1.9rem,4vw,3rem);
+  --t2:clamp(1.4rem,3vw,2.3rem);
+  --shadow:0 10px 30px rgba(20,40,80,.10);
+  --shadow-sm:0 3px 12px rgba(20,40,80,.08);
+}
+/* ---------- chrome ---------- */
+#progress{position:fixed;top:0;left:0;height:4px;width:0;z-index:50;
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .5s ease}
+#section-tag{position:fixed;top:16px;left:24px;z-index:40;font-size:.78rem;
+  letter-spacing:.18em;color:var(--accent);font-weight:700;font-family:"JetBrains Mono",monospace}
+#pageInfo{position:fixed;right:22px;bottom:16px;z-index:40;font-size:.82rem;
+  color:var(--ink-3);font-family:"JetBrains Mono",monospace}
+#hint{position:fixed;left:24px;bottom:16px;z-index:40;font-size:.72rem;color:var(--ink-3)}
+#brand{position:fixed;right:22px;top:14px;z-index:40;font-size:.72rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+/* ---------- slide ---------- */
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:64px 84px;opacity:0;pointer-events:none;
+  transition:opacity .55s ease, transform .55s ease;transform:translateY(14px)}
+.slide.active{opacity:1;pointer-events:auto;transform:translateY(0)}
+.slide-inner{width:100%;max-width:1280px}
+.kicker{font-family:"JetBrains Mono",monospace;font-size:.8rem;letter-spacing:.16em;
+  color:var(--accent);font-weight:700;text-transform:uppercase;margin-bottom:10px}
+.slide-title{font-size:var(--t2);font-weight:900;line-height:1.18;color:var(--ink);
+  letter-spacing:-.01em}
+.slide-title .hi{color:var(--accent-2)}
+.subtitle{font-size:clamp(.95rem,1.5vw,1.2rem);color:var(--ink-2);margin-top:12px;line-height:1.6}
+p,li{font-size:clamp(.92rem,1.4vw,1.12rem);line-height:1.68;color:var(--ink-2)}
+.lead{font-size:clamp(1.05rem,1.8vw,1.35rem);color:var(--ink);line-height:1.6}
+strong,b{color:var(--ink);font-weight:800}
+.em{color:var(--accent-2);font-weight:800}
+.divider{height:3px;width:64px;background:var(--accent-2);border-radius:2px;margin:18px 0}
+ul.clean{list-style:none}
+ul.clean li{position:relative;padding-left:26px;margin:10px 0}
+ul.clean li:before{content:"";position:absolute;left:4px;top:.62em;width:8px;height:8px;
+  border-radius:2px;background:var(--accent);transform:rotate(45deg)}
+.mono{font-family:"JetBrains Mono",monospace}
+/* ---------- layout grids ---------- */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.grid2-1{display:grid;grid-template-columns:1.15fr .85fr;gap:34px;align-items:center}
+.flow6{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+/* ---------- cards ---------- */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;
+  padding:22px 22px;box-shadow:var(--shadow-sm)}
+.card .ic{font-size:1.6rem;margin-bottom:8px}
+.card .ct{font-weight:800;color:var(--ink);font-size:clamp(1rem,1.5vw,1.2rem);margin-bottom:6px}
+.card .cb{font-size:clamp(.85rem,1.25vw,1rem);color:var(--ink-2);line-height:1.55}
+.card.b{border-top:4px solid var(--accent)}
+.card.a{border-top:4px solid var(--accent-2)}
+.card.g{border-top:4px solid var(--ok)}
+.tag{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:.7rem;
+  padding:3px 9px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-weight:700}
+.tag.a{background:var(--accent-2-soft);color:var(--accent-2)}
+.pill{display:inline-block;padding:5px 12px;border-radius:999px;background:var(--surface);
+  border:1px solid var(--line);font-size:.82rem;color:var(--ink-2);margin:3px 4px}
+.note{background:var(--accent-2-soft);border-left:4px solid var(--accent-2);border-radius:8px;
+  padding:14px 18px;color:var(--ink);font-size:clamp(.9rem,1.3vw,1.05rem);line-height:1.6}
+.eq{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 22px;
+  font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,1.7vw,1.4rem);color:var(--ink);
+  text-align:center;box-shadow:var(--shadow-sm)}
+.eq .frac{display:inline-flex;flex-direction:column;text-align:center;vertical-align:middle;margin:0 6px}
+.eq .frac b{border-bottom:2px solid var(--ink);padding-bottom:3px}
+/* ---------- compare table ---------- */
+table.cmp{width:100%;border-collapse:collapse;font-size:clamp(.82rem,1.2vw,1.02rem)}
+table.cmp th,table.cmp td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line)}
+table.cmp thead th{color:var(--accent);font-weight:800;border-bottom:2px solid var(--accent);
+  cursor:pointer;user-select:none;white-space:nowrap}
+table.cmp thead th .ar{opacity:.4;font-size:.8em}
+table.cmp tbody tr:hover{background:var(--surface-2)}
+table.cmp td.c{color:var(--ink);font-weight:700}
+/* ---------- cover / full-bleed ---------- */
+.cover{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;
+  padding:0 100px;background:
+  radial-gradient(1200px 600px at 80% 20%,var(--accent-2-soft),transparent 60%),
+  radial-gradient(900px 500px at 10% 90%,var(--accent-soft),transparent 55%),
+  linear-gradient(135deg,#ffffff,#eef2f8)}
+.cover h1{font-size:clamp(2.4rem,6vw,4.6rem);font-weight:900;line-height:1.05;letter-spacing:-.02em;color:var(--ink)}
+.cover .en{font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,2vw,1.5rem);color:var(--accent);
+  letter-spacing:.1em;margin-top:6px}
+.cover .meta{margin-top:26px;color:var(--ink-2);font-size:clamp(.9rem,1.4vw,1.1rem)}
+.bignum{font-size:clamp(2.4rem,5vw,3.6rem);font-weight:900;color:var(--accent-2);line-height:1}
+.hook{font-size:clamp(2rem,5vw,3.6rem);font-weight:900;color:var(--ink);line-height:1.2;letter-spacing:-.01em}
+.hook .hi{color:var(--accent)}
+/* ---------- svg apparatus ---------- */
+.svgwrap{display:flex;align-items:center;justify-content:center}
+.svgwrap svg{max-width:100%;max-height:62vh;height:auto}
+.lbl{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink-2)}
+.lblb{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink);font-weight:700}
+/* ---------- minigame ---------- */
+.game{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:24px 26px;
+  box-shadow:var(--shadow)}
+.game-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.game-head .gt{font-weight:900;font-size:clamp(1.05rem,1.7vw,1.35rem);color:var(--ink)}
+.game-head .score{margin-left:auto;font-family:"JetBrains Mono",monospace;font-weight:700;
+  color:var(--accent);background:var(--accent-soft);padding:5px 13px;border-radius:999px;font-size:.9rem}
+.game-q{font-size:clamp(.95rem,1.5vw,1.18rem);color:var(--ink);font-weight:700;margin:6px 0 14px}
+.buckets{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:14px}
+.bucket{min-height:120px;border:2px dashed var(--line);border-radius:14px;padding:12px;
+  background:var(--surface-2);transition:.2s}
+.bucket.over{border-color:var(--accent);background:var(--accent-soft)}
+.bucket .bh{font-weight:800;color:var(--ink);text-align:center;margin-bottom:8px;font-size:.95rem}
+.pool{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;min-height:54px}
+.chip{padding:9px 15px;border-radius:10px;background:var(--surface);border:1px solid var(--line);
+  font-weight:700;color:var(--ink);cursor:pointer;box-shadow:var(--shadow-sm);font-size:.92rem;transition:.15s}
+.chip:hover{border-color:var(--accent);transform:translateY(-1px)}
+.chip.sel{background:var(--accent);color:#fff;border-color:var(--accent)}
+.chip.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.chip.no{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+.opt{padding:14px 18px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);
+  cursor:pointer;font-weight:700;color:var(--ink);font-size:clamp(.88rem,1.3vw,1.05rem);transition:.15s}
+.opt:hover{border-color:var(--accent);background:var(--accent-soft)}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.opt.no{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}
+.opt.dim{opacity:.5}
+.fb{margin-top:14px;padding:12px 16px;border-radius:10px;font-weight:700;display:none;
+  font-size:clamp(.85rem,1.3vw,1.02rem);line-height:1.5}
+.fb.show{display:block}
+.fb.good{background:var(--ok-soft);color:var(--ok)}
+.fb.bad{background:var(--bad-soft);color:var(--bad)}
+.fb.info{background:var(--accent-soft);color:var(--accent)}
+.btn{padding:10px 20px;border-radius:10px;border:none;background:var(--accent);color:#fff;
+  font-weight:800;cursor:pointer;font-size:.92rem;font-family:inherit;box-shadow:var(--shadow-sm)}
+.btn:hover{filter:brightness(1.06)}
+.btn.ghost{background:var(--surface);color:var(--accent);border:1.5px solid var(--accent)}
+.btnrow{display:flex;gap:12px;margin-top:16px;align-items:center}
+.sortlist{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.sortrow{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);
+  border-radius:10px;padding:10px 14px;box-shadow:var(--shadow-sm)}
+.sortrow .idx{font-family:"JetBrains Mono",monospace;font-weight:800;color:var(--accent);width:24px}
+.sortrow .txt{flex:1;font-weight:700;color:var(--ink);font-size:clamp(.85rem,1.25vw,1.02rem)}
+.sortrow .ud{display:flex;flex-direction:column;gap:3px}
+.sortrow .ud button{border:none;background:var(--accent-soft);color:var(--accent);border-radius:6px;
+  width:30px;height:20px;cursor:pointer;font-weight:900;line-height:1}
+.sortrow.ok{border-color:var(--ok);background:var(--ok-soft)}
+.sortrow.no{border-color:var(--bad)}
+.numin{font-family:"JetBrains Mono",monospace;font-size:1.2rem;font-weight:800;padding:10px 14px;
+  border:1.5px solid var(--line);border-radius:10px;width:130px;color:var(--ink);text-align:center}
+.numin:focus{outline:none;border-color:var(--accent)}
+.checklist{list-style:none}
+.checklist li{display:flex;align-items:center;gap:12px;padding:11px 14px;border:1px solid var(--line);
+  border-radius:10px;margin:8px 0;background:var(--surface);cursor:pointer;font-weight:700;color:var(--ink-2);
+  font-size:clamp(.9rem,1.35vw,1.08rem);transition:.15s}
+.checklist li .bx{width:24px;height:24px;border-radius:6px;border:2px solid var(--accent);
+  display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;flex:0 0 auto}
+.checklist li.done{background:var(--ok-soft);border-color:var(--ok);color:var(--ink)}
+.checklist li.done .bx{background:var(--ok);border-color:var(--ok)}
+.chartbox{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;
+  box-shadow:var(--shadow-sm);height:60vh;max-height:520px;position:relative}
+.cap{font-size:.82rem;color:var(--ink-3);text-align:center;margin-top:8px}
+</style></head><body><div id="progress"></div><div id="section-tag"></div><div id="brand">FAT ANALYSIS · CH17</div><div id="pageInfo"></div><div id="hint">← → / 空白鍵切頁　·　F 全螢幕　·　點兩側翻頁</div><section class="slide" data-slide="1" data-section="引起動機" data-cover="1"><div class="slide-inner">
+<div class="cover">
+  <div class="kicker">NIELSEN'S FOOD ANALYSIS · CHAPTER 17</div>
+  <h1>油脂<span style="color:var(--accent-2)">分析</span></h1>
+  <div class="en">Fat Analysis</div>
+  <div class="meta">食品分析　·　3 小時課程　·　含 5 個互動小遊戲<br>
+  溶劑萃取 · 水解 · GC · 非溶劑濕式 · 儀器法</div>
+</div></div></section><section class="slide" data-slide="2" data-section="引起動機"><div class="slide-inner">
+<div style="text-align:center">
+  <div class="kicker" style="justify-content:center">先想一想</div>
+  <div class="hook">一塊餅乾，<span class="hi">到底有多少油？</span></div>
+  <p class="subtitle" style="max-width:760px;margin:22px auto 0">
+  營養標示上的「脂肪 14.3 g」是怎麼量出來的？<br>
+  油脂無法用秤直接挑出來——必須靠它的<strong>化學性質</strong>把它「抓」出來。</p>
+  <div style="margin-top:26px"><span class="pill">營養標示</span><span class="pill">品質管制</span>
+  <span class="pill">法規符合</span><span class="pill">產品識別</span></div>
+</div></div></section><section class="slide" data-slide="3" data-section="引起動機"><div class="slide-inner"><div class="kicker">17.1.4 為什麼重要</div><h2 class="slide-title">為什麼要分析油脂</h2>
+<div class="grid3" style="margin-top:26px">
+<div class="card b"><div class="ic">🏷️</div><div class="ct">營養標示</div><div class="cb">法規要求標示脂肪含量，量錯就違規</div></div><div class="card a"><div class="ic">✅</div><div class="ct">品質管制</div><div class="cb">確認符合產品規格與製造標準</div></div><div class="card g"><div class="ic">🔬</div><div class="ct">產品識別</div><div class="cb">判定是否為標示的食品、是否摻假</div></div>
+</div>
+<div class="note" style="margin-top:24px">量測不準會<strong>代價高昂</strong>——可能做出品質不良、功能不符的產品。</div>
+</div></section><section class="slide" data-slide="4" data-section="引起動機"><div class="slide-inner"><div class="kicker">17.1.1 定義</div><h2 class="slide-title">脂質到底是什麼？</h2>
+<div class="grid2" style="margin-top:18px">
+  <div>
+    <ul class="clean">
+      <li><strong>以溶解度定義</strong>：溶於乙醚、氯仿等有機溶劑，但幾乎不溶於水</li>
+      <li><strong>脂肪 (fats)</strong>：室溫下為固態（多來自動物）</li>
+      <li><strong>油 (oils)</strong>：室溫下為液態（多來自植物）</li>
+      <li>三者常互通使用，主成分都是<span class="em">三酸甘油酯</span></li>
+    </ul>
+  </div>
+  <div class="note">
+    <strong>FDA 法規定義（營養標示用）</strong><br>
+    總脂肪 = C4–C24 脂肪酸的總和，以三酸甘油酯計算。<br>
+    <span class="mono" style="color:var(--accent)">Total fat = Σ (FA, C4–C24) as TAG</span>
+  </div>
+</div></div></section><section class="slide" data-slide="5" data-section="引起動機"><div class="slide-inner"><div class="kicker">17.1.2 分類</div><h2 class="slide-title">脂質的三大分類</h2>
+<div class="grid3" style="margin-top:26px">
+<div class="card b"><div class="ic">🧈</div><div class="ct">簡單脂質</div><div class="cb">脂肪酸與醇的酯類<br>例：油脂、蠟</div></div><div class="card a"><div class="ic">🧬</div><div class="ct">複合脂質</div><div class="cb">除醇外還含其他基團<br>例：磷脂質、腦苷脂、鞘脂</div></div><div class="card g"><div class="ic">⚗️</div><div class="ct">衍生脂質</div><div class="cb">由前兩者衍生<br>例：脂肪酸、固醇、脂溶性維生素</div></div>
+</div>
+<p class="subtitle" style="margin-top:20px">下一頁玩個小遊戲，把例子拖進正確的分類 →</p>
+</div></section><section class="slide" data-slide="6" data-section="引起動機" data-chart="food"><div class="slide-inner"><div class="kicker">17.1.3 食物中的含量</div><h2 class="slide-title">食物裡<span class='hi'>多少油</span>？範圍超大</h2>
+<div class="chartbox" style="margin-top:14px"><canvas id="chartFood"></canvas></div>
+<div class="cap">資料：USDA FoodData Central (2023)，% 脂肪（濕基）。從油品 ~94% 到水果 &lt;1%。</div>
+</div></section><section class="slide" data-slide="7" data-section="引起動機"><div class="slide-inner">
+<div style="text-align:center">
+  <div class="kicker" style="justify-content:center">核心命題</div>
+  <div class="hook" style="font-size:clamp(1.7rem,4vw,3rem)"><span class="hi">溶解度</span>，是一切萃取的根基</div>
+  <p class="lead" style="max-width:820px;margin:22px auto 0">
+  脂質<strong>溶於有機溶劑</strong>、<strong>不溶於水</strong>——<br>
+  這個性質就是把油脂從蛋白質、水、碳水中分離出來的關鍵。</p>
+  <div class="eq" style="max-width:560px;margin:26px auto 0">
+   % 脂肪 (乾基) =
+   <span class="frac"><b>樣品中脂肪克數</b><span>乾燥樣品克數</span></span> × 100
+  </div>
+</div></div></section><section class="slide" data-slide="8" data-section="引起動機" data-game="g1"><div class="slide-inner">
+<div class="game no-nav" data-game="g1">
+  <div class="game-head"><span class="tag a">小遊戲 ①</span>
+    <span class="gt">脂質分類配對</span><span class="score" id="g1score">0 / 8</span></div>
+  <div class="game-q">點一張卡片，再點正確的分類桶。把 8 個例子分到三大類！</div>
+  <div class="pool" id="g1pool"></div>
+  <div class="buckets" id="g1buckets"></div>
+  <div class="fb" id="g1fb"></div>
+  <div class="btnrow"><button class="btn" id="g1check">檢查答案</button>
+    <button class="btn ghost" id="g1reset">重來</button></div>
+</div></div></section><section class="slide" data-slide="9" data-section="維持注意"><div class="slide-inner"><div class="kicker">方法全覽</div><h2 class="slide-title">三大方法家族</h2>
+<div class="grid3" style="margin-top:24px">
+<div class="card b"><div class="ic">🧪</div><div class="ct">溶劑萃取法</div><div class="cb">Goldfisch、Soxhlet、Mojonnier、酸水解、氯仿-甲醇、GC</div></div><div class="card a"><div class="ic">🥛</div><div class="ct">非溶劑濕式法</div><div class="cb">Babcock、Gerber——乳品專用，用 H₂SO₄ 消化</div></div><div class="card g"><div class="ic">📡</div><div class="ct">儀器分析法</div><div class="cb">IR/NIR、NMR、X-ray、ASE、SFE——快速、非破壞</div></div>
+</div>
+<div class="note" style="margin-top:22px">沒有「萬用」單一方法——<strong>選對方法取決於樣品種類與脂質型態</strong>。</div>
+</div></section><section class="slide" data-slide="10" data-section="維持注意"><div class="slide-inner"><div class="kicker">17.2.2 樣品前處理</div><h2 class="slide-title">萃取前，先做三件事</h2>
+<div class="flow6" style="margin-top:22px">
+<div class="card b"><div class="ic">1️⃣</div><div class="ct">預乾燥</div><div class="cb">水分阻礙乙醚穿透；先除水才能有效萃取</div></div><div class="card b"><div class="ic">2️⃣</div><div class="ct">粒徑縮小</div><div class="cb">研磨增加表面積；堅果可液態氮冷凍後磨碎</div></div><div class="card a"><div class="ic">3️⃣</div><div class="ct">水解釋放</div><div class="cb">酸/鹼水解打斷脂質與蛋白、碳水的鍵結</div></div>
+</div>
+<div class="note" style="margin-top:22px">關鍵概念：許多食物的脂質<strong>與蛋白質/碳水結合</strong>，直接用溶劑萃取會「少算」。</div>
+</div></section><section class="slide" data-slide="11" data-section="維持注意"><div class="slide-inner"><div class="kicker">17.2.3 溶劑選擇</div><h2 class="slide-title">乙醚 vs 石油醚</h2>
+<table class="cmp" style="margin-top:16px">
+ <thead><tr><th>性質</th><th>乙醚 Ethyl ether</th><th>石油醚 Petroleum ether</th></tr></thead>
+ <tbody>
+  <tr><td>沸點</td><td class="c">34.6 °C</td><td class="c">35–38 °C</td></tr>
+  <tr><td>溶脂能力</td><td class="c">較佳（含極性脂質）</td><td>較選擇性（偏疏水脂質）</td></tr>
+  <tr><td>吸濕性</td><td class="c">高（會吸水）</td><td>低</td></tr>
+  <tr><td>易燃/爆炸</td><td class="c">高、會生過氧化物</td><td>較低</td></tr>
+  <tr><td>價格</td><td>較貴</td><td class="c">較便宜</td></tr>
+ </tbody>
+</table>
+<div class="note" style="margin-top:18px">理想溶劑：<strong>高溶脂力、不溶蛋白/胺基酸/碳水、易揮發無殘留</strong>。常合併使用 2–3 種。</div>
+</div></section><section class="slide" data-slide="12" data-section="維持注意" data-game="g2"><div class="slide-inner">
+<div class="game no-nav" data-game="g2">
+  <div class="game-head"><span class="tag a">小遊戲 ②</span>
+    <span class="gt">溶劑特性即時測驗</span><span class="score" id="g2score">0 / 4</span></div>
+  <div class="game-q" id="g2q"></div>
+  <div class="opts" id="g2opts"></div>
+  <div class="fb" id="g2fb"></div>
+  <div class="btnrow"><button class="btn ghost" id="g2next" style="display:none">下一題 →</button></div>
+</div></div></section><section class="slide" data-slide="13" data-section="維持注意"><div class="slide-inner"><div class="kicker">17.2.4 連續式</div><h2 class="slide-title">連續式萃取：Goldfisch</h2>
+<div class="grid2-1" style="margin-top:8px">
+  <div class="svgwrap">
+<svg viewBox="0 0 320 420">
+ <defs><linearGradient id="glass2" x1="0" y1="0" x2="1" y2="1">
+   <stop offset="0" stop-color="#eaf2ff"/><stop offset="1" stop-color="#cfe0f6"/></linearGradient></defs>
+ <rect x="118" y="14" width="40" height="96" rx="8" fill="url(#glass2)" stroke="#1f6feb" stroke-width="2.5"/>
+ <path d="M138 26 q14 9 0 18 q-14 9 0 18 q14 9 0 18 q-14 9 0 18" fill="none" stroke="#1f6feb" stroke-width="2"/>
+ <text x="170" y="56" class="lblb">冷凝管</text>
+ <!-- ceramic thimble suspended -->
+ <rect x="120" y="128" width="36" height="56" rx="4" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
+ <text x="170" y="150" class="lblb">陶瓷套筒</text><text x="170" y="168" class="lbl">樣品懸於上方</text>
+ <!-- continuous drip -->
+ <circle cx="138" cy="196" r="3" fill="#1f6feb"/><circle cx="138" cy="210" r="3" fill="#1f6feb"/>
+ <text x="170" y="206" class="lbl">溶劑連續滴流</text>
+ <!-- flask -->
+ <circle cx="138" cy="300" r="50" fill="url(#glass2)" stroke="#1f6feb" stroke-width="2.5"/>
+ <path d="M120 252 h36 v8 h-36 z" fill="url(#glass2)" stroke="#1f6feb" stroke-width="2.5"/>
+ <path d="M104 316 a40 40 0 0 0 68 0 z" fill="#fbeede"/>
+ <text x="196" y="300" class="lblb">沸騰瓶</text>
+ <rect x="92" y="360" width="92" height="18" rx="6" fill="#48597a"/>
+ <text x="196" y="374" class="lbl">加熱</text>
+</svg></div>
+  <div>
+    <ul class="clean">
+      <li>溶劑從沸騰瓶蒸發，<strong>連續滴流</strong>過懸於上方的樣品套筒</li>
+      <li>以樣品<strong>失重</strong>或脂肪<strong>增重</strong>計算脂肪含量</li>
+      <li>速度快、效率高</li>
+      <li class="em">缺點：易發生 channeling（溝流）→ 萃取不完全</li>
+    </ul>
+    <div class="note" style="margin-top:16px">火災風險高，許多實驗室已停用；此處作為與半連續/不連續法的對照。</div>
+  </div>
+</div></div></section><section class="slide" data-slide="14" data-section="維持注意"><div class="slide-inner"><div class="kicker">17.2.5 半連續式</div><h2 class="slide-title">Soxhlet：實驗室主力</h2>
+<div class="grid2-1" style="margin-top:8px">
+  <div class="svgwrap">
+<svg viewBox="0 0 320 420" class="">
+ <defs><linearGradient id="glass" x1="0" y1="0" x2="1" y2="1">
+   <stop offset="0" stop-color="#eaf2ff"/><stop offset="1" stop-color="#cfe0f6"/></linearGradient></defs>
+ <!-- condenser -->
+ <rect x="120" y="14" width="40" height="120" rx="8" fill="url(#glass)" stroke="#1f6feb" stroke-width="2.5"/>
+ <path d="M140 28 q14 10 0 20 q-14 10 0 20 q14 10 0 20 q-14 10 0 20 q14 10 0 20" fill="none" stroke="#1f6feb" stroke-width="2"/>
+ <text x="172" y="60" class="lblb">冷凝管</text><text x="172" y="78" class="lbl">Condenser</text>
+ <!-- extraction chamber -->
+ <path d="M112 138 h56 v92 l-16 18 h-24 l-16 -18 z" fill="url(#glass)" stroke="#1f6feb" stroke-width="2.5"/>
+ <rect x="124" y="150" width="32" height="40" rx="4" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
+ <text x="118" y="143" class="lbl" font-size="11" text-anchor="middle"> </text>
+ <text x="186" y="160" class="lblb">萃取室</text><text x="186" y="178" class="lbl">套筒 thimble</text>
+ <text x="186" y="196" class="lbl">+ 樣品</text>
+ <!-- siphon arm -->
+ <path d="M112 210 q-22 4 -22 -22 v-28" fill="none" stroke="#1f6feb" stroke-width="2.5"/>
+ <text x="20" y="172" class="lbl">虹吸管</text><text x="20" y="188" class="lbl">siphon</text>
+ <!-- boiling flask -->
+ <path d="M140 248 v22" stroke="#1f6feb" stroke-width="2.5"/>
+ <circle cx="140" cy="320" r="52" fill="url(#glass)" stroke="#1f6feb" stroke-width="2.5"/>
+ <path d="M120 270 h40 v8 h-40 z" fill="url(#glass)" stroke="#1f6feb" stroke-width="2.5"/>
+ <path d="M104 338 a40 40 0 0 0 72 0 z" fill="#fbeede"/>
+ <text x="200" y="320" class="lblb">沸騰瓶</text><text x="200" y="338" class="lbl">溶劑 solvent</text>
+ <!-- heater -->
+ <rect x="92" y="380" width="96" height="20" rx="6" fill="#48597a"/>
+ <path d="M118 378 q4 -10 8 0 M138 378 q4 -10 8 0 M158 378 q4 -10 8 0" fill="none" stroke="#d9822b" stroke-width="2.5"/>
+ <text x="200" y="394" class="lbl">加熱 heater</text>
+</svg></div>
+  <div>
+    <ul class="clean">
+      <li>溶劑在萃取室<strong>累積浸泡樣品 5–10 分鐘</strong>，再虹吸回沸騰瓶</li>
+      <li>有<span class="em">浸泡效應</span>、不會 channeling</li>
+      <li>萃取時間通常 <strong>16 小時</strong></li>
+      <li>AOAC 948.22（堅果）、960.39（肉品）</li>
+    </ul>
+    <div class="note" style="margin-top:16px">樣品含水 &gt;10% 要先在 95–100 °C、≤100 mmHg 乾燥約 5 小時（AOAC 934.01）。</div>
+  </div>
+</div></div></section><section class="slide" data-slide="15" data-section="維持注意"><div class="slide-inner"><div class="kicker">Soxhlet 操作</div><h2 class="slide-title">六個步驟</h2>
+<div class="flow6" style="margin-top:22px">
+<div class="card b"><div class="ic">1</div><div class="ct">乾燥磨碎</div><div class="cb">樣品乾燥、研磨成適當粒徑</div></div><div class="card b"><div class="ic">2</div><div class="ct">秤入套筒</div><div class="cb">精秤樣品放進纖維素套筒</div></div><div class="card a"><div class="ic">3</div><div class="ct">裝入裝置</div><div class="cb">套筒置於萃取室，接沸騰瓶</div></div><div class="card a"><div class="ic">4</div><div class="ct">加熱萃取</div><div class="cb">溶劑回流、浸泡、虹吸 16 h</div></div><div class="card g"><div class="ic">5</div><div class="ct">蒸發溶劑</div><div class="cb">移除溶劑，留下脂肪</div></div><div class="card g"><div class="ic">6</div><div class="ct">秤重計算</div><div class="cb">重量法求 % 脂肪</div></div>
+</div></div></section><section class="slide" data-slide="16" data-section="維持注意" data-game="g3"><div class="slide-inner">
+<div class="game no-nav" data-game="g3">
+  <div class="game-head"><span class="tag a">小遊戲 ③</span>
+    <span class="gt">萃取法分類</span><span class="score" id="g3score">0 / 5</span></div>
+  <div class="game-q">這些方法屬於 連續 / 半連續 / 不連續？點方法卡，再點分類桶。</div>
+  <div class="pool" id="g3pool"></div>
+  <div class="buckets" id="g3buckets"></div>
+  <div class="fb" id="g3fb"></div>
+  <div class="btnrow"><button class="btn" id="g3check">檢查答案</button>
+    <button class="btn ghost" id="g3reset">重來</button></div>
+</div></div></section><section class="slide" data-slide="17" data-section="維持注意" data-chart="hyd"><div class="slide-inner"><div class="kicker">17.2.6 不連續式</div><h2 class="slide-title">為什麼要<span class='hi'>水解</span>？</h2>
+<div class="grid2-1" style="margin-top:8px">
+  <div class="chartbox" style="height:52vh"><canvas id="chartHyd"></canvas></div>
+  <div>
+    <p class="lead">很多食物的脂質與蛋白、碳水<strong>結合</strong>，<br>不先水解就直接萃取會<span class="em">嚴重低估</span>。</p>
+    <ul class="clean" style="margin-top:14px">
+      <li>乾蛋：酸水解 42.4% vs 不水解 36.7%</li>
+      <li>麵粉、酵母、麵條同樣明顯偏低</li>
+    </ul>
+  </div>
+</div>
+<div class="cap">Table 17.3：酸水解 vs 不水解的脂肪回收率（%）</div>
+</div></section><section class="slide" data-slide="18" data-section="維持注意"><div class="slide-inner"><div class="kicker">水解兩種路線</div><h2 class="slide-title">酸水解 vs 鹼水解</h2>
+<div class="grid2" style="margin-top:16px">
+<div class="card a"><div class="ic">🥛</div><div class="ct">鹼水解 (Mojonnier)</div><div class="cb">氨沉澱蛋白後萃取；<strong>乳品標準法</strong>，範圍較窄。AOAC 905.02 / 989.05</div></div><div class="card b"><div class="ic">🌾</div><div class="ct">酸水解</div><div class="cb">用 HCl 消化、打斷共價與離子鍵結；<strong>適用範圍廣</strong>（蛋、麵粉、麵包）。不適生黃豆</div></div>
+</div>
+<div class="note" style="margin-top:20px">兩者都是先<strong>水解釋放結合脂質</strong>，再用乙醚+石油醚萃取，重量法定量。</div>
+</div></section><section class="slide" data-slide="19" data-section="維持注意"><div class="slide-inner"><div class="kicker">17.2.6.3 氯仿-甲醇法</div><h2 class="slide-title">Folch / Bligh-Dyer</h2>
+<div class="grid2" style="margin-top:16px">
+  <div>
+    <ul class="clean">
+      <li><strong>Folch</strong>：適用小樣品</li>
+      <li><strong>Bligh-Dyer</strong>：適用高水分大樣品，省溶劑</li>
+      <li>加 0.88% KCl 使溶液<strong>分兩相</strong>：上層水相、下層氯仿相（含脂質）</li>
+      <li>常用於萃取後做<strong>脂肪酸組成</strong>分析</li>
+    </ul>
+  </div>
+  <div class="note">⚠️ 氯仿與甲醇<strong>毒性高</strong>，須在通風櫃操作。會測到所有脂溶性物質（非僅 TAG）。</div>
+</div></div></section><section class="slide" data-slide="20" data-section="維持注意"><div class="slide-inner"><div class="kicker">17.2.7 營養標示</div><h2 class="slide-title">GC 法測「總脂肪」</h2>
+<div class="grid2" style="margin-top:14px">
+  <div>
+    <ul class="clean">
+      <li>FDA 定義的總脂肪 = <strong>各脂肪酸總和</strong>（以 TAG 計）</li>
+      <li>脂肪酸轉成<span class="em">脂肪酸甲酯 (FAME)</span>，用 GC 分離定量</li>
+      <li>對<strong>內標</strong>定量；<strong>AOAC 996.06</strong></li>
+      <li>反式脂肪也能一併定量</li>
+    </ul>
+  </div>
+  <div class="note">這是現代<strong>營養標示</strong>的法定方法——只測「真正的脂肪酸」，不含其他脂溶性物質。GC 原理見第 14 章。</div>
+</div></div></section><section class="slide" data-slide="21" data-section="維持注意"><div class="slide-inner"><div class="kicker">GC 法流程</div><h2 class="slide-title">從樣品到總脂肪</h2>
+<div class="grid3" style="margin-top:18px">
+<div class="card b"><div class="ic">1·2</div><div class="ct">加抗氧化劑+內標</div><div class="cb">焦性沒食子酸防氧化；加二十一酸甲酯內標</div></div><div class="card a"><div class="ic">3·4</div><div class="ct">水解 + 萃取</div><div class="cb">酸/鹼水解後，乙醚/石油醚萃取脂肪</div></div><div class="card g"><div class="ic">5·6·7</div><div class="ct">甲基化→GC→加總</div><div class="cb">BF₃/甲醇 → FAME → GC 分離定量 → 加總</div></div>
+</div>
+<p class="subtitle" style="margin-top:18px">下一頁把這 7 個步驟排出正確順序 →</p>
+</div></section><section class="slide" data-slide="22" data-section="維持注意" data-game="g4"><div class="slide-inner">
+<div class="game no-nav" data-game="g4">
+  <div class="game-head"><span class="tag a">小遊戲 ④</span>
+    <span class="gt">GC 流程排序</span><span class="score" id="g4score">— / 7</span></div>
+  <div class="game-q">用 ▲▼ 把 GC 測總脂肪的 7 個步驟排成正確順序。</div>
+  <div class="sortlist" id="g4list"></div>
+  <div class="fb" id="g4fb"></div>
+  <div class="btnrow"><button class="btn" id="g4check">檢查順序</button>
+    <button class="btn ghost" id="g4reset">打亂重排</button></div>
+</div></div></section><section class="slide" data-slide="23" data-section="維持注意"><div class="slide-inner"><div class="kicker">17.3 非溶劑濕式法</div><h2 class="slide-title">Babcock 法（乳品）</h2>
+<div class="grid2-1" style="margin-top:8px">
+  <div class="svgwrap">
+<svg viewBox="0 0 260 420">
+ <defs><linearGradient id="glass3" x1="0" y1="0" x2="0" y2="1">
+   <stop offset="0" stop-color="#eaf2ff"/><stop offset="1" stop-color="#cfe0f6"/></linearGradient></defs>
+ <!-- graduated neck -->
+ <rect x="116" y="20" width="22" height="150" rx="4" fill="url(#glass3)" stroke="#1f6feb" stroke-width="2.5"/>
+ <!-- fat column -->
+ <rect x="118" y="40" width="18" height="48" fill="#f0b94f"/>
+ <text x="150" y="60" class="lblb">脂肪柱</text><text x="150" y="78" class="lbl">讀體積 %</text>
+ <!-- graduations -->
+ <g stroke="#48597a" stroke-width="1.4">
+  <line x1="116" y1="40" x2="126" y2="40"/><line x1="116" y1="64" x2="126" y2="64"/>
+  <line x1="116" y1="88" x2="126" y2="88"/><line x1="116" y1="112" x2="126" y2="112"/>
+  <line x1="116" y1="136" x2="126" y2="136"/></g>
+ <!-- bulb -->
+ <circle cx="127" cy="250" r="62" fill="url(#glass3)" stroke="#1f6feb" stroke-width="2.5"/>
+ <path d="M116 170 h22 v22 h-22 z" fill="url(#glass3)" stroke="#1f6feb" stroke-width="2.5"/>
+ <text x="200" y="250" class="lblb">Babcock</text><text x="200" y="268" class="lbl">測試瓶</text>
+ <text x="60" y="250" class="lbl" text-anchor="end">H₂SO₄</text>
+ <text x="60" y="268" class="lbl" text-anchor="end">消化蛋白</text>
+</svg></div>
+  <div>
+    <ul class="clean">
+      <li>加 <strong>H₂SO₄</strong> 消化蛋白、產熱、釋放脂肪</li>
+      <li>離心 + 加熱水，把脂肪<strong>擠到刻度頸部</strong></li>
+      <li><span class="em">體積法</span>讀數（但以 % 脂肪表示）</li>
+      <li>約 45 分鐘；AOAC 989.04（牛奶）</li>
+    </ul>
+    <div class="note" style="margin-top:14px">不測磷脂質；含巧克力或加糖產品會<strong>焦化</strong>，需改良。</div>
+  </div>
+</div></div></section><section class="slide" data-slide="24" data-section="維持注意"><div class="slide-inner"><div class="kicker">17.3.2 Gerber 法</div><h2 class="slide-title">Gerber：更簡單快速</h2>
+<div class="grid2" style="margin-top:16px">
+<div class="card a"><div class="ic">🧪</div><div class="ct">原理</div><div class="cb">類似 Babcock，但用 <strong>H₂SO₄ + 戊醇 (amyl alcohol)</strong>。AOAC 2000.18</div></div><div class="card b"><div class="ic">✨</div><div class="ct">優點</div><div class="cb">戊醇<strong>防止糖焦化</strong>；比 Babcock 簡單快速，歐洲較常用</div></div>
+</div>
+<div class="note" style="margin-top:20px">Babcock 與 Gerber 都是<strong>體積法</strong>，都是乳品專用、原本為乳業開發。</div>
+</div></section><section class="slide" data-slide="25" data-section="維持注意"><div class="slide-inner"><div class="kicker">17.4 儀器分析法</div><h2 class="slide-title">快速、非破壞的選擇</h2>
+<div class="flow6" style="margin-top:20px">
+<div class="card b"><div class="ic">📡</div><div class="ct">IR / NIR</div><div class="cb">吸收 5.73 µm；NIR 預測法</div></div><div class="card b"><div class="ic">🧲</div><div class="ct">NMR</div><div class="cb">脈衝 NMR，測固脂含量</div></div><div class="card b"><div class="ic">☢️</div><div class="ct">X-ray</div><div class="cb">肉品含脂量，可線上量測</div></div><div class="card a"><div class="ic">⚡</div><div class="ct">ASE</div><div class="cb">加速溶劑萃取，<20 min</div></div><div class="card a"><div class="ic">💨</div><div class="ct">SFE</div><div class="cb">超臨界 CO₂，綠色環保</div></div><div class="card g"><div class="ic">⚖️</div><div class="ct">共同點</div><div class="cb">需對標準法<strong>建檢量線</strong></div></div>
+</div></div></section><section class="slide" data-slide="26" data-section="維持注意"><div class="slide-inner"><div class="kicker">兩種代表性儀器</div><h2 class="slide-title">紅外線 與 NMR</h2>
+<div class="grid2" style="margin-top:16px">
+<div class="card b"><div class="ic">📡</div><div class="ct">紅外線 IR / NIR</div><div class="cb">脂肪在 <strong>5.73 µm</strong> 吸收；吸收越多脂肪越多。NIR 是<strong>預測</strong>法，需大量標準資料建模並持續驗證（AOAC 2007.04）</div></div><div class="card a"><div class="ic">🧲</div><div class="ct">核磁共振 NMR</div><div class="cb">低解析脈衝 NMR 測總脂；非破壞、快速、高自動化。也能測<strong>固脂含量曲線</strong>（AOAC 2008.06）</div></div>
+</div>
+<div class="note" style="margin-top:18px">儀器法快又方便，但<strong>都是估計值</strong>，必須先用標準萃取法校正。</div>
+</div></section><section class="slide" data-slide="27" data-section="喚起行動" data-game="cmp"><div class="slide-inner"><div class="kicker">17.5 方法比較</div><h2 class="slide-title">一張表選對方法（點欄位可排序）</h2>
+<table class="cmp" id="cmpTable" style="margin-top:14px">
+ <thead><tr>
+  <th data-k="m" data-t="s">方法 <span class="ar">⇅</span></th>
+  <th data-k="meas" data-t="s">量測 <span class="ar">⇅</span></th>
+  <th data-k="speed" data-t="n">速度 <span class="ar">⇅</span></th>
+  <th data-k="app" data-t="s">主要應用 <span class="ar">⇅</span></th>
+ </tr></thead>
+ <tbody></tbody>
+</table>
+<div class="cap">速度：★ 越多越快。整合自 Table 17.4 / 17.5。</div>
+</div></section><section class="slide" data-slide="28" data-section="喚起行動"><div class="slide-inner"><div class="kicker">方法選擇</div><h2 class="slide-title">怎麼選？跟著決策樹走</h2>
+<div class="svgwrap" style="margin-top:10px">
+<svg viewBox="0 0 980 360">
+ <!-- root -->
+ <rect x="380" y="14" width="220" height="56" rx="12" fill="#1f6feb"/>
+ <text x="490" y="40" text-anchor="middle" fill="#fff" font-weight="800" font-size="16">這是什麼樣的樣品?</text>
+ <text x="490" y="60" text-anchor="middle" fill="#cfe0f6" font-size="12">選擇油脂分析方法</text>
+ <!-- lines -->
+ <g stroke="#8493ad" stroke-width="2" fill="none">
+  <path d="M420 70 C 200 110, 130 120, 120 150"/>
+  <path d="M470 70 C 400 120, 380 120, 375 150"/>
+  <path d="M510 70 C 590 120, 610 120, 625 150"/>
+  <path d="M560 70 C 800 110, 860 120, 875 150"/>
+ </g>
+ <!-- leaves -->
+ <g font-size="14" font-weight="800">
+  <rect x="30" y="150" width="190" height="120" rx="12" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
+  <text x="125" y="178" text-anchor="middle" fill="#15233f">乳品?</text>
+  <text x="125" y="206" text-anchor="middle" fill="#d9822b" font-size="16">Babcock / Gerber</text>
+  <text x="125" y="232" text-anchor="middle" fill="#48597a" font-size="12">H₂SO₄ 體積法</text>
+  <text x="125" y="252" text-anchor="middle" fill="#48597a" font-size="12">快速、乳品專用</text>
+
+  <rect x="280" y="150" width="190" height="120" rx="12" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
+  <text x="375" y="178" text-anchor="middle" fill="#15233f">結合脂質?</text>
+  <text x="375" y="206" text-anchor="middle" fill="#1f6feb" font-size="16">酸 / 鹼水解</text>
+  <text x="375" y="232" text-anchor="middle" fill="#48597a" font-size="12">麵粉、蛋、乳品</text>
+  <text x="375" y="252" text-anchor="middle" fill="#48597a" font-size="12">先釋放再萃取</text>
+
+  <rect x="530" y="150" width="190" height="120" rx="12" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
+  <text x="625" y="178" text-anchor="middle" fill="#15233f">營養標示?</text>
+  <text x="625" y="206" text-anchor="middle" fill="#1f9d6b" font-size="16">GC 法</text>
+  <text x="625" y="232" text-anchor="middle" fill="#48597a" font-size="12">FAME · AOAC 996.06</text>
+  <text x="625" y="252" text-anchor="middle" fill="#48597a" font-size="12">FDA 定義的總脂肪</text>
+
+  <rect x="780" y="150" width="190" height="120" rx="12" fill="#f6f9fd" stroke="#48597a" stroke-width="2"/>
+  <text x="875" y="178" text-anchor="middle" fill="#15233f">一般乾樣?</text>
+  <text x="875" y="206" text-anchor="middle" fill="#15233f" font-size="16">Soxhlet</text>
+  <text x="875" y="232" text-anchor="middle" fill="#48597a" font-size="12">穀物、堅果、肉</text>
+  <text x="875" y="252" text-anchor="middle" fill="#48597a" font-size="12">半連續·主力方法</text>
+ </g>
+</svg></div>
+<p class="subtitle" style="text-align:center;margin-top:14px">下一頁實戰：給你一個食物，選出最合適的方法 →</p>
+</div></section><section class="slide" data-slide="29" data-section="喚起行動" data-game="g5"><div class="slide-inner">
+<div class="game no-nav" data-game="g5">
+  <div class="game-head"><span class="tag a">小遊戲 ⑤</span>
+    <span class="gt">決策挑戰</span><span class="score" id="g5score">0 / 5</span></div>
+  <div class="game-q" id="g5q"></div>
+  <div class="opts" id="g5opts"></div>
+  <div class="fb" id="g5fb"></div>
+  <div class="btnrow"><button class="btn ghost" id="g5next" style="display:none">下一題 →</button></div>
+</div></div></section><section class="slide" data-slide="30" data-section="喚起行動"><div class="slide-inner"><div class="kicker">17.8 計算</div><h2 class="slide-title">乾基 vs 濕基（範例詳解）</h2>
+<div class="note" style="margin-top:8px">半濕食物 10 g，水分 25%。乾燥後測得脂肪 13.5%（乾基）。求原食物的脂肪 %？</div>
+<div class="grid2" style="margin-top:18px">
+  <div>
+    <ul class="clean">
+      <li>乾重 = 10 × (1−0.25) = <strong>7.5 g</strong></li>
+      <li>脂肪 = 7.5 × 13.5% = <strong>1.0125 g</strong></li>
+      <li>原食物脂肪 = 1.0125 / 10 = <span class="em">10.125%</span></li>
+    </ul>
+  </div>
+  <div class="eq">
+   % 脂肪(濕基) =
+   <span class="frac"><b>乾重 × 乾基%</b><span>原樣品重</span></span>
+  </div>
+</div>
+<p class="subtitle" style="margin-top:14px">換你算下一頁的冰淇淋題 →</p>
+</div></section><section class="slide" data-slide="31" data-section="喚起行動" data-game="g6"><div class="slide-inner">
+<div class="game no-nav" data-game="g6">
+  <div class="game-head"><span class="tag a">小遊戲 ⑥</span>
+    <span class="gt">計算闖關</span><span class="score" id="g6score">未作答</span></div>
+  <div class="game-q">10.00 g 冰淇淋用 Mojonnier 法。第二、三次萃取的脂肪分別為
+   1.21 g 與 1.24 g。<strong>第三次萃取</strong>佔總量的百分比是多少？</div>
+  <div class="btnrow">
+    <input class="numin" id="g6in" type="number" step="0.01" placeholder="?"> <span style="font-weight:800;color:var(--ink)">%</span>
+    <button class="btn" id="g6check">對答案</button>
+    <button class="btn ghost" id="g6hint">提示</button>
+  </div>
+  <div class="fb" id="g6fb"></div>
+</div></div></section><section class="slide" data-slide="32" data-section="喚起行動"><div class="slide-inner"><div class="kicker">重點整理</div><h2 class="slide-title">今天的五個關鍵</h2>
+<div class="grid2" style="margin-top:18px">
+  <ul class="clean">
+    <li><strong>溶解度</strong>是油脂萃取的根基</li>
+    <li>樣品前處理：乾燥、磨碎、<strong>水解釋放結合脂質</strong></li>
+    <li>溶劑萃取：連續(Goldfisch)／半連續(<strong>Soxhlet</strong>)／不連續(Mojonnier、酸水解、氯仿-甲醇)</li>
+  </ul>
+  <ul class="clean">
+    <li>營養標示用 <strong>GC 法</strong>（FAME, AOAC 996.06）</li>
+    <li>乳品用 <strong>Babcock / Gerber</strong>（體積法）；儀器法快但需校正</li>
+  </ul>
+</div>
+<div class="note" style="margin-top:18px"><strong>選方法</strong>＝看樣品種類 × 脂質型態 × 用途（標示？品管？研究？）。</div>
+</div></section><section class="slide" data-slide="33" data-section="喚起行動"><div class="slide-inner"><div class="kicker">自我檢核</div><h2 class="slide-title">今天結束，你應該會…</h2>
+<ul class="checklist no-nav" id="selfcheck" style="margin-top:18px;max-width:900px">
+  <li data-k><span class="bx">✓</span>用溶解度解釋為什麼能把油脂分離出來</li>
+  <li data-k><span class="bx">✓</span>區分簡單／複合／衍生脂質</li>
+  <li data-k><span class="bx">✓</span>說明 Soxhlet 與 Goldfisch 的差異（浸泡 vs 連續）</li>
+  <li data-k><span class="bx">✓</span>解釋為什麼結合脂質要先水解</li>
+  <li data-k><span class="bx">✓</span>知道營養標示為何用 GC 法</li>
+  <li data-k><span class="bx">✓</span>替一個食物選出合適的脂肪分析方法</li>
+  <li data-k><span class="bx">✓</span>計算乾基／濕基的脂肪百分比</li>
+</ul>
+<p class="subtitle" style="margin-top:12px">點一下打勾——確認自己真的會了。</p>
+</div></section><section class="slide" data-slide="34" data-section="喚起行動" data-cover="1"><div class="slide-inner">
+<div class="cover">
+  <div class="kicker">下一步 · NEXT</div>
+  <h1 style="font-size:clamp(2rem,5vw,3.6rem)">把油脂分析<br><span style="color:var(--accent-2)">用起來</span></h1>
+  <div class="meta" style="margin-top:20px">
+   📌 課後練習：Study Questions 1–10、Practice Problems 1–2<br>
+   🔜 銜接章節：<strong>蛋白質分析 (Ch18)</strong>、<strong>碳水化合物分析 (Ch19)</strong><br>
+   🧪 思考：你實驗室的樣品，會選哪一種方法？為什麼？</div>
+  <div style="margin-top:26px"><span class="pill">Soxhlet</span><span class="pill">水解</span>
+  <span class="pill">GC / FAME</span><span class="pill">Babcock</span><span class="pill">NIR</span></div>
+</div></div></section><script>
+/* ---------------- navigation ---------------- */
+const slides=[...document.querySelectorAll('.slide')];
+const total=slides.length;
+let cur=0;
+const prog=document.getElementById('progress');
+const pageInfo=document.getElementById('pageInfo');
+const secTag=document.getElementById('section-tag');
+function show(i){
+  cur=Math.max(0,Math.min(total-1,i));
+  slides.forEach((s,k)=>s.classList.toggle('active',k===cur));
+  prog.style.width=((cur+1)/total*100)+'%';
+  pageInfo.textContent=(cur+1)+' / '+total;
+  secTag.textContent='— '+(slides[cur].dataset.section||'')+' —';
+  const ch=slides[cur].dataset.chart; if(ch) initChart(ch);
+  const g=slides[cur].dataset.game; if(g) initGame(g);
+}
+function next(){show(cur+1)} function prev(){show(cur-1)}
+function toggleFs(){ if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()} else {document.exitFullscreen&&document.exitFullscreen()} }
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next()}
+  else if(e.key==='ArrowLeft'){prev()}
+  else if(e.key==='f'||e.key==='F'){toggleFs()}
+});
+document.addEventListener('click',e=>{
+  if(e.target.closest('.no-nav')) return;
+  if(e.target.closest('button,input,select,textarea,a,.chip,.opt,.bucket')) return;
+  const x=e.clientX/window.innerWidth;
+  if(x>0.72) next(); else if(x<0.28) prev();
+});
+show(0);
+
+/* ---------------- charts (lazy) ---------------- */
+const chartDone={};
+function initChart(id){
+  if(chartDone[id]||typeof Chart==='undefined') return; chartDone[id]=1;
+  Chart.defaults.font.family="'Noto Sans TC',sans-serif";
+  Chart.defaults.color='#48597a';
+  if(id==='food'){
+    new Chart(document.getElementById('chartFood'),{type:'bar',
+      data:{labels:['芥花油','橄欖油','胡桃','芝麻醬','花生醬','培根','切達起司','全脂黃豆粉','葡萄乾餅乾','白麵包','2%牛奶','蘋果'],
+        datasets:[{label:'% 脂肪 (濕基)',data:[94.5,93.7,73.3,62.4,49.4,36.5,34,20.7,14.3,3.59,1.9,0.16],
+        backgroundColor:'#1f6feb',borderRadius:5}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+        scales:{y:{beginAtZero:true,title:{display:true,text:'% 脂肪'}}}}});
+  }
+  if(id==='hyd'){
+    new Chart(document.getElementById('chartHyd'),{type:'bar',
+      data:{labels:['乾蛋','酵母','麵粉','麵條','粗粒小麥粉'],
+        datasets:[
+         {label:'酸水解',data:[42.39,6.35,1.73,4.3,1.9],backgroundColor:'#d9822b',borderRadius:5},
+         {label:'不水解',data:[36.74,3.74,1.20,3.0,1.24],backgroundColor:'#9fb3d1',borderRadius:5}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},
+        scales:{y:{beginAtZero:true,title:{display:true,text:'% 脂肪'}}}}});
+  }
+}
+
+/* ---------------- games ---------------- */
+const gameDone={};
+function setScore(el,v){document.getElementById(el).textContent=v}
+function fb(el,msg,type){const f=document.getElementById(el);f.className='fb show '+type;f.innerHTML=msg}
+
+const G1=[
+ {t:'三酸甘油酯',c:'簡單'},{t:'蠟',c:'簡單'},
+ {t:'磷脂質',c:'複合'},{t:'腦苷脂',c:'複合'},{t:'鞘脂',c:'複合'},
+ {t:'脂肪酸',c:'衍生'},{t:'固醇',c:'衍生'},{t:'脂溶性維生素',c:'衍生'}];
+const G3=[
+ {t:'Goldfisch',c:'連續式'},{t:'Soxhlet',c:'半連續式'},
+ {t:'Mojonnier(鹼水解)',c:'不連續式'},{t:'酸水解',c:'不連續式'},{t:'氯仿-甲醇(Folch)',c:'不連續式'}];
+
+function buildBucketGame(prefix,data,cats){
+  const pool=document.getElementById(prefix+'pool');
+  const bk=document.getElementById(prefix+'buckets');
+  let sel=null;
+  function render(){
+    pool.innerHTML=''; bk.innerHTML='';
+    bk.style.gridTemplateColumns='repeat('+cats.length+',1fr)';
+    const placed={}; cats.forEach(c=>placed[c]=[]);
+    data.forEach((d,i)=>{ if(d.at) placed[d.at].push(i); });
+    data.forEach((d,i)=>{ if(d.at) return;
+      const c=document.createElement('div');c.className='chip';c.textContent=d.t;
+      c.onclick=()=>{sel=(sel===i?null:i);paint()};
+      c.dataset.i=i; pool.appendChild(c);
+    });
+    cats.forEach(cat=>{
+      const b=document.createElement('div');b.className='bucket';
+      let inner='<div class="bh">'+cat+'</div>';
+      b.innerHTML=inner;
+      placed[cat].forEach(i=>{
+        const c=document.createElement('div');c.className='chip';c.textContent=data[i].t;
+        c.onclick=()=>{data[i].at=null;sel=null;render()};
+        b.appendChild(c);
+      });
+      b.onclick=(e)=>{ if(e.target!==b&&!e.target.classList.contains('bh'))return;
+        if(sel!=null){data[sel].at=cat;sel=null;render()} };
+      bk.appendChild(b);
+    });
+    paint();
+  }
+  function paint(){[...pool.children].forEach(c=>c.classList.toggle('sel',+c.dataset.i===sel))}
+  render();
+  return {data,render};
+}
+
+function initGame(g){
+  if(gameDone[g]) return; gameDone[g]=1;
+
+  if(g==='g1'){
+    G1.forEach(d=>d.at=null);
+    const inst=buildBucketGame('g1',G1,['簡單','複合','衍生']);
+    document.getElementById('g1check').onclick=()=>{
+      let ok=0; G1.forEach(d=>{if(d.at===d.c)ok++});
+      setScore('g1score',ok+' / 8');
+      if(ok===8) fb('g1fb','🎉 全對！簡單=酯類、複合=含其他基團、衍生=由前兩者衍生。','good');
+      else fb('g1fb','答對 '+ok+'/8。提示：脂肪酸、固醇、脂溶性維生素都是「衍生脂質」。再調整看看。','bad');
+    };
+    document.getElementById('g1reset').onclick=()=>{G1.forEach(d=>d.at=null);inst.render();setScore('g1score','0 / 8');document.getElementById('g1fb').className='fb'};
+  }
+
+  if(g==='g3'){
+    G3.forEach(d=>d.at=null);
+    const inst=buildBucketGame('g3',G3,['連續式','半連續式','不連續式']);
+    document.getElementById('g3check').onclick=()=>{
+      let ok=0; G3.forEach(d=>{if(d.at===d.c)ok++});
+      setScore('g3score',ok+' / 5');
+      if(ok===5) fb('g3fb','🎉 正確！Goldfisch=連續、Soxhlet=半連續、其餘三個都是不連續。','good');
+      else fb('g3fb','答對 '+ok+'/5。記得：只有 Goldfisch 連續、只有 Soxhlet 半連續。','bad');
+    };
+    document.getElementById('g3reset').onclick=()=>{G3.forEach(d=>d.at=null);inst.render();setScore('g3score','0 / 5');document.getElementById('g3fb').className='fb'};
+  }
+
+  if(g==='g2') initMCQ('g2',G2DATA,4);
+  if(g==='g5') initMCQ('g5',G5DATA,5);
+
+  if(g==='g4'){
+    const correct=[
+     '加入抗氧化劑（焦性沒食子酸）','加入內標（二十一酸甲酯）','進行酸/鹼水解',
+     '用乙醚/石油醚萃取脂肪','用 BF₃/甲醇 甲基化成 FAME','GC 毛細管柱分離、偵測定量','加總各脂肪酸 = 總脂肪'];
+    let order=[0,1,2,3,4,5,6];
+    // shuffle deterministically-ish
+    order=[3,0,5,1,6,2,4];
+    const list=document.getElementById('g4list');
+    function render(){
+      list.innerHTML='';
+      order.forEach((stepIdx,pos)=>{
+        const row=document.createElement('div');row.className='sortrow';
+        row.innerHTML='<div class="idx">'+(pos+1)+'</div><div class="txt">'+correct[stepIdx]+'</div>';
+        const ud=document.createElement('div');ud.className='ud';
+        const up=document.createElement('button');up.textContent='▲';up.onclick=()=>{if(pos>0){[order[pos-1],order[pos]]=[order[pos],order[pos-1]];render()}};
+        const dn=document.createElement('button');dn.textContent='▼';dn.onclick=()=>{if(pos<order.length-1){[order[pos+1],order[pos]]=[order[pos],order[pos+1]];render()}};
+        ud.appendChild(up);ud.appendChild(dn);row.appendChild(ud);
+        list.appendChild(row);
+      });
+    }
+    render();
+    document.getElementById('g4check').onclick=()=>{
+      let ok=0; order.forEach((v,i)=>{if(v===i)ok++});
+      [...list.children].forEach((r,i)=>{r.classList.toggle('ok',order[i]===i);r.classList.toggle('no',order[i]!==i)});
+      setScore('g4score',ok+' / 7');
+      if(ok===7) fb('g4fb','🎉 順序完全正確！先防氧化+內標 → 水解 → 萃取 → 甲基化 → GC → 加總。','good');
+      else fb('g4fb','對了 '+ok+'/7 個位置。提示：水解一定在萃取之前；甲基化後才能上 GC。','bad');
+    };
+    document.getElementById('g4reset').onclick=()=>{order=[6,4,2,0,5,3,1];render();document.getElementById('g4fb').className='fb';setScore('g4score','— / 7')};
+  }
+
+  if(g==='g6'){
+    document.getElementById('g6check').onclick=()=>{
+      const v=parseFloat(document.getElementById('g6in').value);
+      if(isNaN(v)){fb('g6fb','請先輸入一個數字。','info');return}
+      if(Math.abs(v-0.3)<=0.06){
+        setScore('g6score','✓ 答對');
+        fb('g6fb','🎉 正確！(1.24 − 1.21) / 10 × 100 = <b>0.3%</b>。第三次只多萃出極少脂肪，代表前兩次幾乎萃完了。','good');
+      } else {
+        setScore('g6score','再試一次');
+        fb('g6fb','不對喔。第三次「新增」的脂肪 = 1.24 − 1.21 = 0.03 g，再除以樣品 10 g ×100。','bad');
+      }
+    };
+    document.getElementById('g6hint').onclick=()=>fb('g6fb','提示：第三次萃取「多出來」的量 = 第三次 − 第二次重量；再除以樣品總重 ×100。','info');
+  }
+
+  if(g==='cmp') initCmp();
+}
+
+/* ---- MCQ engine ---- */
+const G2DATA=[
+ {q:'哪一種溶劑較疏水、較便宜、較不易吸濕、也較不易燃？',
+  o:['乙醚','石油醚','氯仿','甲醇'],a:1,
+  e:'石油醚較疏水、便宜、不易吸濕、不易燃，對疏水脂質有選擇性。'},
+ {q:'乙醚 (ethyl ether) 的主要缺點是？',
+  o:['完全不溶解脂質','易吸濕、易爆易燃、會形成過氧化物','沸點高達 200°C','只能用於乳品'],a:1,
+  e:'乙醚溶脂力佳，但吸濕、易爆、會生過氧化物，是它的風險。'},
+ {q:'理想的脂肪萃取溶劑應該具備什麼？',
+  o:['能溶解蛋白質與碳水','高溶脂力、不溶蛋白/碳水、易揮發無殘留','沸點越高越好','顏色越深越好'],a:1,
+  e:'好溶劑要「只挑脂質」、容易移除、不留殘渣。'},
+ {q:'為什麼濕的樣品要先「預乾燥」再用乙醚萃取？',
+  o:['讓樣品變重','乙醚疏水又吸濕，無法穿透含水組織','降低脂肪含量','增加顏色'],a:1,
+  e:'水分會阻擋疏水的乙醚穿透樣品，所以先除水。'}
+];
+const G5DATA=[
+ {q:'要快速測「牛奶」的脂肪含量，最常用？',
+  o:['Soxhlet','Babcock / Gerber','氯仿-甲醇','X-ray'],a:1,
+  e:'Babcock / Gerber 是乳品專用的體積法，約 45 分鐘。'},
+ {q:'「麵粉」的脂質與蛋白、碳水結合，應先做什麼？',
+  o:['直接乙醚萃取','酸水解後再萃取','只用 NIR','離心即可'],a:1,
+  e:'結合脂質要先酸水解打斷鍵結，否則會低估。'},
+ {q:'要做「營養標示」上的總脂肪，法定方法是？',
+  o:['Babcock','GC 法 (AOAC 996.06)','Goldfisch','比重法'],a:1,
+  e:'營養標示用 GC 測 FAME，符合 FDA 對總脂肪的定義。'},
+ {q:'一般「乾燥穀物 / 堅果」測總脂，最典型的選擇？',
+  o:['Soxhlet','Gerber','NMR','Babcock'],a:0,
+  e:'Soxhlet 半連續萃取是穀物、堅果、肉品的主力方法。'},
+ {q:'「低脂、高水分」樣品要做脂肪酸組成，適合？',
+  o:['Babcock','氯仿-甲醇 (Bligh-Dyer)','X-ray','Gerber'],a:1,
+  e:'Bligh-Dyer 適合高水分大樣品，常用於後續脂肪酸分析。'}
+];
+function initMCQ(prefix,DATA,nq){
+  let idx=0,score=0,locked=false;
+  const qEl=document.getElementById(prefix+'q');
+  const opEl=document.getElementById(prefix+'opts');
+  const nextBtn=document.getElementById(prefix+'next');
+  function render(){
+    locked=false;
+    const d=DATA[idx];
+    qEl.innerHTML='<span style="color:var(--accent)">Q'+(idx+1)+'.</span> '+d.q;
+    opEl.innerHTML='';
+    document.getElementById(prefix+'fb').className='fb';
+    nextBtn.style.display='none';
+    d.o.forEach((t,i)=>{
+      const o=document.createElement('div');o.className='opt';o.textContent=t;
+      o.onclick=()=>{
+        if(locked)return; locked=true;
+        const ok=(i===d.a);
+        if(ok){o.classList.add('ok');score++}
+        else{o.classList.add('no');opEl.children[d.a].classList.add('ok')}
+        [...opEl.children].forEach((c,k)=>{if(k!==i&&k!==d.a)c.classList.add('dim')});
+        setScore(prefix+'score',score+' / '+nq);
+        fb(prefix+'fb',(ok?'✅ 答對！':'❌ 正解：'+d.o[d.a]+'。')+'<br>'+d.e,ok?'good':'bad');
+        nextBtn.style.display=(idx<DATA.length-1)?'inline-block':'none';
+        if(idx>=DATA.length-1) fb(prefix+'fb',(ok?'✅ 答對！':'❌ 正解：'+d.o[d.a]+'。')+'<br>'+d.e+'<br><b>完成！總分 '+score+'/'+nq+'</b>',ok?'good':'bad');
+      };
+      opEl.appendChild(o);
+    });
+  }
+  nextBtn.onclick=()=>{if(idx<DATA.length-1){idx++;render()}};
+  render();
+}
+
+/* ---- comparison sortable table ---- */
+const CMP=[
+ {m:'Soxhlet',meas:'重量法',speed:2,app:'穀物、堅果、肉'},
+ {m:'Goldfisch',meas:'重量法',speed:3,app:'（連續式對照）'},
+ {m:'Mojonnier(鹼)',meas:'重量法',speed:2,app:'乳品'},
+ {m:'酸水解',meas:'重量法',speed:2,app:'多數食品'},
+ {m:'氯仿-甲醇',meas:'重量法',speed:2,app:'多數食品、脂肪酸組成'},
+ {m:'GC 法',meas:'脂肪酸加總',speed:1,app:'營養標示（法定）'},
+ {m:'Babcock',meas:'體積法',speed:3,app:'乳品'},
+ {m:'Gerber',meas:'體積法',speed:4,app:'乳品（高糖）'},
+ {m:'NIR / IR',meas:'光譜預測',speed:5,app:'肉、穀物、乳品'},
+ {m:'NMR',meas:'訊號→總脂',speed:5,app:'高通量、固脂'},
+ {m:'ASE / SFE',meas:'重量法',speed:4,app:'取代 Soxhlet'}
+];
+function stars(n){return '★★★★★'.slice(0,n)+'☆☆☆☆☆'.slice(0,5-n)}
+function initCmp(){
+  const tb=document.querySelector('#cmpTable tbody');
+  let dir={};
+  function draw(){tb.innerHTML='';CMP.forEach(r=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML='<td class="c">'+r.m+'</td><td>'+r.meas+'</td><td style="color:var(--accent-2)">'+stars(r.speed)+'</td><td>'+r.app+'</td>';
+    tb.appendChild(tr);});}
+  draw();
+  document.querySelectorAll('#cmpTable thead th').forEach(th=>{
+    th.onclick=()=>{const k=th.dataset.k,t=th.dataset.t;dir[k]=!dir[k];
+      CMP.sort((a,b)=>{let x=a[k],y=b[k];if(t==='n'){return dir[k]?x-y:y-x}
+        return dir[k]?String(x).localeCompare(String(y),'zh-Hant'):String(y).localeCompare(String(x),'zh-Hant')});
+      draw();};
+  });
+}
+</script></body></html>

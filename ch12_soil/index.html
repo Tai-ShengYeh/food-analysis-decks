@@ -1,0 +1,433 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>層析原理 Basic Principles of Chromatography · Nielsen Ch12</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script><style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{font-size:18px}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;background:var(--bg);
+  color:var(--ink);overflow:hidden;height:100vh;width:100vw}
+:root{
+  --bg:#eef2f8;--surface:#ffffff;--surface-2:#f6f9fd;
+  --ink:#15233f;--ink-2:#48597a;--ink-3:#8493ad;--line:#dde5f0;
+  --accent:#1f6feb;--accent-soft:#e7f0fe;
+  --accent-2:#d9822b;--accent-2-soft:#fbeede;
+  --ok:#1f9d6b;--ok-soft:#e3f6ee;--bad:#d94f4f;--bad-soft:#fbe7e7;--warn:#d9a32b;
+  --t2:clamp(1.4rem,3vw,2.3rem);
+  --shadow:0 10px 30px rgba(20,40,80,.10);--shadow-sm:0 3px 12px rgba(20,40,80,.08)}
+#progress{position:fixed;top:0;left:0;height:4px;width:0;z-index:50;
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .5s ease}
+#section-tag{position:fixed;top:16px;left:24px;z-index:40;font-size:.78rem;letter-spacing:.18em;
+  color:var(--accent);font-weight:700;font-family:"JetBrains Mono",monospace}
+#pageInfo{position:fixed;right:22px;bottom:16px;z-index:40;font-size:.82rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+#hint{position:fixed;left:24px;bottom:16px;z-index:40;font-size:.72rem;color:var(--ink-3)}
+#brand{position:fixed;right:22px;top:14px;z-index:40;font-size:.72rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:64px 84px;opacity:0;pointer-events:none;
+  transition:opacity .55s ease,transform .55s ease;transform:translateY(14px)}
+.slide.active{opacity:1;pointer-events:auto;transform:translateY(0)}
+.slide-inner{width:100%;max-width:1280px}
+.kicker{font-family:"JetBrains Mono",monospace;font-size:.8rem;letter-spacing:.16em;color:var(--accent);
+  font-weight:700;text-transform:uppercase;margin-bottom:10px}
+.slide-title{font-size:var(--t2);font-weight:900;line-height:1.18;color:var(--ink);letter-spacing:-.01em}
+.slide-title .hi{color:var(--accent-2)}
+.subtitle{font-size:clamp(.95rem,1.5vw,1.2rem);color:var(--ink-2);margin-top:12px;line-height:1.6}
+p,li{font-size:clamp(.92rem,1.4vw,1.12rem);line-height:1.68;color:var(--ink-2)}
+.lead{font-size:clamp(1.05rem,1.8vw,1.35rem);color:var(--ink);line-height:1.6}
+strong,b{color:var(--ink);font-weight:800}.em{color:var(--accent-2);font-weight:800}
+.divider{height:3px;width:64px;background:var(--accent-2);border-radius:2px;margin:18px 0}
+ul.clean{list-style:none}ul.clean li{position:relative;padding-left:26px;margin:10px 0}
+ul.clean li:before{content:"";position:absolute;left:4px;top:.62em;width:8px;height:8px;border-radius:2px;
+  background:var(--accent);transform:rotate(45deg)}
+.mono{font-family:"JetBrains Mono",monospace}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.grid2-1{display:grid;grid-template-columns:1.15fr .85fr;gap:34px;align-items:center}
+.flow6{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow-sm)}
+.card .ic{font-size:1.6rem;margin-bottom:8px}
+.card .ct{font-weight:800;color:var(--ink);font-size:clamp(1rem,1.5vw,1.2rem);margin-bottom:6px}
+.card .cb{font-size:clamp(.85rem,1.25vw,1rem);color:var(--ink-2);line-height:1.55}
+.card.b{border-top:4px solid var(--accent)}.card.a{border-top:4px solid var(--accent-2)}
+.card.g{border-top:4px solid var(--ok)}
+.tag{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:.7rem;padding:3px 9px;border-radius:999px;
+  background:var(--accent-soft);color:var(--accent);font-weight:700}
+.tag.a{background:var(--accent-2-soft);color:var(--accent-2)}
+.pill{display:inline-block;padding:5px 12px;border-radius:999px;background:var(--surface);border:1px solid var(--line);
+  font-size:.82rem;color:var(--ink-2);margin:3px 4px}
+.note{background:var(--accent-2-soft);border-left:4px solid var(--accent-2);border-radius:8px;padding:14px 18px;
+  color:var(--ink);font-size:clamp(.9rem,1.3vw,1.05rem);line-height:1.6}
+.eq{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 22px;
+  font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,1.7vw,1.4rem);color:var(--ink);text-align:center;box-shadow:var(--shadow-sm)}
+.eq .frac{display:inline-flex;flex-direction:column;text-align:center;vertical-align:middle;margin:0 6px}
+.eq .frac b{border-bottom:2px solid var(--ink);padding-bottom:3px}
+table.cmp{width:100%;border-collapse:collapse;font-size:clamp(.82rem,1.2vw,1.02rem)}
+table.cmp th,table.cmp td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line)}
+table.cmp thead th{color:var(--accent);font-weight:800;border-bottom:2px solid var(--accent);cursor:pointer;
+  user-select:none;white-space:nowrap}
+table.cmp thead th .ar{opacity:.4;font-size:.8em}
+table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--ink);font-weight:700}
+.cover{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 100px;
+  background:radial-gradient(1200px 600px at 80% 20%,var(--accent-2-soft),transparent 60%),
+  radial-gradient(900px 500px at 10% 90%,var(--accent-soft),transparent 55%),linear-gradient(135deg,#ffffff,#eef2f8)}
+.cover h1{font-size:clamp(2.4rem,6vw,4.6rem);font-weight:900;line-height:1.05;letter-spacing:-.02em;color:var(--ink)}
+.cover .en{font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,2vw,1.5rem);color:var(--accent);letter-spacing:.1em;margin-top:6px}
+.cover .meta{margin-top:26px;color:var(--ink-2);font-size:clamp(.9rem,1.4vw,1.1rem)}
+.hook{font-size:clamp(2rem,5vw,3.6rem);font-weight:900;color:var(--ink);line-height:1.2;letter-spacing:-.01em}
+.hook .hi{color:var(--accent)}
+.svgwrap{display:flex;align-items:center;justify-content:center}
+.svgwrap svg{max-width:100%;max-height:62vh;height:auto}
+.lbl{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink-2)}
+.lblb{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink);font-weight:700}
+.game{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 24px;box-shadow:var(--shadow)}
+.game-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.game-head .gt{font-weight:900;font-size:clamp(1.05rem,1.7vw,1.35rem);color:var(--ink)}
+.game-head .score{margin-left:auto;font-family:"JetBrains Mono",monospace;font-weight:700;color:var(--accent);
+  background:var(--accent-soft);padding:5px 13px;border-radius:999px;font-size:.9rem}
+.game-q{font-size:clamp(.95rem,1.5vw,1.18rem);color:var(--ink);font-weight:700;margin:6px 0 14px;line-height:1.5}
+.buckets{display:grid;gap:16px;margin-top:14px}
+.bucket{min-height:120px;border:2px dashed var(--line);border-radius:14px;padding:12px;background:var(--surface-2);transition:.2s}
+.bucket .bh{font-weight:800;color:var(--ink);text-align:center;margin-bottom:8px;font-size:.95rem}
+.pool{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;min-height:54px}
+.chip{padding:9px 15px;border-radius:10px;background:var(--surface);border:1px solid var(--line);font-weight:700;
+  color:var(--ink);cursor:pointer;box-shadow:var(--shadow-sm);font-size:.92rem;transition:.15s}
+.chip:hover{border-color:var(--accent);transform:translateY(-1px)}
+.chip.sel{background:var(--accent);color:#fff;border-color:var(--accent)}
+.chip.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.chip.no{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+.opt{padding:14px 18px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);cursor:pointer;
+  font-weight:700;color:var(--ink);font-size:clamp(.88rem,1.3vw,1.05rem);transition:.15s}
+.opt:hover{border-color:var(--accent);background:var(--accent-soft)}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.opt.no{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}.opt.dim{opacity:.5}
+.fb{margin-top:14px;padding:12px 16px;border-radius:10px;font-weight:700;display:none;
+  font-size:clamp(.85rem,1.3vw,1.02rem);line-height:1.5}
+.fb.show{display:block}.fb.good{background:var(--ok-soft);color:var(--ok)}
+.fb.bad{background:var(--bad-soft);color:var(--bad)}.fb.info{background:var(--accent-soft);color:var(--accent)}
+.btn{padding:10px 20px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-weight:800;cursor:pointer;
+  font-size:.92rem;font-family:inherit;box-shadow:var(--shadow-sm)}
+.btn:hover{filter:brightness(1.06)}.btn.ghost{background:var(--surface);color:var(--accent);border:1.5px solid var(--accent)}
+.btnrow{display:flex;gap:12px;margin-top:16px;align-items:center}
+.sortlist{display:flex;flex-direction:column;gap:6px;margin-top:6px;max-height:44vh;overflow-y:auto;padding-right:4px}
+.sortrow{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:7px 14px;box-shadow:var(--shadow-sm)}
+.sortrow .idx{font-family:"JetBrains Mono",monospace;font-weight:800;color:var(--accent);width:24px}
+.sortrow .txt{flex:1;font-weight:700;color:var(--ink);font-size:clamp(.85rem,1.25vw,1.02rem)}
+.sortrow .ud{display:flex;flex-direction:column;gap:3px}
+.sortrow .ud button{border:none;background:var(--accent-soft);color:var(--accent);border-radius:6px;width:30px;height:20px;
+  cursor:pointer;font-weight:900;line-height:1}
+.sortrow.ok{border-color:var(--ok);background:var(--ok-soft)}.sortrow.no{border-color:var(--bad)}
+.numin{font-family:"JetBrains Mono",monospace;font-size:1.2rem;font-weight:800;padding:10px 14px;border:1.5px solid var(--line);
+  border-radius:10px;width:140px;color:var(--ink);text-align:center}
+.numin:focus{outline:none;border-color:var(--accent)}
+.checklist{list-style:none}
+.checklist li{display:flex;align-items:center;gap:12px;padding:11px 14px;border:1px solid var(--line);border-radius:10px;
+  margin:8px 0;background:var(--surface);cursor:pointer;font-weight:700;color:var(--ink-2);font-size:clamp(.9rem,1.35vw,1.08rem);transition:.15s}
+.checklist li .bx{width:24px;height:24px;border-radius:6px;border:2px solid var(--accent);display:flex;align-items:center;
+  justify-content:center;color:#fff;font-weight:900;flex:0 0 auto}
+.checklist li.done{background:var(--ok-soft);border-color:var(--ok);color:var(--ink)}
+.checklist li.done .bx{background:var(--ok);border-color:var(--ok)}
+.chartbox{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow-sm);
+  height:60vh;max-height:520px;position:relative}
+.cap{font-size:.82rem;color:var(--ink-3);text-align:center;margin-top:8px}
+</style></head><body><div id="progress"></div><div id="section-tag"></div><div id="brand">CHROMATOGRAPHY · CH12</div><div id="pageInfo"></div><div id="hint">← → / 空白鍵切頁　·　F 全螢幕　·　點兩側翻頁</div><section class="slide" data-slide="1" data-section="引起動機" data-cover="1"><div class="slide-inner"><div class="cover"><div class="kicker">NIELSEN'S FOOD ANALYSIS · CHAPTER 12</div><h1>層析<span style='color:var(--accent-2)'>原理</span></h1><div class="en">Basic Principles of Chromatography</div><div class="meta">食品分析　·　3 小時課程　·　含 6 個互動小遊戲<br>萃取 · 移動相/固定相 · 分配係數 · 七大分離模式 · 解析度</div><div style="margin-top:24px"><span class="pill">Extraction</span><span class="pill">Partition K</span><span class="pill">GC/LC/SFC</span><span class="pill">7 modes</span><span class="pill">Resolution</span></div></div></div></section><section class="slide" data-slide="2" data-section="引起動機"><div class="slide-inner"><div style="text-align:center">
+  <div class="kicker" style="justify-content:center">先想一想</div>
+  <div class="hook">一杯混合液裡的成分，<span class="hi">怎麼一個一個分開？</span></div>
+  <p class="subtitle" style="max-width:780px;margin:22px auto 0">食品裡常是數十種成分的混合物。要定性、定量，<br>
+  第一步往往是——把它們<strong>分離 (separation)</strong> 出來。</p>
+  <div style="margin-top:24px"><span class="pill">色素分離</span><span class="pill">胺基酸</span>
+  <span class="pill">脂溶性維生素</span><span class="pill">多酚</span><span class="pill">糖類</span></div></div></div></section><section class="slide" data-slide="3" data-section="引起動機"><div class="slide-inner"><div class="kicker">12.1 為什麼重要</div><h2 class="slide-title">層析：分析科學的基石</h2><div class="grid2" style="margin-top:22px"><div class="card b"><div class="ic">🌈</div><div class="ct">分離混合物</div><div class="cb">把複雜樣品中的各成分逐一分開，是定性/定量的前提</div></div><div class="card a"><div class="ic">🔬</div><div class="ct">應用極廣</div><div class="cb">胺基酸、蛋白、脂質、醣類、酚類、摻假物皆可分析</div></div><div class="card g"><div class="ic">⚙️</div><div class="ct">技術多元</div><div class="cb">材料、設備、方法種類繁多，可彈性搭配</div></div><div class="card b"><div class="ic">🚀</div><div class="ct">品質控制</div><div class="cb">食品成分與產品的特性分析與品管</div></div></div></div></section><section class="slide" data-slide="4" data-section="引起動機"><div class="slide-inner"><div class="kicker">12.2 先談萃取</div><h2 class="slide-title">萃取：分離的起點</h2><div class="grid2" style="margin-top:18px"><div><ul class="clean"><li><strong>批次萃取</strong>：與第二種不互溶溶劑搖盪，溶質依分配分布</li><li><strong>連續萃取</strong>：如 Soxhlet，溶劑循環反覆萃取</li><li><strong>逆流萃取</strong>：多管串聯，分離分配係數相近的溶質</li><li>每一管的平衡 ≈ 層析的一個<span class='em'>理論板</span></li></ul></div><div class="note"><strong>分配係數 K：溶質在兩相濃度之比 (式 12.1)。</strong><br>K = 相 1 濃度 ÷ 相 2 濃度。逆流萃取正是層析的概念前身。</div></div></div></section><section class="slide" data-slide="5" data-section="引起動機" data-chart="polar"><div class="slide-inner"><div class="kicker">12.4.1 極性序</div><h2 class="slide-title"><span class='hi'>極性</span>決定洗脫順序</h2><div class="chartbox"><canvas id="chart_polar"></canvas></div><div class="cap">資料：Table 12.4 化合物極性序（相對等級，數字越大越極性）。</div></div></section><section class="slide" data-slide="6" data-section="引起動機"><div class="slide-inner"><div style="text-align:center">
+  <div class="kicker" style="justify-content:center">核心命題</div>
+  <div class="hook" style="font-size:clamp(1.7rem,4vw,3rem)">兩相之間，<span class="hi">不斷分配</span></div>
+  <p class="lead" style="max-width:820px;margin:20px auto 0">層析的本質：溶質在<strong>移動相</strong>與<strong>固定相</strong>之間反覆達成平衡。</p>
+  <div class="eq" style="max-width:560px;margin:24px auto 0">分配係數 K = <span class="frac"><b>移動相中溶質濃度</b><span>固定相中溶質濃度</span></span><br>
+  <span style="font-size:.8em;color:var(--ink-2)">與固定相作用越強 → 走得越慢 → 越晚洗出</span></div></div></div></section><section class="slide" data-slide="7" data-section="引起動機"><div class="slide-inner"><div class="kicker">12.3.1 歷史</div><h2 class="slide-title">從色素到<span class='hi'>層析學</span></h2><div class="grid2" style="margin-top:18px"><div class="card g"><div class="ic">🌿</div><div class="ct">1903 Tsvet</div><div class="cb">俄國植物學家用碳酸鈣管柱分離葉片色素，命名 chromatography</div></div><div class="card b"><div class="ic">🧪</div><div class="ct">1941 Martin & Synge</div><div class="cb">發展液–液分配層析，奠定理論板概念</div></div><div class="card a"><div class="ic">⛽</div><div class="ct">1960s GC</div><div class="cb">氣相層析商品化，先用於石油工業</div></div><div class="card b"><div class="ic">🚀</div><div class="ct">HPLC / SFC</div><div class="cb">由 GC 理論推進液相；SFC 1962 起應用於食品</div></div></div></div></section><section class="slide" data-slide="8" data-section="引起動機" data-game="g1"><div class="slide-inner"><div class="game no-nav" data-game="g1"><div class="game-head"><span class="tag a">小遊戲 ①</span><span class="gt">三種層析依「移動相」分類</span><span class="score" id="g1score">0 / 6</span></div><div class="game-q">移動相是什麼狀態？把 6 個關鍵字分到三類。</div><div class="pool" id="g1pool"></div><div class="buckets" id="g1buckets"></div><div class="fb" id="g1fb"></div><div class="btnrow"><button class="btn" id="g1check">檢查答案</button><button class="btn ghost" id="g1reset">重來</button></div></div></div></section><section class="slide" data-slide="9" data-section="維持注意"><div class="slide-inner"><div class="kicker">12.3.2 一般術語</div><h2 class="slide-title">層析家族<span class='hi'>樹</span></h2><div class="svgwrap" style="margin-top:10px">
+<svg viewBox="0 0 980 320">
+ <rect x="400" y="14" width="180" height="48" rx="10" fill="#1f6feb"/>
+ <text x="490" y="44" text-anchor="middle" fill="#fff" font-weight="800" font-size="16">層析 Chromatography</text>
+ <g stroke="#8493ad" stroke-width="2" fill="none">
+  <path d="M460 62 C 300 90,210 95,200 120"/><path d="M490 62 v58"/>
+  <path d="M520 62 C 680 90,770 95,780 120"/></g>
+ <g font-size="14" font-weight="800">
+  <rect x="110" y="120" width="180" height="56" rx="10" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
+  <text x="200" y="146" text-anchor="middle" fill="#15233f">氣相層析 GC</text>
+  <text x="200" y="166" text-anchor="middle" class="lbl">移動相＝氣體</text>
+  <rect x="400" y="120" width="180" height="56" rx="10" fill="#eef4ec" stroke="#1f9d6b" stroke-width="2"/>
+  <text x="490" y="146" text-anchor="middle" fill="#15233f">超臨界流體 SFC</text>
+  <text x="490" y="166" text-anchor="middle" class="lbl">移動相＝超臨界流體</text>
+  <rect x="690" y="120" width="180" height="56" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
+  <text x="780" y="146" text-anchor="middle" fill="#15233f">液相層析 LC</text>
+  <text x="780" y="166" text-anchor="middle" class="lbl">移動相＝液體</text>
+ </g>
+ <g stroke="#8493ad" stroke-width="2" fill="none">
+  <path d="M740 176 C 640 205,600 210,590 235"/><path d="M780 176 v59"/>
+  <path d="M820 176 C 900 205,910 210,905 235"/></g>
+ <g font-size="13" font-weight="700">
+  <rect x="500" y="235" width="180" height="44" rx="9" fill="#f6f9fd" stroke="#48597a" stroke-width="1.6"/>
+  <text x="590" y="262" text-anchor="middle" fill="#15233f">紙層析 Paper</text>
+  <rect x="690" y="235" width="180" height="44" rx="9" fill="#f6f9fd" stroke="#48597a" stroke-width="1.6"/>
+  <text x="780" y="262" text-anchor="middle" fill="#15233f">薄層 TLC</text>
+  <rect x="816" y="235" width="150" height="44" rx="9" fill="#f6f9fd" stroke="#48597a" stroke-width="1.6"/>
+  <text x="891" y="262" text-anchor="middle" fill="#15233f">管柱 Column</text>
+ </g>
+</svg></div><div class="note" style="margin-top:14px">依<strong>移動相</strong>分為 GC / LC / SFC；液相層析再分為平面式（紙、薄層 TLC）與管柱式。</div></div></section><section class="slide" data-slide="10" data-section="維持注意"><div class="slide-inner"><div class="kicker">12.3 管柱層析</div><h2 class="slide-title">管柱裡發生了什麼</h2><div class="grid2-1" style="margin-top:8px"><div class="svgwrap">
+<svg viewBox="0 0 300 400">
+ <defs><linearGradient id="gc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eaf2ff"/><stop offset="1" stop-color="#cfe0f6"/></linearGradient></defs>
+ <rect x="118" y="18" width="64" height="22" rx="6" fill="#48597a"/>
+ <text x="150" y="33" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">注入樣品</text>
+ <path d="M150 40 v18" stroke="#1f6feb" stroke-width="3"/>
+ <rect x="110" y="58" width="80" height="270" rx="14" fill="url(#gc)" stroke="#1f6feb" stroke-width="3"/>
+ <text x="150" y="78" text-anchor="middle" class="lblb">管柱 Column</text>
+ <text x="150" y="96" text-anchor="middle" class="lbl">固定相</text>
+ <circle cx="135" cy="125" r="7" fill="#d9822b"/><circle cx="160" cy="135" r="7" fill="#d9822b"/>
+ <circle cx="148" cy="180" r="7" fill="#1f9d6b"/><circle cx="166" cy="195" r="7" fill="#1f9d6b"/>
+ <circle cx="138" cy="250" r="7" fill="#8b5cf6"/>
+ <text x="232" y="100" class="lbl">移動相</text><text x="232" y="118" class="lbl">↓ 流洗</text>
+ <text x="232" y="190" class="lbl">分配快</text><text x="232" y="208" class="lbl">→ 先出</text>
+ <path d="M150 328 v22" stroke="#1f6feb" stroke-width="3"/>
+ <rect x="108" y="350" width="84" height="26" rx="7" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
+ <text x="150" y="368" text-anchor="middle" class="lblb" font-size="12">偵測器 → 訊號</text>
+ <text x="150" y="394" text-anchor="middle" class="lbl">管柱層析 Column chromatography</text>
+</svg></div><div><ul class="clean"><li><strong>移動相</strong>帶著樣品流過<strong>固定相</strong></li><li>各成分與固定相作用<span class='em'>強弱不同</span></li><li>作用弱者走得快 → <strong>先洗出</strong>；作用強者後出</li><li>出柱後經<strong>偵測器</strong>產生峰 (peak)</li></ul><div class="note" style="margin-top:14px">1903 年 Tsvet 用碳酸鈣管柱分離葉片色素，命名「chromatography」。</div></div></div></div></section><section class="slide" data-slide="11" data-section="維持注意"><div class="slide-inner"><div class="kicker">12.4 七大分離模式</div><h2 class="slide-title">依物理化學原理區分</h2><div class="grid2" style="margin-top:16px"><div class="card b"><div class="ic">🧲</div><div class="ct">吸附 / 分配</div><div class="cb">正相·逆相：靠極性差異 (van der Waals / 溶解度)</div></div><div class="card a"><div class="ic">💧</div><div class="ct">HILIC / HIC</div><div class="cb">親水交互作用 / 疏水交互作用</div></div><div class="card g"><div class="ic">⚡</div><div class="ct">離子交換</div><div class="cb">靜電作用，依電荷分離</div></div><div class="card b"><div class="ic">🔑</div><div class="ct">親和 / 排阻</div><div class="cb">專一結合 (affinity) / 依分子大小 (SEC)</div></div></div><div class="note" style="margin-top:14px">同一分離常牽涉<strong>不只一種機制</strong>；整理自 Table 12.3。</div></div></section><section class="slide" data-slide="12" data-section="維持注意" data-game="g2"><div class="slide-inner"><div class="game no-nav" data-game="g2"><div class="game-head"><span class="tag a">小遊戲 ②</span><span class="gt">層析原理即時測驗</span><span class="score" id="g2score">0 / 4</span></div><div class="game-q" id="g2q"></div><div class="opts" id="g2opts"></div><div class="fb" id="g2fb"></div><div class="btnrow"><button class="btn ghost" id="g2next" style="display:none">下一題 →</button></div></div></div></section><section class="slide" data-slide="13" data-section="維持注意"><div class="slide-inner"><div class="kicker">12.4.1 / 12.4.2</div><h2 class="slide-title">正相 vs 逆相</h2><div class="grid2" style="margin-top:16px"><div class="card a"><div class="ic">🟠</div><div class="ct">正相 Normal-phase</div><div class="cb">固定相<strong>極性</strong>(silica)、移動相非極性；<strong>非極性先出、極性後出</strong></div></div><div class="card b"><div class="ic">🔵</div><div class="ct">逆相 Reversed-phase</div><div class="cb">固定相<strong>非極性</strong>(C8/C18)、移動相極性(水/乙腈)；<strong>極性先出</strong></div></div></div><div class="note" style="margin-top:18px">逆相 HPLC 是食品分析<strong>最常用</strong>：維生素、多酚、類胡蘿蔔素、類黃酮。</div></div></section><section class="slide" data-slide="14" data-section="維持注意"><div class="slide-inner"><div class="kicker">12.3.5 超臨界流體</div><h2 class="slide-title">SFC：介於 GC 與 LC</h2><div class="grid2" style="margin-top:16px"><div class="card g"><div class="ic">🌫️</div><div class="ct">移動相</div><div class="cb">超臨界 CO₂（介於氣/液之間），可調壓力、溫度與組成</div></div><div class="card b"><div class="ic">🧴</div><div class="ct">強項</div><div class="cb">分析<strong>非揮發·熱不安定</strong>物；脂質、脂溶性維生素、Sudan 染料</div></div></div><div class="note" style="margin-top:18px">分析時間短、溶劑用量少；可用填充或毛細管柱，並可接質譜 (MS)。</div></div></section><section class="slide" data-slide="15" data-section="維持注意"><div class="slide-inner"><div class="kicker">12.4.5 離子交換</div><h2 class="slide-title">靠電荷分離</h2><div class="grid2" style="margin-top:16px"><div class="card b"><div class="ic">➖</div><div class="ct">陽離子交換</div><div class="cb">固定相帶<strong>負電</strong>(RSO₃⁻/RCO₂⁻)，抓陽離子</div></div><div class="card a"><div class="ic">➕</div><div class="ct">陰離子交換</div><div class="cb">固定相帶<strong>正電</strong>(R-NHR'₂⁺)，抓陰離子</div></div></div><div class="note" style="margin-top:18px">溶離策略：改變<strong>pH</strong> 或提高<strong>離子強度</strong>(如加 NaCl) 以削弱靜電作用。</div></div></section><section class="slide" data-slide="16" data-section="維持注意"><div class="slide-inner"><div class="kicker">12.4.6 親和層析</div><h2 class="slide-title">Affinity：專一鎖定</h2><div class="grid2" style="margin-top:16px"><div><ul class="clean"><li>固定相接上<strong>專一配基</strong>(抗體、酵素抑制劑、凝集素)</li><li>只有目標分子被<span class='em'>專一結合</span>，其餘直接洗掉</li><li>改 pH / 離子強度，或加競爭配基即可溶離</li><li>純化單一蛋白的<strong>高選擇性</strong>利器</li></ul></div><div class="note">「鑰匙–鎖」式的辨識：靠生物專一性而非極性或電荷，純化倍率極高，常一步到位。</div></div></div></section><section class="slide" data-slide="17" data-section="維持注意" data-game="g4"><div class="slide-inner"><div class="game no-nav" data-game="g4"><div class="game-head"><span class="tag a">小遊戲 ③</span><span class="gt">層析分析流程排序</span><span class="score" id="g4score">— / 7</span></div><div class="game-q">用 ▲▼ 把一次完整層析分析的 7 個步驟排成正確順序。</div><div class="sortlist" id="g4list"></div><div class="fb" id="g4fb"></div><div class="btnrow"><button class="btn" id="g4check">檢查順序</button><button class="btn ghost" id="g4reset">打亂重排</button></div></div></div></section><section class="slide" data-slide="18" data-section="維持注意"><div class="slide-inner"><div class="kicker">12.4.7 排阻層析</div><h2 class="slide-title">SEC：依大小篩分</h2><div class="grid2" style="margin-top:16px"><div><ul class="clean"><li>固定相為<strong>多孔膠體</strong>(如 Sephadex 葡聚醣)</li><li>大分子<span class='em'>進不了</span>孔洞 → 走孔隙體積 → <strong>先洗出</strong></li><li>小分子鑽進孔洞 → 路徑長 → 後出</li><li>可估蛋白質<strong>分子量</strong>(Kav vs log MW 檢量線)</li></ul></div><div class="note">與其他模式相反：<strong>大分子先出、小分子後出</strong>。溫和條件少變性，常作為純化的早期步驟，也可替代透析脫鹽。</div></div></div></section><section class="slide" data-slide="19" data-section="維持注意" data-chart="hetp"><div class="slide-inner"><div class="kicker">12.5.1.2.2 Van Deemter</div><h2 class="slide-title">找出最佳<span class='hi'>流速</span></h2><div class="chartbox" style="height:52vh"><canvas id="chart_hetp"></canvas></div><div class="cap">Van Deemter：HETP=A+B/u+Cu。HETP 越小、效率越高（代表性示意數據）。</div></div></section><section class="slide" data-slide="20" data-section="維持注意"><div class="slide-inner"><div class="kicker">12.5.1.2.1 滯留時間</div><h2 class="slide-title">讀懂層析圖</h2><div class="grid2" style="margin-top:16px"><div class="card b"><div class="ic">⏱️</div><div class="ct">滯留時間 t_R</div><div class="cb">成分從進樣到出峰所需時間（或滯留體積 V_R）</div></div><div class="card a"><div class="ic">💨</div><div class="ct">空容時間 t₀</div><div class="cb">不被滯留的成分(溶劑前緣)通過管柱的時間</div></div><div class="card g"><div class="ic">✂️</div><div class="ct">校正滯留 t'_R</div><div class="cb">t'_R = t_R − t₀，扣掉系統死體積後的真實滯留</div></div><div class="card b"><div class="ic">📐</div><div class="ct">峰寬 w</div><div class="cb">基線寬度 w = 4σ；半高寬 w½ 更準確</div></div></div><div class="note" style="margin-top:14px">跨系統比較時用<strong>校正滯留時間 t'_R</strong> 較可靠。</div></div></section><section class="slide" data-slide="21" data-section="維持注意"><div class="slide-inner"><div class="kicker">12.5.1 解析度</div><h2 class="slide-title">把峰<span class='hi'>分得開</span></h2><div class="svgwrap" style="margin-top:8px">
+<svg viewBox="0 0 560 250">
+ <g font-size="13">
+  <line x1="40" y1="200" x2="540" y2="200" stroke="#8493ad" stroke-width="2"/>
+  <line x1="40" y1="200" x2="40" y2="30" stroke="#8493ad" stroke-width="2"/>
+  <text x="20" y="120" text-anchor="middle" class="lbl" transform="rotate(-90 20 120)">偵測訊號</text>
+  <text x="290" y="232" text-anchor="middle" class="lbl">時間 (或體積)</text>
+  <path d="M40 200 L160 198 Q200 198 215 120 Q230 198 270 198" fill="none" stroke="#1f6feb" stroke-width="2.6"/>
+  <path d="M270 198 Q330 198 350 70 Q372 198 460 198" fill="none" stroke="#d9822b" stroke-width="2.6"/>
+  <line x1="215" y1="120" x2="215" y2="200" stroke="#1f6feb" stroke-width="1" stroke-dasharray="3 3"/>
+  <line x1="350" y1="70" x2="350" y2="200" stroke="#d9822b" stroke-width="1" stroke-dasharray="3 3"/>
+  <line x1="215" y1="48" x2="350" y2="48" stroke="#48597a" stroke-width="1.4" marker-start="url(#a2)" marker-end="url(#a2)"/>
+  <text x="282" y="40" text-anchor="middle" class="lblb">Δt</text>
+  <text x="215" y="216" text-anchor="middle" class="lbl" fill="#1f6feb">t_R1</text>
+  <text x="350" y="216" text-anchor="middle" class="lbl" fill="#d9822b">t_R2</text>
+  <text x="190" y="186" text-anchor="middle" class="lbl">w₁</text>
+  <text x="405" y="186" text-anchor="middle" class="lbl">w₂</text>
+  <defs><marker id="a2" markerWidth="9" markerHeight="9" refX="4" refY="4" orient="auto">
+   <path d="M0 0 L8 4 L0 8 z" fill="#48597a"/></marker></defs>
+  <text x="290" y="20" text-anchor="middle" class="lblb" font-size="15">層析峰與解析度 Rs = 2Δt / (w₁+w₂)</text>
+ </g>
+</svg></div><div class="note" style="margin-top:14px">解析度 Rs 越大，兩峰分得越開。<strong>Rs = 2Δt / (w₁+w₂)</strong>（式 12.4），通常 Rs ≥ 1.5 視為基線分離。</div></div></section><section class="slide" data-slide="22" data-section="維持注意"><div class="slide-inner"><div class="kicker">12.5.1.2 三要素</div><h2 class="slide-title">效率 · 選擇性 · 容量</h2><div class="grid3" style="margin-top:22px"><div class="card b"><div class="ic">📊</div><div class="ct">效率 N</div><div class="cb">理論板數 N=16(t_R/w)²；板越多、峰越窄。HETP=L/N</div></div><div class="card a"><div class="ic">🎯</div><div class="ct">選擇性 α</div><div class="cb">分離因子 α=t'_R2/t'_R1；峰間相對距離</div></div><div class="card g"><div class="ic">⏱️</div><div class="ct">容量因子 k'</div><div class="cb">k'=(t_R−t₀)/t₀；停留在固定相的程度，常取 1–15</div></div></div><div class="note" style="margin-top:14px">Rs 與選擇性<strong>線性</strong>相關，但與效率僅<strong>平方根</strong>相關——N 要 4 倍才讓 Rs 加倍。</div></div></section><section class="slide" data-slide="23" data-section="維持注意" data-game="g3"><div class="slide-inner"><div class="game no-nav" data-game="g3"><div class="game-head"><span class="tag a">小遊戲 ④</span><span class="gt">固定相依「化學本質」分類</span><span class="score" id="g3score">0 / 6</span></div><div class="game-q">換個角度——這些分離模式的固定相本質是什麼？分到三類。</div><div class="pool" id="g3pool"></div><div class="buckets" id="g3buckets"></div><div class="fb" id="g3fb"></div><div class="btnrow"><button class="btn" id="g3check">檢查答案</button><button class="btn ghost" id="g3reset">重來</button></div></div></div></section><section class="slide" data-slide="24" data-section="維持注意"><div class="slide-inner"><div class="kicker">12.5.3 定量分析</div><h2 class="slide-title">內標 vs 外標</h2><div class="grid2" style="margin-top:16px"><div class="card b"><div class="ic">🧮</div><div class="ct">外標法</div><div class="cb">另外配標準品分開進樣，建<strong>峰面積–濃度</strong>檢量線；需偵測器穩定</div></div><div class="card a"><div class="ic">🎯</div><div class="ct">內標法</div><div class="cb">加入已知量內標物，用<strong>峰面積比</strong>校正；補償前處理損失與進樣誤差</div></div></div><div class="note" style="margin-top:18px">內標物須與分析物<strong>性質相似但分得開</strong>、且樣品中本不存在（Table 12.7）。</div></div></section><section class="slide" data-slide="25" data-section="維持注意" data-game="g5"><div class="slide-inner"><div class="game no-nav" data-game="g5"><div class="game-head"><span class="tag a">小遊戲 ⑤</span><span class="gt">決策挑戰：選對模式</span><span class="score" id="g5score">0 / 5</span></div><div class="game-q" id="g5q"></div><div class="opts" id="g5opts"></div><div class="fb" id="g5fb"></div><div class="btnrow"><button class="btn ghost" id="g5next" style="display:none">下一題 →</button></div></div></div></section><section class="slide" data-slide="26" data-section="喚起行動" data-game="cmp"><div class="slide-inner"><div class="kicker">12.4 模式比較</div><h2 class="slide-title">一張表選分離模式（點欄位排序）</h2><table class="cmp" id="cmpTable" style="margin-top:14px"><thead><tr><th data-k="m" data-t="s">模式 <span class="ar">⇅</span></th><th data-k="sp" data-t="s">固定相 <span class="ar">⇅</span></th><th data-k="mp" data-t="s">移動相 <span class="ar">⇅</span></th><th data-k="by" data-t="s">依何分離 <span class="ar">⇅</span></th></tr></thead><tbody></tbody></table><div class="cap">整合自 Table 12.3。點欄位標題可排序。</div></div></section><section class="slide" data-slide="27" data-section="喚起行動"><div class="slide-inner"><div class="kicker">方法選擇</div><h2 class="slide-title">跟著決策樹走</h2><div class="svgwrap" style="margin-top:10px">
+<svg viewBox="0 0 980 360">
+ <rect x="380" y="14" width="220" height="56" rx="12" fill="#1f6feb"/>
+ <text x="490" y="40" text-anchor="middle" fill="#fff" font-weight="800" font-size="16">樣品有什麼特性？</text>
+ <text x="490" y="60" text-anchor="middle" fill="#cfe0f6" font-size="12">依分子量與性質選分離模式</text>
+ <g stroke="#8493ad" stroke-width="2" fill="none">
+  <path d="M420 70 C 200 110,130 120,120 150"/><path d="M470 70 C 400 120,380 120,375 150"/>
+  <path d="M510 70 C 590 120,610 120,625 150"/><path d="M560 70 C 800 110,860 120,875 150"/></g>
+ <g font-size="14" font-weight="800">
+  <rect x="30" y="150" width="190" height="120" rx="12" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
+  <text x="125" y="178" text-anchor="middle" fill="#15233f">小分子·非極性?</text>
+  <text x="125" y="206" text-anchor="middle" fill="#d9822b" font-size="15">正相 (silica)</text>
+  <text x="125" y="232" text-anchor="middle" fill="#48597a" font-size="12">極性固定相</text>
+  <text x="125" y="252" text-anchor="middle" fill="#48597a" font-size="12">非極性先出</text>
+  <rect x="280" y="150" width="190" height="120" rx="12" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
+  <text x="375" y="178" text-anchor="middle" fill="#15233f">小分子·水溶?</text>
+  <text x="375" y="206" text-anchor="middle" fill="#1f6feb" font-size="15">逆相 RP</text>
+  <text x="375" y="232" text-anchor="middle" fill="#48597a" font-size="12">非極性固定相</text>
+  <text x="375" y="252" text-anchor="middle" fill="#48597a" font-size="12">食品分析最常用</text>
+  <rect x="530" y="150" width="190" height="120" rx="12" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
+  <text x="625" y="178" text-anchor="middle" fill="#15233f">帶電荷離子?</text>
+  <text x="625" y="206" text-anchor="middle" fill="#1f9d6b" font-size="15">離子交換 IEC</text>
+  <text x="625" y="232" text-anchor="middle" fill="#48597a" font-size="12">靜電作用</text>
+  <text x="625" y="252" text-anchor="middle" fill="#48597a" font-size="12">調 pH / 鹽濃度溶離</text>
+  <rect x="780" y="150" width="190" height="120" rx="12" fill="#f6f9fd" stroke="#48597a" stroke-width="2"/>
+  <text x="875" y="178" text-anchor="middle" fill="#15233f">大分子·測 MW?</text>
+  <text x="875" y="206" text-anchor="middle" fill="#15233f" font-size="15">size 排阻 SEC</text>
+  <text x="875" y="232" text-anchor="middle" fill="#48597a" font-size="12">依分子大小分離</text>
+  <text x="875" y="252" text-anchor="middle" fill="#48597a" font-size="12">大分子先出</text>
+ </g>
+</svg></div><p class="subtitle" style="text-align:center;margin-top:14px">下一頁實戰：算兩個峰的解析度 Rs →</p></div></section><section class="slide" data-slide="28" data-section="喚起行動"><div class="slide-inner"><div class="kicker">12.5.1 計算</div><h2 class="slide-title">解析度：從滯留時間到 Rs</h2><div class="grid2" style="margin-top:14px"><div class="eq">R<sub>s</sub> = <span class="frac"><b>2 · Δt</b><span>w₁ + w₂</span></span></div><div><ul class="clean"><li>Δt = 兩峰滯留時間差 (t_R2 − t_R1)</li><li>w₁、w₂ = 兩峰基線寬度</li><li>Rs 越大、分得越開</li><li>Rs ≥ 1.5 ≈ 基線分離</li></ul></div></div></div></section><section class="slide" data-slide="29" data-section="喚起行動" data-game="g6"><div class="slide-inner"><div class="game no-nav" data-game="g6"><div class="game-head"><span class="tag a">小遊戲 ⑥</span><span class="gt">計算闖關</span><span class="score" id="g6score">未作答</span></div><div class="game-q">兩個層析峰：t_R1 = 10.0 min、t_R2 = 12.0 min，基線寬 w₁ = w₂ = 1.0 min。求<strong>解析度 Rs</strong>（無單位）。</div><div class="btnrow"><input class="numin" id="g6in" type="number" step="any" placeholder="?"> <span style="font-weight:800;color:var(--ink)"></span><button class="btn" id="g6check">對答案</button><button class="btn ghost" id="g6hint">提示</button></div><div class="fb" id="g6fb"></div></div></div></section><section class="slide" data-slide="30" data-section="喚起行動"><div class="slide-inner"><div class="kicker">重點整理</div><h2 class="slide-title">今天的五個關鍵</h2><div class="grid2" style="margin-top:18px"><ul class="clean"><li>層析＝溶質在<strong>移動相與固定相</strong>間反覆分配</li><li>依移動相分 <strong>GC / LC / SFC</strong>；液相再分平面與管柱</li><li>七大模式：吸附·分配·HILIC·HIC·離子交換·親和·排阻</li></ul><ul class="clean"><li>峰的好壞看 <strong>Rs、N、α、k'</strong>；Van Deemter 找最佳流速</li><li>定量靠峰面積＋標準品：<strong>內標</strong>補損失、<strong>外標</strong>建檢量線</li></ul></div></div></section><section class="slide" data-slide="31" data-section="喚起行動"><div class="slide-inner"><div class="kicker">自我檢核</div><h2 class="slide-title">今天結束，你應該會…</h2><ul class="checklist no-nav" id="selfcheck" style="margin-top:18px;max-width:980px"><li data-k><span class="bx">✓</span>用「兩相分配」解釋層析的基本原理</li><li data-k><span class="bx">✓</span>畫出層析家族樹並說明 GC/LC/SFC 的差別</li><li data-k><span class="bx">✓</span>說出七大分離模式各自靠什麼分離</li><li data-k><span class="bx">✓</span>比較正相與逆相、陽離子與陰離子交換</li><li data-k><span class="bx">✓</span>判斷該用哪種模式（小分子/離子/大分子）</li><li data-k><span class="bx">✓</span>由滯留時間與峰寬算出解析度 Rs</li><li data-k><span class="bx">✓</span>區分內標法與外標法的用途</li></ul><p class="subtitle" style="margin-top:12px">點一下打勾——確認自己真的會了。</p></div></section><section class="slide" data-slide="32" data-section="喚起行動" data-cover="1"><div class="slide-inner"><div class="cover"><div class="kicker">下一步 · NEXT</div><h1>把層析原理<br><span style='color:var(--accent-2)'>用起來</span></h1><div class="en"></div><div class="meta">📌 課後練習：Study Questions、Practice Problems<br>🔜 銜接章節：<strong>HPLC (Ch13)</strong>、<strong>氣相層析 GC (Ch14)</strong><br>🧪 思考：你的樣品是小分子還是大分子？帶電荷嗎？該選哪種分離模式？</div><div style="margin-top:24px"><span class="pill">GC</span><span class="pill">LC/HPLC</span><span class="pill">SFC</span><span class="pill">IEC</span><span class="pill">SEC</span></div></div></div></section><script>window.CFG={"charts": {"polar": {"type": "bar", "yTitle": "相對極性 (等級)", "labels": ["碳氟化物", "飽和烴", "烯類", "芳香族", "鹵化物", "醚類", "酯/酮/醛", "醇/胺", "醯胺", "羧酸"], "datasets": [{"label": "相對極性（Table 12.4，越大越極性）", "data": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], "color": "#1f6feb"}]}, "hetp": {"type": "line", "yTitle": "HETP (任意單位)", "zero": false, "labels": ["0.4", "0.6", "0.8", "1.0", "1.2", "1.5", "2.0", "2.5", "3.0"], "datasets": [{"label": "HETP = A + B/u + Cu", "data": [5.5, 4.3, 3.7, 3.4, 3.3, 3.4, 3.9, 4.6, 5.4], "color": "#d9822b"}]}}, "bucket": {"g1": {"cats": ["氣相 GC", "液相 LC", "超臨界流體 SFC"], "items": [{"t": "載送氣體 (He)", "c": "氣相 GC"}, {"t": "揮發性成分", "c": "氣相 GC"}, {"t": "水 / 乙腈", "c": "液相 LC"}, {"t": "逆相 HPLC", "c": "液相 LC"}, {"t": "超臨界 CO₂", "c": "超臨界流體 SFC"}, {"t": "非揮發·熱不安定物", "c": "超臨界流體 SFC"}], "ok": "🎉 全對！GC 用氣體移動相、LC 用液體、SFC 用超臨界流體（如 CO₂）。", "tip": "提示：移動相是氣體→GC；液體→LC；超臨界流體→SFC。"}, "g3": {"cats": ["極性固定相", "非極性固定相", "帶電/孔洞固定相"], "items": [{"t": "正相 silica", "c": "極性固定相"}, {"t": "HILIC", "c": "極性固定相"}, {"t": "逆相 C18", "c": "非極性固定相"}, {"t": "HIC butyl-Sepharose", "c": "非極性固定相"}, {"t": "離子交換樹脂", "c": "帶電/孔洞固定相"}, {"t": "排阻 Sephadex", "c": "帶電/孔洞固定相"}], "ok": "🎉 正確！silica/HILIC 極性、C18/HIC 非極性、離子交換帶電、排阻靠孔洞。", "tip": "提示：silica 與 HILIC 是極性；C18 與 HIC 是非極性；IEC 帶電、SEC 多孔。"}}, "mcq": {"g2": [{"q": "層析分離的最根本原理是？", "o": ["重量差異", "溶質在兩相間反覆分配", "顏色差異", "沸點唯一"], "a": 1, "e": "層析＝溶質在移動相與固定相之間反覆達成平衡分配。"}, {"q": "依「移動相」分類，下列何者正確？", "o": ["GC 用液體", "LC 用氣體", "SFC 用超臨界流體", "GC 用超臨界流體"], "a": 2, "e": "GC 氣體、LC 液體、SFC 超臨界流體。"}, {"q": "正相層析中，洗脫順序為？", "o": ["極性先出", "非極性先出", "同時出", "隨機"], "a": 1, "e": "正相固定相為極性，非極性溶質作用弱→先洗出，極性後出。"}, {"q": "分配係數 K 的定義是？", "o": ["兩相中溶質濃度之比", "溫度比", "體積比", "峰高比"], "a": 0, "e": "K = 溶質在相 1 與相 2 的濃度之比（式 12.1）。"}], "g5": [{"q": "要依分子大小分離蛋白質、並估其分子量，選？", "o": ["離子交換", "排阻層析 SEC", "正相", "氣相 GC"], "a": 1, "e": "SEC 依分子大小篩分，可由 Kav-logMW 檢量線估分子量。"}, {"q": "分離帶電荷的離子化合物，最適合？", "o": ["排阻 SEC", "離子交換 IEC", "親和層析", "正相"], "a": 1, "e": "離子交換靠靜電作用，專門分離帶電荷物種。"}, {"q": "食品中極性偏低的多酚、脂溶性維生素，最常用？", "o": ["逆相 RP", "正相 silica", "離子交換", "SEC"], "a": 0, "e": "逆相 HPLC 是食品分析最常用，廣泛分析多酚、類胡蘿蔔素等。"}, {"q": "想提高兩個相鄰峰的解析度 Rs，最有效的是？", "o": ["只增加管柱長度(提升N)", "改善選擇性α", "降低溫度", "加大進樣量"], "a": 1, "e": "Rs 與選擇性α線性相關、與效率N僅平方根相關，故改善α最有效。"}, {"q": "要校正前處理損失與進樣體積誤差，定量宜用？", "o": ["外標法", "內標法", "只看峰高", "不校正"], "a": 1, "e": "內標法加入已知內標物、用峰面積比校正，可補償損失與進樣誤差。"}]}, "sort": {"g4": {"steps": ["評估樣品特性，選擇分離模式", "選固定相、移動相與溶離條件(等度/梯度)", "注入樣品到管柱", "成分依與固定相作用強弱分離", "偵測器記錄各峰(滯留時間/峰面積)", "優化解析度(調 N / α / k')", "以標準品定性與定量"], "shuffle": [3, 0, 6, 1, 4, 2, 5], "ok": "🎉 順序正確！選模式→定條件→進樣→分離→偵測→優化→定量。", "tip": "提示：先選模式與條件，最後才用標準品定量。"}}, "calc": {"g6": {"answer": 2.0, "tol": 0.05, "ok": "🎉 正確！Rs = 2×(12.0−10.0) ÷ (1.0+1.0) = 4.0 ÷ 2.0 = <b>2.0<\/b>（> 1.5，基線分離）。", "bad": "再算算：Rs = 2·Δt ÷ (w₁+w₂)；Δt = 12.0−10.0 = 2.0，分母 = 1.0+1.0 = 2.0。", "hint": "提示：Δt = 2.0，w₁+w₂ = 2.0；Rs = 2×2.0 ÷ 2.0。"}}, "cmp": {"cols": [{"k": "m"}, {"k": "sp"}, {"k": "mp"}, {"k": "by"}], "rows": [{"m": "正相 (吸附/分配)", "sp": "極性 (silica)", "mp": "非極性溶劑", "by": "極性 (非極性先出)"}, {"m": "逆相 RP", "sp": "非極性 (C8/C18)", "mp": "極性 (水/乙腈)", "by": "極性 (極性先出)"}, {"m": "HILIC", "sp": "極性改質 silica", "mp": "高比例有機+水", "by": "極性 (親水)"}, {"m": "疏水 HIC", "sp": "弱疏水配基", "mp": "高鹽→低鹽", "by": "表面疏水性"}, {"m": "陽離子交換", "sp": "負電基 (RSO₃⁻)", "mp": "緩衝/離子強度", "by": "正電荷密度"}, {"m": "陰離子交換", "sp": "正電基 (R-NHR'₂⁺)", "mp": "緩衝/離子強度", "by": "負電荷密度"}, {"m": "親和 Affinity", "sp": "專一配基/抗體", "mp": "緩衝", "by": "專一結合力"}, {"m": "排阻 SEC", "sp": "多孔膠 (Sephadex)", "mp": "水/緩衝", "by": "分子大小 (大先出)"}]}};</script><script>
+var CFG=window.CFG||{};
+var slides=[].slice.call(document.querySelectorAll('.slide'));
+var total=slides.length,cur=0;
+var prog=document.getElementById('progress'),pageInfo=document.getElementById('pageInfo'),secTag=document.getElementById('section-tag');
+function show(i){
+  cur=Math.max(0,Math.min(total-1,i));
+  slides.forEach(function(s,k){s.classList.toggle('active',k===cur)});
+  prog.style.width=((cur+1)/total*100)+'%';
+  pageInfo.textContent=(cur+1)+' / '+total;
+  secTag.textContent='— '+(slides[cur].dataset.section||'')+' —';
+  var ch=slides[cur].dataset.chart; if(ch) initChart(ch);
+  var g=slides[cur].dataset.game; if(g) initGame(g);
+}
+function next(){show(cur+1)} function prev(){show(cur-1)}
+function toggleFs(){if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()}else{document.exitFullscreen&&document.exitFullscreen()}}
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next()}
+  else if(e.key==='ArrowLeft'){prev()}
+  else if(e.key==='f'||e.key==='F'){toggleFs()}
+});
+document.addEventListener('click',function(e){
+  if(e.target.closest('.no-nav')) return;
+  if(e.target.closest('button,input,select,textarea,a,.chip,.opt,.bucket')) return;
+  var x=e.clientX/window.innerWidth;
+  if(x>0.72) next(); else if(x<0.28) prev();
+});
+
+/* ---------- charts ---------- */
+var chartDone={};
+function initChart(id){
+  if(chartDone[id]||typeof Chart==='undefined'||!CFG.charts||!CFG.charts[id]) return; chartDone[id]=1;
+  Chart.defaults.font.family="'Noto Sans TC',sans-serif"; Chart.defaults.color='#48597a';
+  var c=CFG.charts[id];
+  var el=document.getElementById('chart_'+id); if(!el) return;
+  var ds=c.datasets.map(function(d){return {label:d.label,data:d.data,
+    backgroundColor:d.color||'#1f6feb',borderColor:d.color||'#1f6feb',borderRadius:5,
+    fill:(c.type==='line'?false:true),tension:.3}});
+  new Chart(el,{type:c.type||'bar',data:{labels:c.labels,datasets:ds},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:(c.datasets.length>1),position:'top'}},
+      scales:{y:{beginAtZero:(c.zero!==false),title:{display:!!c.yTitle,text:c.yTitle||''}}}}});
+}
+
+/* ---------- games ---------- */
+var gameDone={};
+function setScore(el,v){var e=document.getElementById(el);if(e)e.textContent=v}
+function fb(el,msg,type){var f=document.getElementById(el);if(!f)return;f.className='fb show '+type;f.innerHTML=msg}
+function initGame(g){
+  if(gameDone[g])return; gameDone[g]=1;
+  if(CFG.bucket&&CFG.bucket[g]) return initBucket(g);
+  if(CFG.mcq&&CFG.mcq[g]) return initMCQ(g);
+  if(CFG.sort&&CFG.sort[g]) return initSort(g);
+  if(CFG.calc&&CFG.calc[g]) return initCalc(g);
+  if(g==='cmp') return initCmp();
+}
+
+function initBucket(g){
+  var cfg=CFG.bucket[g];
+  var data=cfg.items.map(function(x){return {t:x.t,c:x.c,at:null}});
+  var cats=cfg.cats, N=data.length;
+  var pool=document.getElementById(g+'pool'), bk=document.getElementById(g+'buckets');
+  var sel=null;
+  bk.style.gridTemplateColumns='repeat('+cats.length+',1fr)';
+  function paint(){[].slice.call(pool.children).forEach(function(c){c.classList.toggle('sel',+c.dataset.i===sel)})}
+  function render(){
+    pool.innerHTML=''; bk.innerHTML='';
+    var placed={}; cats.forEach(function(c){placed[c]=[]});
+    data.forEach(function(d,i){if(d.at)placed[d.at].push(i)});
+    data.forEach(function(d,i){ if(d.at) return;
+      var c=document.createElement('div');c.className='chip';c.textContent=d.t;c.dataset.i=i;
+      c.onclick=function(){sel=(sel===i?null:i);paint()}; pool.appendChild(c);
+    });
+    cats.forEach(function(cat){
+      var b=document.createElement('div');b.className='bucket';b.innerHTML='<div class="bh">'+cat+'</div>';
+      placed[cat].forEach(function(i){
+        var c=document.createElement('div');c.className='chip';c.textContent=data[i].t;
+        c.onclick=function(){data[i].at=null;sel=null;render()}; b.appendChild(c);
+      });
+      b.onclick=function(e){ if(e.target!==b&&!e.target.classList.contains('bh'))return;
+        if(sel!=null){data[sel].at=cat;sel=null;render()} };
+      bk.appendChild(b);
+    });
+    paint();
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; data.forEach(function(d){if(d.at===d.c)ok++});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 全對！','good');
+    else fb(g+'fb','答對 '+ok+'/'+N+'。'+(cfg.tip||'再調整看看。'),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    data.forEach(function(d){d.at=null}); sel=null; render(); setScore(g+'score','0 / '+N);
+    var f=document.getElementById(g+'fb'); if(f) f.className='fb';
+  };
+}
+
+function initMCQ(g){
+  var DATA=CFG.mcq[g], nq=DATA.length, idx=0, score=0, locked=false;
+  var qEl=document.getElementById(g+'q'), opEl=document.getElementById(g+'opts'), nextBtn=document.getElementById(g+'next');
+  function render(){
+    locked=false; var d=DATA[idx];
+    qEl.innerHTML='<span style="color:var(--accent)">Q'+(idx+1)+'.</span> '+d.q;
+    opEl.innerHTML=''; var f=document.getElementById(g+'fb'); if(f)f.className='fb'; if(nextBtn)nextBtn.style.display='none';
+    d.o.forEach(function(t,i){
+      var o=document.createElement('div');o.className='opt';o.textContent=t;
+      o.onclick=function(){
+        if(locked)return; locked=true; var ok=(i===d.a);
+        if(ok){o.classList.add('ok');score++}else{o.classList.add('no');opEl.children[d.a].classList.add('ok')}
+        [].slice.call(opEl.children).forEach(function(c,k){if(k!==i&&k!==d.a)c.classList.add('dim')});
+        setScore(g+'score',score+' / '+nq);
+        var done=(idx>=DATA.length-1);
+        var msg=(ok?'✅ 答對！':'❌ 正解：'+d.o[d.a]+'。')+'<br>'+d.e+(done?'<br><b>完成！總分 '+score+'/'+nq+'</b>':'');
+        fb(g+'fb',msg,ok?'good':'bad');
+        if(nextBtn) nextBtn.style.display=done?'none':'inline-block';
+      };
+      opEl.appendChild(o);
+    });
+  }
+  if(nextBtn) nextBtn.onclick=function(){if(idx<DATA.length-1){idx++;render()}};
+  render();
+}
+
+function initSort(g){
+  var cfg=CFG.sort[g], steps=cfg.steps, N=steps.length;
+  var order=(cfg.shuffle||steps.map(function(_,i){return i})).slice();
+  var list=document.getElementById(g+'list');
+  function render(){
+    list.innerHTML='';
+    order.forEach(function(stepIdx,pos){
+      var row=document.createElement('div');row.className='sortrow';
+      row.innerHTML='<div class="idx">'+(pos+1)+'</div><div class="txt">'+steps[stepIdx]+'</div>';
+      var ud=document.createElement('div');ud.className='ud';
+      var up=document.createElement('button');up.textContent='▲';
+      up.onclick=function(){if(pos>0){var t=order[pos-1];order[pos-1]=order[pos];order[pos]=t;render()}};
+      var dn=document.createElement('button');dn.textContent='▼';
+      dn.onclick=function(){if(pos<order.length-1){var t=order[pos+1];order[pos+1]=order[pos];order[pos]=t;render()}};
+      ud.appendChild(up);ud.appendChild(dn);row.appendChild(ud);list.appendChild(row);
+    });
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; order.forEach(function(v,i){if(v===i)ok++});
+    [].slice.call(list.children).forEach(function(r,i){r.classList.toggle('ok',order[i]===i);r.classList.toggle('no',order[i]!==i)});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 順序完全正確！','good');
+    else fb(g+'fb','對了 '+ok+'/'+N+' 個位置。'+(cfg.tip||''),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    order=(cfg.shuffle||steps.map(function(_,i){return i})).slice().reverse(); render();
+    var f=document.getElementById(g+'fb'); if(f)f.className='fb'; setScore(g+'score','— / '+N);
+  };
+}
+
+function initCalc(g){
+  var cfg=CFG.calc[g];
+  document.getElementById(g+'check').onclick=function(){
+    var v=parseFloat(document.getElementById(g+'in').value);
+    if(isNaN(v)){fb(g+'fb','請先輸入一個數字。','info');return}
+    if(Math.abs(v-cfg.answer)<=(cfg.tol||0.05)){
+      setScore(g+'score','✓ 答對'); fb(g+'fb',cfg.ok||('🎉 正確！答案是 '+cfg.answer),'good');
+    } else { setScore(g+'score','再試一次'); fb(g+'fb',cfg.bad||'再算算看。','bad'); }
+  };
+  var hb=document.getElementById(g+'hint');
+  if(hb) hb.onclick=function(){fb(g+'fb',cfg.hint||'提示：對照公式逐步代入。','info')};
+}
+
+function stars(n){return '★★★★★'.slice(0,n)+'☆☆☆☆☆'.slice(0,5-n)}
+function initCmp(){
+  if(!CFG.cmp) return;
+  var cols=CFG.cmp.cols, rows=CFG.cmp.rows.slice(), dir={};
+  var tb=document.querySelector('#cmpTable tbody');
+  function draw(){ tb.innerHTML=''; rows.forEach(function(r){
+    var tr=document.createElement('tr');
+    tr.innerHTML=cols.map(function(c,ci){
+      var v=r[c.k];
+      if(c.star) return '<td style="color:var(--accent-2)">'+stars(v)+'</td>';
+      return '<td'+(ci===0?' class="c"':'')+'>'+v+'</td>';
+    }).join(''); tb.appendChild(tr); }); }
+  draw();
+  document.querySelectorAll('#cmpTable thead th').forEach(function(th){
+    th.onclick=function(){var k=th.dataset.k,t=th.dataset.t;dir[k]=!dir[k];
+      rows.sort(function(a,b){var x=a[k],y=b[k];
+        if(t==='n')return dir[k]?x-y:y-x;
+        return dir[k]?String(x).localeCompare(String(y),'zh-Hant'):String(y).localeCompare(String(x),'zh-Hant')});
+      draw();};
+  });
+}
+show(0);
+</script>
+<script>document.addEventListener('click',function(e){var li=e.target.closest('#selfcheck li');if(li)li.classList.toggle('done')});</script>
+</body></html>

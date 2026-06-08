@@ -1,0 +1,41 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>食品分析 SOIL 教學投影片 · Nielsen</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"Noto Sans TC",sans-serif;background:#eef2f8;color:#15233f;padding:48px 24px;min-height:100vh}
+.wrap{max-width:1080px;margin:0 auto}
+.kick{font-family:"JetBrains Mono",monospace;color:#1f6feb;font-weight:700;letter-spacing:.16em;font-size:.8rem}
+h1{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:900;margin:6px 0 4px}
+.sub{color:#48597a;margin-bottom:8px}
+.stat{color:#8493ad;font-size:.85rem;font-family:"JetBrains Mono",monospace;margin-bottom:28px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
+a.card{display:block;text-decoration:none;background:#fff;border:1px solid #dde5f0;border-top:4px solid #1f6feb;
+  border-radius:14px;padding:20px 22px;box-shadow:0 3px 12px rgba(20,40,80,.08);transition:.18s}
+a.card:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(20,40,80,.14);border-top-color:#d9822b}
+.ch{font-family:"JetBrains Mono",monospace;color:#d9822b;font-weight:700;font-size:.8rem}
+.tt{font-size:1.3rem;font-weight:900;margin:4px 0 2px}
+.en{color:#8493ad;font-size:.82rem;font-family:"JetBrains Mono",monospace}
+.meta{margin-top:12px;color:#48597a;font-size:.85rem}
+.tag{display:inline-block;background:#e7f0fe;color:#1f6feb;font-size:.72rem;font-weight:700;padding:3px 9px;border-radius:999px;margin-right:6px}
+.foot{margin-top:30px;color:#8493ad;font-size:.8rem;line-height:1.7}
+</style></head><body><div class="wrap">
+<div class="kick">NIELSEN'S FOOD ANALYSIS · SOIL HTML DECKS</div>
+<h1>食品分析 · 互動教學投影片</h1>
+<div class="sub">每章 3 小時課程 · 淺色學術風 · 各含 6 個嵌入式小遊戲 · 單一 HTML 可離線</div>
+<div class="stat">9 章 · 283 頁 · 54 個小遊戲 · ← → 切頁 · F 全螢幕</div>
+<div class="grid">
+  <a class="card" href="ch12_soil/index.html"><div class="ch">CH 12</div><div class="tt">層析原理</div><div class="en">Principles of Chromatography</div><div class="meta">32 頁 · 6 遊戲</div></a>
+  <a class="card" href="ch13_hplc_soil/index.html"><div class="ch">CH 13</div><div class="tt">高效液相層析</div><div class="en">HPLC</div><div class="meta">32 頁 · 6 遊戲</div></a>
+  <a class="card" href="ch14_gc_soil/index.html"><div class="ch">CH 14</div><div class="tt">氣相層析</div><div class="en">Gas Chromatography</div><div class="meta">31 頁 · 6 遊戲</div></a>
+  <a class="card" href="ch15_moisture_soil/index.html"><div class="ch">CH 15</div><div class="tt">水分分析</div><div class="en">Moisture Analysis</div><div class="meta">32 頁 · 6 遊戲</div></a>
+  <a class="card" href="ch16_ash_soil/index.html"><div class="ch">CH 16</div><div class="tt">灰分分析</div><div class="en">Ash Analysis</div><div class="meta">31 頁 · 6 遊戲</div></a>
+  <a class="card" href="ch17_fat_soil/index.html"><div class="ch">CH 17</div><div class="tt">油脂分析</div><div class="en">Fat Analysis</div><div class="meta">34 頁 · 6 遊戲</div></a>
+  <a class="card" href="ch18_protein_soil/index.html"><div class="ch">CH 18</div><div class="tt">蛋白質分析</div><div class="en">Protein Analysis</div><div class="meta">29 頁 · 6 遊戲</div></a>
+  <a class="card" href="ch19_carb_soil/index.html"><div class="ch">CH 19</div><div class="tt">碳水化合物分析</div><div class="en">Carbohydrate Analysis</div><div class="meta">32 頁 · 6 遊戲</div></a>
+  <a class="card" href="ch21_mineral_soil/index.html"><div class="ch">CH 21</div><div class="tt">礦物質分析</div><div class="en">Mineral Analysis</div><div class="meta">30 頁 · 6 遊戲</div></a>
+</div>
+<div class="foot">每章資料夾內 <code>build_chNN.py</code> 為唯一 source of truth；改內容後 <code>python build_chNN.py</code> 重新產生 index.html。<br>
+共用引擎：<code>soil_deck_common.py</code>（ch17 為獨立 build_fat_deck.py）。</div>
+</div></body></html>
