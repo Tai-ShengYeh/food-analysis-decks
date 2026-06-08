@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>Ch7 隨堂遊戲 QR Code 海報</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@700;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background: linear-gradient(135deg, #0D1B2A 0%, #0072FF 50%, #00C6FF 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .print-btn {
+            position: fixed;
+            top: 20px; right: 20px;
+            background: white;
+            color: #0072FF;
+            padding: 8px 16px;
+            border-radius: 9999px;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        @media print {
+            body { background: white !important; }
+            .print-btn { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<button onclick="window.print()" class="print-btn">🖨 列印</button>
+
+<div class="bg-white rounded-3xl p-12 max-w-2xl text-center shadow-2xl">
+    <div class="text-stone-500 text-sm tracking-widest mb-2" style="font-family:'JetBrains Mono',monospace;">NIELSEN FOOD ANALYSIS · CHAPTER 7</div>
+    <h1 class="text-4xl font-black mb-2" style="color:#0072FF;">隨堂小遊戲</h1>
+    <p class="text-stone-600 mb-6">UV-Vis 與螢光光譜法</p>
+
+    <div id="qr" class="flex justify-center mb-6"></div>
+
+    <div class="text-2xl font-black text-stone-800 mb-2">📱 用手機掃我！</div>
+    <p class="text-sm text-stone-600 mb-4">或輸入網址：</p>
+    <div id="urlText" class="bg-stone-100 rounded-lg px-4 py-2 inline-block font-mono text-sm text-stone-700"></div>
+
+    <div class="mt-8 grid grid-cols-3 gap-4 text-stone-700 text-sm">
+        <div>
+            <div class="text-3xl mb-1">📝</div>
+            <div class="font-bold">17 題</div>
+            <div class="text-xs text-stone-500">前5＋中6＋後6</div>
+        </div>
+        <div>
+            <div class="text-3xl mb-1">⏱️</div>
+            <div class="font-bold">約 12 分鐘</div>
+            <div class="text-xs text-stone-500">建議用時</div>
+        </div>
+        <div>
+            <div class="text-3xl mb-1">🎯</div>
+            <div class="font-bold">即時上傳</div>
+            <div class="text-xs text-stone-500">老師後台統計</div>
+        </div>
+    </div>
+
+    <div class="mt-6 text-xs text-stone-400">Nielsen's Food Analysis, 6th Ed.｜Chapter 7</div>
+</div>
+
+<script>
+    const quizURL = new URL("quiz.html", window.location.href).href;
+    document.getElementById('urlText').textContent = quizURL;
+    new QRCode(document.getElementById('qr'), {
+        text: quizURL,
+        width: 300, height: 300,
+        colorDark: "#0072FF",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>教師教學入口 · 食品科學課程</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0D1B2A;--bg2:#0F2133;--card:#122540;--card2:#0f1e32;
+  --ink:#ECEEF2;--ink2:#B8C5E0;--muted:#7A91B0;
+  --cyan:#00C6FF;--gold:#FFD700;--green:#2ECC71;--red:#E74C3C;--purple:#9B59B6;--orange:#E67E22;
+}
+html,body{background:var(--bg);color:var(--ink);font-family:'Noto Sans TC','Microsoft JhengHei',sans-serif;min-height:100vh}
+
+/* ── Header ── */
+.hdr{background:var(--bg2);border-bottom:2px solid var(--cyan);padding:20px 36px;display:flex;align-items:center;gap:16px}
+.hdr-icon{font-size:2rem}
+.hdr-title{font-size:1.5rem;font-weight:700;color:var(--cyan)}
+.hdr-sub{font-size:.85rem;color:var(--muted);margin-top:2px}
+.hdr-date{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:.9rem;color:var(--gold);background:var(--card);padding:6px 14px;border-radius:8px}
+
+/* ── Main ── */
+.main{padding:32px 36px;display:flex;flex-direction:column;gap:32px;max-width:1100px;margin:0 auto}
+.section-title{font-size:1.1rem;font-weight:700;color:var(--muted);letter-spacing:.05em;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.section-title::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.08)}
+
+/* ── Course grid ── */
+.course-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(480px,1fr));gap:20px}
+.course-card{background:var(--card);border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.06);transition:border-color .2s}
+.course-card:hover{border-color:var(--cyan)}
+.cc-head{padding:16px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.07)}
+.cc-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+.cc-name{font-size:1rem;font-weight:700;color:var(--ink)}
+.cc-code{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--muted);margin-left:auto;background:var(--card2);padding:3px 8px;border-radius:5px}
+.cc-body{padding:16px 20px;display:flex;flex-direction:column;gap:10px}
+
+/* ── Link rows ── */
+.link-group{display:flex;flex-direction:column;gap:6px}
+.link-row{display:flex;align-items:center;gap:8px;background:var(--card2);border-radius:8px;padding:8px 12px;text-decoration:none;color:var(--ink2);font-size:.88rem;transition:background .2s}
+.link-row:hover{background:#1a3354}
+.link-icon{font-size:1rem;width:22px;text-align:center;flex-shrink:0}
+.link-label{flex:1}
+.link-badge{font-size:.7rem;background:rgba(0,198,255,.15);color:var(--cyan);padding:2px 8px;border-radius:10px;flex-shrink:0}
+.link-badge.green{background:rgba(46,204,113,.15);color:var(--green)}
+.link-badge.gold{background:rgba(255,215,0,.15);color:var(--gold)}
+
+/* ── Records quick-pick ── */
+.rec-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.rec-label{font-size:.8rem;color:var(--muted);flex-shrink:0}
+.rec-btn{background:var(--card2);border:1px solid rgba(255,255,255,.1);color:var(--ink2);font-size:.8rem;padding:5px 12px;border-radius:6px;cursor:pointer;text-decoration:none;transition:background .2s;font-family:'Noto Sans TC',sans-serif}
+.rec-btn:hover{background:#1a3354;color:var(--cyan)}
+
+/* ── Divider ── */
+.hr{border:none;border-top:1px solid rgba(255,255,255,.07);margin:4px 0}
+
+/* ── Footer ── */
+.footer{text-align:center;padding:24px;color:var(--muted);font-size:.8rem}
+.footer strong{color:var(--cyan)}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-icon">🎓</div>
+  <div>
+    <div class="hdr-title">教師教學入口</div>
+    <div class="hdr-sub">食品科學課程 · Firebase Hosting 即時互動管理</div>
+  </div>
+  <div class="hdr-date" id="today-label">—</div>
+</div>
+
+<div class="main">
+
+  <!-- ═══ 食品分析 ═══ -->
+  <div>
+    <div class="section-title">🧪 食品分析 Food Analysis</div>
+    <div class="course-grid">
+
+      <!-- 四技 A 班 -->
+      <div class="course-card">
+        <div class="cc-head">
+          <div class="cc-dot" style="background:#00C6FF"></div>
+          <div class="cc-name">四技食品分析</div>
+          <div class="cc-code">fa · A 班</div>
+        </div>
+        <div class="cc-body">
+          <div class="link-group">
+            <a class="link-row" href="ch6_spectroscopy.html?course=fa&class=A" target="_blank">
+              <span class="link-icon">📺</span>
+              <span class="link-label">Ch6 光譜學 — 教師投影</span>
+              <span class="link-badge">課堂使用</span>
+            </a>
+            <a class="link-row" href="ch7_spectroscopy.html?course=fa&class=A" target="_blank">
+              <span class="link-icon">📺</span>
+              <span class="link-label">Ch7 — 教師投影</span>
+              <span class="link-badge">課堂使用</span>
+            </a>
+          </div>
+          <hr class="hr">
+          <div class="link-group">
+            <a class="link-row" href="decision_tree.html?course=fa&class=A" target="_blank">
+              <span class="link-icon">🌿</span>
+              <span class="link-label">決策樹（學生用）</span>
+              <span class="link-badge green">學生連結</span>
+            </a>
+            <a class="link-row" href="dt_results.html?course=fa&class=A" target="_blank">
+              <span class="link-icon">📊</span>
+              <span class="link-label">決策樹結果（教師）</span>
+              <span class="link-badge">教師檢視</span>
+            </a>
+          </div>
+          <hr class="hr">
+          <div class="rec-row">
+            <span class="rec-label">📋 學習紀錄：</span>
+            <a class="rec-btn" id="rec-fa-A-today" href="#" target="_blank">今日</a>
+            <a class="rec-btn" href="class_records.html?course=fa&class=A" target="_blank">自選日期</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 五專 B 班 -->
+      <div class="course-card">
+        <div class="cc-head">
+          <div class="cc-dot" style="background:#2ECC71"></div>
+          <div class="cc-name">五專食品分析</div>
+          <div class="cc-code">fa · B 班</div>
+        </div>
+        <div class="cc-body">
+          <div class="link-group">
+            <a class="link-row" href="ch6_spectroscopy.html?course=fa&class=B" target="_blank">
+              <span class="link-icon">📺</span>
+              <span class="link-label">Ch6 光譜學 — 教師投影</span>
+              <span class="link-badge">課堂使用</span>
+            </a>
+            <a class="link-row" href="ch7_spectroscopy.html?course=fa&class=B" target="_blank">
+              <span class="link-icon">📺</span>
+              <span class="link-label">Ch7 — 教師投影</span>
+              <span class="link-badge">課堂使用</span>
+            </a>
+          </div>
+          <hr class="hr">
+          <div class="link-group">
+            <a class="link-row" href="decision_tree.html?course=fa&class=B" target="_blank">
+              <span class="link-icon">🌿</span>
+              <span class="link-label">決策樹（學生用）</span>
+              <span class="link-badge green">學生連結</span>
+            </a>
+            <a class="link-row" href="dt_results.html?course=fa&class=B" target="_blank">
+              <span class="link-icon">📊</span>
+              <span class="link-label">決策樹結果（教師）</span>
+              <span class="link-badge">教師檢視</span>
+            </a>
+          </div>
+          <hr class="hr">
+          <div class="rec-row">
+            <span class="rec-label">📋 學習紀錄：</span>
+            <a class="rec-btn" id="rec-fa-B-today" href="#" target="_blank">今日</a>
+            <a class="rec-btn" href="class_records.html?course=fa&class=B" target="_blank">自選日期</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ 食品化學 ═══ -->
+  <div>
+    <div class="section-title">⚗️ 食品化學 Food Chemistry</div>
+    <div class="course-grid">
+      <div class="course-card">
+        <div class="cc-head">
+          <div class="cc-dot" style="background:#E67E22"></div>
+          <div class="cc-name">四技食品化學</div>
+          <div class="cc-code">fc</div>
+        </div>
+        <div class="cc-body">
+          <div style="background:rgba(231,126,34,.08);border-radius:8px;padding:10px 14px;font-size:.85rem;color:var(--muted)">
+            📌 尚未建立課堂投影頁面。建立後可在此加入連結。
+          </div>
+          <hr class="hr">
+          <div class="rec-row">
+            <span class="rec-label">📋 學習紀錄：</span>
+            <a class="rec-btn" id="rec-fc-today" href="#" target="_blank">今日</a>
+            <a class="rec-btn" href="class_records.html?course=fc" target="_blank">自選日期</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 越南班 ═══ -->
+  <div>
+    <div class="section-title">🇻🇳 越南班華語文閱讀與寫作</div>
+    <div class="course-grid">
+      <div class="course-card">
+        <div class="cc-head">
+          <div class="cc-dot" style="background:#9B59B6"></div>
+          <div class="cc-name">越南班華語文</div>
+          <div class="cc-code">vn</div>
+        </div>
+        <div class="cc-body">
+          <div style="background:rgba(155,89,182,.08);border-radius:8px;padding:10px 14px;font-size:.85rem;color:var(--muted)">
+            📌 尚未建立課堂投影頁面。建立後可在此加入連結。
+          </div>
+          <hr class="hr">
+          <div class="rec-row">
+            <span class="rec-label">📋 學習紀錄：</span>
+            <a class="rec-btn" id="rec-vn-today" href="#" target="_blank">今日</a>
+            <a class="rec-btn" href="class_records.html?course=vn" target="_blank">自選日期</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 工具 ═══ -->
+  <div>
+    <div class="section-title">🛠️ 共用教學工具</div>
+    <div class="course-grid">
+      <div class="course-card">
+        <div class="cc-body" style="padding-top:16px">
+          <div class="link-group">
+            <a class="link-row" href="wordcloud_student.html" target="_blank">
+              <span class="link-icon">☁️</span>
+              <span class="link-label">文字雲（學生輸入）</span>
+              <span class="link-badge green">學生連結</span>
+            </a>
+            <a class="link-row" href="wordcloud_display.html" target="_blank">
+              <span class="link-icon">📺</span>
+              <span class="link-label">文字雲顯示（課堂投影）</span>
+              <span class="link-badge">課堂使用</span>
+            </a>
+            <a class="link-row" href="lab_uvvis_fooddye.html" target="_blank">
+              <span class="link-icon">🔬</span>
+              <span class="link-label">UV-Vis 食用色素實驗</span>
+              <span class="link-badge gold">實驗</span>
+            </a>
+            <a class="link-row" href="lab_fluorescence_quinine.html" target="_blank">
+              <span class="link-icon">🔬</span>
+              <span class="link-label">螢光 奎寧實驗</span>
+              <span class="link-badge gold">實驗</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  部署於 <strong>Firebase Hosting</strong> · my-teaching-tools-517a0.web.app<br>
+  學生只需要各課程的直接連結，不需要開啟此頁面。
+</div>
+
+<script>
+// ── Fill today's date ──────────────────────────────────────────
+const _today = new Date().toISOString().slice(0,10).replace(/-/g,'');
+const _todayDisp = _today.slice(0,4)+'-'+_today.slice(4,6)+'-'+_today.slice(6,8);
+document.getElementById('today-label').textContent = '今日：' + _todayDisp;
+
+const _todayPairs = [
+  ['rec-fa-A-today', `class_records.html?session=${_today}_fa_A`],
+  ['rec-fa-B-today', `class_records.html?session=${_today}_fa_B`],
+  ['rec-fc-today',   `class_records.html?session=${_today}_fc`],
+  ['rec-vn-today',   `class_records.html?session=${_today}_vn`],
+];
+_todayPairs.forEach(([id, href]) => {
+  const el = document.getElementById(id);
+  if (el) el.href = href;
+});
+</script>
+</body>
+</html>

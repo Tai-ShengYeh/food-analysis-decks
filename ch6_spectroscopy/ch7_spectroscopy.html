@@ -1,0 +1,1515 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch7 UV-Vis & Fluorescence Spectroscopy | Nielsen Food Analysis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#0D1B2A; --bg2:#152236; --bg3:#1c2e45; --bg4:#0a1520;
+  --accent:#00C6FF; --gold:#FFD700; --magenta:#FF0099;
+  --green:#00E676; --red:#FF5252; --yellow:#FFD740;
+  --ink:#EEF3FF; --ink2:#B8C5E0; --ink3:#7A8BB8; --ink4:#4a5680;
+  --t1:55px; --t2:34px; --t3:21px; --t4:13px;
+  --s1:80px; --s2:48px; --s3:24px; --s4:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{width:100%;height:100%;overflow:hidden;
+  background:var(--bg);color:var(--ink);
+  font-family:'Noto Sans TC','Microsoft JhengHei',sans-serif;}
+
+/* ── Progress & Chapter tag ── */
+#progress{position:fixed;top:0;left:0;right:0;height:3px;z-index:200;
+  background:rgba(0,198,255,0.15);}
+#progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--gold));
+  width:0;transition:width .4s;}
+#section-tag{position:fixed;top:8px;left:16px;z-index:200;
+  font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink3);
+  letter-spacing:1px;}
+#page-info{position:fixed;bottom:16px;right:20px;z-index:200;
+  font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink4);}
+#hint{position:fixed;bottom:16px;left:20px;z-index:200;
+  font-size:11px;color:var(--ink4);font-family:'JetBrains Mono',monospace;}
+
+/* ── Slide container ── */
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:60px 80px 60px;overflow:hidden;
+  opacity:0;pointer-events:none;
+  transition:opacity .5s ease,transform .5s ease;transform:translateY(18px);}
+.slide.active{opacity:1;pointer-events:auto;transform:translateY(0);}
+.slide-inner{width:100%;max-width:1280px;}
+
+/* ── Cover slide ── */
+.slide-cover{background:radial-gradient(ellipse at 30% 50%,rgba(0,198,255,0.12) 0%,transparent 60%),
+  radial-gradient(ellipse at 70% 80%,rgba(255,0,153,0.08) 0%,transparent 50%),var(--bg);}
+.cover-kicker{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--accent);
+  letter-spacing:3px;text-transform:uppercase;margin-bottom:16px;}
+.cover-h1{font-size:var(--t1);font-weight:900;line-height:1.15;
+  background:linear-gradient(90deg,var(--ink),var(--accent));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:16px;}
+.cover-sub{font-size:var(--t3);color:var(--ink2);margin-bottom:32px;max-width:700px;}
+.cover-pills{display:flex;gap:10px;flex-wrap:wrap;}
+.pill{padding:6px 16px;border-radius:20px;font-size:var(--t4);border:1px solid;
+  font-family:'JetBrains Mono',monospace;}
+.pill-cyan{background:rgba(0,198,255,0.1);border-color:rgba(0,198,255,0.35);color:var(--accent);}
+.pill-gold{background:rgba(255,215,0,0.1);border-color:rgba(255,215,0,0.35);color:var(--gold);}
+.pill-mag{background:rgba(255,0,153,0.08);border-color:rgba(255,0,153,0.3);color:var(--magenta);}
+
+/* ── Standard content slide ── */
+.s-kicker{font-family:'JetBrains Mono',monospace;font-size:var(--t4);color:var(--accent);
+  letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;}
+.s-h1{font-size:var(--t2);font-weight:900;color:var(--ink);margin-bottom:20px;line-height:1.2;}
+.s-h1 em{color:var(--accent);font-style:normal;}
+.s-h2{font-size:var(--t3);font-weight:700;color:var(--gold);margin-bottom:12px;}
+.s-body{font-size:15px;color:var(--ink2);line-height:1.7;}
+
+/* ── Cards ── */
+.card-grid{display:grid;gap:16px;}
+.card-grid.cols2{grid-template-columns:1fr 1fr;}
+.card-grid.cols3{grid-template-columns:repeat(3,1fr);}
+.card-grid.cols4{grid-template-columns:repeat(4,1fr);}
+.card{background:var(--bg2);border:1px solid rgba(0,198,255,0.15);border-radius:12px;padding:20px;}
+.card.gold-b{border-color:rgba(255,215,0,0.3);}
+.card.mag-b{border-color:rgba(255,0,153,0.3);}
+.card.accent-b{border-color:rgba(0,198,255,0.4);}
+.card-icon{font-size:28px;margin-bottom:10px;}
+.card-title{font-size:15px;font-weight:700;color:var(--ink);margin-bottom:6px;}
+.card-desc{font-size:13px;color:var(--ink2);}
+
+/* ── Equation box ── */
+.eq-box{background:rgba(0,198,255,0.06);border:1px solid rgba(0,198,255,0.2);
+  border-radius:10px;padding:14px 20px;margin:10px 0;font-family:'JetBrains Mono',monospace;}
+.eq{font-size:18px;color:var(--accent);margin:4px 0;}
+.eq-sub{font-size:12px;color:var(--ink3);margin-top:8px;}
+.eq-box.gold{background:rgba(255,215,0,0.05);border-color:rgba(255,215,0,0.2);}
+.eq-box.gold .eq{color:var(--gold);}
+
+/* ── Two-col layout ── */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;}
+.split.ratio{grid-template-columns:1.1fr 0.9fr;}
+.split.ratio-r{grid-template-columns:0.9fr 1.1fr;}
+
+/* ── List ── */
+.check-list{list-style:none;margin:10px 0;}
+.check-list li{padding:6px 0;font-size:14px;color:var(--ink2);display:flex;gap:10px;align-items:flex-start;}
+.check-list li::before{content:'▸';color:var(--accent);flex-shrink:0;margin-top:2px;}
+.check-list li strong{color:var(--ink);}
+
+/* ── Badge row ── */
+.badge-row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0;}
+.badge{padding:4px 12px;border-radius:20px;font-size:12px;border:1px solid;font-family:'JetBrains Mono',monospace;}
+
+/* ── Highlight box ── */
+.hl-box{background:rgba(255,215,0,0.06);border:1px solid rgba(255,215,0,0.25);
+  border-radius:8px;padding:12px 16px;font-size:13px;color:var(--ink);margin:12px 0;}
+.hl-box.red{background:rgba(255,82,82,0.06);border-color:rgba(255,82,82,0.25);color:var(--red);}
+.hl-box.cyan{background:rgba(0,198,255,0.06);border-color:rgba(0,198,255,0.25);}
+
+/* ── Number stat cards ── */
+.stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin:14px 0;}
+.stat-card{background:var(--bg3);border-radius:10px;padding:14px;text-align:center;}
+.stat-val{font-size:26px;font-weight:900;color:var(--accent);}
+.stat-label{font-size:11px;color:var(--ink3);margin-top:4px;}
+
+/* ── SVG wrapper ── */
+.svg-panel{background:var(--bg3);border-radius:12px;padding:16px;overflow:hidden;}
+
+/* ── Interactive calc ── */
+.calc-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin:12px 0;}
+.calc-field label{display:block;font-size:11px;color:var(--ink3);margin-bottom:4px;font-family:'JetBrains Mono',monospace;}
+.calc-field input{width:100%;background:var(--bg3);border:1px solid rgba(0,198,255,0.2);
+  color:var(--ink);border-radius:6px;padding:8px 10px;font-size:14px;
+  font-family:'JetBrains Mono',monospace;outline:none;}
+.calc-field input:focus{border-color:var(--accent);}
+.calc-btn{background:var(--accent);color:var(--bg);border:none;border-radius:8px;
+  padding:9px 20px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;
+  transition:all .2s;margin-top:8px;}
+.calc-btn:hover{background:#29d3ff;}
+.calc-result{background:rgba(0,198,255,0.08);border:1px solid rgba(0,198,255,0.2);
+  border-radius:8px;padding:10px 14px;margin-top:10px;font-family:'JetBrains Mono',monospace;
+  font-size:14px;color:var(--accent);}
+
+/* ── Comparison table ── */
+.comp-table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0;}
+.comp-table th{background:rgba(0,198,255,0.1);color:var(--accent);padding:10px 14px;
+  border:1px solid rgba(0,198,255,0.15);text-align:left;}
+.comp-table td{padding:9px 14px;border:1px solid rgba(255,255,255,0.05);color:var(--ink2);vertical-align:top;}
+.comp-table tr:nth-child(even) td{background:rgba(255,255,255,0.02);}
+.comp-table td:first-child{color:var(--ink);font-weight:600;}
+.hi{color:var(--green);font-weight:600;}
+.lo{color:var(--red);}
+.ok{color:var(--yellow);}
+
+/* ── Wordcloud slide ── */
+#wc-display{min-height:120px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;
+  justify-content:center;padding:10px;}
+#wc-input{background:var(--bg3);border:1px solid rgba(0,198,255,0.3);color:var(--ink);
+  border-radius:8px;padding:10px 16px;font-size:16px;font-family:inherit;outline:none;width:300px;}
+#wc-btn{background:var(--accent);color:var(--bg);border:none;border-radius:8px;
+  padding:10px 20px;font-weight:700;cursor:pointer;font-size:15px;}
+
+/* ── Decision tree slide ── */
+#dt-session-input{background:var(--bg3);border:1px solid rgba(0,198,255,0.3);color:var(--ink);
+  border-radius:8px;padding:8px 14px;font-size:13px;font-family:'JetBrains Mono',monospace;
+  width:200px;outline:none;}
+.dt-options{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:16px 0;}
+.dt-opt{border-radius:12px;padding:18px;cursor:pointer;border:2px solid transparent;
+  transition:all .25s;text-align:center;}
+.dt-opt.optA{background:rgba(0,198,255,0.08);border-color:rgba(0,198,255,0.2);}
+.dt-opt.optA:hover,.dt-opt.optA.sel{border-color:var(--accent);background:rgba(0,198,255,0.18);}
+.dt-opt.optB{background:rgba(255,215,0,0.06);border-color:rgba(255,215,0,0.2);}
+.dt-opt.optB:hover,.dt-opt.optB.sel{border-color:var(--gold);background:rgba(255,215,0,0.16);}
+.dt-opt.optC{background:rgba(255,0,153,0.06);border-color:rgba(255,0,153,0.2);}
+.dt-opt.optC:hover,.dt-opt.optC.sel{border-color:var(--magenta);background:rgba(255,0,153,0.14);}
+.dt-letter{font-size:22px;font-weight:900;margin-bottom:6px;}
+.dt-optA .dt-letter,.optA .dt-letter{color:var(--accent);}
+.dt-optB .dt-letter,.optB .dt-letter{color:var(--gold);}
+.dt-optC .dt-letter,.optC .dt-letter{color:var(--magenta);}
+.dt-text{font-size:13px;color:var(--ink2);line-height:1.4;}
+#dt-reason{width:100%;background:var(--bg3);border:1px solid rgba(0,198,255,0.2);
+  color:var(--ink);border-radius:8px;padding:8px 12px;font-size:13px;
+  font-family:inherit;resize:none;height:60px;outline:none;margin-top:8px;}
+#dt-sid,#dt-name{background:var(--bg3);border:1px solid rgba(0,198,255,0.2);color:var(--ink);
+  border-radius:6px;padding:7px 12px;font-size:13px;font-family:inherit;outline:none;width:140px;}
+#dt-submit-btn{background:var(--gold);color:var(--bg);border:none;border-radius:8px;
+  padding:9px 22px;font-weight:700;cursor:pointer;font-size:14px;margin-top:8px;}
+#dt-status{font-size:13px;margin-top:8px;color:var(--ink2);}
+#dt-chart-area{margin-top:12px;}
+
+/* ── QR placeholder ── */
+.qr-box{background:white;border-radius:8px;padding:6px;display:inline-block;}
+
+/* ── Fullscreen button ── */
+#fs-btn{position:fixed;top:12px;right:16px;z-index:200;background:transparent;
+  border:1px solid var(--ink4);color:var(--ink4);border-radius:6px;
+  padding:4px 10px;font-size:11px;cursor:pointer;font-family:'JetBrains Mono',monospace;}
+#fs-btn:hover{border-color:var(--accent);color:var(--accent);}
+
+/* ── Decorative right panel ── */
+.right-deco{position:relative;height:100%;min-height:200px;display:flex;align-items:center;justify-content:center;}
+
+/* ── Chromophore table ── */
+.chrom-table{width:100%;border-collapse:collapse;font-size:12px;}
+.chrom-table th{background:rgba(255,215,0,0.1);color:var(--gold);padding:8px 10px;
+  border:1px solid rgba(255,215,0,0.15);text-align:left;}
+.chrom-table td{padding:7px 10px;border:1px solid rgba(255,255,255,0.05);color:var(--ink2);}
+.chrom-table tr:nth-child(even) td{background:rgba(255,255,255,0.02);}
+
+/* ── Transition slide ── */
+.slide-transition{background:var(--bg4);}
+
+/* ── Chapter colors per section ── */
+[data-section="引起動機"] #section-tag,.sec-mo{color:var(--magenta)!important;}
+[data-section="維持注意"] #section-tag,.sec-ma{color:var(--accent)!important;}
+[data-section="喚起行動"] #section-tag,.sec-ac{color:var(--gold)!important;}
+</style>
+</head>
+<body>
+
+<div id="progress"><div id="progress-fill"></div></div>
+<div id="section-tag">— 引起動機 —</div>
+<div id="page-info">1 / 25</div>
+<div id="hint">← → 切換　F 全螢幕</div>
+<button id="fs-btn" onclick="toggleFS()">⛶ 全螢幕</button>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 1: COVER
+══════════════════════════════════════════════ -->
+<section class="slide slide-cover active" data-slide="1" data-section="引起動機">
+<div class="slide-inner">
+  <div class="cover-kicker">Nielsen Food Analysis · Chapter 7</div>
+  <div class="cover-h1">紫外線、可見光<br>與螢光光譜學</div>
+  <div class="cover-sub">UV-Vis & Fluorescence Spectroscopy<br>光如何揭示食品的秘密</div>
+  <div class="cover-pills">
+    <span class="pill pill-cyan">Beer-Lambert Law</span>
+    <span class="pill pill-cyan">校正曲線</span>
+    <span class="pill pill-gold">食品色素分析</span>
+    <span class="pill pill-gold">奎寧螢光定量</span>
+    <span class="pill pill-mag">λ = 200–780 nm</span>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 2: WORD CLOUD WARM-UP
+══════════════════════════════════════════════ -->
+<section class="slide" data-slide="2" data-section="引起動機">
+<div class="slide-inner">
+  <div class="s-kicker">暖身活動 · Wordcloud</div>
+  <div class="s-h1">你想到什麼？</div>
+  <div style="font-size:16px;color:var(--ink2);margin-bottom:16px;">
+    看到「光譜分析」這四個字，你第一個聯想到的詞是什麼？
+  </div>
+  <div id="wc-display">
+    <span style="color:var(--ink3);font-size:14px;">等待同學送出…</span>
+  </div>
+  <div style="display:flex;gap:12px;margin-top:16px;align-items:center;flex-wrap:wrap;">
+    <input id="wc-input" type="text" maxlength="20" placeholder="輸入一個詞（最多20字）" onkeydown="if(event.key==='Enter')wcSubmit()">
+    <button id="wc-btn" onclick="wcSubmit()">送出 ↵</button>
+    <span id="wc-status" style="font-size:13px;color:var(--ink3)"></span>
+  </div>
+  <div style="margin-top:16px;font-size:12px;color:var(--ink4)">Session: <span id="wc-session-label" style="font-family:'JetBrains Mono',monospace;color:var(--accent)">未設定</span></div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 3: 痛點問句
+══════════════════════════════════════════════ -->
+<section class="slide" data-slide="3" data-section="引起動機">
+<div class="slide-inner">
+  <div class="s-kicker">問題導向 · 引起動機</div>
+  <div style="font-size:var(--t2);font-weight:900;color:var(--ink);line-height:1.3;margin-bottom:28px;">
+    這兩杯飲料，<br><em style="color:var(--accent)">顏色一樣嗎？</em><br>
+    <span style="font-size:var(--t3);color:var(--ink3)">你怎麼<em style="color:var(--gold)">量化</em>這個差異？</span>
+  </div>
+  <div class="card-grid cols3">
+    <div class="card">
+      <div class="card-icon">👁️</div>
+      <div class="card-title">肉眼判斷</div>
+      <div class="card-desc" style="color:var(--red)">主觀、不可重複、無法量化</div>
+    </div>
+    <div class="card accent-b">
+      <div class="card-icon">🔬</div>
+      <div class="card-title">UV-Vis 分光光度法</div>
+      <div class="card-desc" style="color:var(--green)">客觀 · 精確 · 可量化 · 快速</div>
+    </div>
+    <div class="card gold-b">
+      <div class="card-icon">✨</div>
+      <div class="card-title">螢光光譜法</div>
+      <div class="card-desc" style="color:var(--gold)">超高靈敏度 · ppb 級偵測</div>
+    </div>
+  </div>
+  <div class="hl-box cyan" style="margin-top:16px;">
+    📌 本章目標：掌握光與物質交互作用的原理，並將其應用於食品成分的定量分析
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 4: OVERVIEW
+══════════════════════════════════════════════ -->
+<section class="slide" data-slide="4" data-section="引起動機">
+<div class="slide-inner">
+  <div class="s-kicker">Chapter Overview · 本章地圖</div>
+  <div class="s-h1">Ch7 核心架構</div>
+  <div class="card-grid" style="grid-template-columns:1fr 1fr;gap:20px">
+    <div>
+      <div class="s-h2">Part I：UV-Vis 吸光度法</div>
+      <ul class="check-list">
+        <li><strong>Beer-Lambert 定律</strong> A = εbc</li>
+        <li><strong>偏差類型</strong> 濃度、儀器、化學偏差</li>
+        <li><strong>校正曲線</strong> 線性範圍與標準添加法</li>
+        <li><strong>儀器元件</strong> 光源、單色儀、偵測器</li>
+        <li><strong>單/雙光束</strong> 儀器設計比較</li>
+        <li><strong>食品發色團</strong> β-胡蘿蔔素、蛋白質…</li>
+      </ul>
+    </div>
+    <div>
+      <div class="s-h2" style="color:var(--magenta)">Part II：螢光光譜法</div>
+      <ul class="check-list">
+        <li><strong>激發/發射原理</strong> Jablonski 圖</li>
+        <li><strong>Stokes 位移</strong> 螢光選擇性的來源</li>
+        <li><strong>F = kP₀c</strong> 線性濃度關係</li>
+        <li><strong>靈敏度比較</strong> vs UV-Vis 差 1-3 數量級</li>
+        <li><strong>食品應用</strong> 維生素、農藥、奎寧</li>
+      </ul>
+    </div>
+  </div>
+  <div class="stat-row">
+    <div class="stat-card"><div class="stat-val">200</div><div class="stat-label">UV 起點 (nm)</div></div>
+    <div class="stat-card"><div class="stat-val">780</div><div class="stat-label">Near-IR 終點 (nm)</div></div>
+    <div class="stat-card"><div class="stat-val">0.2–0.8</div><div class="stat-label">最佳吸光度範圍</div></div>
+    <div class="stat-card"><div class="stat-val">10³</div><div class="stat-label">螢光靈敏度倍數</div></div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 5: EM SPECTRUM
+══════════════════════════════════════════════ -->
+<section class="slide" data-slide="5" data-section="維持注意">
+<div class="slide-inner">
+  <div class="s-kicker">Electromagnetic Spectrum · 電磁波譜</div>
+  <div class="s-h1">光的世界：從 200 到 780 nm</div>
+  <!-- EM Spectrum SVG -->
+  <div class="svg-panel">
+    <svg viewBox="0 0 800 130" style="width:100%;max-height:130px">
+      <!-- Full spectrum gradient -->
+      <defs>
+        <linearGradient id="specGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#8B00FF"/>
+          <stop offset="15%" stop-color="#4400FF"/>
+          <stop offset="28%" stop-color="#0022FF"/>
+          <stop offset="38%" stop-color="#00CCFF"/>
+          <stop offset="50%" stop-color="#00FF44"/>
+          <stop offset="62%" stop-color="#FFFF00"/>
+          <stop offset="75%" stop-color="#FF8800"/>
+          <stop offset="88%" stop-color="#FF2200"/>
+          <stop offset="100%" stop-color="#8B0000"/>
+        </linearGradient>
+        <!-- UV glow -->
+        <filter id="glow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+      <!-- Background regions -->
+      <rect x="30" y="30" width="120" height="50" fill="rgba(180,0,255,0.12)" rx="4"/>
+      <rect x="150" y="30" width="500" height="50" fill="url(#specGrad)" rx="4" opacity="0.85"/>
+      <rect x="650" y="30" width="120" height="50" fill="rgba(100,0,0,0.2)" rx="4"/>
+      <!-- Labels -->
+      <text x="90" y="22" fill="#9966FF" font-size="12" text-anchor="middle" font-family="JetBrains Mono,monospace">UV</text>
+      <text x="90" y="22" dy="0" fill="#9966FF" font-size="12" text-anchor="middle">UV</text>
+      <text x="400" y="22" fill="white" font-size="12" text-anchor="middle">可見光 Visible</text>
+      <text x="710" y="22" fill="#FF6666" font-size="12" text-anchor="middle">近紅外 NIR</text>
+      <!-- Wavelength ticks -->
+      <line x1="30" y1="82" x2="30" y2="95" stroke="#546E7A" stroke-width="1"/>
+      <text x="30" y="108" fill="#546E7A" font-size="10" text-anchor="middle">200</text>
+      <line x1="150" y1="82" x2="150" y2="95" stroke="#9966FF" stroke-width="2"/>
+      <text x="150" y="108" fill="#9966FF" font-size="10" text-anchor="middle">380</text>
+      <line x1="293" y1="82" x2="293" y2="95" stroke="#00CCFF" stroke-width="1.5"/>
+      <text x="293" y="108" fill="#00CCFF" font-size="10" text-anchor="middle">480</text>
+      <line x1="400" y1="82" x2="400" y2="95" stroke="#00FF44" stroke-width="1.5"/>
+      <text x="400" y="108" fill="#00FF44" font-size="10" text-anchor="middle">550</text>
+      <line x1="530" y1="82" x2="530" y2="95" stroke="#FF8800" stroke-width="1.5"/>
+      <text x="530" y="108" fill="#FF8800" font-size="10" text-anchor="middle">640</text>
+      <line x1="650" y1="82" x2="650" y2="95" stroke="#FF4444" stroke-width="2"/>
+      <text x="650" y="108" fill="#FF4444" font-size="10" text-anchor="middle">780</text>
+      <line x1="770" y1="82" x2="770" y2="95" stroke="#546E7A" stroke-width="1"/>
+      <text x="770" y="108" fill="#546E7A" font-size="10" text-anchor="middle">1000</text>
+      <!-- UV-Vis analysis bracket -->
+      <rect x="30" y="88" width="740" height="6" fill="rgba(0,198,255,0.15)" rx="3"/>
+      <text x="400" y="125" fill="rgba(0,198,255,0.7)" font-size="11" text-anchor="middle">← UV-Vis 分析範圍 (200–780 nm) →</text>
+      <!-- Yellow 5 / Red 40 markers -->
+      <line x1="213" y1="28" x2="213" y2="82" stroke="#FFE033" stroke-width="1.5" stroke-dasharray="3,3"/>
+      <text x="213" y="18" fill="#FFE033" font-size="9" text-anchor="middle">Y5 427</text>
+      <line x1="277" y1="28" x2="277" y2="82" stroke="#FF6B6B" stroke-width="1.5" stroke-dasharray="3,3"/>
+      <text x="277" y="10" fill="#FF6B6B" font-size="9" text-anchor="middle">R40 503</text>
+      <line x1="483" y1="28" x2="483" y2="82" stroke="#6BA3FF" stroke-width="1.5" stroke-dasharray="3,3"/>
+      <text x="483" y="18" fill="#6BA3FF" font-size="9" text-anchor="middle">B1 629</text>
+    </svg>
+  </div>
+  <div class="card-grid cols3" style="margin-top:16px">
+    <div class="card"><div class="card-title">UV 區 (200–380 nm)</div>
+      <div class="card-desc">蛋白質(280nm)、核酸(260nm)；需石英比色管</div></div>
+    <div class="card accent-b"><div class="card-title">可見光區 (380–780 nm)</div>
+      <div class="card-desc">色素、天然色素；可用玻璃/塑膠比色管</div></div>
+    <div class="card"><div class="card-title">近紅外區 (780+ nm)</div>
+      <div class="card-desc">本章不涵蓋；用於穀物水分含量快速分析</div></div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 6: LIGHT–MATTER INTERACTION
+══════════════════════════════════════════════ -->
+<section class="slide" data-slide="6" data-section="維持注意">
+<div class="slide-inner">
+  <div class="split">
+    <div>
+      <div class="s-kicker">光與物質 · Beer-Lambert 基礎</div>
+      <div class="s-h1">光射進去，<br>什麼出來了？</div>
+      <div class="eq-box">
+        <div class="eq-sub">透光率 Transmittance</div>
+        <div class="eq">T = P / P₀</div>
+        <div class="eq-sub">吸光度 Absorbance</div>
+        <div class="eq">A = −log(T) = −log(P/P₀)</div>
+        <div class="eq-sub" style="margin-top:10px">A = 0 → T = 1（100%，完全透過）<br>A = 1 → T = 0.1（10%）<br>A = 2 → T = 0.01（1%）</div>
+      </div>
+      <ul class="check-list" style="margin-top:12px">
+        <li><strong>P₀</strong>：入射光強度（incident radiant power）</li>
+        <li><strong>P</strong>：透過光強度（transmitted power）</li>
+        <li><strong>A</strong>：無因次量，對數尺度</li>
+      </ul>
+    </div>
+    <div>
+      <!-- Cuvette diagram -->
+      <div class="svg-panel">
+        <svg viewBox="0 0 320 200" style="width:100%">
+          <!-- Light beam incoming -->
+          <defs>
+            <linearGradient id="beamIn" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#00C6FF" stop-opacity="0.9"/>
+              <stop offset="100%" stop-color="#00C6FF" stop-opacity="0.3"/>
+            </linearGradient>
+            <linearGradient id="beamOut" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#00C6FF" stop-opacity="0.15"/>
+              <stop offset="100%" stop-color="#00C6FF" stop-opacity="0.5"/>
+            </linearGradient>
+          </defs>
+          <!-- P0 beam -->
+          <rect x="10" y="88" width="90" height="24" fill="url(#beamIn)" rx="3"/>
+          <text x="55" y="82" fill="#00C6FF" font-size="13" text-anchor="middle" font-weight="bold">P₀</text>
+          <text x="55" y="125" fill="#546E7A" font-size="11" text-anchor="middle">入射光</text>
+          <!-- Cuvette -->
+          <rect x="100" y="50" width="120" height="100" fill="rgba(0,150,200,0.15)" stroke="rgba(0,198,255,0.6)" stroke-width="2" rx="4"/>
+          <text x="160" y="105" fill="rgba(0,198,255,0.7)" font-size="13" text-anchor="middle">溶液</text>
+          <text x="160" y="165" fill="#546E7A" font-size="11" text-anchor="middle">← b (光徑) →</text>
+          <!-- Path length arrows -->
+          <line x1="100" y1="155" x2="220" y2="155" stroke="#546E7A" stroke-width="1" marker-start="url(#arr)" marker-end="url(#arr)"/>
+          <!-- P beam (attenuated) -->
+          <rect x="220" y="92" width="90" height="16" fill="url(#beamOut)" rx="3"/>
+          <text x="265" y="82" fill="#00C6FF" font-size="13" text-anchor="middle" font-weight="bold">P</text>
+          <text x="265" y="122" fill="#546E7A" font-size="11" text-anchor="middle">穿透光</text>
+          <!-- Absorption label -->
+          <text x="160" y="35" fill="var(--gold)" font-size="12" text-anchor="middle">部分光被吸收</text>
+          <text x="160" y="188" fill="var(--accent)" font-size="11" text-anchor="middle">A = −log(P/P₀)</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 7: BEER-LAMBERT LAW
+══════════════════════════════════════════════ -->
+<section class="slide" data-slide="7" data-section="維持注意">
+<div class="slide-inner">
+  <div class="s-kicker">Beer-Lambert Law · 定量核心</div>
+  <div class="s-h1">A = <em>ε</em> · b · c</div>
+  <div class="card-grid cols3" style="margin-bottom:16px">
+    <div class="card accent-b">
+      <div class="card-title" style="font-size:28px;color:var(--accent);font-family:'JetBrains Mono'">ε</div>
+      <div class="card-desc"><strong style="color:var(--ink)">莫耳吸收係數</strong><br>單位：L/(mol·cm)<br>物質固有屬性，隨波長變化</div>
+    </div>
+    <div class="card gold-b">
+      <div class="card-title" style="font-size:28px;color:var(--gold);font-family:'JetBrains Mono'">b</div>
+      <div class="card-desc"><strong style="color:var(--ink)">光徑長度</strong><br>單位：cm<br>通常標準比色管 = 1 cm</div>
+    </div>
+    <div class="card mag-b">
+      <div class="card-title" style="font-size:28px;color:var(--magenta);font-family:'JetBrains Mono'">c</div>
+      <div class="card-desc"><strong style="color:var(--ink)">濃度</strong><br>單位：mol/L (M)<br>欲求量，由 A 計算得出</div>
+    </div>
+  </div>
+  <div class="split" style="gap:20px">
+    <div>
+      <div class="eq-box gold">
+        <div class="eq-sub">由 A 求 c：</div>
+        <div class="eq">c = A / (ε × b)</div>
+        <div class="eq-sub">定量分析的核心計算式</div>
+      </div>
+      <ul class="check-list" style="margin-top:10px">
+        <li><strong>前提</strong>：稀溶液（濃度 &lt; 10 mM）</li>
+        <li><strong>前提</strong>：在 λmax 測量，靈敏度最大</li>
+        <li><strong>前提</strong>：單色光（narrowband light）</li>
+      </ul>
+    </div>
+    <div>
+      <div class="hl-box">
+        <strong>📌 FD&C 色素 ε 值：</strong><br>
+        Yellow 5：ε = 27,300 L/(mol·cm) at 427 nm<br>
+        Red 40：ε = 25,900 L/(mol·cm) at 503 nm<br>
+        <span style="color:var(--gold)">Blue 1：ε = 130,000 L/(mol·cm) at 629 nm</span><br>
+        <small>→ Blue 1 靈敏度最高，極微量即可測到</small>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 8: INTERACTIVE BEER-LAMBERT CALCULATOR
+══════════════════════════════════════════════ -->
+<section class="slide" data-slide="8" data-section="維持注意">
+<div class="slide-inner">
+  <div class="s-kicker">互動練習 · Interactive Calculator</div>
+  <div class="s-h1">Beer-Lambert 計算器</div>
+  <div class="calc-grid">
+    <div class="calc-field"><label>吸光度 A</label>
+      <input id="bl-A" type="number" step="0.001" placeholder="例：0.450"></div>
+    <div class="calc-field"><label>ε [L/(mol·cm)]</label>
+      <input id="bl-eps" type="number" placeholder="例：27300"></div>
+    <div class="calc-field"><label>光徑 b (cm)</label>
+      <input id="bl-b" type="number" value="1" step="0.1"></div>
+    <div class="calc-field"><label>濃度 c (mol/L)</label>
+      <input id="bl-c" type="number" step="0.000001" placeholder="待計算"></div>
+  </div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px">
+    <button class="calc-btn" onclick="blCalc('c')">計算 c</button>
+    <button class="calc-btn" style="background:var(--gold)" onclick="blCalc('A')">計算 A</button>
+    <button class="calc-btn" style="background:var(--magenta)" onclick="blCalc('eps')">計算 ε</button>
+    <button class="calc-btn" style="background:var(--bg3);color:var(--ink2);border:1px solid var(--ink4)" onclick="blFill('Y5')">填入 Yellow 5</button>
+    <button class="calc-btn" style="background:var(--bg3);color:var(--ink2);border:1px solid var(--ink4)" onclick="blFill('R40')">填入 Red 40</button>
+  </div>
+  <div class="calc-result" id="bl-out" style="display:none"></div>
+  <div class="card-grid cols3" style="margin-top:16px">
+    <div class="card"><div class="card-title">A = 0.450, ε = 27300</div>
+      <div class="card-desc" style="font-family:'JetBrains Mono',monospace">c = 0.450/(27300×1)<br>= 1.648×10⁻⁵ mol/L<br>= 16.48 μmol/L</div></div>
+    <div class="card"><div class="card-title">若 A > 0.8 怎麼辦？</div>
+      <div class="card-desc" style="color:var(--yellow)">稀釋樣品（例如10倍）後重測，結果乘回稀釋倍數</div></div>
+    <div class="card"><div class="card-title">若 A < 0.2 怎麼辦？</div>
+      <div class="card-desc" style="color:var(--yellow)">增加濃縮倍數、使用更長光徑（5cm, 10cm比色管）</div></div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 9: OPTIMAL A RANGE
+══════════════════════════════════════════════ -->
+<section class="slide" data-slide="9" data-section="維持注意">
+<div class="slide-inner">
+  <div class="split">
+    <div>
+      <div class="s-kicker">最佳測量範圍</div>
+      <div class="s-h1">A = 0.2 至 0.8<br>為什麼？</div>
+      <div class="hl-box red" style="margin-bottom:12px">
+        A > 0.8 → T &lt; 16%<br>偵測器接收光極少，雜訊比例大
+      </div>
+      <div class="hl-box red">
+        A &lt; 0.2 → T > 63%<br>大部分光穿透，難以精確測量微小差異
+      </div>
+      <div class="hl-box" style="margin-top:12px">
+        ✅ A = 0.2–0.8（T = 16–63%）<br>誤差最小，精確度最高
+      </div>
+    </div>
+    <div>
+      <canvas id="chart-err" style="background:var(--bg3);border-radius:10px;padding:10px"></canvas>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 10: DEVIATIONS FROM BEER'S LAW
+══════════════════════════════════════════════ -->
+<section class="slide" data-slide="10" data-section="維持注意">
+<div class="slide-inner">
+  <div class="s-kicker">Deviations · Beer's Law 偏差</div>
+  <div class="s-h1">三種 Beer's Law 偏差</div>
+  <div class="card-grid cols3">
+    <div class="card mag-b">
+      <div class="card-icon">🧪</div>
+      <div class="card-title" style="color:var(--magenta)">真實偏差<br>True Deviation</div>
+      <div class="card-desc">
+        高濃度（&gt;10 mM）時，分子間交互作用改變吸收特性<br>
+        <span style="color:var(--red)">→ 非線性 A vs c 曲線</span><br>
+        <strong>解法：</strong>稀釋至線性範圍
+      </div>
+    </div>
+    <div class="card gold-b">
+      <div class="card-icon">🔦</div>
+      <div class="card-title" style="color:var(--gold)">儀器偏差<br>Instrumental Deviation</div>
+      <div class="card-desc">
+        多色光（polychromatic radiation）同時照射<br>
+        Beer's Law 僅對單色光嚴格成立<br>
+        <strong>解法：</strong>窄通帶設定（≤2 nm bandwidth）
+      </div>
+    </div>
+    <div class="card accent-b">
+      <div class="card-icon">⚗️</div>
+      <div class="card-title" style="color:var(--accent)">化學偏差<br>Chemical Deviation</div>
+      <div class="card-desc">
+        溶液中化學平衡（解離/結合），改變吸光物種<br>
+        pH 影響最常見（如 pH 指示劑）<br>
+        <strong>解法：</strong>緩衝液控制 pH
+      </div>
+    </div>
+  </div>
+  <div class="hl-box cyan" style="margin-top:12px">
+    💡 實務上：先建立校正曲線（calibration curve）確認線性範圍，再進行定量分析
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 11: CALIBRATION CURVES
+══════════════════════════════════════════════ -->
+<section class="slide" data-slide="11" data-section="維持注意">
+<div class="slide-inner">
+  <div class="s-kicker">Calibration Curve · 校正曲線</div>
+  <div class="s-h1">如何建立校正曲線</div>
+  <div class="split">
+    <div>
+      <canvas id="chart-cal" style="background:var(--bg3);border-radius:10px;padding:8px"></canvas>
+    </div>
+    <div>
+      <ul class="check-list">
+        <li>配製 <strong>5–8 個已知濃度</strong>的標準液（涵蓋待測濃度範圍）</li>
+        <li>在相同 λ 測量各標準液吸光度</li>
+        <li>以 A（Y 軸）vs c（X 軸）作圖，擬合直線</li>
+        <li><strong>R² ≥ 0.999</strong> 為品質標準</li>
+        <li>樣品 A 代入方程式求 c</li>
+      </ul>
+      <div class="eq-box" style="margin-top:12px">
+        <div class="eq-sub">線性回歸方程式：</div>
+        <div class="eq">A = slope × c + intercept</div>
+        <div class="eq-sub">→ c = (A − intercept) / slope</div>
+      </div>
+      <div class="hl-box" style="margin-top:10px">
+        ⚠️ 理想上截距應近似 0（Beer's Law 過原點）
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 12: STANDARD ADDITION
+══════════════════════════════════════════════ -->
+<section class="slide" data-slide="12" data-section="維持注意">
+<div class="slide-inner">
+  <div class="s-kicker">Standard Addition · 標準添加法</div>
+  <div class="s-h1">基質效應的解法</div>
+  <div class="split ratio">
+    <div>
+      <div class="s-h2">何時使用？</div>
+      <ul class="check-list">
+        <li>複雜食品基質（complex matrix）干擾測量</li>
+        <li>基質成分影響 ε 值</li>
+        <li>無法配製與樣品完全相同基質的標準液</li>
+      </ul>
+      <div class="s-h2" style="margin-top:16px">操作流程</div>
+      <ul class="check-list">
+        <li>取 <strong>多份等量樣品</strong>，分別添加不同量的標準品</li>
+        <li>測量各份 A 值，對添加量作圖（得直線）</li>
+        <li>直線外推至 X 軸負截距 → 即為原樣品濃度</li>
+      </ul>
+    </div>
+    <div>
+      <div class="svg-panel">
+        <svg viewBox="0 0 280 200" style="width:100%">
+          <defs>
+            <marker id="arrowStd" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L8,3 z" fill="#00C6FF"/>
+            </marker>
+          </defs>
+          <!-- Axes -->
+          <line x1="80" y1="170" x2="265" y2="170" stroke="#546E7A" stroke-width="1.5" marker-end="url(#arrowStd)"/>
+          <line x1="80" y1="170" x2="80" y2="20" stroke="#546E7A" stroke-width="1.5" marker-end="url(#arrowStd)"/>
+          <!-- X,Y labels -->
+          <text x="170" y="188" fill="#546E7A" font-size="11" text-anchor="middle">添加標準量</text>
+          <text x="20" y="95" fill="#546E7A" font-size="11" text-anchor="middle" transform="rotate(-90,20,95)">吸光度 A</text>
+          <!-- Data points and line -->
+          <circle cx="80" cy="120" r="4" fill="var(--accent)"/>
+          <circle cx="120" cy="97" r="4" fill="var(--accent)"/>
+          <circle cx="165" cy="72" r="4" fill="var(--accent)"/>
+          <circle cx="210" cy="47" r="4" fill="var(--accent)"/>
+          <!-- Regression line (extended to left) -->
+          <line x1="30" y1="145" x2="250" y2="28" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="5,3"/>
+          <!-- Intercept arrow -->
+          <circle cx="30" cy="170" r="5" fill="var(--gold)" opacity="0.8"/>
+          <line x1="30" y1="170" x2="30" y2="145" stroke="var(--gold)" stroke-width="1.5" stroke-dasharray="3,2"/>
+          <text x="30" y="185" fill="var(--gold)" font-size="10" text-anchor="middle">Cₓ</text>
+          <text x="150" y="15" fill="var(--gold)" font-size="11" text-anchor="middle">外推至 X 軸 → 樣品濃度</text>
+          <!-- Zero line -->
+          <line x1="25" y1="170" x2="80" y2="170" stroke="rgba(255,215,0,0.4)" stroke-width="1.5" stroke-dasharray="3,2"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 13: CUVETTE SELECTION
+══════════════════════════════════════════════ -->
+<section class="slide" data-slide="13" data-section="維持注意">
+<div class="slide-inner">
+  <div class="s-kicker">Cuvette Selection · 比色管選擇</div>
+  <div class="s-h1">材質決定測量波長</div>
+  <div class="card-grid cols3">
+    <div class="card gold-b">
+      <div style="font-size:32px;margin-bottom:10px">💎</div>
+      <div class="card-title" style="color:var(--gold)">石英 Quartz (SiO₂)</div>
+      <div class="card-desc">
+        <strong style="color:var(--green)">UV + Visible (200–2500 nm)</strong><br>
+        透過 UV 光（200–380 nm）<br>
+        最貴，用於蛋白質(280 nm)、螢光測定<br>
+        <em>螢光實驗必用</em>
+      </div>
+    </div>
+    <div class="card accent-b">
+      <div style="font-size:32px;margin-bottom:10px">🔲</div>
+      <div class="card-title" style="color:var(--accent)">玻璃 Glass (SiO₂+)</div>
+      <div class="card-desc">
+        <strong style="color:var(--yellow)">Visible only (350–2500 nm)</strong><br>
+        UV 光會被玻璃吸收<br>
+        適合食品色素（FD&C）分析<br>
+        <em>可重複使用，中等價格</em>
+      </div>
+    </div>
+    <div class="card">
+      <div style="font-size:32px;margin-bottom:10px">🧴</div>
+      <div class="card-title">塑膠 Plastic</div>
+      <div class="card-desc">
+        <strong style="color:var(--yellow)">Visible only (340–900 nm)</strong><br>
+        一次性使用，無需清洗<br>
+        適合可見光範圍測定<br>
+        <em>FD&C 色素分析推薦使用</em>
+      </div>
+    </div>
+  </div>
+  <div class="hl-box" style="margin-top:14px">
+    ⚠️ <strong>重點記憶</strong>：任何 λ &lt; 350 nm 的測量 → 必須使用石英比色管！
+    食品色素（427/503/629 nm）→ 玻璃或塑膠即可。
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 14: SPECTROPHOTOMETER COMPONENTS
+══════════════════════════════════════════════ -->
+<section class="slide" data-slide="14" data-section="維持注意">
+<div class="slide-inner">
+  <div class="s-kicker">Instrumentation · 儀器元件</div>
+  <div class="s-h1">分光光度計的五大元件</div>
+  <div class="card-grid cols3" style="margin-bottom:14px">
+    <div class="card">
+      <div class="card-title">① 光源</div>
+      <div class="card-desc"><strong>鎢燈</strong>：可見光（320–2500 nm）<br>
+        <strong>氘燈</strong>：UV（160–380 nm）<br>
+        多數儀器兩者兼備，自動切換</div>
+    </div>
+    <div class="card">
+      <div class="card-title">② 單色儀 Monochromator</div>
+      <div class="card-desc"><strong>折射光柵</strong>：反射式繞射光柵<br>
+        分散複合光為單一波長<br>
+        通帶寬度（bandwidth）影響準確度</div>
+    </div>
+    <div class="card">
+      <div class="card-title">③ 樣品槽</div>
+      <div class="card-desc">比色管架、流通槽<br>
+        參考（空白）+ 樣品<br>
+        溫度控制（某些應用）</div>
+    </div>
+    <div class="card gold-b">
+      <div class="card-title">④ 偵測器</div>
+      <div class="card-desc">
+        <strong>光電管</strong>：簡單可靠<br>
+        <strong>光電倍增管（PMT）</strong>：增益 10⁶–10⁹ 倍<br>
+        <strong>光電二極體陣列（PDA）</strong>：全光譜同時掃描
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">⑤ 信號處理</div>
+      <div class="card-desc">電流→電壓轉換<br>
+        A/D 轉換，數位化<br>
+        電腦顯示與儲存</div>
+    </div>
+    <div class="card accent-b">
+      <div class="card-title">光路示意</div>
+      <div class="card-desc" style="font-family:'JetBrains Mono',monospace;font-size:12px">
+        光源 → 單色儀<br>→ 比色管<br>→ 偵測器<br>→ 讀數
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 15: SINGLE vs DOUBLE BEAM
+══════════════════════════════════════════════ -->
+<section class="slide" data-slide="15" data-section="維持注意">
+<div class="slide-inner">
+  <div class="s-kicker">Instrument Design · 儀器設計</div>
+  <div class="s-h1">單光束 vs 雙光束</div>
+  <table class="comp-table">
+    <thead>
+      <tr><th>比較項目</th><th>單光束 Single-beam</th><th>雙光束 Double-beam</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>設計原理</td><td>樣品槽只有一個位置，需手動歸零</td><td>光束分為參考+樣品兩路，自動補償</td></tr>
+      <tr><td>代表儀器</td><td class="ok">Spectronic 20（Genesys）</td><td class="hi">掃描型高端儀器</td></tr>
+      <tr><td>光源飄移補償</td><td class="lo">❌ 需頻繁歸零</td><td class="hi">✅ 自動即時補償</td></tr>
+      <tr><td>掃描光譜</td><td class="lo">❌ 每個波長需重新歸零</td><td class="hi">✅ 連續掃描，快速</td></tr>
+      <tr><td>成本</td><td class="hi">較低</td><td class="lo">較高</td></tr>
+      <tr><td>適用場景</td><td>固定波長定量分析（如食品色素）</td><td>完整光譜掃描（未知物鑑定）</td></tr>
+    </tbody>
+  </table>
+  <div class="hl-box cyan" style="margin-top:12px">
+    📌 Spectronic 20（Genesys）是食品分析教學實驗室最常見的單光束分光光度計，
+    可見光範圍 340–900 nm，配備 1 cm 塑膠或玻璃比色管即可進行 FD&C 色素分析。
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 16: CHROMOPHORES
+══════════════════════════════════════════════ -->
+<section class="slide" data-slide="16" data-section="維持注意">
+<div class="slide-inner">
+  <div class="s-kicker">Chromophores · 食品發色團</div>
+  <div class="s-h1">哪些食品成分會吸光？</div>
+  <div class="split">
+    <div>
+      <table class="chrom-table">
+        <thead><tr><th>食品成分</th><th>λmax (nm)</th><th>ε 大小</th><th>應用</th></tr></thead>
+        <tbody>
+          <tr><td>蛋白質（Trp/Tyr）</td><td>278</td><td>中</td><td>蛋白質定量</td></tr>
+          <tr><td>核苷酸（DNA/RNA）</td><td>260</td><td>高</td><td>核酸定量</td></tr>
+          <tr><td>β-胡蘿蔔素</td><td style="color:#FF8C00">465</td><td>高</td><td>維生素A前驅物</td></tr>
+          <tr><td>葡萄糖（DNS法）</td><td>540</td><td>中</td><td>還原糖測定</td></tr>
+          <tr><td>FD&C Yellow 5</td><td style="color:#FFE033">427</td><td>中</td><td>色素定量</td></tr>
+          <tr><td>FD&C Red 40</td><td style="color:#FF6B6B">503</td><td>中</td><td>色素定量</td></tr>
+          <tr><td>FD&C Blue 1</td><td style="color:#6BA3FF">629</td><td>極高</td><td>色素定量</td></tr>
+          <tr><td>葉綠素 a</td><td>665</td><td>高</td><td>植物光合分析</td></tr>
+          <tr><td>肌紅蛋白</td><td>555</td><td>中</td><td>肉類新鮮度</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <div class="card gold-b">
+        <div class="card-title">發色團（Chromophore）</div>
+        <div class="card-desc">有機分子中含有共軛雙鍵（π 鍵）或非鍵電子（n 電子）的基團。
+          共軛系統越長，λmax 越紅移（往長波長移動）。</div>
+      </div>
+      <div class="card" style="margin-top:10px">
+        <div class="card-title">Bradford Assay 示例</div>
+        <div class="card-desc">蛋白質 + Coomassie Blue 染劑<br>
+          Free dye: λmax = 465 nm<br>
+          Protein-bound: λmax = <span style="color:var(--accent)">595 nm</span><br>
+          → 顏色改變可用於定量</div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 17: TRANSITION TO FLUORESCENCE
+══════════════════════════════════════════════ -->
+<section class="slide slide-transition" data-slide="17" data-section="維持注意">
+<div class="slide-inner" style="text-align:center">
+  <div style="font-size:var(--t4);color:var(--ink3);letter-spacing:3px;margin-bottom:20px;font-family:'JetBrains Mono',monospace">PART II</div>
+  <div style="font-size:var(--t1);font-weight:900;background:linear-gradient(90deg,var(--accent),var(--magenta),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:16px;line-height:1.2">螢光光譜學</div>
+  <div style="font-size:var(--t3);color:var(--ink2);margin-bottom:28px">Fluorescence Spectroscopy</div>
+  <div class="stat-row" style="max-width:500px;margin:0 auto 24px">
+    <div class="stat-card"><div class="stat-val" style="color:var(--magenta)">10³</div><div class="stat-label">靈敏度倍數<br>vs UV-Vis</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:var(--gold)">90°</div><div class="stat-label">偵測器<br>放置角度</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:var(--accent)">ppb</div><div class="stat-label">偵測<br>極限等級</div></div>
+  </div>
+  <div style="font-size:15px;color:var(--ink3)">當物質吸收光能後，以不同波長的光重新輻射出來</div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 18: FLUORESCENCE PRINCIPLE
+══════════════════════════════════════════════ -->
+<section class="slide" data-slide="18" data-section="維持注意">
+<div class="slide-inner">
+  <div class="s-kicker">Fluorescence Principle · 螢光原理</div>
+  <div class="s-h1">吸收 → 轉換 → 發射</div>
+  <div class="split">
+    <div>
+      <div class="svg-panel">
+        <svg viewBox="0 0 300 220" style="width:100%">
+          <defs>
+            <marker id="arr2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L8,3 z" fill="#C980FF"/>
+            </marker>
+            <marker id="arr3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L8,3 z" fill="#00C6FF"/>
+            </marker>
+            <marker id="arr4" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L8,3 z" fill="#546E7A"/>
+            </marker>
+          </defs>
+          <!-- Energy levels -->
+          <!-- S0 -->
+          <line x1="30" y1="190" x2="140" y2="190" stroke="#90A4AE" stroke-width="2"/>
+          <text x="85" y="207" fill="#90A4AE" font-size="11" text-anchor="middle">S₀ 基態</text>
+          <!-- S1 -->
+          <line x1="170" y1="90" x2="280" y2="90" stroke="#C980FF" stroke-width="2"/>
+          <text x="225" y="78" fill="#C980FF" font-size="11" text-anchor="middle">S₁ 激發態</text>
+          <!-- S2 -->
+          <line x1="220" y1="35" x2="280" y2="35" stroke="#FF6B6B" stroke-width="1" stroke-dasharray="4"/>
+          <text x="250" y="25" fill="#FF6B6B" font-size="10">S₂</text>
+          <!-- Absorption S0→S2 (blue arrow) -->
+          <line x1="85" y1="190" x2="235" y2="40" stroke="#00C6FF" stroke-width="2.5" marker-end="url(#arr3)"/>
+          <text x="130" y="120" fill="#00C6FF" font-size="11" transform="rotate(-38,130,120)">激發 350nm</text>
+          <!-- IC S2→S1 -->
+          <line x1="245" y1="35" x2="245" y2="88" stroke="#546E7A" stroke-width="1.5" stroke-dasharray="3" marker-end="url(#arr4)"/>
+          <text x="262" y="62" fill="#546E7A" font-size="10">IC</text>
+          <!-- Fluorescence S1→S0 -->
+          <line x1="200" y1="90" x2="110" y2="188" stroke="#C980FF" stroke-width="2.5" marker-end="url(#arr2)"/>
+          <text x="140" y="150" fill="#C980FF" font-size="11" transform="rotate(36,140,150)">螢光 450nm</text>
+          <!-- 90 deg detector -->
+          <text x="15" y="105" fill="#FFD700" font-size="10" text-anchor="middle">偵測</text>
+          <text x="15" y="118" fill="#FFD700" font-size="10" text-anchor="middle">器↑</text>
+          <text x="15" y="130" fill="#FFD700" font-size="10" text-anchor="middle">90°</text>
+        </svg>
+      </div>
+    </div>
+    <div>
+      <ul class="check-list">
+        <li>分子吸收激發光（λex = 350 nm）→ 升到激發態 S₂</li>
+        <li>快速無輻射鬆弛（IC）→ 落至 S₁ 最低振動能態</li>
+        <li>S₁ → S₀ 以光子形式放出能量 → <strong>螢光（λem = 450 nm）</strong></li>
+        <li>λem > λex（損失部分能量為熱）→ <strong>Stokes 位移</strong></li>
+      </ul>
+      <div class="eq-box" style="margin-top:12px">
+        <div class="eq-sub">螢光強度（低濃度近似）：</div>
+        <div class="eq">F ≈ 2.303 · φ · ε · b · c · P₀</div>
+        <div class="eq">F = k · P₀ · c</div>
+        <div class="eq-sub">φ：量子效率 (0–1)　奎寧 φ ≈ 0.546</div>
+      </div>
+      <div class="hl-box">
+        📌 <strong>90° 偵測</strong>：偵測器垂直於激發光方向，
+        避免接收穿透激發光，大幅降低背景干擾
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 19: STOKES SHIFT
+══════════════════════════════════════════════ -->
+<section class="slide" data-slide="19" data-section="維持注意">
+<div class="slide-inner">
+  <div class="s-kicker">Stokes Shift · 選擇性的關鍵</div>
+  <div class="s-h1">激發光 ≠ 發射光</div>
+  <div class="split">
+    <div>
+      <canvas id="chart-stokes" style="background:var(--bg3);border-radius:10px;padding:8px"></canvas>
+    </div>
+    <div>
+      <div class="eq-box">
+        <div class="eq-sub">Stokes 位移定義：</div>
+        <div class="eq">Δλ = λem − λex</div>
+        <div class="eq-sub">奎寧：450 − 350 = 100 nm</div>
+      </div>
+      <ul class="check-list" style="margin-top:12px">
+        <li><strong>靈敏度高</strong>：偵測器不受激發光干擾</li>
+        <li><strong>選擇性好</strong>：可分別設定 λex 和 λem，選擇特定螢光物質</li>
+        <li><strong>線性範圍廣</strong>：低濃度下 F ∝ c</li>
+        <li><strong>侷限性</strong>：只適用於有自然螢光（fluorophore）的物質</li>
+      </ul>
+      <div class="hl-box" style="margin-top:12px;border-color:rgba(255,0,153,0.3);background:rgba(255,0,153,0.05)">
+        ✨ 常見食品螢光物質：<br>
+        奎寧 (350/450 nm)、維生素 B₁ (365/435)、<br>
+        維生素 B₂ 核黃素 (450/530)、葉綠素 (436/670)
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 20: FLUORESCENCE vs UV-VIS
+══════════════════════════════════════════════ -->
+<section class="slide" data-slide="20" data-section="維持注意">
+<div class="slide-inner">
+  <div class="s-kicker">Method Comparison · 方法比較</div>
+  <div class="s-h1">UV-Vis vs 螢光：如何選擇？</div>
+  <table class="comp-table">
+    <thead>
+      <tr><th>比較項目</th><th>UV-Vis 吸光度法</th><th>螢光光譜法</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>偵測靈敏度</td><td class="ok">中（ppm–ppb）</td><td class="hi">高（ppb–ppt，高 10³ 倍）</td></tr>
+      <tr><td>適用物質</td><td class="hi">廣（任何有吸收的物質）</td><td class="lo">窄（需有螢光基團）</td></tr>
+      <tr><td>選擇性</td><td class="lo">低（同波長多物質重疊）</td><td class="hi">高（雙波長選擇：λex + λem）</td></tr>
+      <tr><td>線性範圍</td><td class="ok">中（A = 0.2–0.8）</td><td class="hi">廣（低濃度 F ∝ c）</td></tr>
+      <tr><td>高濃度行為</td><td class="ok">非線性（真實偏差）</td><td class="lo">Inner filter effect（自吸收）</td></tr>
+      <tr><td>儀器成本</td><td class="hi">低（Spectronic 20）</td><td class="lo">高（螢光光譜儀）</td></tr>
+      <tr><td>食品應用例</td><td>色素(FD&C)、蛋白質、糖</td><td>奎寧、維生素、農藥殘留</td></tr>
+    </tbody>
+  </table>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 21: FLUORESCENCE APPLICATIONS
+══════════════════════════════════════════════ -->
+<section class="slide" data-slide="21" data-section="維持注意">
+<div class="slide-inner">
+  <div class="s-kicker">Food Applications · 食品螢光應用</div>
+  <div class="s-h1">螢光分析在食品中的角色</div>
+  <div class="card-grid" style="grid-template-columns:repeat(3,1fr);gap:16px">
+    <div class="card">
+      <div class="card-icon">🍋</div>
+      <div class="card-title">維生素定量</div>
+      <div class="card-desc">維生素 B₂（核黃素）：λex/em = 450/530 nm<br>維生素 B₁（硫胺素）：氧化後螢光</div>
+    </div>
+    <div class="card gold-b">
+      <div class="card-icon">🍺</div>
+      <div class="card-title">通寧水奎寧</div>
+      <div class="card-desc">λex = 350 nm，λem = 450 nm<br>FDA 限量 ≤ 83 ppm<br>Pandey 實驗：直接法 + 導數法</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🌱</div>
+      <div class="card-title">農藥殘留</div>
+      <div class="card-desc">有機磷農藥某些代謝產物具螢光<br>痕量分析（μg/kg 級）<br>食品安全監測</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🥛</div>
+      <div class="card-title">乳品鑑偽</div>
+      <div class="card-desc">三維螢光指紋圖譜<br>鑑別牛奶品種、摻假偵測<br>非破壞性快速分析</div>
+    </div>
+    <div class="card mag-b">
+      <div class="card-icon">🫒</div>
+      <div class="card-title">橄欖油品質</div>
+      <div class="card-desc">酚類化合物螢光特徵<br>鑑別特級初榨橄欖油（EVOO）<br>vs 精煉油</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🐟</div>
+      <div class="card-title">多環芳烴（PAH）</div>
+      <div class="card-desc">燒烤食品汙染物偵測<br>苯并芘等致癌物<br>高靈敏螢光偵測</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 22: DERIVATIVE FLUORESCENCE
+══════════════════════════════════════════════ -->
+<section class="slide" data-slide="22" data-section="維持注意">
+<div class="slide-inner">
+  <div class="s-kicker">Derivative Spectroscopy · 導數光譜法</div>
+  <div class="s-h1">一階導數法：消除背景干擾</div>
+  <div class="split">
+    <div>
+      <ul class="check-list" style="margin-bottom:14px">
+        <li>對螢光光譜取一階導數 <strong>dF/dλ</strong></li>
+        <li>緩慢變化的背景螢光（廣峰）在導數後趨近於零</li>
+        <li>在過零點（zero-crossing）測量 → 選擇性更好</li>
+        <li>可同時定量兩種重疊螢光物質</li>
+      </ul>
+      <div class="eq-box gold">
+        <div class="eq-sub">Pandey (1999) 奎寧導數法：</div>
+        <div class="eq">dF/dλ|₄₂₂ = 0.186c + 0.037</div>
+        <div class="eq">dF/dλ|₄₇₇ = −0.127c − 0.034</div>
+        <div class="eq-sub">R² = 0.9988 / 0.9976（兩個過零點）</div>
+      </div>
+      <div class="eq-box">
+        <div class="eq-sub">直接發射法（對照）：</div>
+        <div class="eq">F(450nm) = 19.598c + 4.354</div>
+        <div class="eq-sub">R² = 0.9983</div>
+      </div>
+    </div>
+    <div>
+      <div class="svg-panel" style="height:220px;display:flex;align-items:center;justify-content:center">
+        <svg viewBox="0 0 280 200" style="width:100%">
+          <!-- Axes -->
+          <line x1="30" y1="170" x2="270" y2="170" stroke="#546E7A" stroke-width="1.5"/>
+          <line x1="30" y1="10" x2="30" y2="170" stroke="#546E7A" stroke-width="1.5"/>
+          <!-- Zero line for derivative -->
+          <line x1="30" y1="90" x2="270" y2="90" stroke="rgba(255,215,0,0.3)" stroke-width="1" stroke-dasharray="4,3"/>
+          <text x="20" y="93" fill="rgba(255,215,0,0.6)" font-size="9" text-anchor="end">0</text>
+          <!-- Original spectrum (bell curve) -->
+          <path d="M30,170 Q80,165 110,80 Q140,20 160,20 Q190,20 210,80 Q240,165 270,170"
+            fill="none" stroke="#00C6FF" stroke-width="2"/>
+          <!-- Derivative spectrum (S-curve) -->
+          <path d="M30,90 Q60,88 90,50 Q110,20 130,90 Q145,140 160,90 Q178,40 200,90 Q220,130 240,90 Q260,80 270,88"
+            fill="none" stroke="#C980FF" stroke-width="2"/>
+          <!-- Zero crossings -->
+          <circle cx="130" cy="90" r="4" fill="var(--gold)"/>
+          <circle cx="200" cy="90" r="4" fill="var(--gold)"/>
+          <text x="130" y="108" fill="var(--gold)" font-size="9" text-anchor="middle">422nm</text>
+          <text x="200" y="108" fill="var(--gold)" font-size="9" text-anchor="middle">477nm</text>
+          <!-- Legend -->
+          <line x1="35" y1="185" x2="60" y2="185" stroke="#00C6FF" stroke-width="2"/>
+          <text x="65" y="188" fill="#00C6FF" font-size="10">直接光譜</text>
+          <line x1="130" y1="185" x2="155" y2="185" stroke="#C980FF" stroke-width="2"/>
+          <text x="160" y="188" fill="#C980FF" font-size="10">一階導數</text>
+          <!-- Wavelength label -->
+          <text x="150" y="185" fill="#546E7A" font-size="0">λ (nm)</text>
+          <text x="270" y="183" fill="#546E7A" font-size="10">λ</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 23: DECISION TREE (Firebase)
+══════════════════════════════════════════════ -->
+<section class="slide" data-slide="23" data-section="喚起行動">
+<div class="slide-inner">
+  <div class="s-kicker" style="display:flex;justify-content:space-between;align-items:center">
+    <span>互動決策 · 課堂活動</span>
+    <span style="font-size:12px">Session：<input id="dt-session-input" type="text" placeholder="20260505_A" style="width:140px"
+      onchange="window.__session=this.value;document.getElementById('wc-session-label').textContent=this.value"></span>
+  </div>
+  <div class="s-h1" style="font-size:var(--t3)">你會選擇哪種光譜法？</div>
+  <div style="font-size:14px;color:var(--ink2);margin-bottom:14px">
+    🧪 任務：測定通寧水中的奎寧含量（約 43 ppm），你選擇哪種分析方法？請說明理由。
+  </div>
+  <div class="dt-options">
+    <div class="dt-opt optA" onclick="dtSelect('A',this)">
+      <div class="dt-letter">A</div>
+      <div class="dt-text"><strong>UV-Vis 吸光度法</strong><br>直接在 350 nm 測吸光度，建立校正曲線</div>
+    </div>
+    <div class="dt-opt optB" onclick="dtSelect('B',this)">
+      <div class="dt-letter">B</div>
+      <div class="dt-text"><strong>螢光光譜法</strong><br>Ex=350nm, Em=450nm，利用高靈敏度定量</div>
+    </div>
+    <div class="dt-opt optC" onclick="dtSelect('C',this)">
+      <div class="dt-letter">C</div>
+      <div class="dt-text"><strong>先 UV-Vis，再螢光</strong><br>雙重確認，UV 初測濃度，螢光精確定量</div>
+    </div>
+  </div>
+  <textarea id="dt-reason" placeholder="請說明你選擇的理由（2–3句）..."></textarea>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:8px">
+    <input id="dt-sid" type="text" placeholder="學號">
+    <input id="dt-name" type="text" placeholder="姓名（選填）">
+    <button id="dt-submit-btn" onclick="dtSubmit()">送出 ▶</button>
+    <span id="dt-status"></span>
+  </div>
+  <div id="dt-chart-area"></div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 24: LAB CONNECTIONS
+══════════════════════════════════════════════ -->
+<section class="slide" data-slide="24" data-section="喚起行動">
+<div class="slide-inner">
+  <div class="s-kicker">Lab Connections · 實驗連結</div>
+  <div class="s-h1">理論 → 實驗室</div>
+  <div class="card-grid cols2">
+    <div class="card accent-b">
+      <div style="font-size:11px;color:var(--ink3);font-family:'JetBrains Mono',monospace;margin-bottom:8px">UV-Vis LAB · Sigmann &amp; Wheeler, J. Chem. Educ. 2004</div>
+      <div class="card-title" style="font-size:17px">食品色素定量分析</div>
+      <ul class="check-list" style="margin-top:10px">
+        <li>測定飲料粉中 FD&amp;C Yellow 5 + Red 40</li>
+        <li>在 427 nm 和 503 nm 測量吸光度</li>
+        <li>聯立方程式校正光譜重疊</li>
+        <li>mg 色素 / gallon 計算</li>
+      </ul>
+      <div class="badge-row" style="margin-top:10px">
+        <span class="badge" style="background:rgba(255,224,51,0.1);border-color:rgba(255,224,51,0.3);color:#FFE033">Yellow 5 427nm</span>
+        <span class="badge" style="background:rgba(255,107,107,0.1);border-color:rgba(255,107,107,0.3);color:#FF6B6B">Red 40 503nm</span>
+      </div>
+      <div style="margin-top:12px;font-size:13px;color:var(--ink3)">
+        🔗 開啟實驗頁面：<span style="font-family:'JetBrains Mono',monospace;color:var(--accent)">lab_uvvis_fooddye.html</span>
+      </div>
+    </div>
+    <div class="card mag-b">
+      <div style="font-size:11px;color:var(--ink3);font-family:'JetBrains Mono',monospace;margin-bottom:8px">FLUORESCENCE LAB · Pandey et al., J. Chem. Educ. 1999</div>
+      <div class="card-title" style="font-size:17px">通寧水奎寧螢光定量</div>
+      <ul class="check-list" style="margin-top:10px">
+        <li>稀釋 20 倍於 0.05M H₂SO₄</li>
+        <li>建立 0.4–10 ppm 標準曲線</li>
+        <li>直接發射法 vs 一階導數法</li>
+        <li>t 檢定比較兩種方法</li>
+      </ul>
+      <div class="badge-row" style="margin-top:10px">
+        <span class="badge" style="background:rgba(201,128,255,0.1);border-color:rgba(201,128,255,0.3);color:#C980FF">Ex 350nm</span>
+        <span class="badge" style="background:rgba(201,128,255,0.1);border-color:rgba(201,128,255,0.3);color:#C980FF">Em 450nm</span>
+        <span class="badge" style="background:rgba(255,215,0,0.1);border-color:rgba(255,215,0,0.3);color:var(--gold)">≤83ppm FDA</span>
+      </div>
+      <div style="margin-top:12px;font-size:13px;color:var(--ink3)">
+        🔗 開啟實驗頁面：<span style="font-family:'JetBrains Mono',monospace;color:var(--magenta)">lab_fluorescence_quinine.html</span>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 25: SUMMARY + CTA
+══════════════════════════════════════════════ -->
+<section class="slide" data-slide="25" data-section="喚起行動">
+<div class="slide-inner">
+  <div class="s-kicker" style="color:var(--gold)">Summary · 課程總結</div>
+  <div class="s-h1">Ch7 核心要點</div>
+  <div class="card-grid cols2" style="margin-bottom:16px">
+    <div>
+      <div class="s-h2">UV-Vis 吸光度法</div>
+      <ul class="check-list">
+        <li><strong>A = εbc</strong>：吸光度與濃度成正比</li>
+        <li><strong>A = 0.2–0.8</strong>：最佳線性範圍</li>
+        <li><strong>λmax 處測量</strong>：靈敏度最大</li>
+        <li>三種偏差：真實／儀器／化學</li>
+        <li>校正曲線 R² ≥ 0.999</li>
+        <li>比色管：石英（UV）或玻璃/塑膠（Vis）</li>
+      </ul>
+    </div>
+    <div>
+      <div class="s-h2" style="color:var(--magenta)">螢光光譜法</div>
+      <ul class="check-list">
+        <li><strong>F = kP₀c</strong>：低濃度線性</li>
+        <li>靈敏度高 <strong>10³ 倍</strong>（vs UV-Vis）</li>
+        <li>90° 偵測，Stokes 位移</li>
+        <li>量子效率 φ 決定螢光強度</li>
+        <li>高濃度：inner filter effect</li>
+        <li>適用：奎寧、維生素、農藥殘留</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card-grid cols3">
+    <div class="card" style="background:rgba(0,198,255,0.08);border-color:rgba(0,198,255,0.3)">
+      <div class="card-title" style="color:var(--accent)">🔬 下週實驗</div>
+      <div class="card-desc">FD&C 食品色素 UV-Vis 定量<br>→ lab_uvvis_fooddye.html</div>
+    </div>
+    <div class="card" style="background:rgba(201,128,255,0.08);border-color:rgba(201,128,255,0.3)">
+      <div class="card-title" style="color:var(--magenta)">✨ 螢光實驗</div>
+      <div class="card-desc">通寧水奎寧螢光定量<br>→ lab_fluorescence_quinine.html</div>
+    </div>
+    <div class="card gold-b">
+      <div class="card-title" style="color:var(--gold)">📖 自習題</div>
+      <div class="card-desc">Nielsen Ch7 第7.5節<br>Study Questions 1–10</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════════════════════ -->
+<script>
+// ── Firebase ─────────────────────────────────────────────────────
+const PROJECT_ID = 'my-teaching-tools-517a0';
+const API_KEY    = 'FIREBASE_API_KEY_REMOVED';
+const BASE_URL   = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents`;
+
+// Get session from URL or default
+const urlParams = new URLSearchParams(window.location.search);
+window.__session = urlParams.get('session') || '';
+document.getElementById('wc-session-label').textContent = window.__session || '未設定（?session=YYYYMMDD_X）';
+if (window.__session) document.getElementById('dt-session-input').value = window.__session;
+
+// ── Slide management ─────────────────────────────────────────────
+const slides  = document.querySelectorAll('.slide');
+const total   = slides.length;
+let current   = 0;
+let chartsInit = {};
+
+function showSlide(n) {
+  slides[current].classList.remove('active');
+  current = Math.max(0, Math.min(n, total - 1));
+  slides[current].classList.add('active');
+  const sl    = slides[current];
+  const sec   = sl.dataset.section || '';
+  document.getElementById('section-tag').textContent = `— ${sec} —`;
+  document.getElementById('section-tag').style.color =
+    sec==='引起動機'?'#FF0099':sec==='喚起行動'?'#FFD700':'#00C6FF';
+  document.getElementById('page-info').textContent = `${current+1} / ${total}`;
+  document.getElementById('progress-fill').style.width = ((current+1)/total*100)+'%';
+  initChartForSlide(current);
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); showSlide(current + 1); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); showSlide(current - 1); }
+  if (e.key.toLowerCase() === 'f') toggleFS();
+});
+document.addEventListener('click', e => {
+  if (e.target.closest('input,textarea,button,select,a')) return;
+  if (e.clientX > window.innerWidth * 0.65) showSlide(current + 1);
+  else if (e.clientX < window.innerWidth * 0.35) showSlide(current - 1);
+});
+function toggleFS() {
+  if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+  else document.exitFullscreen();
+}
+
+// ── Charts lazy init ─────────────────────────────────────────────
+function initChartForSlide(idx) {
+  const slideNum = parseInt(slides[idx].dataset.slide);
+  if (chartsInit[slideNum]) return;
+  chartsInit[slideNum] = true;
+  if (slideNum === 9) initErrChart();
+  if (slideNum === 11) initCalChart();
+  if (slideNum === 19) initStokesChart();
+}
+
+function chartDefaults() {
+  return {
+    responsive: true, maintainAspectRatio: true,
+    plugins: { legend: { labels: { color: '#B8C5E0', font: { family: "'Noto Sans TC'" } } } },
+    scales: {
+      x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#7A8BB8' } },
+      y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#7A8BB8' } }
+    }
+  };
+}
+
+function initErrChart() {
+  const ctx = document.getElementById('chart-err');
+  if (!ctx) return;
+  const T   = Array.from({length:50}, (_,i) => (i+1)*2);
+  const err = T.map(t => {
+    const A = -Math.log10(t/100);
+    return Math.abs(0.00434/(Math.log10(t/100)*(t/100-1))) * 100;
+  });
+  new Chart(ctx, { type:'line', data:{
+    labels: T,
+    datasets:[{ label:'相對誤差%', data:err, borderColor:'#FF5252', backgroundColor:'rgba(255,82,82,0.1)', fill:true, tension:.4, pointRadius:0 }]
+  }, options:{...chartDefaults(), plugins:{...chartDefaults().plugins,
+    title:{display:true,text:'透光率 T (%) vs 測量誤差',color:'#B8C5E0'},
+    annotation:{annotations:{box1:{type:'box',xMin:16,xMax:63,backgroundColor:'rgba(0,230,118,0.08)',borderColor:'rgba(0,230,118,0.4)',label:{display:true,content:'最佳範圍 (T=16–63%, A=0.2–0.8)',color:'#00E676',font:{size:11}}}}}
+  }, scales:{...chartDefaults().scales, x:{...chartDefaults().scales.x, title:{display:true,text:'透光率 T (%)',color:'#7A8BB8'}}, y:{...chartDefaults().scales.y, title:{display:true,text:'相對誤差 (%)',color:'#7A8BB8'}}}}
+  });
+}
+
+function initCalChart() {
+  const ctx = document.getElementById('chart-cal');
+  if (!ctx) return;
+  const concs = [0,2,5,10,15,20];
+  const abs   = concs.map(c => 0.0274*c + 0.002);
+  const samp  = [{x:8.3,y:0.232}];
+  new Chart(ctx, { type:'scatter', data:{
+    datasets:[
+      { label:'標準液', data:concs.map((c,i)=>({x:c,y:abs[i]})), backgroundColor:'#00C6FF', pointRadius:6 },
+      { label:'線性回歸 A=0.0274c+0.002 (R²=0.9997)', data:[{x:0,y:0.002},{x:20,y:0.55}], type:'line', borderColor:'rgba(0,198,255,0.5)', pointRadius:0, tension:0 },
+      { label:'樣品 (c≈8.3 mg/L)', data:samp, backgroundColor:'#FFD700', pointRadius:8, pointStyle:'triangle' }
+    ]
+  }, options:{...chartDefaults(), scales:{...chartDefaults().scales,
+    x:{...chartDefaults().scales.x,title:{display:true,text:'濃度 (mg/L)',color:'#7A8BB8'}},
+    y:{...chartDefaults().scales.y,title:{display:true,text:'吸光度 A',color:'#7A8BB8'}}
+  }}});
+}
+
+function initStokesChart() {
+  const ctx = document.getElementById('chart-stokes');
+  if (!ctx) return;
+  const wls = Array.from({length:301},(_,i)=>i+300);
+  function gauss(x,mu,s,h){ return h*Math.exp(-0.5*Math.pow((x-mu)/s,2)); }
+  const ex  = wls.map(w => gauss(w,350,20,1.0));
+  const em  = wls.map(w => gauss(w,450,30,0.55));
+  new Chart(ctx, { type:'line', data:{
+    labels: wls,
+    datasets:[
+      { label:'激發光譜 (Ex 350nm)', data:ex, borderColor:'#00C6FF', backgroundColor:'rgba(0,198,255,0.1)', fill:true, tension:.4, pointRadius:0 },
+      { label:'發射光譜 (Em 450nm)', data:em, borderColor:'#C980FF', backgroundColor:'rgba(201,128,255,0.1)', fill:true, tension:.4, pointRadius:0 }
+    ]
+  }, options:{...chartDefaults(), scales:{...chartDefaults().scales,
+    x:{...chartDefaults().scales.x,title:{display:true,text:'波長 (nm)',color:'#7A8BB8'},
+      ticks:{...chartDefaults().scales.x.ticks,maxTicksLimit:8,callback:(v,i,a)=>a[i]?.label+' nm'}},
+    y:{...chartDefaults().scales.y,title:{display:true,text:'相對強度',color:'#7A8BB8'}}
+  }, plugins:{...chartDefaults().plugins,
+    annotation:{annotations:{stokes:{type:'line',xMin:350,xMax:450,yMin:0.5,yMax:0.5,borderColor:'rgba(255,215,0,0.6)',borderWidth:1,label:{display:true,content:'Stokes Δ=100nm',color:'#FFD700',position:'center',font:{size:11}}}}}
+  }}});
+}
+
+// ── Beer-Lambert calculator ────────────────────────────────────────
+function blCalc(solve) {
+  const A = parseFloat(document.getElementById('bl-A').value);
+  const e = parseFloat(document.getElementById('bl-eps').value);
+  const b = parseFloat(document.getElementById('bl-b').value)||1;
+  const c = parseFloat(document.getElementById('bl-c').value);
+  const out = document.getElementById('bl-out');
+  out.style.display='block';
+  if(solve==='c'){
+    if(isNaN(A)||isNaN(e)){out.textContent='請輸入 A 和 ε';return;}
+    const res=A/(e*b);
+    document.getElementById('bl-c').value=res.toExponential(4);
+    out.textContent=`c = ${res.toExponential(4)} mol/L = ${(res*1e6).toFixed(3)} μmol/L = ${(res*1000).toFixed(6)} mmol/L`;
+  } else if(solve==='A'){
+    if(isNaN(e)||isNaN(c)){out.textContent='請輸入 ε 和 c';return;}
+    const res=e*b*c;
+    document.getElementById('bl-A').value=res.toFixed(4);
+    out.textContent=`A = ${res.toFixed(4)} ${res<0.2?'⚠️ 偏低':res>0.8?'⚠️ 偏高':'✅ 在最佳範圍'}`;
+  } else if(solve==='eps'){
+    if(isNaN(A)||isNaN(c)){out.textContent='請輸入 A 和 c';return;}
+    const res=A/(b*c);
+    document.getElementById('bl-eps').value=res.toFixed(0);
+    out.textContent=`ε = ${res.toFixed(0)} L/(mol·cm)`;
+  }
+}
+function blFill(dye){
+  const data={Y5:{eps:27300,name:'Yellow 5, λmax=427nm'},R40:{eps:25900,name:'Red 40, λmax=503nm'}};
+  document.getElementById('bl-eps').value=data[dye].eps;
+  document.getElementById('bl-b').value=1;
+  document.getElementById('bl-out').style.display='block';
+  document.getElementById('bl-out').textContent=`${data[dye].name}: ε = ${data[dye].eps} L/(mol·cm)`;
+}
+
+// ── Wordcloud ─────────────────────────────────────────────────────
+let wcListener = null;
+async function wcSubmit() {
+  const w = document.getElementById('wc-input').value.trim();
+  const s = document.getElementById('wc-status');
+  if (!w || w.length > 20) { s.textContent='請輸入1–20字'; return; }
+  const url = `${BASE_URL}/wordcloud_words?key=${API_KEY}`;
+  try {
+    const r = await fetch(url, { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ fields:{ word:{stringValue:w} } }) });
+    if(r.ok){ s.textContent='✅ 已送出！'; document.getElementById('wc-input').value=''; }
+    else throw new Error(await r.text());
+  } catch(e){ s.textContent='送出失敗：'+e.message; }
+}
+
+// Poll wordcloud every 5s when on slide 2
+setInterval(async () => {
+  if(parseInt(slides[current].dataset.slide)!==2) return;
+  try {
+    const r = await fetch(`${BASE_URL}/wordcloud_words?key=${API_KEY}&pageSize=200`);
+    const d = await r.json();
+    const docs = d.documents || [];
+    const words = docs.map(doc=>doc.fields?.word?.stringValue||'').filter(Boolean);
+    const freq = {};
+    words.forEach(w=>freq[w]=(freq[w]||0)+1);
+    const div = document.getElementById('wc-display');
+    div.innerHTML = Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,40).map(([w,cnt])=>{
+      const size = 14 + cnt*5;
+      const colors = ['#00C6FF','#FFD700','#FF0099','#00E676','#FF8C00','#B8C5E0'];
+      const col = colors[Math.abs(w.charCodeAt(0))%colors.length];
+      return `<span style="font-size:${Math.min(size,36)}px;color:${col};font-weight:${cnt>2?'bold':'400'};margin:4px">${w}</span>`;
+    }).join('') || '<span style="color:var(--ink3)">等待同學送出…</span>';
+  } catch(e){}
+}, 5000);
+
+// ── Decision Tree ─────────────────────────────────────────────────
+let dtSelected = null;
+function dtSelect(opt, el) {
+  document.querySelectorAll('.dt-opt').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');
+  dtSelected = opt;
+}
+
+async function dtSubmit() {
+  const session = document.getElementById('dt-session-input').value.trim() || window.__session;
+  const sid     = document.getElementById('dt-sid').value.trim();
+  const name    = document.getElementById('dt-name').value.trim();
+  const reason  = document.getElementById('dt-reason').value.trim();
+  const status  = document.getElementById('dt-status');
+  if (!dtSelected) { status.textContent='請先選擇方法！'; return; }
+  if (!sid) { status.textContent='請填寫學號！'; return; }
+  if (!session) { status.textContent='請設定 Session ID！'; return; }
+  status.textContent = '送出中…';
+  const url = `${BASE_URL}/decision_tree_responses/${session}/responses?key=${API_KEY}`;
+  try {
+    const r = await fetch(url, { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ fields:{
+        method:{stringValue:dtSelected},
+        reason:{stringValue:reason},
+        student_id:{stringValue:sid},
+        name:{stringValue:name},
+        ts:{timestampValue:new Date().toISOString()}
+      }})
+    });
+    if(r.ok){ status.textContent='✅ 送出成功！'; fetchDtChart(session); }
+    else throw new Error((await r.json()).error?.message);
+  } catch(e){ status.textContent='送出失敗：'+e.message; }
+}
+
+async function fetchDtChart(session) {
+  try {
+    const r = await fetch(`${BASE_URL}/decision_tree_responses/${session}/responses?key=${API_KEY}`);
+    const d = await r.json();
+    const docs = d.documents || [];
+    const counts = {A:0,B:0,C:0};
+    docs.forEach(doc=>{ const m=doc.fields?.method?.stringValue; if(counts[m]!==undefined)counts[m]++; });
+    const area = document.getElementById('dt-chart-area');
+    area.innerHTML = `<div style="display:flex;gap:20px;margin-top:10px;align-items:flex-end">
+      ${Object.entries(counts).map(([k,v])=>{
+        const colors={A:'#00C6FF',B:'#FFD700',C:'#FF0099'};
+        const labels={A:'UV-Vis',B:'螢光法',C:'雙重確認'};
+        const max=Math.max(...Object.values(counts),1);
+        const h=Math.max(20,v/max*80);
+        return `<div style="text-align:center">
+          <div style="font-size:13px;color:${colors[k]};margin-bottom:4px">${v}票</div>
+          <div style="width:60px;height:${h}px;background:${colors[k]};border-radius:4px 4px 0 0;opacity:0.8"></div>
+          <div style="font-size:11px;color:var(--ink3);margin-top:4px">${k}: ${labels[k]}</div>
+        </div>`;
+      }).join('')}
+      <div style="font-size:12px;color:var(--ink3);margin-left:auto">共 ${docs.length} 票</div>
+    </div>`;
+  } catch(e){}
+}
+// Auto-fetch chart when on decision tree slide
+setInterval(()=>{
+  if(parseInt(slides[current].dataset.slide)===23 && window.__session) fetchDtChart(window.__session);
+},8000);
+
+// Init first slide
+showSlide(0);
+</script>
+</body>
+</html>

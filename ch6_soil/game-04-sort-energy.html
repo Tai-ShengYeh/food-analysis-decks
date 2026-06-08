@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>遊戲 4：光譜能量排序 · Ch6</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0e27; --bg-2:#11163a; --card:#1A3050; --card2:#122540;
+  --ink:#eef3ff; --ink-2:#b8c5e0; --muted:#7a8bb8;
+  --accent:#00d4ff; --accent-2:#ff006e; --grn:#00e08a; --red:#e74c3c; --warn:#ffb800;
+}
+body{
+  font-family:'Noto Sans TC','Microsoft JhengHei',sans-serif;
+  background:radial-gradient(ellipse at top, #11163a 0%, #0a0e27 60%);
+  color:var(--ink); min-height:100vh; padding:16px; font-size:16px;
+}
+.container{max-width:820px; margin:0 auto}
+.nav-link{display:inline-block; margin-bottom:10px; color:var(--accent); text-decoration:none; font-size:14px}
+.nav-link:hover{text-decoration:underline}
+header{
+  background:var(--card); padding:18px 20px; border-radius:12px;
+  margin-bottom:16px; border-left:4px solid var(--grn);
+}
+header h1{font-size:22px; margin-bottom:6px; color:var(--grn)}
+header .subtitle{color:var(--muted); font-size:13px}
+.score-bar{
+  background:var(--card2); padding:10px 18px; border-radius:8px;
+  margin-bottom:16px; display:flex; justify-content:space-between;
+  font-size:14px; font-weight:bold;
+}
+.round-tag{
+  background:var(--warn); color:var(--bg);
+  padding:3px 10px; border-radius:12px; font-size:12px; margin-right:8px;
+}
+.round-progress{
+  background:var(--card2); padding:8px 16px; border-radius:8px;
+  margin-bottom:12px; font-size:13px; color:var(--muted);
+}
+.round-progress .step{
+  display:inline-block; padding:2px 10px; margin:0 4px;
+  border-radius:12px; background:var(--card);
+}
+.round-progress .step.active{background:var(--accent); color:var(--bg); font-weight:bold}
+.round-progress .step.done{background:var(--grn); color:var(--bg)}
+.task-card{
+  background:var(--card); border-radius:12px; padding:20px;
+  margin-bottom:14px;
+}
+.task-q{
+  font-size:17px; line-height:1.5; margin-bottom:8px; font-weight:700;
+}
+.task-hint{font-size:13px; color:var(--muted); margin-bottom:14px}
+.task-hint .arrow-left, .task-hint .arrow-right{
+  display:inline-block; padding:2px 8px; border-radius:8px;
+  background:rgba(0,212,255,.1); color:var(--accent);
+  margin:0 4px; font-family:'JetBrains Mono',monospace; font-size:11px;
+}
+.sort-list{
+  display:flex; flex-direction:column; gap:8px;
+  background:var(--card2); padding:14px; border-radius:10px;
+  min-height:200px;
+}
+.sort-item{
+  background:var(--card); border:2px solid #2A4A6E;
+  padding:12px 16px; border-radius:8px;
+  display:flex; justify-content:space-between; align-items:center;
+  cursor:grab; user-select:none;
+  font-size:15px; line-height:1.4;
+  transition:transform .15s, border-color .15s;
+}
+.sort-item:active{cursor:grabbing}
+.sort-item.dragging{opacity:.4; transform:scale(.98)}
+.sort-item.over{border-color:var(--accent); background:rgba(0,212,255,.08)}
+.sort-item .item-info{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted)}
+.sort-item.correct-pos{
+  border-color:var(--grn); background:rgba(0,224,138,.08);
+}
+.sort-item.wrong-pos{
+  border-color:var(--red); background:rgba(231,76,60,.08);
+}
+.controls{display:flex; gap:10px; margin:14px 0; justify-content:center; flex-wrap:wrap}
+.btn{
+  border:none; padding:10px 22px; border-radius:8px;
+  font-size:15px; font-weight:bold; cursor:pointer;
+  font-family:inherit; min-height:44px;
+}
+.btn-primary{background:var(--accent); color:var(--bg)}
+.btn-primary:hover{background:#00a8d4}
+.btn-secondary{background:#5B6777; color:var(--ink)}
+.btn-secondary:hover{background:#455260}
+.btn-next{
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  color:var(--bg); display:none;
+}
+.btn-next.show{display:inline-block}
+.feedback{
+  display:none; margin-top:12px; padding:14px 16px;
+  border-radius:10px; font-size:14px; line-height:1.6;
+}
+.feedback.show{display:block}
+.feedback.correct{background:rgba(0,224,138,.08); border-left:3px solid var(--grn)}
+.feedback.wrong{background:rgba(255,184,0,.08); border-left:3px solid var(--warn)}
+.feedback strong{color:var(--accent)}
+.complete{
+  background:linear-gradient(135deg,var(--grn),var(--accent));
+  color:var(--bg); padding:28px; border-radius:14px;
+  text-align:center; display:none; margin-bottom:14px;
+}
+.complete h2{font-size:24px; margin-bottom:10px}
+.complete .score{font-size:42px; font-weight:900; margin:14px 0}
+.up-down{display:flex; flex-direction:column; gap:4px; margin-left:8px}
+.ud-btn{
+  width:32px; height:24px; background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.1); border-radius:5px;
+  color:var(--ink); cursor:pointer; font-size:14px; font-family:inherit;
+  display:flex; align-items:center; justify-content:center;
+}
+.ud-btn:hover{background:var(--accent); color:var(--bg)}
+.ud-btn:disabled{opacity:.3; cursor:not-allowed; background:transparent}
+.qr-foot{text-align:center; margin-top:24px; padding:14px; border-top:1px solid rgba(255,255,255,.06)}
+.qr-foot img{border-radius:8px; background:white; padding:6px}
+.qr-foot p{font-size:.75rem; color:var(--muted); margin-top:6px}
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="ch6_spectroscopy.html" class="nav-link">← 回投影片</a>
+  <header>
+    <h1>📊 遊戲 4：光譜能量排序</h1>
+    <div class="subtitle">把卡片從上到下，依「能量由大到小」拖曳排列。可用點按或上下箭頭調整順序。</div>
+  </header>
+
+  <div class="round-progress">
+    <span>關卡：</span>
+    <span class="step active" id="step-1">Round 1：電磁波</span>
+    <span class="step" id="step-2">Round 2：能階躍遷</span>
+    <span class="step" id="step-3">Round 3：分析方法</span>
+  </div>
+
+  <div class="score-bar">
+    <span><span class="round-tag" id="roundTag">Round 1</span>嘗試：<span id="attempts">0</span></span>
+    <span style="color:var(--grn)">完美次數：<span id="perfectCount">0</span></span>
+  </div>
+
+  <div id="complete" class="complete">
+    <h2>🎉 全部關卡完成！</h2>
+    <div class="score" id="finalScore">0 / 3</div>
+    <div id="finalMsg"></div>
+    <br>
+    <button class="btn btn-primary" onclick="restart()">再玩一次</button>
+  </div>
+
+  <div id="gameArea"></div>
+
+  <div class="qr-foot">
+    <img id="qr-img" width="120" height="120" alt="QR">
+    <p>手機掃描即可開啟此遊戲</p>
+  </div>
+</div>
+
+<script type="module">
+import { initGameSession, logEvent } from './game_firebase.js';
+
+const ROUNDS = [
+  {
+    title: '電磁波能量排序',
+    q: '把下列電磁波依「光子能量由大到小」排序',
+    items: [
+      { text: 'γ 射線（gamma ray）', info: '< 0.01 nm', rank: 1 },
+      { text: 'UV 紫外光', info: '10–380 nm', rank: 2 },
+      { text: '可見光', info: '380–780 nm', rank: 3 },
+      { text: 'IR 紅外光', info: '780 nm – 1000 μm', rank: 4 },
+      { text: '微波', info: '0.1–100 cm', rank: 5 },
+      { text: '無線電波（NMR）', info: '1–1000 m', rank: 6 },
+    ],
+    hint: 'E = hc/λ，波長越短能量越大。'
+  },
+  {
+    title: '能階躍遷能量差',
+    q: '把下列能階躍遷依「能量差 ΔE 由大到小」排序',
+    items: [
+      { text: '電子躍遷（UV-Vis）', info: 'electronic', rank: 1 },
+      { text: '振動躍遷（IR）', info: 'vibrational', rank: 2 },
+      { text: '轉動躍遷（微波）', info: 'rotational', rank: 3 },
+      { text: '核自旋（NMR）', info: 'nuclear spin', rank: 4 },
+    ],
+    hint: '電子 ≫ 振動 ≫ 轉動 ≫ 核自旋（注意 NMR 還需外加磁場）。'
+  },
+  {
+    title: '光譜法靈敏度',
+    q: '把下列光譜法依「室溫下相對靈敏度由高到低」排序',
+    items: [
+      { text: '螢光（Fluorescence）', info: '放射量測', rank: 1 },
+      { text: 'UV-Vis 吸收', info: '電子躍遷', rank: 2 },
+      { text: 'IR 吸收', info: '振動躍遷', rank: 3 },
+      { text: 'NMR', info: '核自旋', rank: 4 },
+    ],
+    hint: '螢光是「黑底測光」訊背景比最好；NMR 因 Boltzmann 分布幾近均等而靈敏度最低。'
+  },
+];
+
+let currentRound = 0;
+let order = [];
+let attempts = 0;
+let totalAttempts = 0;
+let perfectCount = 0;
+const roundResults = [];
+let answered = false;
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function render() {
+  if (currentRound >= ROUNDS.length) { showComplete(); return; }
+  const round = ROUNDS[currentRound];
+
+  // Update step indicator
+  for (let i = 0; i < ROUNDS.length; i++) {
+    const el = document.getElementById('step-' + (i + 1));
+    el.classList.remove('active', 'done');
+    if (i < currentRound) el.classList.add('done');
+    else if (i === currentRound) el.classList.add('active');
+  }
+
+  document.getElementById('roundTag').textContent = `Round ${currentRound + 1}：${round.title}`;
+  document.getElementById('attempts').textContent = attempts;
+
+  if (order.length === 0) order = shuffle(round.items);
+
+  const itemsHtml = order.map((it, idx) => `
+    <div class="sort-item" data-idx="${idx}" draggable="true">
+      <div>
+        <div>${it.text}</div>
+        <div class="item-info">${it.info}</div>
+      </div>
+      <div class="up-down">
+        <button class="ud-btn" data-action="up" ${idx === 0 ? 'disabled' : ''}>▲</button>
+        <button class="ud-btn" data-action="down" ${idx === order.length - 1 ? 'disabled' : ''}>▼</button>
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('gameArea').innerHTML = `
+    <div class="task-card">
+      <div class="task-q">${round.q}</div>
+      <div class="task-hint">
+        <span class="arrow-left">上 = 能量大</span> · 拖曳或按 ▲▼ 排序 · <span class="arrow-right">下 = 能量小</span>
+      </div>
+      <div class="sort-list" id="sortList">${itemsHtml}</div>
+      <div class="controls">
+        <button class="btn btn-secondary" id="shuffleBtn">🔄 重新打亂</button>
+        <button class="btn btn-primary" id="checkBtn">✓ 檢查答案</button>
+        <button class="btn btn-next" id="nextBtn">下一關 →</button>
+      </div>
+      <div class="feedback" id="feedback"></div>
+    </div>
+  `;
+
+  bindEvents();
+  answered = false;
+}
+
+function bindEvents() {
+  const list = document.getElementById('sortList');
+
+  // Drag-and-drop
+  list.querySelectorAll('.sort-item').forEach(item => {
+    item.addEventListener('dragstart', (e) => {
+      if (answered) { e.preventDefault(); return; }
+      item.classList.add('dragging');
+      e.dataTransfer.setData('text/plain', item.dataset.idx);
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    item.addEventListener('dragend', () => item.classList.remove('dragging'));
+    item.addEventListener('dragover', (e) => { e.preventDefault(); item.classList.add('over'); });
+    item.addEventListener('dragleave', () => item.classList.remove('over'));
+    item.addEventListener('drop', (e) => {
+      e.preventDefault();
+      item.classList.remove('over');
+      const from = parseInt(e.dataTransfer.getData('text/plain'));
+      const to = parseInt(item.dataset.idx);
+      if (from === to) return;
+      const moved = order.splice(from, 1)[0];
+      order.splice(to, 0, moved);
+      render();
+    });
+  });
+
+  // Up/down buttons
+  list.querySelectorAll('.ud-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      if (answered) return;
+      const idx = parseInt(btn.closest('.sort-item').dataset.idx);
+      const dir = btn.dataset.action;
+      const swap = dir === 'up' ? idx - 1 : idx + 1;
+      if (swap < 0 || swap >= order.length) return;
+      [order[idx], order[swap]] = [order[swap], order[idx]];
+      render();
+    });
+  });
+
+  document.getElementById('shuffleBtn').addEventListener('click', () => {
+    if (answered) return;
+    order = shuffle(order);
+    render();
+  });
+  document.getElementById('checkBtn').addEventListener('click', checkAnswer);
+  document.getElementById('nextBtn').addEventListener('click', () => {
+    currentRound++;
+    order = [];
+    attempts = 0;
+    render();
+  });
+}
+
+function checkAnswer() {
+  if (answered) return;
+  attempts++;
+  totalAttempts++;
+
+  const round = ROUNDS[currentRound];
+  let allCorrect = true;
+  let correctCount = 0;
+  order.forEach((it, idx) => {
+    const expected = round.items.find(x => x.rank === idx + 1);
+    const items = document.querySelectorAll('.sort-item');
+    if (it.rank === idx + 1) {
+      items[idx].classList.add('correct-pos');
+      correctCount++;
+    } else {
+      items[idx].classList.add('wrong-pos');
+      allCorrect = false;
+    }
+  });
+
+  document.getElementById('attempts').textContent = attempts;
+
+  const fb = document.getElementById('feedback');
+  if (allCorrect) {
+    answered = true;
+    if (attempts === 1) perfectCount++;
+    document.getElementById('perfectCount').textContent = perfectCount;
+    roundResults[currentRound] = { perfect: attempts === 1, attempts };
+
+    fb.innerHTML = attempts === 1
+      ? `<strong style="color:var(--grn)">🌟 一次就答對！</strong> ${round.hint}`
+      : `<strong style="color:var(--grn)">✅ 順序正確！</strong>（用了 ${attempts} 次嘗試）${round.hint}`;
+    fb.classList.remove('wrong');
+    fb.classList.add('show', 'correct');
+
+    document.getElementById('checkBtn').style.display = 'none';
+    document.getElementById('nextBtn').classList.add('show');
+
+    logEvent({
+      event_type: 'round_complete',
+      question_id: `R${currentRound + 1}`,
+      is_correct: true,
+      attempts,
+    });
+  } else {
+    fb.innerHTML = `<strong style="color:var(--warn)">▸ 還沒完全正確</strong>　位置正確 ${correctCount} / ${order.length}。<br>綠色＝對的，紅色＝錯位。再試一次！`;
+    fb.classList.remove('correct');
+    fb.classList.add('show', 'wrong');
+    setTimeout(() => {
+      document.querySelectorAll('.sort-item').forEach(el => {
+        el.classList.remove('correct-pos', 'wrong-pos');
+      });
+    }, 1800);
+    logEvent({
+      event_type: 'check',
+      question_id: `R${currentRound + 1}`,
+      is_correct: false,
+      attempts,
+    });
+  }
+}
+
+function showComplete() {
+  document.getElementById('gameArea').innerHTML = '';
+  document.getElementById('complete').style.display = 'block';
+  document.getElementById('finalScore').textContent = `${perfectCount} / ${ROUNDS.length}`;
+  const pct = perfectCount / ROUNDS.length;
+  document.getElementById('finalMsg').textContent =
+    pct === 1 ? '🌟 三關全部一次就答對，太強！' :
+    pct >= 0.66 ? '👍 大致掌握，少數順序需再確認。' :
+    '📚 排序混淆代表能階概念需要再讀。';
+  logEvent({ event_type: 'session_complete', final_score: perfectCount, attempts: totalAttempts });
+}
+
+function restart() {
+  currentRound = 0;
+  order = [];
+  attempts = 0;
+  totalAttempts = 0;
+  perfectCount = 0;
+  roundResults.length = 0;
+  document.getElementById('complete').style.display = 'none';
+  document.getElementById('perfectCount').textContent = 0;
+  render();
+}
+window.restart = restart;
+
+await initGameSession({ chapter: 'ch6_soil_2026', game: 'sort-energy' });
+render();
+
+document.getElementById('qr-img').src =
+  'https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=' +
+  encodeURIComponent(window.location.href);
+</script>
+</body>
+</html>

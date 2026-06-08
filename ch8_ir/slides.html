@@ -1,0 +1,3212 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nielsen Chap.8 紅外光與拉曼光譜學 ｜ 互動教學</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+/* ============ 基礎 ============ */
+html, body { font-size: 18px; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root{
+  --bg:#0a0e27; --bg-2:#11163a; --bg-3:#1a2050;
+  --ink:#eef3ff; --ink-2:#b8c5e0; --ink-3:#7a8bb8; --ink-4:#4a5680;
+  --accent:#00d4ff;
+  --accent-2:#ff006e;
+  --warn:#ffb800;
+  --good:#00e676;
+  --bad:#ff4466;
+  --t1: clamp(2.2rem, 4.5vw, 3.5rem);
+  --t2: clamp(1.4rem, 3vw, 2.4rem);
+  --t3: clamp(1.0rem, 1.6vw, 1.35rem);
+  --t4: clamp(0.85rem, 1.3vw, 1.15rem);
+  --t5: clamp(0.75rem, 1.1vw, 1rem);
+  --s1: 80px; --s2: 48px; --s3: 24px; --s4: 12px;
+  --card-bg: rgba(255,255,255,0.05);
+  --card-border: rgba(255,255,255,0.12);
+  --glow: 0 0 24px rgba(0,212,255,0.25);
+}
+
+body{
+  background: radial-gradient(ellipse at top left, var(--bg-2) 0%, var(--bg) 70%);
+  color: var(--ink);
+  font-family: 'Noto Sans TC', sans-serif;
+  min-height: 100vh;
+  overflow: hidden;
+  position: relative;
+}
+
+/* 全頁背景動畫: 流動的光譜線條 */
+body::before{
+  content:'';
+  position:fixed; inset:0;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(0,212,255,0.08) 0%, transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(255,0,110,0.06) 0%, transparent 40%);
+  pointer-events:none; z-index:0;
+}
+
+/* ============ 進度條 / 章節 / 頁碼 ============ */
+#progress{
+  position: fixed; top: 0; left: 0; right: 0; height: 3px;
+  background: rgba(255,255,255,0.05); z-index: 100;
+}
+#progress-fill{
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  width: 0; transition: width .5s cubic-bezier(.4,0,.2,1);
+  box-shadow: 0 0 8px var(--accent);
+}
+
+#section-tag{
+  position: fixed; top: 18px; left: 28px; z-index: 90;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: var(--t5); color: var(--accent);
+  letter-spacing: .08em; text-transform: uppercase;
+  padding: 4px 10px; border-left: 2px solid var(--accent);
+}
+
+#page-info{
+  position: fixed; bottom: 16px; right: 28px; z-index: 90;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: var(--t5); color: var(--ink-3);
+  letter-spacing: .05em;
+}
+
+#hint{
+  position: fixed; bottom: 16px; left: 28px; z-index: 90;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem; color: var(--ink-4);
+  letter-spacing: .05em;
+}
+
+#student-badge{
+  position: fixed; top: 18px; right: 28px; z-index: 90;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem; color: var(--ink-2);
+  padding: 4px 12px;
+  background: rgba(0,212,255,0.08);
+  border: 1px solid rgba(0,212,255,0.3);
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all .2s;
+}
+#student-badge:hover{ background: rgba(0,212,255,0.18); }
+
+/* ============ Slide 容器 ============ */
+.slide{
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  padding: clamp(28px, 4vh, 60px) clamp(36px, 5vw, 80px);
+  opacity: 0; pointer-events: none;
+  transition: opacity .55s ease, transform .55s ease;
+  transform: translateY(16px);
+  overflow: hidden;
+  z-index: 1;
+}
+.slide.active{ opacity: 1; pointer-events: auto; transform: translateY(0); }
+.slide-inner{
+  width: 100%; max-width: 1320px; max-height: 100%;
+  overflow-y: auto; overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0,212,255,0.3) transparent;
+  padding-right: 4px;
+}
+.slide-inner::-webkit-scrollbar{ width: 4px; }
+.slide-inner::-webkit-scrollbar-track{ background: transparent; }
+.slide-inner::-webkit-scrollbar-thumb{ background: rgba(0,212,255,0.3); border-radius: 2px; }
+
+.kicker{
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem; color: var(--accent);
+  letter-spacing: .12em; text-transform: uppercase;
+  padding: 4px 10px; margin-bottom: 12px;
+  border: 1px solid rgba(0,212,255,0.3);
+  border-radius: 4px;
+  background: rgba(0,212,255,0.05);
+}
+
+.slide-title{
+  font-size: var(--t1); font-weight: 900;
+  letter-spacing: -0.02em; line-height: 1.1;
+  margin-bottom: 18px;
+}
+.slide-title .en{
+  display: block; font-size: 0.45em; font-weight: 400;
+  color: var(--ink-3); margin-top: 6px; letter-spacing: 0;
+}
+
+.slide-h2{ font-size: var(--t2); font-weight: 700; margin-bottom: 16px; line-height: 1.2; }
+.slide-h3{ font-size: var(--t3); font-weight: 700; margin-bottom: 10px; }
+p, li{ font-size: var(--t4); line-height: 1.6; color: var(--ink-2); }
+em{ color: var(--accent); font-style: normal; font-weight: 700; }
+strong{ color: var(--ink); font-weight: 700; }
+
+/* ============ 卡片 ============ */
+.card{
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 24px;
+  backdrop-filter: blur(10px);
+  transition: all .3s;
+}
+.card:hover{
+  border-color: rgba(0,212,255,0.4);
+  transform: translateY(-4px);
+  box-shadow: var(--glow);
+}
+.card-icon{
+  width: 48px; height: 48px;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  border-radius: 12px;
+  font-size: 24px; margin-bottom: 14px;
+  color: #fff; font-weight: 900;
+}
+
+.grid-2{ display: grid; grid-template-columns: 1fr 1fr; gap: var(--s3); }
+.grid-3{ display: grid; grid-template-columns: repeat(3,1fr); gap: var(--s3); }
+.grid-4{ display: grid; grid-template-columns: repeat(4,1fr); gap: var(--s3); }
+.grid-2x3{ display: grid; grid-template-columns: repeat(3,1fr); grid-template-rows: 1fr 1fr; gap: var(--s3); }
+
+/* ============ 按鈕 ============ */
+.btn{
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 26px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #fff; font-weight: 700;
+  border: none; border-radius: 100px;
+  cursor: pointer;
+  font-family: inherit; font-size: var(--t4);
+  transition: all .2s;
+  box-shadow: 0 4px 16px rgba(0,212,255,0.3);
+}
+.btn:hover{ transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,212,255,0.5); }
+.btn-outline{
+  background: transparent;
+  border: 2px solid var(--accent);
+  color: var(--accent);
+  box-shadow: none;
+}
+.btn-outline:hover{ background: rgba(0,212,255,0.1); }
+
+/* ============ 表格 ============ */
+.tbl{
+  width: 100%; border-collapse: collapse;
+  font-size: var(--t5);
+}
+.tbl th, .tbl td{
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--card-border);
+  text-align: left;
+}
+.tbl th{
+  color: var(--accent);
+  font-weight: 700;
+  letter-spacing: .04em;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  cursor: pointer;
+  user-select: none;
+}
+.tbl th:hover{ color: var(--ink); }
+.tbl th.sortable::after{ content: ' ⇅'; opacity: .4; }
+.tbl tbody tr:hover{ background: rgba(255,255,255,0.03); }
+.tbl td .badge{
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  padding: 2px 8px; border-radius: 4px;
+  background: rgba(0,212,255,0.15);
+  color: var(--accent);
+}
+
+/* ============ SVG 動畫 ============ */
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: .85; }
+}
+@keyframes stretch-symm {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(-8px); }
+}
+@keyframes stretch-symm-r {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(8px); }
+}
+@keyframes stretch-asymm-l {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(-10px); }
+}
+@keyframes stretch-asymm-r {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(-5px); }
+}
+@keyframes bend {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(10deg); }
+}
+@keyframes bend-r {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-10deg); }
+}
+@keyframes wave-flow {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-100px); }
+}
+
+/* ============ 遊戲區塊 ============ */
+.game-area{
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  padding: 24px;
+  backdrop-filter: blur(20px);
+}
+
+.option{
+  padding: 14px 18px;
+  background: var(--card-bg);
+  border: 2px solid var(--card-border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all .2s;
+  font-size: var(--t4);
+  color: var(--ink);
+  font-family: inherit;
+  text-align: left;
+  width: 100%;
+}
+.option:hover:not(.disabled){
+  border-color: var(--accent);
+  background: rgba(0,212,255,0.08);
+}
+.option.correct{
+  border-color: var(--good);
+  background: rgba(0,230,118,0.12);
+  color: var(--good);
+}
+.option.wrong{
+  border-color: var(--bad);
+  background: rgba(255,68,102,0.12);
+  color: var(--bad);
+}
+.option.disabled{ cursor: not-allowed; opacity: 0.6; }
+
+.match-card{
+  padding: 14px 16px;
+  background: var(--card-bg);
+  border: 2px solid var(--card-border);
+  border-radius: 10px;
+  cursor: grab;
+  font-size: 0.95rem;
+  text-align: center;
+  transition: all .2s;
+}
+.match-card.selected{
+  border-color: var(--accent);
+  background: rgba(0,212,255,0.15);
+  box-shadow: 0 0 16px rgba(0,212,255,0.3);
+}
+.match-card.matched{
+  border-color: var(--good);
+  background: rgba(0,230,118,0.15);
+  cursor: default;
+  opacity: 0.6;
+}
+.match-target{
+  padding: 14px 16px;
+  background: rgba(255,255,255,0.02);
+  border: 2px dashed var(--card-border);
+  border-radius: 10px;
+  min-height: 56px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.95rem;
+  transition: all .2s;
+}
+.match-target.matched{
+  border-style: solid;
+  border-color: var(--good);
+  background: rgba(0,230,118,0.08);
+}
+
+.score-display{
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.progress-dots{
+  display: flex; gap: 8px; margin-bottom: 16px;
+}
+.progress-dots .dot{
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--card-border);
+}
+.progress-dots .dot.done{ background: var(--good); }
+.progress-dots .dot.current{ background: var(--accent); box-shadow: 0 0 12px var(--accent); }
+.progress-dots .dot.wrong{ background: var(--bad); }
+
+.feedback{
+  margin-top: 14px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 0.92rem;
+  display: none;
+}
+.feedback.show{ display: block; }
+.feedback.good{ background: rgba(0,230,118,0.1); border-left: 3px solid var(--good); color: var(--good); }
+.feedback.bad{ background: rgba(255,68,102,0.1); border-left: 3px solid var(--bad); color: var(--bad); }
+.feedback .explain{ color: var(--ink-2); margin-top: 6px; font-size: 0.85rem; }
+
+/* ============ 光譜圖 ============ */
+.spectrum-container{
+  position: relative;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 16px;
+  height: 280px;
+}
+
+/* ============ 雜項 ============ */
+.tag{
+  display: inline-block;
+  padding: 3px 9px;
+  font-size: 0.72rem;
+  font-family: 'JetBrains Mono', monospace;
+  border-radius: 4px;
+  background: rgba(255,255,255,0.05);
+  color: var(--ink-3);
+  border: 1px solid var(--card-border);
+  margin-right: 4px;
+}
+.tag.accent{ background: rgba(0,212,255,0.12); color: var(--accent); border-color: rgba(0,212,255,0.3); }
+.tag.accent-2{ background: rgba(255,0,110,0.12); color: var(--accent-2); border-color: rgba(255,0,110,0.3); }
+.tag.warn{ background: rgba(255,184,0,0.12); color: var(--warn); border-color: rgba(255,184,0,0.3); }
+
+/* ============ 全螢幕封面 ============ */
+.cover-bg{
+  position: absolute; inset: 0; overflow: hidden; z-index: -1;
+}
+.cover-bg .wave-line{
+  position: absolute; height: 1px; background: rgba(0,212,255,0.3);
+  animation: wave-flow 8s linear infinite;
+}
+
+/* ============ 學生 Modal ============ */
+.modal-overlay{
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+}
+.modal{
+  background: var(--bg-2);
+  border: 1px solid var(--accent);
+  border-radius: 20px;
+  padding: 36px;
+  max-width: 480px; width: 90%;
+  box-shadow: 0 0 60px rgba(0,212,255,0.4);
+}
+.modal h2{ color: var(--accent); margin-bottom: 16px; font-size: 1.5rem; }
+.modal p{ margin-bottom: 18px; }
+.modal input{
+  width: 100%; padding: 12px 16px;
+  background: rgba(0,0,0,0.4);
+  border: 2px solid var(--card-border);
+  border-radius: 10px;
+  color: var(--ink);
+  font-family: inherit; font-size: 1rem;
+  margin-bottom: 14px;
+}
+.modal input:focus{ outline: none; border-color: var(--accent); }
+.modal-buttons{ display: flex; gap: 12px; justify-content: flex-end; }
+
+/* ============ 試管 & 稀釋計算器 ============ */
+.tube{
+  width: 38px; height: 110px;
+  border: 2px solid var(--card-border);
+  border-radius: 0 0 18px 18px;
+  position: relative;
+  overflow: hidden;
+  background: rgba(255,255,255,0.02);
+  flex-shrink: 0;
+}
+.tube::before{
+  content: ''; position: absolute; top: 0; left: -2px; right: -2px;
+  height: 4px; background: rgba(255,255,255,0.15);
+  border-radius: 4px 4px 0 0;
+}
+.tube-fill{
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 0;
+  background: linear-gradient(180deg, rgba(0,212,255,0.55) 0%, rgba(0,212,255,0.85) 100%);
+  transition: height 0.5s cubic-bezier(.4,0,.2,1);
+}
+.tube-fill::before{
+  content: ''; position: absolute; top: -3px; left: 0; right: 0; height: 6px;
+  background: rgba(0,212,255,0.9);
+  border-radius: 50%;
+}
+.tube-lg{ width: 60px; height: 180px; }
+.tube-row{
+  display: flex; gap: 10px;
+  justify-content: space-between; align-items: flex-end;
+  padding: 12px 8px;
+  background: rgba(0,0,0,0.25);
+  border-radius: 10px;
+}
+.tube-item{
+  display: flex; flex-direction: column; align-items: center;
+  flex: 1;
+  cursor: pointer;
+  transition: transform .2s;
+}
+.tube-item:hover{ transform: translateY(-4px); }
+.tube-item .tube-label{
+  margin-top: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82rem;
+  color: var(--ink-2);
+  font-weight: 700;
+}
+.tube-item .tube-sublabel{
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--ink-3);
+}
+
+/* 滑桿 */
+input[type="range"].dilution-slider{
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 6px;
+  background: linear-gradient(90deg, rgba(0,212,255,0.2), rgba(0,212,255,0.8));
+  border-radius: 3px;
+  outline: none;
+}
+input[type="range"].dilution-slider::-webkit-slider-thumb{
+  -webkit-appearance: none; appearance: none;
+  width: 22px; height: 22px;
+  background: var(--accent);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 12px rgba(0,212,255,0.6);
+  border: 2px solid #fff;
+}
+input[type="range"].dilution-slider::-moz-range-thumb{
+  width: 22px; height: 22px;
+  background: var(--accent);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 12px rgba(0,212,255,0.6);
+  border: 2px solid #fff;
+}
+
+/* 計算器顯示區 */
+.calc-formula{
+  font-family: 'JetBrains Mono', monospace;
+  background: rgba(0,212,255,0.08);
+  border: 1px solid rgba(0,212,255,0.25);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.95rem;
+  color: var(--accent);
+  text-align: center;
+}
+.calc-result{
+  display: flex; flex-direction: column; gap: 6px;
+}
+.calc-result .row{
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 12px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 8px;
+  border-left: 3px solid var(--card-border);
+}
+.calc-result .row.alc{ border-left-color: var(--accent); }
+.calc-result .row.water{ border-left-color: #4fc3f7; }
+.calc-result .row.total{ border-left-color: var(--good); background: rgba(0,230,118,0.06); }
+.calc-result .val{
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+/* 稀釋表 */
+.dilution-row{ transition: all .2s; }
+.dilution-row.active{
+  background: rgba(0,212,255,0.12) !important;
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+.dilution-row{ cursor: pointer; }
+
+/* 密碼模態 */
+.modal.modal-warning{
+  border-color: var(--warn);
+  box-shadow: 0 0 60px rgba(255,184,0,0.3);
+}
+.modal.modal-warning h2{ color: var(--warn); }
+
+/* ============ 主畫面 ============ */
+@media (max-width: 900px){
+  .slide{ padding: 60px 30px; }
+  .grid-3, .grid-4{ grid-template-columns: 1fr 1fr; }
+  .grid-2x3{ grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div id="progress"><div id="progress-fill"></div></div>
+<div id="section-tag">— 引起動機 —</div>
+<div id="student-badge" onclick="promptStudentName()">👤 訪客</div>
+<div id="page-info">01 / 24</div>
+<div id="hint">← → 切換 ｜ F 全螢幕 ｜ R 重置紀錄</div>
+
+<!-- ============ Slide 1: 封面 ============ -->
+<section class="slide active" data-slide="1" data-section="引起動機">
+  <div class="cover-bg" id="cover-bg"></div>
+  <div class="slide-inner" style="text-align:center;">
+    <div style="display:inline-block; padding:6px 16px; border:1px solid var(--accent); border-radius:100px; color:var(--accent); font-family:'JetBrains Mono',monospace; letter-spacing:.15em; font-size:.85rem; margin-bottom:24px;">
+      CHAPTER 8 ｜ NIELSEN'S FOOD ANALYSIS
+    </div>
+    <h1 class="slide-title" style="font-size:clamp(2.5rem,6vw,5rem); margin-bottom:8px;">
+      紅外光與拉曼光譜學
+      <span class="en">Infrared and Raman Spectroscopy</span>
+    </h1>
+    <p style="font-size:var(--t3); color:var(--ink-2); max-width:780px; margin:24px auto 36px;">
+      食物的分子在 0.8 — 100 μm 之間留下獨一無二的<em>振動指紋</em>，<br>
+      我們如何用一束光，讀懂這份密碼？
+    </p>
+    <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap;">
+      <button class="btn" onclick="promptStudentName(true)">🚀 開始學習</button>
+      <button class="btn btn-outline" onclick="nextSlide()">略過 →</button>
+    </div>
+    <div style="margin-top:48px; display:flex; gap:32px; justify-content:center; color:var(--ink-4); font-family:'JetBrains Mono',monospace; font-size:.78rem; letter-spacing:.1em;">
+      <span>24 SLIDES</span>
+      <span>3 MINIGAMES</span>
+      <span>LIVE DATA TRACKING</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Slide 2: 痛點問句 ============ -->
+<section class="slide" data-slide="2" data-section="引起動機">
+  <div class="slide-inner">
+    <div class="kicker">— 一個 30 秒的挑戰 —</div>
+    <h2 class="slide-title" style="font-size:clamp(2rem,4vw,3.2rem);">
+      手上這瓶橄欖油，是<em style="color:var(--accent-2);">純的</em>還是<em style="color:var(--bad);">攙偽</em>的？
+    </h2>
+    <p style="font-size:var(--t3); color:var(--ink-2); max-width:900px; margin-bottom:36px;">
+      傳統濕式化學分析需要試劑、加熱、滴定 — 動輒數小時。<br>
+      但是…
+    </p>
+    <div class="grid-3">
+      <div class="card">
+        <div style="font-size:2.5rem; margin-bottom:8px;">🥛</div>
+        <h3 class="slide-h3" style="color:var(--accent);">牛奶分析儀</h3>
+        <p>同時測出脂肪、蛋白質、乳糖、總固形物，<em>1 分鐘以內</em>，無試劑。</p>
+      </div>
+      <div class="card">
+        <div style="font-size:2.5rem; margin-bottom:8px;">🌾</div>
+        <h3 class="slide-h3" style="color:var(--accent);">穀物檢測</h3>
+        <p>玉米、小麥、稻米中的水分、蛋白、油脂 — AACC 官方認證的快速法。</p>
+      </div>
+      <div class="card">
+        <div style="font-size:2.5rem; margin-bottom:8px;">🍯</div>
+        <h3 class="slide-h3" style="color:var(--accent);">蜂蜜真偽</h3>
+        <p>偵測糖漿攙偽、不同植物源、地理產地 — <em>ppb 級</em>檢測限。</p>
+      </div>
+    </div>
+    <p style="margin-top:32px; font-size:var(--t3); color:var(--accent);">
+      → 它們都用了同一件事：<strong style="color:#fff;">分子振動光譜學</strong>
+    </p>
+  </div>
+</section>
+
+<!-- ============ Slide 3: 核心命題 ============ -->
+<section class="slide" data-slide="3" data-section="引起動機">
+  <div class="slide-inner">
+    <div class="kicker">— 核心概念 —</div>
+    <h2 class="slide-title" style="font-size:clamp(2rem,4.5vw,3.6rem);">
+      分子振動 = 食物的<em>指紋</em>
+    </h2>
+    <p style="font-size:var(--t3); margin-bottom:36px;">
+      每一個官能基（functional group）都有自己的振動頻率。<br>
+      讓不同頻率的紅外光照過去，<em>被吸收的頻率</em>就告訴我們食物裡有什麼分子。
+    </p>
+    <div class="grid-3" style="gap:32px;">
+      <div class="card" style="text-align:center;">
+        <div style="font-size:3rem; color:var(--accent); margin-bottom:8px;">①</div>
+        <h3 class="slide-h3">分子在振動</h3>
+        <svg width="100%" height="80" viewBox="0 0 200 80">
+          <circle cx="60" cy="40" r="18" fill="var(--accent)" opacity=".8">
+            <animate attributeName="cx" values="60;52;60;68;60" dur="1.5s" repeatCount="indefinite"/>
+          </circle>
+          <circle cx="140" cy="40" r="18" fill="var(--accent-2)" opacity=".8">
+            <animate attributeName="cx" values="140;148;140;132;140" dur="1.5s" repeatCount="indefinite"/>
+          </circle>
+          <line x1="78" y1="40" x2="122" y2="40" stroke="#fff" stroke-width="2" opacity=".4"/>
+        </svg>
+        <p style="font-size:.9rem;">每個鍵都像彈簧，以特定頻率<em>伸縮、彎曲</em>。</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-size:3rem; color:var(--accent); margin-bottom:8px;">②</div>
+        <h3 class="slide-h3">吸收特定頻率</h3>
+        <svg width="100%" height="90" viewBox="0 0 220 90">
+          <!-- 標題 -->
+          <text x="110" y="10" font-size="8" fill="#b8c5e0" text-anchor="middle">光譜：頻率 vs 吸收度</text>
+          <!-- X 軸 -->
+          <line x1="20" y1="68" x2="205" y2="68" stroke="#7a8bb8" stroke-width="1"/>
+          <text x="205" y="80" font-size="7" fill="#7a8bb8" text-anchor="end">頻率 →</text>
+          <!-- Y 軸 -->
+          <line x1="20" y1="25" x2="20" y2="68" stroke="#7a8bb8" stroke-width="1"/>
+          <text x="14" y="30" font-size="7" fill="#7a8bb8" text-anchor="end">吸收</text>
+          <!-- 平坦光譜 + 一個吸收峰 -->
+          <path d="M20,63 L70,63 L80,63 L92,32 L104,63 L150,63 L195,63"
+                stroke="#00d4ff" stroke-width="2.5" fill="rgba(0,212,255,0.1)"/>
+          <!-- 峰位閃爍亮點 -->
+          <circle cx="92" cy="32" r="3" fill="#ff006e">
+            <animate attributeName="r" values="3;5;3" dur="1.2s" repeatCount="indefinite"/>
+          </circle>
+          <!-- 標籤 -->
+          <text x="92" y="22" font-size="8" fill="#ff006e" text-anchor="middle" font-weight="700">↓吸收!</text>
+          <line x1="92" y1="68" x2="92" y2="78" stroke="#ff006e" stroke-width="1" stroke-dasharray="2,2"/>
+          <text x="92" y="88" font-size="7" fill="#ff006e" text-anchor="middle">特定頻率</text>
+        </svg>
+        <p style="font-size:.9rem;">當入射光頻率 <em>= 分子振動頻率</em>，光被吸收，在光譜上形成一個峰。</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-size:3rem; color:var(--accent); margin-bottom:8px;">③</div>
+        <h3 class="slide-h3">形成獨特指紋</h3>
+        <svg width="100%" height="80" viewBox="0 0 200 80">
+          <line x1="10" y1="70" x2="190" y2="70" stroke="var(--ink-4)" stroke-width="1"/>
+          <path d="M10,70 L30,70 L40,30 L50,70 L80,70 L95,45 L110,70 L140,70 L155,55 L170,70 L190,70" stroke="var(--accent-2)" stroke-width="2" fill="none"/>
+          <text x="100" y="20" fill="var(--ink-3)" font-size="10" text-anchor="middle">Mid-IR 光譜</text>
+        </svg>
+        <p style="font-size:.9rem;">每種食物有<em>獨一無二</em>的吸收模式 — 像 DNA 一樣。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Slide 4: 章節地圖 ============ -->
+<section class="slide" data-slide="4" data-section="引起動機">
+  <div class="slide-inner">
+    <div class="kicker">— 本章地圖 —</div>
+    <h2 class="slide-h2" style="margin-bottom:8px;">本章五大支柱</h2>
+    <p style="margin-bottom:18px; font-size:.95rem;">依序學習以下五大主題，最後用 <em>3 個小遊戲</em> 驗證成效。</p>
+    <div class="grid-3" style="gap:14px;">
+      <div class="card" onclick="goToSlide(5)" style="cursor:pointer; padding:16px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+          <div class="card-icon" style="width:36px; height:36px; font-size:18px; margin:0;">🌈</div>
+          <h3 class="slide-h3" style="margin:0; font-size:1.05rem;">IR 光譜原理</h3>
+        </div>
+        <p style="font-size:.82rem; margin-bottom:6px;">電磁波譜 ｜ 分子振動 ｜ 影響因子</p>
+        <span class="tag accent">§8.1-8.2</span>
+      </div>
+      <div class="card" onclick="goToSlide(8)" style="cursor:pointer; padding:16px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+          <div class="card-icon" style="width:36px; height:36px; font-size:18px; margin:0;">🔬</div>
+          <h3 class="slide-h3" style="margin:0; font-size:1.05rem;">Mid-IR 中紅外</h3>
+        </div>
+        <p style="font-size:.82rem; margin-bottom:6px;">FTIR ｜ 干涉儀 ｜ ATR ｜ 官能基</p>
+        <span class="tag accent">§8.3</span>
+      </div>
+      <div class="card" onclick="goToSlide(12)" style="cursor:pointer; padding:16px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+          <div class="card-icon" style="width:36px; height:36px; font-size:18px; margin:0;">📊</div>
+          <h3 class="slide-h3" style="margin:0; font-size:1.05rem;">Near-IR 近紅外</h3>
+        </div>
+        <p style="font-size:.82rem; margin-bottom:6px;">漫反射 ｜ 化學計量學 ｜ 食品定量</p>
+        <span class="tag accent">§8.4</span>
+      </div>
+      <div class="card" onclick="goToSlide(14)" style="cursor:pointer; padding:16px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+          <div class="card-icon" style="width:36px; height:36px; font-size:18px; margin:0;">⚡</div>
+          <h3 class="slide-h3" style="margin:0; font-size:1.05rem;">Raman 拉曼</h3>
+        </div>
+        <p style="font-size:.82rem; margin-bottom:6px;">散射 ｜ Stokes ｜ SERS</p>
+        <span class="tag accent-2">§8.5</span>
+      </div>
+      <div class="card" onclick="goToSlide(19)" style="cursor:pointer; padding:16px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+          <div class="card-icon" style="width:36px; height:36px; font-size:18px; margin:0;">📱</div>
+          <h3 class="slide-h3" style="margin:0; font-size:1.05rem;">手持設備</h3>
+        </div>
+        <p style="font-size:.82rem; margin-bottom:6px;">攜帶型 FTIR / NIR / Raman</p>
+        <span class="tag accent">§8.6</span>
+      </div>
+      <div class="card" onclick="goToSlide(20)" style="cursor:pointer; padding:16px; border-color:rgba(255,0,110,0.4);">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+          <div class="card-icon" style="width:36px; height:36px; font-size:18px; margin:0; background:linear-gradient(135deg,var(--accent-2),var(--warn));">🎮</div>
+          <h3 class="slide-h3" style="margin:0; font-size:1.05rem; color:var(--accent-2);">3 個小遊戲</h3>
+        </div>
+        <p style="font-size:.82rem; margin-bottom:6px;">配對 ｜ 情境選擇 ｜ 光譜識讀</p>
+        <span class="tag accent-2">互動測驗</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Slide 5: 電磁波譜中的 IR 區域 ============ -->
+<section class="slide" data-slide="5" data-section="維持注意">
+  <div class="slide-inner">
+    <div class="kicker">— §8.2.1 ｜ IR Region —</div>
+    <h2 class="slide-h2">紅外光在電磁波譜中的位置</h2>
+    <p style="margin-bottom:24px;">IR 介於可見光與微波之間，依波長分為三大區，<em>近紅外與中紅外</em>是食品分析主場。</p>
+
+    <!-- 電磁波譜橫向圖 -->
+    <div style="background:rgba(0,0,0,0.3); border-radius:14px; padding:24px; margin-bottom:24px;">
+      <svg viewBox="0 0 1000 160" style="width:100%; height:auto;">
+        <!-- 漸層光譜帶 -->
+        <defs>
+          <linearGradient id="emSpec" x1="0" x2="1">
+            <stop offset="0" stop-color="#7c3aed"/>
+            <stop offset="0.15" stop-color="#3b82f6"/>
+            <stop offset="0.25" stop-color="#10b981"/>
+            <stop offset="0.35" stop-color="#fbbf24"/>
+            <stop offset="0.45" stop-color="#ef4444"/>
+            <stop offset="0.55" stop-color="#dc2626"/>
+            <stop offset="0.75" stop-color="#7c2d12"/>
+            <stop offset="1" stop-color="#1e293b"/>
+          </linearGradient>
+        </defs>
+        <rect x="0" y="60" width="1000" height="40" fill="url(#emSpec)"/>
+
+        <!-- 區段標籤 -->
+        <g font-family="JetBrains Mono" font-size="11">
+          <line x1="450" y1="60" x2="450" y2="100" stroke="#fff" stroke-width="2"/>
+          <text x="430" y="55" fill="#fff" text-anchor="end">可見光 380-780nm</text>
+
+          <rect x="450" y="60" width="120" height="40" fill="none" stroke="#00d4ff" stroke-width="2"/>
+          <text x="510" y="120" fill="#00d4ff" text-anchor="middle" font-weight="700">Near-IR</text>
+          <text x="510" y="138" fill="#b8c5e0" text-anchor="middle">0.8 - 2.5 μm</text>
+          <text x="510" y="152" fill="#7a8bb8" text-anchor="middle">12500-4000 cm⁻¹</text>
+
+          <rect x="570" y="60" width="180" height="40" fill="none" stroke="#ff006e" stroke-width="2"/>
+          <text x="660" y="120" fill="#ff006e" text-anchor="middle" font-weight="700">Mid-IR</text>
+          <text x="660" y="138" fill="#b8c5e0" text-anchor="middle">2.5 - 15 μm</text>
+          <text x="660" y="152" fill="#7a8bb8" text-anchor="middle">4000-670 cm⁻¹</text>
+
+          <rect x="750" y="60" width="180" height="40" fill="none" stroke="#ffb800" stroke-width="2"/>
+          <text x="840" y="120" fill="#ffb800" text-anchor="middle" font-weight="700">Far-IR</text>
+          <text x="840" y="138" fill="#b8c5e0" text-anchor="middle">15.4 - 100 μm</text>
+          <text x="840" y="152" fill="#7a8bb8" text-anchor="middle">650-100 cm⁻¹</text>
+
+          <text x="50" y="55" fill="#b8c5e0">← 短波長 / 高頻率</text>
+          <text x="950" y="55" fill="#b8c5e0" text-anchor="end">長波長 / 低頻率 →</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="grid-3">
+      <div class="card">
+        <h3 class="slide-h3" style="color:#00d4ff;">Near-IR (NIR)</h3>
+        <p style="font-size:.88rem;"><em>泛音/組合譜帶</em>主導。穿透深、無需製樣，適合<strong>固體粉粒、線上監測、定量分析</strong>。</p>
+      </div>
+      <div class="card">
+        <h3 class="slide-h3" style="color:#ff006e;">Mid-IR</h3>
+        <p style="font-size:.88rem;"><em>基本振動</em>主導，吸收強，是<strong>官能基鑑定</strong>的黃金區。對水的吸收強。</p>
+      </div>
+      <div class="card">
+        <h3 class="slide-h3" style="color:#ffb800;">Far-IR</h3>
+        <p style="font-size:.88rem;">分子整體骨架振動與晶格振動。食品分析<strong>較少使用</strong>。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Slide 6: 分子振動六大模式 ============ -->
+<section class="slide" data-slide="6" data-section="維持注意">
+  <div class="slide-inner">
+    <div class="kicker">— §8.2.2 ｜ Molecular Vibrations —</div>
+    <h2 class="slide-h2">分子振動的六種模式</h2>
+    <p style="margin-bottom:20px;">以水分子 (H₂O) 為例，原子間有六種振動方式：<em>伸縮</em>頻率比<em>彎曲</em>高，<em>不對稱</em>比<em>對稱</em>更易產生偶極矩變化、更易吸收 IR。</p>
+
+    <div class="grid-2x3" style="gap:16px;">
+      <!-- 對稱伸縮 -->
+      <div class="card" style="padding:14px; text-align:center;">
+        <svg width="100%" height="80" viewBox="0 0 200 80">
+          <circle cx="100" cy="55" r="14" fill="#ff006e"/>
+          <circle cx="60" cy="30" r="10" fill="#00d4ff">
+            <animate attributeName="cx" values="60;52;60;52;60" dur="2s" repeatCount="indefinite"/>
+            <animate attributeName="cy" values="30;22;30;22;30" dur="2s" repeatCount="indefinite"/>
+          </circle>
+          <circle cx="140" cy="30" r="10" fill="#00d4ff">
+            <animate attributeName="cx" values="140;148;140;148;140" dur="2s" repeatCount="indefinite"/>
+            <animate attributeName="cy" values="30;22;30;22;30" dur="2s" repeatCount="indefinite"/>
+          </circle>
+          <line x1="60" y1="30" x2="100" y2="55" stroke="#fff" stroke-width="1.5" opacity=".5"/>
+          <line x1="140" y1="30" x2="100" y2="55" stroke="#fff" stroke-width="1.5" opacity=".5"/>
+        </svg>
+        <h4 style="color:var(--accent); font-size:.92rem; margin-top:6px;">對稱伸縮</h4>
+        <p style="font-size:.78rem; color:var(--ink-3);">Symmetric stretch</p>
+      </div>
+      <!-- 不對稱伸縮 -->
+      <div class="card" style="padding:14px; text-align:center;">
+        <svg width="100%" height="80" viewBox="0 0 200 80">
+          <circle cx="100" cy="55" r="14" fill="#ff006e"/>
+          <circle cx="60" cy="30" r="10" fill="#00d4ff">
+            <animate attributeName="cx" values="60;52;60;68;60" dur="2s" repeatCount="indefinite"/>
+            <animate attributeName="cy" values="30;22;30;38;30" dur="2s" repeatCount="indefinite"/>
+          </circle>
+          <circle cx="140" cy="30" r="10" fill="#00d4ff">
+            <animate attributeName="cx" values="140;148;140;132;140" dur="2s" repeatCount="indefinite"/>
+            <animate attributeName="cy" values="30;38;30;22;30" dur="2s" repeatCount="indefinite"/>
+          </circle>
+          <line x1="60" y1="30" x2="100" y2="55" stroke="#fff" stroke-width="1.5" opacity=".5"/>
+          <line x1="140" y1="30" x2="100" y2="55" stroke="#fff" stroke-width="1.5" opacity=".5"/>
+        </svg>
+        <h4 style="color:var(--accent-2); font-size:.92rem; margin-top:6px;">不對稱伸縮</h4>
+        <p style="font-size:.78rem; color:var(--ink-3);">Asymmetric stretch ⚡</p>
+      </div>
+      <!-- 剪式彎曲 -->
+      <div class="card" style="padding:14px; text-align:center;">
+        <svg width="100%" height="80" viewBox="0 0 200 80">
+          <circle cx="100" cy="55" r="14" fill="#ff006e"/>
+          <circle cx="60" cy="30" r="10" fill="#00d4ff">
+            <animate attributeName="cx" values="60;72;60;72;60" dur="2s" repeatCount="indefinite"/>
+          </circle>
+          <circle cx="140" cy="30" r="10" fill="#00d4ff">
+            <animate attributeName="cx" values="140;128;140;128;140" dur="2s" repeatCount="indefinite"/>
+          </circle>
+          <line x1="60" y1="30" x2="100" y2="55" stroke="#fff" stroke-width="1.5" opacity=".5"/>
+          <line x1="140" y1="30" x2="100" y2="55" stroke="#fff" stroke-width="1.5" opacity=".5"/>
+        </svg>
+        <h4 style="color:var(--warn); font-size:.92rem; margin-top:6px;">剪式彎曲</h4>
+        <p style="font-size:.78rem; color:var(--ink-3);">Scissoring (bend)</p>
+      </div>
+      <!-- 搖擺 -->
+      <div class="card" style="padding:14px; text-align:center;">
+        <svg width="100%" height="80" viewBox="0 0 200 80">
+          <circle cx="100" cy="55" r="14" fill="#ff006e"/>
+          <g>
+            <circle cx="60" cy="30" r="10" fill="#00d4ff"/>
+            <circle cx="140" cy="30" r="10" fill="#00d4ff"/>
+            <line x1="60" y1="30" x2="100" y2="55" stroke="#fff" stroke-width="1.5" opacity=".5"/>
+            <line x1="140" y1="30" x2="100" y2="55" stroke="#fff" stroke-width="1.5" opacity=".5"/>
+            <animateTransform attributeName="transform" type="rotate" values="-8 100 55;8 100 55;-8 100 55" dur="2s" repeatCount="indefinite"/>
+          </g>
+        </svg>
+        <h4 style="color:var(--warn); font-size:.92rem; margin-top:6px;">搖擺</h4>
+        <p style="font-size:.78rem; color:var(--ink-3);">Rocking (in-plane)</p>
+      </div>
+      <!-- 扭轉 -->
+      <div class="card" style="padding:14px; text-align:center;">
+        <svg width="100%" height="80" viewBox="0 0 200 80">
+          <circle cx="100" cy="55" r="14" fill="#ff006e"/>
+          <ellipse cx="60" cy="30" rx="10" ry="10" fill="#00d4ff">
+            <animate attributeName="ry" values="10;4;10;4;10" dur="2s" repeatCount="indefinite"/>
+          </ellipse>
+          <ellipse cx="140" cy="30" rx="10" ry="4" fill="#00d4ff">
+            <animate attributeName="ry" values="4;10;4;10;4" dur="2s" repeatCount="indefinite"/>
+          </ellipse>
+          <line x1="60" y1="30" x2="100" y2="55" stroke="#fff" stroke-width="1.5" opacity=".5"/>
+          <line x1="140" y1="30" x2="100" y2="55" stroke="#fff" stroke-width="1.5" opacity=".5"/>
+        </svg>
+        <h4 style="color:var(--warn); font-size:.92rem; margin-top:6px;">扭轉</h4>
+        <p style="font-size:.78rem; color:var(--ink-3);">Twisting (out-of-plane)</p>
+      </div>
+      <!-- 搖尾 -->
+      <div class="card" style="padding:14px; text-align:center;">
+        <svg width="100%" height="80" viewBox="0 0 200 80">
+          <circle cx="100" cy="55" r="14" fill="#ff006e"/>
+          <g>
+            <circle cx="60" cy="30" r="10" fill="#00d4ff"/>
+            <circle cx="140" cy="30" r="10" fill="#00d4ff"/>
+            <line x1="60" y1="30" x2="100" y2="55" stroke="#fff" stroke-width="1.5" opacity=".5"/>
+            <line x1="140" y1="30" x2="100" y2="55" stroke="#fff" stroke-width="1.5" opacity=".5"/>
+            <animateTransform attributeName="transform" type="translate" values="0 0;0 -6;0 0;0 -6;0 0" dur="2s" repeatCount="indefinite"/>
+          </g>
+        </svg>
+        <h4 style="color:var(--warn); font-size:.92rem; margin-top:6px;">搖尾</h4>
+        <p style="font-size:.78rem; color:var(--ink-3);">Wagging</p>
+      </div>
+    </div>
+    <p style="margin-top:18px; font-size:.92rem; color:var(--ink-3);">
+      💡 <strong>關鍵：</strong>只有能造成<em>偶極矩變化</em>的振動才會吸收 IR。對稱伸縮 H₂O 中兩個 O-H 鍵的偶極變化相互抵消，<em>不易在 IR 中觀察</em>，但是 Raman 可以！
+    </p>
+  </div>
+</section>
+
+<!-- ============ Slide 7: 振動頻率影響因子 ============ -->
+<section class="slide" data-slide="7" data-section="維持注意">
+  <div class="slide-inner">
+    <div class="kicker">— §8.2.3 ｜ Factors —</div>
+    <h2 class="slide-h2">什麼決定振動頻率？</h2>
+    <div class="grid-2" style="gap:32px;">
+      <div>
+        <div class="card" style="background:rgba(0,0,0,0.4); padding:24px;">
+          <p style="font-size:.85rem; color:var(--ink-3); margin-bottom:6px;">Harmonic Oscillator 諧振子模型</p>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:1.4rem; text-align:center; padding:18px; background:rgba(0,212,255,0.08); border-radius:8px; color:var(--accent);">
+            E = (v+½)(h/2π)√(k/μ)
+          </div>
+          <p style="margin-top:14px; font-size:.88rem;">其中 <em>μ = m₁m₂/(m₁+m₂)</em> 是縮減質量。</p>
+        </div>
+
+        <div style="margin-top:20px;">
+          <h3 class="slide-h3" style="color:var(--accent);">兩個關鍵變數</h3>
+          <div style="display:flex; flex-direction:column; gap:12px; margin-top:10px;">
+            <div class="card" style="padding:14px; display:flex; align-items:center; gap:14px;">
+              <div style="font-size:1.8rem;">💪</div>
+              <div>
+                <strong style="color:var(--accent);">鍵強度 k ↑</strong> ⟹ 頻率 <em>↑</em><br>
+                <span style="font-size:.85rem; color:var(--ink-3);">C≡C (2200) > C=C (1650) > C-C (1000) cm⁻¹</span>
+              </div>
+            </div>
+            <div class="card" style="padding:14px; display:flex; align-items:center; gap:14px;">
+              <div style="font-size:1.8rem;">⚖️</div>
+              <div>
+                <strong style="color:var(--accent-2);">原子質量 μ ↑</strong> ⟹ 頻率 <em>↓</em><br>
+                <span style="font-size:.85rem; color:var(--ink-3);">C-H (~3000) > C-D (~2100) cm⁻¹</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h3 class="slide-h3" style="color:var(--accent);">基本振動 vs 泛音</h3>
+        <div class="card" style="padding:16px;">
+          <svg viewBox="0 0 320 220" style="width:100%; height:auto;">
+            <!-- 簡諧位能曲線 -->
+            <path d="M 30 200 Q 160 -30 290 200" stroke="var(--accent)" stroke-width="2" fill="none"/>
+            <!-- 能階 -->
+            <line x1="100" y1="160" x2="220" y2="160" stroke="#fff" stroke-width="1.5"/>
+            <text x="240" y="164" font-size="10" fill="var(--ink-2)">v=0</text>
+            <line x1="80" y1="120" x2="240" y2="120" stroke="#fff" stroke-width="1.5"/>
+            <text x="250" y="124" font-size="10" fill="var(--ink-2)">v=1 基本</text>
+            <line x1="65" y1="85" x2="255" y2="85" stroke="#fff" stroke-width="1.5" opacity=".7"/>
+            <text x="262" y="89" font-size="10" fill="var(--ink-3)">v=2 泛音</text>
+            <line x1="55" y1="55" x2="265" y2="55" stroke="#fff" stroke-width="1.5" opacity=".5"/>
+            <text x="272" y="59" font-size="10" fill="var(--ink-3)">v=3 泛音</text>
+            <!-- 躍遷箭頭 -->
+            <path d="M 160 160 L 160 120" stroke="#ff006e" stroke-width="2.5" marker-end="url(#arr)"/>
+            <text x="168" y="142" font-size="10" fill="#ff006e">Mid-IR</text>
+            <path d="M 180 160 L 180 85" stroke="#00d4ff" stroke-width="2" marker-end="url(#arr)" stroke-dasharray="3,2"/>
+            <text x="188" y="120" font-size="10" fill="#00d4ff">Near-IR</text>
+            <!-- 軸 -->
+            <line x1="20" y1="200" x2="300" y2="200" stroke="var(--ink-4)" stroke-width="1"/>
+            <text x="160" y="218" font-size="10" fill="var(--ink-3)" text-anchor="middle">Bond Length →</text>
+            <defs>
+              <marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+                <path d="M0,0 L6,3 L0,6 Z" fill="#fff"/>
+              </marker>
+            </defs>
+          </svg>
+        </div>
+        <p style="margin-top:14px; font-size:.88rem;">
+          <em>Mid-IR</em> 對應 <strong>v=0 → v=1</strong> 的基本躍遷，強度高、選律嚴格。<br>
+          <em>Near-IR</em> 對應 <strong>v=0 → v=2 / v=3</strong> 的泛音躍遷，強度弱但能用於穿透厚樣本。
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Slide 8: FTIR 干涉儀原理 ============ -->
+<section class="slide" data-slide="8" data-section="維持注意">
+  <div class="slide-inner">
+    <div class="kicker">— §8.3.1 ｜ Mid-IR Instrumentation —</div>
+    <h2 class="slide-h2" style="margin-bottom:6px;">FTIR：傅立葉變換紅外光譜儀</h2>
+    <p style="margin-bottom:14px; font-size:.92rem;">取代古老的分散式儀器，<em>所有波長同時打到偵測器</em> → 速度快、訊雜比高、波長精度極佳。</p>
+
+    <div class="grid-2" style="gap:18px;">
+      <div class="card" style="padding:14px;">
+        <h3 class="slide-h3" style="color:var(--accent); margin-bottom:8px; font-size:1.05rem;">Michelson 干涉儀</h3>
+        <svg viewBox="0 0 340 220" style="width:100%; height:auto; max-height:36vh;">
+          <rect x="280" y="20" width="50" height="30" fill="#ff006e" rx="4"/>
+          <text x="305" y="40" font-size="10" fill="#fff" text-anchor="middle" font-weight="700">IR 光源</text>
+          <line x1="150" y1="50" x2="220" y2="120" stroke="#00d4ff" stroke-width="3"/>
+          <text x="225" y="80" font-size="9" fill="#00d4ff">分光器</text>
+          <rect x="180" y="195" width="60" height="8" fill="#7a8bb8"/>
+          <text x="210" y="218" font-size="9" fill="var(--ink-2)" text-anchor="middle">固定鏡</text>
+          <rect x="20" y="60" width="8" height="60" fill="#ffb800">
+            <animate attributeName="x" values="20;40;20;40;20" dur="3s" repeatCount="indefinite"/>
+          </rect>
+          <text x="50" y="95" font-size="9" fill="#ffb800">移動鏡 →</text>
+          <rect x="180" y="130" width="50" height="20" fill="rgba(0,230,118,0.3)" stroke="#00e676"/>
+          <text x="205" y="143" font-size="9" fill="#00e676" text-anchor="middle">樣品</text>
+          <rect x="180" y="155" width="50" height="20" fill="#1a2050" stroke="#fff"/>
+          <text x="205" y="169" font-size="9" fill="#fff" text-anchor="middle">偵測器</text>
+          <line x1="280" y1="35" x2="220" y2="85" stroke="#ff006e" stroke-width="1.5" stroke-dasharray="3,2"/>
+          <line x1="180" y1="85" x2="30" y2="85" stroke="#ff006e" stroke-width="1.5" stroke-dasharray="3,2"/>
+          <line x1="180" y1="85" x2="180" y2="190" stroke="#ff006e" stroke-width="1.5" stroke-dasharray="3,2"/>
+        </svg>
+        <p style="font-size:.8rem; color:var(--ink-3); margin-top:4px;">光分兩路 → 移動鏡產生光程差 → 干涉圖 (interferogram)</p>
+      </div>
+
+      <div>
+        <h3 class="slide-h3" style="color:var(--accent); margin-bottom:8px; font-size:1.05rem;">數據流程</h3>
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <div class="card" style="padding:8px 12px; display:flex; align-items:center; gap:10px;">
+            <span style="background:var(--accent); color:#000; padding:3px 9px; border-radius:50%; font-weight:900; font-size:.85rem;">1</span>
+            <div style="font-size:.85rem;"><strong>採集干涉圖</strong> <span style="color:var(--ink-3);">強度 vs. 鏡位置</span></div>
+          </div>
+          <div class="card" style="padding:8px 12px; display:flex; align-items:center; gap:10px;">
+            <span style="background:var(--accent); color:#000; padding:3px 9px; border-radius:50%; font-weight:900; font-size:.85rem;">2</span>
+            <div style="font-size:.85rem;"><strong>傅立葉變換</strong> <span style="color:var(--ink-3);">FFT 時域 → 頻域</span></div>
+          </div>
+          <div class="card" style="padding:8px 12px; display:flex; align-items:center; gap:10px;">
+            <span style="background:var(--accent); color:#000; padding:3px 9px; border-radius:50%; font-weight:900; font-size:.85rem;">3</span>
+            <div style="font-size:.85rem;"><strong>單通道光譜</strong> <span style="color:var(--ink-3);">樣品 + 背景</span></div>
+          </div>
+          <div class="card" style="padding:8px 12px; display:flex; align-items:center; gap:10px;">
+            <span style="background:var(--accent-2); color:#fff; padding:3px 9px; border-radius:50%; font-weight:900; font-size:.85rem;">4</span>
+            <div style="font-size:.85rem;"><strong>樣品 ÷ 背景</strong> <span style="color:var(--ink-3);">→ 穿透率 %T</span></div>
+          </div>
+          <div class="card" style="padding:8px 12px; display:flex; align-items:center; gap:10px;">
+            <span style="background:var(--accent-2); color:#fff; padding:3px 9px; border-radius:50%; font-weight:900; font-size:.85rem;">5</span>
+            <div style="font-size:.85rem;"><strong>−log(T)</strong> <span style="color:var(--ink-3);">→ 吸收度 Abs</span></div>
+          </div>
+        </div>
+        <div style="margin-top:10px; padding:10px 12px; background:rgba(0,212,255,0.06); border-left:3px solid var(--accent); border-radius:6px; font-size:.82rem;">
+          <strong style="color:var(--accent);">FT 三大優勢：</strong>
+          Felgett (多工同時量) ｜ Jacquinot (無狹縫高訊號) ｜ Connes (He-Ne 校正)
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Slide 9: 取樣 - 穿透 vs ATR ============ -->
+<section class="slide" data-slide="9" data-section="維持注意">
+  <div class="slide-inner">
+    <div class="kicker">— §8.3.2 ｜ Sample Handling —</div>
+    <h2 class="slide-h2" style="margin-bottom:6px;">取樣技術：穿透 vs. ATR</h2>
+    <p style="margin-bottom:14px; font-size:.92rem;">食品分析<em>絕大多數採用 ATR</em>，幾乎免製樣 → 現代 IR 食品分析的主力。</p>
+
+    <div class="grid-2" style="gap:18px;">
+      <!-- 穿透 -->
+      <div class="card" style="padding:14px; border-color:rgba(122,139,184,0.3);">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
+          <span class="tag warn">傳統</span>
+          <h3 class="slide-h3" style="margin:0; font-size:1.05rem;">Transmission 穿透</h3>
+        </div>
+        <svg viewBox="0 0 280 110" style="width:100%; height:auto; max-height:24vh;">
+          <line x1="20" y1="55" x2="60" y2="55" stroke="#ff006e" stroke-width="3" marker-end="url(#arr2)"/>
+          <rect x="80" y="30" width="14" height="50" fill="rgba(122,139,184,0.4)" stroke="#7a8bb8"/>
+          <rect x="94" y="30" width="50" height="50" fill="rgba(0,230,118,0.2)"/>
+          <text x="119" y="58" font-size="10" fill="#00e676" text-anchor="middle">樣品</text>
+          <text x="119" y="70" font-size="9" fill="#00e676" text-anchor="middle">0.01-1mm</text>
+          <rect x="144" y="30" width="14" height="50" fill="rgba(122,139,184,0.4)" stroke="#7a8bb8"/>
+          <line x1="158" y1="55" x2="220" y2="55" stroke="#ff006e" stroke-width="2" stroke-dasharray="3,2" marker-end="url(#arr2)"/>
+          <text x="240" y="58" font-size="10" fill="var(--ink-2)">偵測器</text>
+          <text x="40" y="45" font-size="9" fill="#ff006e">IR</text>
+          <text x="119" y="100" font-size="9" fill="var(--ink-3)" text-anchor="middle">NaCl / KBr 視窗</text>
+          <defs>
+            <marker id="arr2" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill="#ff006e"/>
+            </marker>
+          </defs>
+        </svg>
+        <ul style="font-size:.82rem; margin-top:4px; padding-left:16px; line-height:1.5;">
+          <li>液體：兩個 IR 透明視窗夾住 0.01-1 mm</li>
+          <li>固體：與 KBr 磨粉 → 高壓壓片</li>
+          <li><em>缺點：</em>製備繁瑣、KBr 吸水、難清潔</li>
+        </ul>
+      </div>
+
+      <!-- ATR -->
+      <div class="card" style="padding:14px; border-color:rgba(0,212,255,0.5); background:rgba(0,212,255,0.04);">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
+          <span class="tag accent">現代主流</span>
+          <h3 class="slide-h3" style="margin:0; font-size:1.05rem; color:var(--accent);">ATR 衰減全反射</h3>
+        </div>
+        <svg viewBox="0 0 280 110" style="width:100%; height:auto; max-height:24vh;">
+          <polygon points="40,80 240,80 200,25 80,25" fill="rgba(0,212,255,0.15)" stroke="#00d4ff" stroke-width="2"/>
+          <text x="140" y="55" font-size="11" fill="#00d4ff" text-anchor="middle" font-weight="700">ATR 晶體</text>
+          <text x="140" y="68" font-size="9" fill="#7a8bb8" text-anchor="middle">高折射率材料</text>
+          <rect x="80" y="9" width="120" height="16" fill="rgba(0,230,118,0.3)" stroke="#00e676"/>
+          <text x="140" y="20" font-size="10" fill="#00e676" text-anchor="middle">樣品</text>
+          <path d="M 50 90 L 100 25 L 150 80 L 180 25 L 220 80 L 240 90" stroke="#ff006e" stroke-width="2" fill="none"/>
+          <circle cx="100" cy="25" r="6" fill="none" stroke="#ffb800" stroke-width="1" opacity=".8">
+            <animate attributeName="r" values="3;8;3" dur="1.5s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values=".8;0;.8" dur="1.5s" repeatCount="indefinite"/>
+          </circle>
+          <circle cx="180" cy="25" r="6" fill="none" stroke="#ffb800" stroke-width="1" opacity=".8">
+            <animate attributeName="r" values="3;8;3" dur="1.5s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values=".8;0;.8" dur="1.5s" repeatCount="indefinite"/>
+          </circle>
+          <text x="40" y="100" font-size="9" fill="#ff006e">入射 IR</text>
+          <text x="220" y="100" font-size="9" fill="#ff006e">→ 偵測器</text>
+        </svg>
+        <ul style="font-size:.82rem; margin-top:4px; padding-left:16px; line-height:1.5;">
+          <li>樣品<em>直接放在晶體上，免製樣</em></li>
+          <li><strong>衰減波</strong>穿入樣品數 μm 被吸收</li>
+          <li>三反射晶體訊號增強 3-25 倍；含水樣品 OK</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Slide 10: ATR 晶體比較表 ============ -->
+<section class="slide" data-slide="10" data-section="維持注意">
+  <div class="slide-inner">
+    <div class="kicker">— ATR Crystals —</div>
+    <h2 class="slide-h2">ATR 晶體怎麼選？</h2>
+    <p style="margin-bottom:18px;">每種晶體有自己的<em>光譜範圍、硬度、pH 耐受性</em>。點擊欄位可排序。</p>
+
+    <table class="tbl" id="atr-table">
+      <thead>
+        <tr>
+          <th class="sortable" onclick="sortTable('atr-table',0,'str')">材質</th>
+          <th class="sortable" onclick="sortTable('atr-table',1,'num')">光譜範圍 (cm⁻¹)</th>
+          <th class="sortable" onclick="sortTable('atr-table',2,'num')">硬度 (Kg/mm)</th>
+          <th class="sortable" onclick="sortTable('atr-table',3,'str')">pH 範圍</th>
+          <th class="sortable" onclick="sortTable('atr-table',4,'num')">折射率</th>
+          <th class="sortable" onclick="sortTable('atr-table',5,'num')">穿透深度 (μm)</th>
+          <th>常見用途</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong style="color:var(--accent);">鑽石 Diamond</strong></td><td><span class="badge">50000-2500</span></td><td>9000</td><td>1-14</td><td>2.4</td><td>1.66</td><td>萬用首選、強酸鹼樣品</td></tr>
+        <tr><td>鍺 Germanium</td><td><span class="badge">5000-550</span></td><td>780</td><td>1-14</td><td>4.0</td><td>0.65</td><td>強吸收樣品（深色）</td></tr>
+        <tr><td>矽 Silicon</td><td><span class="badge">8333-33</span></td><td>1150</td><td>1-12</td><td>3.4</td><td>0.81</td><td>遠紅外、長波長分析</td></tr>
+        <tr><td>KRS-5</td><td><span class="badge">17900-250</span></td><td>40</td><td>5-8</td><td>2.4</td><td>0.85</td><td>軟、有毒，少用</td></tr>
+        <tr><td>ZnSe 硒化鋅</td><td><span class="badge">20000-500</span></td><td>130</td><td>5-9</td><td>2.4</td><td>1.66</td><td>價廉、不耐強酸鹼</td></tr>
+        <tr><td>AMTIR</td><td><span class="badge">11000-725</span></td><td>170</td><td>1-9</td><td>2.5</td><td>1.46</td><td>耐酸但不耐強鹼</td></tr>
+      </tbody>
+    </table>
+
+    <div style="margin-top:18px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px;">
+      <div class="card" style="padding:14px;">
+        <strong style="color:var(--accent);">💎 鑽石</strong>
+        <p style="font-size:.85rem; margin-top:4px;">最硬、化學最惰性，但<em>貴</em>。一般食品分析首選。</p>
+      </div>
+      <div class="card" style="padding:14px;">
+        <strong style="color:var(--accent);">🟫 鍺</strong>
+        <p style="font-size:.85rem; margin-top:4px;">折射率最高 → <em>穿透深度最淺</em>，適合強吸收樣品。</p>
+      </div>
+      <div class="card" style="padding:14px;">
+        <strong style="color:var(--accent);">⚪ ZnSe</strong>
+        <p style="font-size:.85rem; margin-top:4px;">便宜常用，但<em>怕強酸強鹼</em>、會脆裂。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Slide 11: 官能基特徵峰（互動光譜）============ -->
+<section class="slide" data-slide="11" data-section="維持注意">
+  <div class="slide-inner">
+    <div class="kicker">— §8.3.3 ｜ Functional Group Identification —</div>
+    <h2 class="slide-h2">食品官能基的特徵吸收峰</h2>
+    <p style="margin-bottom:14px;">點擊光譜上的峰，看看它對應哪個官能基 🔍</p>
+
+    <div class="spectrum-container" style="height:300px;">
+      <canvas id="spectrumChart"></canvas>
+    </div>
+
+    <div style="margin-top:14px; display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:10px;">
+      <div class="card" style="padding:10px 12px; border-left:3px solid #ff006e;">
+        <strong style="color:#ff006e;">脂肪 Fats</strong>
+        <p style="font-size:.78rem; margin-top:4px;">1740 C=O 酯 ｜ 2950 C-H ｜ 1465 CH₂</p>
+      </div>
+      <div class="card" style="padding:10px 12px; border-left:3px solid #00d4ff;">
+        <strong style="color:#00d4ff;">蛋白質 Proteins</strong>
+        <p style="font-size:.78rem; margin-top:4px;">3300 醯胺 A ｜ 1640 醯胺 I ｜ 1540 醯胺 II</p>
+      </div>
+      <div class="card" style="padding:10px 12px; border-left:3px solid #ffb800;">
+        <strong style="color:#ffb800;">醣類 Carbs</strong>
+        <p style="font-size:.78rem; margin-top:4px;">1080 C-OH ｜ 1030 澱粉結晶 ｜ 995 醣苷鍵</p>
+      </div>
+      <div class="card" style="padding:10px 12px; border-left:3px solid #00e676;">
+        <strong style="color:#00e676;">水 Water</strong>
+        <p style="font-size:.78rem; margin-top:4px;">3500 O-H 伸縮 ｜ 1650 O-H 彎曲</p>
+      </div>
+    </div>
+    <p style="margin-top:12px; font-size:.85rem; color:var(--ink-3);">
+      💡 這就是<em>指紋區 (fingerprint region)</em>，1500 cm⁻¹ 以下的吸收模式對每個分子都獨一無二。
+    </p>
+  </div>
+</section>
+
+<!-- ============ Slide 12: 近紅外漫反射 ============ -->
+<section class="slide" data-slide="12" data-section="維持注意">
+  <div class="slide-inner">
+    <div class="kicker">— §8.4 ｜ Near-IR Spectroscopy —</div>
+    <h2 class="slide-h2">近紅外的秘密武器：漫反射</h2>
+    <p style="margin-bottom:24px;">NIR 能<em>直接量整粒穀物、整片起司</em>，不必磨粉、不必製樣 — 關鍵在<strong>漫反射 (diffuse reflection)</strong>。</p>
+
+    <div class="grid-2" style="gap:24px;">
+      <div class="card" style="padding:18px;">
+        <h3 class="slide-h3" style="color:var(--ink-3);">鏡面反射 (Specular)</h3>
+        <svg viewBox="0 0 280 140" style="width:100%; height:auto;">
+          <line x1="40" y1="20" x2="140" y2="100" stroke="#ff006e" stroke-width="2" marker-end="url(#arr3)"/>
+          <line x1="140" y1="100" x2="240" y2="20" stroke="#ff006e" stroke-width="2" marker-end="url(#arr3)"/>
+          <rect x="20" y="100" width="240" height="20" fill="rgba(255,255,255,0.1)" stroke="#7a8bb8"/>
+          <text x="140" y="115" font-size="10" fill="var(--ink-2)" text-anchor="middle">光滑表面</text>
+          <defs>
+            <marker id="arr3" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill="#ff006e"/>
+            </marker>
+          </defs>
+        </svg>
+        <p style="font-size:.88rem; margin-top:8px; color:var(--ink-3);">入射角 = 反射角，<em>沒進入樣品</em>，得不到化學資訊 → 要避免。</p>
+      </div>
+
+      <div class="card" style="padding:18px; border-color:var(--accent);">
+        <h3 class="slide-h3" style="color:var(--accent);">漫反射 (Diffuse) ✓</h3>
+        <svg viewBox="0 0 280 140" style="width:100%; height:auto;">
+          <line x1="40" y1="20" x2="140" y2="80" stroke="#ff006e" stroke-width="2" marker-end="url(#arr3)"/>
+          <g stroke="#00d4ff" stroke-width="1.5" fill="none">
+            <line x1="140" y1="80" x2="80" y2="20" marker-end="url(#arr3b)"/>
+            <line x1="140" y1="80" x2="120" y2="10" marker-end="url(#arr3b)"/>
+            <line x1="140" y1="80" x2="180" y2="20" marker-end="url(#arr3b)"/>
+            <line x1="140" y1="80" x2="220" y2="30" marker-end="url(#arr3b)"/>
+            <line x1="140" y1="80" x2="60" y2="40" marker-end="url(#arr3b)"/>
+          </g>
+          <rect x="20" y="80" width="240" height="40" fill="rgba(0,212,255,0.08)" stroke="#00d4ff"/>
+          <!-- 顆粒 -->
+          <circle cx="60" cy="95" r="3" fill="#fff" opacity=".4"/>
+          <circle cx="100" cy="105" r="3" fill="#fff" opacity=".4"/>
+          <circle cx="140" cy="100" r="3" fill="#fff" opacity=".4"/>
+          <circle cx="180" cy="110" r="3" fill="#fff" opacity=".4"/>
+          <circle cx="220" cy="98" r="3" fill="#fff" opacity=".4"/>
+          <text x="140" y="135" font-size="10" fill="var(--accent)" text-anchor="middle">顆粒樣品 (穿透多次)</text>
+          <defs>
+            <marker id="arr3b" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto">
+              <path d="M0,0 L5,2.5 L0,5 Z" fill="#00d4ff"/>
+            </marker>
+          </defs>
+        </svg>
+        <p style="font-size:.88rem; margin-top:8px;">光在顆粒間<em>多次穿透與反射</em>，吸收的能量正比於樣品中的化學成分濃度。</p>
+      </div>
+    </div>
+
+    <div style="margin-top:20px; padding:16px; background:rgba(0,212,255,0.06); border-radius:10px; display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+      <div>
+        <strong style="color:var(--accent);">⚙️ 兩種光路</strong>
+        <p style="font-size:.85rem; margin-top:4px;">① 45° 角偵測器（避開鏡面反射）<br>② 積分球 (Integrating sphere) — 金鍍球收集全方位漫反射光</p>
+      </div>
+      <div>
+        <strong style="color:var(--accent);">📐 反射率公式</strong>
+        <p style="font-family:'JetBrains Mono',monospace; font-size:1rem; margin-top:4px;">R = I / I₀</p>
+        <p style="font-size:.85rem; color:var(--ink-3);">最常以 log(1/R) 表示，類比於穿透模式的吸光度。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Slide 13: 化學計量學 ============ -->
+<section class="slide" data-slide="13" data-section="維持注意">
+  <div class="slide-inner">
+    <div class="kicker">— §8.4.3 ｜ Chemometrics —</div>
+    <h2 class="slide-h2">化學計量學：從光譜到濃度</h2>
+    <p style="margin-bottom:20px;">NIR 吸收<em>頻帶寬、重疊嚴重</em>，無法用單一波長定量。需要<strong>多元統計</strong>把光譜變數壓縮成可預測的回歸方程。</p>
+
+    <div class="grid-3" style="gap:18px;">
+      <div class="card">
+        <span class="tag">最簡單</span>
+        <h3 class="slide-h3" style="margin-top:6px; color:var(--accent);">MLR</h3>
+        <p style="font-size:.85rem; color:var(--ink-3); margin-bottom:8px;">多元線性回歸<br>Multiple Linear Regression</p>
+        <div style="font-family:'JetBrains Mono',monospace; font-size:.78rem; background:rgba(0,0,0,0.4); padding:10px; border-radius:6px; line-height:1.5;">
+          %C = z + a·log(1/R<sub>λ1</sub>)<br>+ b·log(1/R<sub>λ2</sub>) + ···
+        </div>
+        <p style="font-size:.82rem; margin-top:8px;"><em>缺點：</em>波長太多會 overfit；波長間若高度相關，係數不穩。</p>
+      </div>
+
+      <div class="card" style="border-color:var(--accent);">
+        <span class="tag accent">最常用 ⭐</span>
+        <h3 class="slide-h3" style="margin-top:6px; color:var(--accent);">PLS</h3>
+        <p style="font-size:.85rem; color:var(--ink-3); margin-bottom:8px;">偏最小二乘法<br>Partial Least Squares</p>
+        <p style="font-size:.85rem;">把光譜變化壓縮成<em>少量潛在變數</em>，同時最大化與目標濃度的相關性。</p>
+        <div style="margin-top:8px; padding:8px; background:rgba(0,212,255,0.08); border-radius:6px;">
+          <strong style="color:var(--accent); font-size:.85rem;">✓ 全光譜資訊</strong><br>
+          <strong style="color:var(--accent); font-size:.85rem;">✓ 抗 overfit</strong>
+        </div>
+      </div>
+
+      <div class="card">
+        <span class="tag">資料壓縮</span>
+        <h3 class="slide-h3" style="margin-top:6px; color:var(--accent);">PCR</h3>
+        <p style="font-size:.85rem; color:var(--ink-3); margin-bottom:8px;">主成分回歸<br>Principal Component Regression</p>
+        <p style="font-size:.85rem;">先做 PCA 找出主成分（最大變異方向），再用主成分迴歸目標濃度。</p>
+        <p style="font-size:.82rem; margin-top:8px;"><em>差異：</em>PCR 只看光譜變異；PLS 同時考慮目標變數。</p>
+      </div>
+    </div>
+
+    <div style="margin-top:20px; padding:16px; background:rgba(255,184,0,0.06); border-left:3px solid var(--warn); border-radius:8px;">
+      <strong style="color:var(--warn);">⚠️ 校正流程關鍵</strong>
+      <p style="font-size:.88rem; margin-top:4px;">
+        1) 收集涵蓋濃度範圍的<em>校正集</em> →
+        2) 用<em>參考方法 (e.g. Kjeldahl)</em> 測真值 →
+        3) 建立回歸方程 →
+        4) 用<em>獨立驗證集</em>測試 →
+        5) 通過才能上線。
+      </p>
+    </div>
+
+    <p style="margin-top:14px; font-size:.85rem; color:var(--ink-3);">
+      <strong>定性分類</strong>則使用：PCA、SIMCA、判別分析 — 把樣本分到「真品/攙偽/未知」等類別。
+    </p>
+  </div>
+</section>
+
+<!-- ============ Slide 14: 拉曼光譜原理 ============ -->
+<section class="slide" data-slide="14" data-section="維持注意">
+  <div class="slide-inner">
+    <div class="kicker">— §8.5.1 ｜ Raman Principles —</div>
+    <h2 class="slide-h2">拉曼散射 = IR 的補位英雄</h2>
+    <p style="margin-bottom:20px;">當光子撞到分子，<em>99.99999%</em> 彈性散射（Rayleigh），但有<strong>百萬分之一</strong>機率交換能量 → 形成 Raman 散射。</p>
+
+    <div class="grid-2" style="gap:24px;">
+      <div class="card" style="padding:18px;">
+        <h3 class="slide-h3" style="color:var(--accent-2);">能階躍遷示意圖</h3>
+        <svg viewBox="0 0 380 260" style="width:100%; height:auto;">
+          <!-- Virtual energy states -->
+          <line x1="30" y1="20" x2="350" y2="20" stroke="#7a8bb8" stroke-width="1" stroke-dasharray="4,2"/>
+          <text x="360" y="22" font-size="9" fill="#7a8bb8">虛擬能階 Virtual</text>
+
+          <!-- Vibrational states -->
+          <line x1="30" y1="220" x2="350" y2="220" stroke="#fff" stroke-width="1.5"/>
+          <text x="355" y="223" font-size="9" fill="#fff">v=0</text>
+          <line x1="30" y1="195" x2="350" y2="195" stroke="#fff" stroke-width="1.5"/>
+          <text x="355" y="198" font-size="9" fill="#fff">v=1</text>
+          <line x1="30" y1="170" x2="350" y2="170" stroke="#fff" stroke-width="1.5" opacity=".7"/>
+          <text x="355" y="173" font-size="9" fill="#fff" opacity=".7">v=2</text>
+
+          <!-- Rayleigh -->
+          <path d="M 70 220 L 70 20" stroke="#00d4ff" stroke-width="2" marker-end="url(#arr4)"/>
+          <path d="M 80 20 L 80 220" stroke="#00d4ff" stroke-width="2" marker-end="url(#arr4)"/>
+          <text x="75" y="245" font-size="9" fill="#00d4ff" text-anchor="middle">Rayleigh</text>
+          <text x="75" y="256" font-size="8" fill="var(--ink-3)" text-anchor="middle">彈性散射</text>
+
+          <!-- Stokes -->
+          <path d="M 160 220 L 160 20" stroke="#ff006e" stroke-width="2.5" marker-end="url(#arr4)"/>
+          <path d="M 170 20 L 170 195" stroke="#ff006e" stroke-width="2.5" marker-end="url(#arr4)"/>
+          <text x="165" y="245" font-size="9" fill="#ff006e" text-anchor="middle" font-weight="700">Stokes ⭐</text>
+          <text x="165" y="256" font-size="8" fill="var(--ink-3)" text-anchor="middle">頻率↓ (損失能量)</text>
+
+          <!-- Anti-Stokes -->
+          <path d="M 250 195 L 250 20" stroke="#ffb800" stroke-width="2" marker-end="url(#arr4)"/>
+          <path d="M 260 20 L 260 220" stroke="#ffb800" stroke-width="2" marker-end="url(#arr4)"/>
+          <text x="255" y="245" font-size="9" fill="#ffb800" text-anchor="middle">Anti-Stokes</text>
+          <text x="255" y="256" font-size="8" fill="var(--ink-3)" text-anchor="middle">頻率↑ (取得能量)</text>
+
+          <!-- Mid-IR for comparison -->
+          <path d="M 320 220 L 320 195" stroke="#7a8bb8" stroke-width="2" marker-end="url(#arr4)" stroke-dasharray="3,2"/>
+          <text x="320" y="245" font-size="9" fill="var(--ink-3)" text-anchor="middle">Mid-IR</text>
+          <text x="320" y="256" font-size="8" fill="var(--ink-3)" text-anchor="middle">吸收</text>
+
+          <defs>
+            <marker id="arr4" markerWidth="5" markerHeight="5" refX="2.5" refY="2.5" orient="auto">
+              <path d="M0,0 L5,2.5 L0,5 Z" fill="#fff"/>
+            </marker>
+          </defs>
+        </svg>
+        <p style="font-size:.82rem; color:var(--ink-3); margin-top:6px;">
+          📌 Stokes 線通常作為標準記錄，因為起始於熱平衡下豐度高的 v=0。
+        </p>
+      </div>
+
+      <div>
+        <h3 class="slide-h3" style="color:var(--accent);">拉曼的三大優勢</h3>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <div class="card" style="padding:14px; display:flex; gap:12px;">
+            <div style="font-size:1.6rem;">💧</div>
+            <div>
+              <strong>水分干擾極小</strong>
+              <p style="font-size:.85rem; color:var(--ink-3);">水的拉曼訊號很弱 → 直接量水溶液樣品</p>
+            </div>
+          </div>
+          <div class="card" style="padding:14px; display:flex; gap:12px;">
+            <div style="font-size:1.6rem;">🍾</div>
+            <div>
+              <strong>穿透容器</strong>
+              <p style="font-size:.85rem; color:var(--ink-3);">玻璃、石英、塑膠對拉曼是透明的 — 不開瓶就能測</p>
+            </div>
+          </div>
+          <div class="card" style="padding:14px; display:flex; gap:12px;">
+            <div style="font-size:1.6rem;">🔬</div>
+            <div>
+              <strong>免製樣 + 對稱振動可見</strong>
+              <p style="font-size:.85rem; color:var(--ink-3);">看 IR 看不到的對稱伸縮 — 例如 C=C, C-C</p>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:12px; padding:12px; background:rgba(255,184,0,0.06); border-left:3px solid var(--warn); border-radius:6px;">
+          <strong style="color:var(--warn);">⚠️ 缺點：</strong>
+          <span style="font-size:.85rem;">訊號很弱（10⁷分之一）、樣品<em>螢光干擾</em>嚴重 → 解法：用近紅外雷射 (1064 nm) 或 FT-Raman。</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Slide 15: IR vs Raman 互補 ============ -->
+<section class="slide" data-slide="15" data-section="維持注意">
+  <div class="slide-inner">
+    <div class="kicker">— Complementarity —</div>
+    <h2 class="slide-h2">IR 與 Raman：互補不是競爭</h2>
+    <p style="margin-bottom:20px;"><em>選律不同</em> — IR 看「偶極矩變化」，Raman 看「極化率變化」。同一分子兩者各看到不同振動。</p>
+
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>項目</th>
+          <th style="color:#ff006e;">紅外光譜 IR</th>
+          <th style="color:#00d4ff;">拉曼光譜 Raman</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>物理機制</strong></td><td>吸收</td><td>散射</td></tr>
+        <tr><td><strong>選律</strong></td><td>偶極矩 (μ) 變化</td><td>極化率 (α) 變化</td></tr>
+        <tr><td><strong>對稱振動</strong> (e.g. C=C, C-C, S-S)</td><td style="color:var(--bad);">看不到 ✗</td><td style="color:var(--good);">看得到 ✓</td></tr>
+        <tr><td><strong>不對稱振動</strong> (e.g. C=O, O-H)</td><td style="color:var(--good);">看得到 ✓</td><td>較弱</td></tr>
+        <tr><td><strong>水中量測</strong></td><td style="color:var(--bad);">水吸收強，難 ✗</td><td style="color:var(--good);">水很弱，OK ✓</td></tr>
+        <tr><td><strong>玻璃容器</strong></td><td style="color:var(--bad);">玻璃吸收 ✗</td><td style="color:var(--good);">玻璃透明 ✓</td></tr>
+        <tr><td><strong>製樣</strong></td><td>ATR 幾乎免製樣</td><td>完全免製樣</td></tr>
+        <tr><td><strong>螢光干擾</strong></td><td>不受影響</td><td style="color:var(--bad);">嚴重，需 NIR 雷射</td></tr>
+        <tr><td><strong>靈敏度</strong></td><td>標準</td><td>低（除非 SERS）</td></tr>
+      </tbody>
+    </table>
+
+    <div style="margin-top:18px; padding:14px; background:rgba(0,212,255,0.06); border-left:3px solid var(--accent); border-radius:6px;">
+      <strong style="color:var(--accent);">🎯 教學重點：</strong>
+      <span style="font-size:.9rem;">「IR 看極性、Raman 看對稱」— 結合兩者才能完整描繪一個分子的振動指紋。</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Slide 16: SERS ============ -->
+<section class="slide" data-slide="16" data-section="維持注意">
+  <div class="slide-inner">
+    <div class="kicker">— §8.5.3 ｜ Surface-Enhanced Raman Scattering —</div>
+    <h2 class="slide-h2">SERS：把訊號放大 100 億倍</h2>
+    <p style="margin-bottom:24px;">傳統拉曼太弱，怎麼辦？把分子<em>吸附在金屬奈米結構上</em>，訊號暴增 <strong style="color:var(--accent-2); font-size:1.4em;">10⁴ — 10¹¹</strong> 倍 → 可達<em>單分子偵測</em>。</p>
+
+    <div class="grid-2" style="gap:24px;">
+      <div class="card" style="padding:18px;">
+        <h3 class="slide-h3" style="color:var(--ink-3);">傳統拉曼</h3>
+        <svg viewBox="0 0 280 140" style="width:100%; height:auto;">
+          <line x1="20" y1="60" x2="120" y2="60" stroke="#ff006e" stroke-width="2" marker-end="url(#arr5)"/>
+          <text x="20" y="50" font-size="9" fill="#ff006e">入射光</text>
+          <circle cx="140" cy="60" r="20" fill="rgba(0,230,118,0.3)" stroke="#00e676" stroke-width="1.5"/>
+          <text x="140" y="63" font-size="10" fill="#00e676" text-anchor="middle">分子</text>
+          <!-- 弱散射 -->
+          <g stroke="#00d4ff" stroke-width="1" opacity=".5">
+            <line x1="155" y1="55" x2="200" y2="35" marker-end="url(#arr5b)"/>
+            <line x1="155" y1="65" x2="220" y2="80" marker-end="url(#arr5b)"/>
+          </g>
+          <text x="230" y="60" font-size="9" fill="#7a8bb8">弱訊號</text>
+          <defs>
+            <marker id="arr5" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill="#ff006e"/>
+            </marker>
+            <marker id="arr5b" markerWidth="4" markerHeight="4" refX="3" refY="2" orient="auto">
+              <path d="M0,0 L4,2 L0,4 Z" fill="#00d4ff"/>
+            </marker>
+          </defs>
+        </svg>
+        <p style="font-size:.88rem; color:var(--ink-3);">10⁷ 個光子中 1 個產生 Raman 散射。</p>
+      </div>
+
+      <div class="card" style="padding:18px; border-color:var(--accent-2);">
+        <h3 class="slide-h3" style="color:var(--accent-2);">SERS 表面增強 ✨</h3>
+        <svg viewBox="0 0 280 140" style="width:100%; height:auto;">
+          <line x1="20" y1="50" x2="100" y2="50" stroke="#ff006e" stroke-width="2" marker-end="url(#arr5)"/>
+          <circle cx="120" cy="50" r="14" fill="rgba(0,230,118,0.3)" stroke="#00e676" stroke-width="1.5"/>
+          <text x="120" y="53" font-size="9" fill="#00e676" text-anchor="middle">分子</text>
+          <!-- 強散射 -->
+          <g stroke="#ff006e" stroke-width="2" opacity=".9">
+            <line x1="135" y1="40" x2="200" y2="15" marker-end="url(#arr5c)"/>
+            <line x1="140" y1="50" x2="220" y2="40" marker-end="url(#arr5c)"/>
+            <line x1="135" y1="60" x2="210" y2="80" marker-end="url(#arr5c)"/>
+            <line x1="130" y1="65" x2="200" y2="100" marker-end="url(#arr5c)"/>
+          </g>
+          <!-- 奈米粒子 -->
+          <circle cx="85" cy="100" r="14" fill="#ffb800" opacity=".8"/>
+          <circle cx="115" cy="110" r="12" fill="#ffb800" opacity=".8"/>
+          <circle cx="145" cy="100" r="14" fill="#ffb800" opacity=".8"/>
+          <circle cx="175" cy="108" r="12" fill="#ffb800" opacity=".8"/>
+          <text x="130" y="130" font-size="9" fill="#ffb800" text-anchor="middle">金/銀 奈米結構</text>
+          <text x="240" y="50" font-size="10" fill="#ff006e" font-weight="700">超強！</text>
+          <defs>
+            <marker id="arr5c" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto">
+              <path d="M0,0 L5,2.5 L0,5 Z" fill="#ff006e"/>
+            </marker>
+          </defs>
+        </svg>
+        <p style="font-size:.88rem;"><strong>SERS</strong> 的增強來自兩個機制：①<em>電磁增強</em> ②<em>化學增強</em>，靈敏度可達 ppb 甚至單分子。</p>
+      </div>
+    </div>
+
+    <div style="margin-top:20px; padding:16px; background:rgba(255,0,110,0.06); border-left:3px solid var(--accent-2); border-radius:8px;">
+      <strong style="color:var(--accent-2);">🎯 食品應用</strong>
+      <ul style="font-size:.88rem; margin-top:6px; padding-left:18px;">
+        <li>食源性病原菌的快速偵測（取代傳統微生物培養）</li>
+        <li>農藥殘留、抗生素殘留（ppb 等級）</li>
+        <li>三聚氰胺、非法食用色素、黴菌毒素</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Slide 17: 三大技術選擇決策樹 ============ -->
+<section class="slide" data-slide="17" data-section="喚起行動">
+  <div class="slide-inner">
+    <div class="kicker">— Decision Framework —</div>
+    <h2 class="slide-h2">該選 Mid-IR、Near-IR 還是 Raman？</h2>
+    <p style="margin-bottom:20px;">面對一個新樣品，這張決策樹是你的<em>速查表</em>。</p>
+
+    <svg viewBox="0 0 1000 420" style="width:100%; height:auto; max-height:65vh;">
+      <!-- 樣式 -->
+      <defs>
+        <linearGradient id="nodeGrad" x1="0" x2="1">
+          <stop offset="0" stop-color="#00d4ff"/>
+          <stop offset="1" stop-color="#0080ff"/>
+        </linearGradient>
+        <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+          <path d="M0,0 L8,4 L0,8 Z" fill="#7a8bb8"/>
+        </marker>
+      </defs>
+
+      <!-- Q1: 開始 -->
+      <rect x="380" y="20" width="240" height="56" rx="28" fill="url(#nodeGrad)"/>
+      <text x="500" y="44" font-size="14" fill="#fff" text-anchor="middle" font-weight="700">START</text>
+      <text x="500" y="62" font-size="11" fill="#fff" text-anchor="middle">樣品含<tspan font-weight="700">大量水</tspan>嗎？</text>
+
+      <!-- Yes branch -->
+      <line x1="440" y1="76" x2="240" y2="130" stroke="#7a8bb8" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <text x="320" y="100" font-size="11" fill="#ff006e" font-weight="700">YES (水溶液)</text>
+      <!-- No branch -->
+      <line x1="560" y1="76" x2="760" y2="130" stroke="#7a8bb8" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <text x="680" y="100" font-size="11" fill="#00e676" font-weight="700">NO (固體/粉末)</text>
+
+      <!-- Q2a: 水樣 -->
+      <rect x="120" y="140" width="240" height="56" rx="10" fill="rgba(0,212,255,0.15)" stroke="#00d4ff" stroke-width="1.5"/>
+      <text x="240" y="166" font-size="12" fill="#fff" text-anchor="middle">需要 <tspan font-weight="700">ppb 級</tspan>偵測？</text>
+      <text x="240" y="180" font-size="10" fill="var(--ink-3)" text-anchor="middle">(農藥殘留、毒素)</text>
+
+      <!-- Q2b: 固體 -->
+      <rect x="640" y="140" width="240" height="56" rx="10" fill="rgba(0,212,255,0.15)" stroke="#00d4ff" stroke-width="1.5"/>
+      <text x="760" y="166" font-size="12" fill="#fff" text-anchor="middle">要做<tspan font-weight="700">定量分析</tspan>？</text>
+      <text x="760" y="180" font-size="10" fill="var(--ink-3)" text-anchor="middle">(蛋白、脂肪、水分%)</text>
+
+      <!-- Q2a Yes -->
+      <line x1="180" y1="196" x2="120" y2="260" stroke="#7a8bb8" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <line x1="300" y1="196" x2="360" y2="260" stroke="#7a8bb8" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <line x1="700" y1="196" x2="640" y2="260" stroke="#7a8bb8" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <line x1="820" y1="196" x2="880" y2="260" stroke="#7a8bb8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+      <!-- 結果 4 個方案 -->
+      <!-- SERS -->
+      <rect x="20" y="270" width="200" height="100" rx="14" fill="rgba(255,0,110,0.15)" stroke="#ff006e" stroke-width="2"/>
+      <text x="120" y="294" font-size="14" fill="#ff006e" text-anchor="middle" font-weight="900">SERS</text>
+      <text x="120" y="312" font-size="10" fill="#fff" text-anchor="middle">表面增強拉曼</text>
+      <text x="120" y="332" font-size="9" fill="var(--ink-2)" text-anchor="middle">• 食源性病原菌</text>
+      <text x="120" y="346" font-size="9" fill="var(--ink-2)" text-anchor="middle">• 農藥/毒素殘留</text>
+      <text x="120" y="360" font-size="9" fill="var(--ink-2)" text-anchor="middle">• ppb 級偵測限</text>
+
+      <!-- Raman -->
+      <rect x="260" y="270" width="200" height="100" rx="14" fill="rgba(0,212,255,0.15)" stroke="#00d4ff" stroke-width="2"/>
+      <text x="360" y="294" font-size="14" fill="#00d4ff" text-anchor="middle" font-weight="900">Raman</text>
+      <text x="360" y="312" font-size="10" fill="#fff" text-anchor="middle">拉曼光譜</text>
+      <text x="360" y="332" font-size="9" fill="var(--ink-2)" text-anchor="middle">• 飲料中糖含量</text>
+      <text x="360" y="346" font-size="9" fill="var(--ink-2)" text-anchor="middle">• 油脂氧化監測</text>
+      <text x="360" y="360" font-size="9" fill="var(--ink-2)" text-anchor="middle">• 透過容器測</text>
+
+      <!-- Near-IR -->
+      <rect x="540" y="270" width="200" height="100" rx="14" fill="rgba(0,230,118,0.15)" stroke="#00e676" stroke-width="2"/>
+      <text x="640" y="294" font-size="14" fill="#00e676" text-anchor="middle" font-weight="900">Near-IR</text>
+      <text x="640" y="312" font-size="10" fill="#fff" text-anchor="middle">近紅外光譜</text>
+      <text x="640" y="332" font-size="9" fill="var(--ink-2)" text-anchor="middle">• 牛奶定量分析</text>
+      <text x="640" y="346" font-size="9" fill="var(--ink-2)" text-anchor="middle">• 穀物水分/蛋白</text>
+      <text x="640" y="360" font-size="9" fill="var(--ink-2)" text-anchor="middle">• 線上連續監測</text>
+
+      <!-- Mid-IR -->
+      <rect x="780" y="270" width="200" height="100" rx="14" fill="rgba(255,184,0,0.15)" stroke="#ffb800" stroke-width="2"/>
+      <text x="880" y="294" font-size="14" fill="#ffb800" text-anchor="middle" font-weight="900">Mid-IR</text>
+      <text x="880" y="312" font-size="10" fill="#fff" text-anchor="middle">中紅外光譜</text>
+      <text x="880" y="332" font-size="9" fill="var(--ink-2)" text-anchor="middle">• 官能基鑑定</text>
+      <text x="880" y="346" font-size="9" fill="var(--ink-2)" text-anchor="middle">• 攙偽偵測</text>
+      <text x="880" y="360" font-size="9" fill="var(--ink-2)" text-anchor="middle">• ATR 免製樣</text>
+
+      <text x="500" y="400" font-size="11" fill="var(--ink-3)" text-anchor="middle">💡 攜帶型 + 現場分析？→ Handheld FTIR / NIR / Raman 都有</text>
+    </svg>
+  </div>
+</section>
+
+<!-- ============ Slide 18: 食品產業應用全景 ============ -->
+<section class="slide" data-slide="18" data-section="喚起行動">
+  <div class="slide-inner">
+    <div class="kicker">— Industry Applications —</div>
+    <h2 class="slide-h2">食品工業應用全景</h2>
+    <p style="margin-bottom:20px;">這些方法已成為食品產業<em>每日的標準工具</em>，從乳製品到橄欖油，從現場品檢到攙偽鑑定。</p>
+
+    <div class="grid-4" style="gap:14px;">
+      <div class="card" style="padding:14px;">
+        <div style="font-size:1.6rem;">🥛</div>
+        <strong style="color:var(--accent);">牛奶</strong>
+        <p style="font-size:.78rem; color:var(--ink-3);">脂肪/蛋白/乳糖、來源、攙偽（乳清、過氧化氫、三聚氰胺）</p>
+      </div>
+      <div class="card" style="padding:14px;">
+        <div style="font-size:1.6rem;">🧀</div>
+        <strong style="color:var(--accent);">起司</strong>
+        <p style="font-size:.78rem; color:var(--ink-3);">熟成度、年份分類、福馬林檢測</p>
+      </div>
+      <div class="card" style="padding:14px;">
+        <div style="font-size:1.6rem;">🫒</div>
+        <strong style="color:var(--accent-2);">橄欖油</strong>
+        <p style="font-size:.78rem; color:var(--ink-3);">品種、地理來源、攙偽（大豆油、菜籽油）</p>
+      </div>
+      <div class="card" style="padding:14px;">
+        <div style="font-size:1.6rem;">🍷</div>
+        <strong style="color:var(--accent-2);">紅酒</strong>
+        <p style="font-size:.78rem; color:var(--ink-3);">真偽鑑定、產地、年份、酒精/酸度</p>
+      </div>
+      <div class="card" style="padding:14px;">
+        <div style="font-size:1.6rem;">☕</div>
+        <strong style="color:var(--warn);">咖啡</strong>
+        <p style="font-size:.78rem; color:var(--ink-3);">地理產地、缺陷豆、攙偽（咖啡殼）</p>
+      </div>
+      <div class="card" style="padding:14px;">
+        <div style="font-size:1.6rem;">🍯</div>
+        <strong style="color:var(--warn);">蜂蜜</strong>
+        <p style="font-size:.78rem; color:var(--ink-3);">真偽、植物來源、糖漿攙偽</p>
+      </div>
+      <div class="card" style="padding:14px;">
+        <div style="font-size:1.6rem;">🌾</div>
+        <strong style="color:var(--good);">穀物</strong>
+        <p style="font-size:.78rem; color:var(--ink-3);">玉米/小麥/稻米 — 水分、蛋白、油、真菌毒素</p>
+      </div>
+      <div class="card" style="padding:14px;">
+        <div style="font-size:1.6rem;">🍖</div>
+        <strong style="color:var(--good);">肉品</strong>
+        <p style="font-size:.78rem; color:var(--ink-3);">攙偽（馬肉、火雞肉）、新鮮度、冷凍/解凍鑑別</p>
+      </div>
+      <div class="card" style="padding:14px;">
+        <div style="font-size:1.6rem;">🐟</div>
+        <strong>魚類</strong>
+        <p style="font-size:.78rem; color:var(--ink-3);">物種鑑定、養殖/野生、新鮮度</p>
+      </div>
+      <div class="card" style="padding:14px;">
+        <div style="font-size:1.6rem;">🍫</div>
+        <strong>巧克力</strong>
+        <p style="font-size:.78rem; color:var(--ink-3);">豬油攙偽偵測</p>
+      </div>
+      <div class="card" style="padding:14px;">
+        <div style="font-size:1.6rem;">🍺</div>
+        <strong>啤酒/飲料</strong>
+        <p style="font-size:.78rem; color:var(--ink-3);">糖、酒精、pH、品質參數</p>
+      </div>
+      <div class="card" style="padding:14px;">
+        <div style="font-size:1.6rem;">🌶️</div>
+        <strong>香料</strong>
+        <p style="font-size:.78rem; color:var(--ink-3);">辣椒粉中的蘇丹紅、薑黃、藏紅花攙偽</p>
+      </div>
+    </div>
+
+    <div style="margin-top:18px; padding:14px; background:rgba(0,212,255,0.06); border-radius:10px; text-align:center;">
+      <strong style="color:var(--accent);">📊 由 Table 8.2 整理：</strong>
+      <span style="font-size:.9rem;">超過 50 種食品 × 多種光譜技術，已在文獻中建立成熟方法。</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Slide 19: 掌上型設備 ============ -->
+<section class="slide" data-slide="19" data-section="喚起行動">
+  <div class="slide-inner">
+    <div class="kicker">— §8.6 ｜ Handheld & Portable —</div>
+    <h2 class="slide-h2">把光譜實驗室帶到現場</h2>
+    <p style="margin-bottom:20px;">攜帶型 + 電池供電 + 幾乎免製樣 → <em>30 秒內</em>得到結果，現場攙偽偵測、海關查驗、農場品檢都可用。</p>
+
+    <div class="grid-4" style="gap:16px;">
+      <div class="card">
+        <div style="aspect-ratio:1/1; background:linear-gradient(135deg, rgba(255,0,110,0.15), rgba(255,0,110,0.05)); border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:3rem; margin-bottom:12px;">📡</div>
+        <strong style="color:var(--accent-2);">Handheld FTIR</strong>
+        <p style="font-size:.82rem; margin-top:6px; color:var(--ink-3);">Agilent 4300 — 槍式 FTIR，基本振動強訊號、可偵測低濃度成分。</p>
+      </div>
+      <div class="card">
+        <div style="aspect-ratio:1/1; background:linear-gradient(135deg, rgba(255,184,0,0.15), rgba(255,184,0,0.05)); border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:3rem; margin-bottom:12px;">🧰</div>
+        <strong style="color:var(--warn);">Portable FTIR</strong>
+        <p style="font-size:.82rem; margin-top:6px; color:var(--ink-3);">Agilent 4500 — 手提箱式 FTIR，可現場分析液體與固體。</p>
+      </div>
+      <div class="card">
+        <div style="aspect-ratio:1/1; background:linear-gradient(135deg, rgba(0,230,118,0.15), rgba(0,230,118,0.05)); border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:3rem; margin-bottom:12px;">🔦</div>
+        <strong style="color:var(--good);">Handheld NIR</strong>
+        <p style="font-size:.82rem; margin-top:6px; color:var(--ink-3);">Thermo microPhazir — 無需製樣、漫反射打到包裝表面即可。</p>
+      </div>
+      <div class="card">
+        <div style="aspect-ratio:1/1; background:linear-gradient(135deg, rgba(0,212,255,0.15), rgba(0,212,255,0.05)); border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:3rem; margin-bottom:12px;">⚡</div>
+        <strong style="color:var(--accent);">Handheld Raman</strong>
+        <p style="font-size:.82rem; margin-top:6px; color:var(--ink-3);">Rigaku Progeny — 1064 nm 雷射，避螢光，可穿玻璃/塑膠袋。</p>
+      </div>
+    </div>
+
+    <div style="margin-top:20px; display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+      <div class="card" style="border-left:3px solid var(--accent);">
+        <strong style="color:var(--accent);">📐 Mid-IR 攜帶型優勢</strong>
+        <p style="font-size:.88rem; margin-top:6px;">基本振動 → 訊號強、低濃度可測；但水會干擾，需 ATR。</p>
+      </div>
+      <div class="card" style="border-left:3px solid var(--good);">
+        <strong style="color:var(--good);">📐 Near-IR 攜帶型優勢</strong>
+        <p style="font-size:.88rem; margin-top:6px;">穿透深、含水樣品也能測；訊號弱但搭配化學計量學可定量。</p>
+      </div>
+      <div class="card" style="border-left:3px solid var(--accent-2);">
+        <strong style="color:var(--accent-2);">📐 Raman 攜帶型優勢</strong>
+        <p style="font-size:.88rem; margin-top:6px;">穿過玻璃/塑膠包裝、水訊號弱、無破壞性 → 海關、入庫檢驗超實用。</p>
+      </div>
+      <div class="card" style="border-left:3px solid var(--warn);">
+        <strong style="color:var(--warn);">⚠️ 共同挑戰</strong>
+        <p style="font-size:.88rem; margin-top:6px;">電池續航、抗震、軟體易用性、校正模型更新 — 是商品化的決勝點。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Slide 20: 遊戲 1 - 官能基配對 ============ -->
+<section class="slide" data-slide="20" data-section="喚起行動">
+  <div class="slide-inner">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+      <div>
+        <div class="kicker" style="background:rgba(255,0,110,0.1); border-color:rgba(255,0,110,0.3); color:var(--accent-2);">🎮 MINIGAME 1 / 3</div>
+        <h2 class="slide-h2" style="margin-top:8px; margin-bottom:4px;">官能基配對挑戰</h2>
+        <p style="font-size:.95rem; color:var(--ink-2);">把右邊的<em>波數 (cm⁻¹)</em> 點選後，連到左邊正確的<em>官能基 / 食品成分</em>。</p>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:.78rem; color:var(--ink-3);">SCORE</div>
+        <div class="score-display" id="g1-score">0 / 6</div>
+        <div style="font-size:.78rem; color:var(--ink-3); margin-top:4px;">TIME <span id="g1-time">0:00</span></div>
+      </div>
+    </div>
+
+    <div class="game-area">
+      <div class="progress-dots" id="g1-dots">
+        <span class="dot current"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:32px;">
+        <div>
+          <h4 style="color:var(--accent); margin-bottom:10px; font-size:.95rem;">📍 官能基 / 食品成分</h4>
+          <div id="g1-targets" style="display:flex; flex-direction:column; gap:10px;"></div>
+        </div>
+        <div>
+          <h4 style="color:var(--accent-2); margin-bottom:10px; font-size:.95rem;">🔢 波數 (cm⁻¹) — 點選</h4>
+          <div id="g1-sources" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;"></div>
+        </div>
+      </div>
+      <div id="g1-feedback" class="feedback"></div>
+      <div style="margin-top:16px; display:flex; gap:10px; justify-content:flex-end;">
+        <button class="btn btn-outline" onclick="resetGame1()">↻ 重置</button>
+        <button class="btn" id="g1-next-btn" onclick="finishGame1()" disabled>完成 → 下一題</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Slide 21: 遊戲 2 - 情境式技術選擇 ============ -->
+<section class="slide" data-slide="21" data-section="喚起行動">
+  <div class="slide-inner">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+      <div>
+        <div class="kicker" style="background:rgba(255,0,110,0.1); border-color:rgba(255,0,110,0.3); color:var(--accent-2);">🎮 MINIGAME 2 / 3</div>
+        <h2 class="slide-h2" style="margin-top:8px; margin-bottom:4px;">情境技術選擇</h2>
+        <p style="font-size:.95rem; color:var(--ink-2);">5 個真實工作情境，<em>哪一種光譜技術最適合</em>？</p>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:.78rem; color:var(--ink-3);">SCORE</div>
+        <div class="score-display" id="g2-score">0 / 5</div>
+        <div style="font-size:.78rem; color:var(--ink-3); margin-top:4px;">第 <span id="g2-current">1</span> 題</div>
+      </div>
+    </div>
+
+    <div class="game-area">
+      <div class="progress-dots" id="g2-dots">
+        <span class="dot current"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+      </div>
+      <div id="g2-scenario" style="padding:18px; background:rgba(0,212,255,0.06); border-left:3px solid var(--accent); border-radius:10px; margin-bottom:16px;">
+        <strong style="color:var(--accent);">情境：</strong>
+        <p id="g2-question" style="font-size:1rem; margin-top:8px;">載入中…</p>
+      </div>
+      <div id="g2-options" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;"></div>
+      <div id="g2-feedback" class="feedback"></div>
+      <div style="margin-top:14px; display:flex; gap:10px; justify-content:flex-end;">
+        <button class="btn" id="g2-next-btn" onclick="nextG2Question()" disabled>下一題 →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Slide 22: 遊戲 3 - 光譜識讀挑戰 ============ -->
+<section class="slide" data-slide="22" data-section="喚起行動">
+  <div class="slide-inner">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+      <div>
+        <div class="kicker" style="background:rgba(255,0,110,0.1); border-color:rgba(255,0,110,0.3); color:var(--accent-2);">🎮 MINIGAME 3 / 3</div>
+        <h2 class="slide-h2" style="margin-top:8px; margin-bottom:4px;">光譜識讀挑戰</h2>
+        <p style="font-size:.95rem; color:var(--ink-2);">看光譜峰位置 + 強度，<em>判斷食物或攙偽情境</em>。</p>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:.78rem; color:var(--ink-3);">SCORE</div>
+        <div class="score-display" id="g3-score">0 / 4</div>
+        <div style="font-size:.78rem; color:var(--ink-3); margin-top:4px;">第 <span id="g3-current">1</span> 題</div>
+      </div>
+    </div>
+
+    <div class="game-area">
+      <div class="progress-dots" id="g3-dots">
+        <span class="dot current"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+      </div>
+      <div style="display:grid; grid-template-columns:1.4fr 1fr; gap:18px;">
+        <div>
+          <div style="background:rgba(0,0,0,0.4); border-radius:10px; padding:12px;">
+            <canvas id="g3-chart" style="max-height:240px;"></canvas>
+          </div>
+          <p id="g3-context" style="margin-top:10px; font-size:.88rem; color:var(--ink-2);">載入中…</p>
+        </div>
+        <div>
+          <p id="g3-question" style="margin-bottom:14px; font-size:1rem;">載入中…</p>
+          <div id="g3-options" style="display:flex; flex-direction:column; gap:10px;"></div>
+        </div>
+      </div>
+      <div id="g3-feedback" class="feedback"></div>
+      <div style="margin-top:14px; display:flex; gap:10px; justify-content:flex-end;">
+        <button class="btn" id="g3-next-btn" onclick="nextG3Question()" disabled>下一題 →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Slide 23: 學習成效儀表板 ============ -->
+<section class="slide" data-slide="23" data-section="喚起行動">
+  <div class="slide-inner">
+    <div class="kicker">— Learning Analytics —</div>
+    <h2 class="slide-h2" style="margin-bottom:4px;">學習成效儀表板</h2>
+    <p style="margin-bottom:12px; font-size:.88rem;">儲存於瀏覽器 localStorage，可<em>匯出 CSV 供教師分析</em>。</p>
+
+    <div class="grid-4" style="gap:10px; margin-bottom:12px;">
+      <div class="card" style="text-align:center; padding:12px;">
+        <div style="font-size:.72rem; color:var(--ink-3);">總得分</div>
+        <div class="score-display" id="dash-total-score" style="font-size:1.5rem;">0 / 15</div>
+      </div>
+      <div class="card" style="text-align:center; padding:12px;">
+        <div style="font-size:.72rem; color:var(--ink-3);">答對率</div>
+        <div class="score-display" id="dash-accuracy" style="font-size:1.5rem;">0%</div>
+      </div>
+      <div class="card" style="text-align:center; padding:12px;">
+        <div style="font-size:.72rem; color:var(--ink-3);">總用時</div>
+        <div class="score-display" id="dash-time" style="font-size:1.5rem;">0:00</div>
+      </div>
+      <div class="card" style="text-align:center; padding:12px;">
+        <div style="font-size:.72rem; color:var(--ink-3);">嘗試次數</div>
+        <div class="score-display" id="dash-attempts" style="font-size:1.5rem;">0</div>
+      </div>
+    </div>
+
+    <div class="grid-2" style="gap:12px;">
+      <div class="card" style="padding:14px;">
+        <h3 class="slide-h3" style="color:var(--accent); margin-bottom:6px; font-size:1rem;">各遊戲表現</h3>
+        <div style="height:180px;"><canvas id="dash-game-chart"></canvas></div>
+      </div>
+      <div class="card" style="padding:14px;">
+        <h3 class="slide-h3" style="color:var(--accent); margin-bottom:6px; font-size:1rem;">知識點掌握度</h3>
+        <div id="dash-knowledge" style="display:flex; flex-direction:column; gap:5px; margin-top:4px;"></div>
+      </div>
+    </div>
+
+    <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
+      <button class="btn" style="padding:8px 18px; font-size:.88rem;" onclick="exportCSV()">📥 匯出我的紀錄</button>
+      <button class="btn btn-outline" style="padding:8px 18px; font-size:.88rem; border-color:var(--warn); color:var(--warn);" onclick="exportClassCSV()">🔒 匯出全班紀錄（教師）</button>
+      <button class="btn btn-outline" style="padding:8px 18px; font-size:.88rem; border-color:var(--bad); color:var(--bad);" onclick="resetAllData()">🗑️ 清除紀錄</button>
+    </div>
+    <p style="margin-top:8px; font-size:.72rem; color:var(--ink-4); text-align:center;">
+      ※ 全班紀錄需<em>教師密碼</em>才能匯出，涵蓋這台電腦上所有 session 的數據
+    </p>
+  </div>
+</section>
+
+<!-- ============ Slide 24: 行動 CTA + 總結 ============ -->
+<section class="slide" data-slide="24" data-section="喚起行動">
+  <div class="slide-inner" style="text-align:center;">
+    <div class="kicker">— Take Action —</div>
+    <h2 class="slide-title" style="font-size:clamp(1.6rem,3.5vw,2.6rem); margin-bottom:8px;">學完之後，下一步？</h2>
+    <p style="font-size:.95rem; color:var(--ink-2); max-width:760px; margin:0 auto 16px;">
+      把光譜學變成你的工具：<em>動手做、看別人怎麼用、自己解讀</em>。
+    </p>
+
+    <div class="grid-3" style="gap:14px; margin-bottom:16px;">
+      <div class="card" style="text-align:left; padding:16px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+          <div class="card-icon" style="width:36px; height:36px; font-size:18px; margin:0;">🔬</div>
+          <h3 class="slide-h3" style="margin:0; font-size:1.05rem;">實作 ATR-FTIR</h3>
+        </div>
+        <p style="font-size:.82rem;">量測一份食用油 / 蜂蜜 / 牛奶，找出 3 個關鍵吸收峰。</p>
+      </div>
+      <div class="card" style="text-align:left; padding:16px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+          <div class="card-icon" style="width:36px; height:36px; font-size:18px; margin:0;">📚</div>
+          <h3 class="slide-h3" style="margin:0; font-size:1.05rem;">閱讀文獻</h3>
+        </div>
+        <p style="font-size:.82rem;">挑一篇 Table 8.2 攙偽偵測論文，整理技術 / 化學計量學 / 偵測限。</p>
+      </div>
+      <div class="card" style="text-align:left; padding:16px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+          <div class="card-icon" style="width:36px; height:36px; font-size:18px; margin:0;">🧠</div>
+          <h3 class="slide-h3" style="margin:0; font-size:1.05rem;">章末思考題</h3>
+        </div>
+        <p style="font-size:.82rem;">完成 §8.8 Study Q1-Q6，特別是 Q5（漫反射）與 Q6（NIR 校正）。</p>
+      </div>
+    </div>
+
+    <div style="padding:16px 20px; background:linear-gradient(135deg, rgba(0,212,255,0.1), rgba(255,0,110,0.1)); border-radius:14px; border:1px solid rgba(0,212,255,0.3);">
+      <p style="font-size:.85rem; margin-bottom:6px; color:var(--ink-3);">📖 本章一句話總結：</p>
+      <p style="font-size:clamp(.95rem,1.6vw,1.2rem); color:var(--accent); font-weight:700; line-height:1.5;">
+        「分子振動就是食物的指紋；<br>IR、NIR、Raman 是讀懂這份指紋的三把鑰匙。」
+      </p>
+    </div>
+
+    <div style="margin-top:16px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+      <button class="btn" style="background:linear-gradient(135deg, var(--warn), var(--accent-2));" onclick="goToSlide(25)">🧪 進入實驗實作 (Bonus)</button>
+      <button class="btn btn-outline" onclick="goToSlide(23)">📊 看我的成績單</button>
+      <button class="btn btn-outline" onclick="goToSlide(1)">↻ 重新開始</button>
+    </div>
+  </div>
+</section>
+
+<script>
+// ============ 全域狀態 ============
+const TOTAL_SLIDES = 26;
+const TEACHER_PASSWORD = 'teacher2026';  // 🔒 教師密碼，請在此修改後重新部署
+let currentSlide = 1;
+let student = JSON.parse(localStorage.getItem('chap8_student') || '{"name":"訪客","id":"","class":""}');
+let session = JSON.parse(localStorage.getItem('chap8_session') || '{}');
+let startTime = Date.now();
+const sessionId = session.id || ('s_' + Date.now() + '_' + Math.random().toString(36).slice(2,8));
+
+// 初始化 session
+if (!session.id) {
+  session = {
+    id: sessionId,
+    student: student,
+    startedAt: new Date().toISOString(),
+    games: { g1: null, g2: null, g3: null },
+    knowledge: {},  // 知識點答對 / 答錯計數
+    visitedSlides: []
+  };
+  localStorage.setItem('chap8_session', JSON.stringify(session));
+}
+
+// 把所有 session 加進歷史紀錄（教師端用）
+function appendToHistory(){
+  const history = JSON.parse(localStorage.getItem('chap8_history') || '[]');
+  const idx = history.findIndex(h => h.id === session.id);
+  if (idx >= 0) history[idx] = session;
+  else history.push(session);
+  localStorage.setItem('chap8_history', JSON.stringify(history));
+}
+
+function recordKnowledge(topic, correct){
+  if (!session.knowledge[topic]) session.knowledge[topic] = {right:0, wrong:0};
+  session.knowledge[topic][correct ? 'right' : 'wrong']++;
+  localStorage.setItem('chap8_session', JSON.stringify(session));
+  appendToHistory();
+}
+
+// ============ 導航 ============
+function showSlide(n){
+  if (n < 1 || n > TOTAL_SLIDES) return;
+  document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+  const slide = document.querySelector(`[data-slide="${n}"]`);
+  if (!slide) return;
+  slide.classList.add('active');
+  currentSlide = n;
+
+  // 更新 UI
+  document.getElementById('progress-fill').style.width = (n/TOTAL_SLIDES*100) + '%';
+  document.getElementById('section-tag').textContent = '— ' + slide.dataset.section + ' —';
+  document.getElementById('page-info').textContent =
+    String(n).padStart(2,'0') + ' / ' + String(TOTAL_SLIDES).padStart(2,'0');
+
+  // 記錄已訪問
+  if (!session.visitedSlides.includes(n)) {
+    session.visitedSlides.push(n);
+    localStorage.setItem('chap8_session', JSON.stringify(session));
+    appendToHistory();
+  }
+
+  // 延遲渲染圖表（避免初始載入卡頓）
+  if (n === 11 && !window.spectrumChartInit) initSpectrumChart();
+  if (n === 20 && !window.g1Init) initGame1();
+  if (n === 21 && !window.g2Init) initGame2();
+  if (n === 22 && !window.g3Init) initGame3();
+  if (n === 23) updateDashboard();
+  if (n === 25 && !window.dilInit) initDilutionCalc();
+}
+
+function nextSlide(){ showSlide(currentSlide + 1); }
+function prevSlide(){ showSlide(currentSlide - 1); }
+function goToSlide(n){ showSlide(n); }
+
+document.addEventListener('keydown', e => {
+  // 在 input 內按鍵不要切頁
+  if (document.activeElement.tagName === 'INPUT') return;
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); nextSlide(); }
+  else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prevSlide(); }
+  else if (e.key.toLowerCase() === 'f') toggleFullscreen();
+  else if (e.key.toLowerCase() === 'r') { if (confirm('確認重置所有學習紀錄？')) resetAllData(); }
+  else if (e.key === 'Escape') { document.getElementById('student-modal').style.display = 'none'; }
+});
+
+// 點擊畫面切頁（避開遊戲區域）
+document.addEventListener('click', e => {
+  if (e.target.closest('button, input, .card, .option, .match-card, .match-target, th, #student-modal, .tbl')) return;
+  const x = e.clientX, w = window.innerWidth;
+  if (x > w * 0.85) nextSlide();
+  else if (x < w * 0.15) prevSlide();
+});
+
+function toggleFullscreen(){
+  if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+  else document.exitFullscreen();
+}
+
+// ============ 學生身份 ============
+function promptStudentName(forceNew = false){
+  if (!forceNew && student.name !== '訪客') return;
+  document.getElementById('student-name-input').value = student.name === '訪客' ? '' : student.name;
+  document.getElementById('student-id-input').value = student.id || '';
+  document.getElementById('student-class-input').value = student.class || '';
+  document.getElementById('student-modal').style.display = 'flex';
+  setTimeout(()=>document.getElementById('student-name-input').focus(), 50);
+}
+function cancelStudentModal(){ document.getElementById('student-modal').style.display = 'none'; }
+function saveStudent(){
+  const name = document.getElementById('student-name-input').value.trim() || '訪客';
+  const sid = document.getElementById('student-id-input').value.trim();
+  const cls = document.getElementById('student-class-input').value.trim();
+  student = { name, id: sid, class: cls };
+  localStorage.setItem('chap8_student', JSON.stringify(student));
+  session.student = student;
+  localStorage.setItem('chap8_session', JSON.stringify(session));
+  appendToHistory();
+  document.getElementById('student-badge').textContent = '👤 ' + name + (cls ? ' / '+cls : '');
+  document.getElementById('student-modal').style.display = 'none';
+}
+// 初始化 badge
+document.getElementById('student-badge').textContent = '👤 ' + student.name + (student.class ? ' / '+student.class : '');
+
+// ============ 表格排序 ============
+function sortTable(tableId, colIdx, type){
+  const tbl = document.getElementById(tableId);
+  const tbody = tbl.querySelector('tbody');
+  const rows = Array.from(tbody.querySelectorAll('tr'));
+  const asc = tbl.dataset.sortDir !== 'asc';
+  rows.sort((a,b) => {
+    let av = a.children[colIdx].textContent.trim();
+    let bv = b.children[colIdx].textContent.trim();
+    if (type === 'num') {
+      av = parseFloat(av.replace(/[^\d.-]/g, '')) || 0;
+      bv = parseFloat(bv.replace(/[^\d.-]/g, '')) || 0;
+      return asc ? av-bv : bv-av;
+    }
+    return asc ? av.localeCompare(bv) : bv.localeCompare(av);
+  });
+  rows.forEach(r => tbody.appendChild(r));
+  tbl.dataset.sortDir = asc ? 'asc' : 'desc';
+}
+
+// ============ Slide 11: 官能基互動光譜 ============
+const SPECTRUM_PEAKS = [
+  {x:3500, h:0.45, w:120, group:'O-H 伸縮 (水)', color:'#00e676', cat:'水'},
+  {x:3300, h:0.55, w:80, group:'醯胺 A — N-H 伸縮 (蛋白質)', color:'#00d4ff', cat:'蛋白質'},
+  {x:2950, h:0.7, w:50, group:'C-H 伸縮 (脂肪)', color:'#ff006e', cat:'脂肪'},
+  {x:1740, h:0.85, w:30, group:'C=O 酯 (脂肪 — 三酸甘油酯)', color:'#ff006e', cat:'脂肪'},
+  {x:1640, h:0.65, w:40, group:'醯胺 I — C=O (蛋白質)', color:'#00d4ff', cat:'蛋白質'},
+  {x:1540, h:0.5, w:35, group:'醯胺 II — N-H 彎曲 (蛋白質)', color:'#00d4ff', cat:'蛋白質'},
+  {x:1465, h:0.35, w:25, group:'CH₂ 彎曲 (脂肪烷基)', color:'#ff006e', cat:'脂肪'},
+  {x:1080, h:0.45, w:40, group:'C-OH (醣類)', color:'#ffb800', cat:'醣類'},
+  {x:1030, h:0.6, w:30, group:'澱粉結晶 (醣類)', color:'#ffb800', cat:'醣類'},
+  {x:995, h:0.4, w:25, group:'醣苷鍵 (醣類)', color:'#ffb800', cat:'醣類'},
+];
+
+function initSpectrumChart(){
+  window.spectrumChartInit = true;
+  const canvas = document.getElementById('spectrumChart');
+  const ctx = canvas.getContext('2d');
+  const labels = [];
+  const data = [];
+  for (let x = 4000; x >= 600; x -= 10) {
+    labels.push(x);
+    let y = 0.05 + (Math.random()-0.5) * 0.015;
+    for (const p of SPECTRUM_PEAKS) y += p.h * Math.exp(-Math.pow((x-p.x)/p.w, 2));
+    data.push(y);
+  }
+
+  // 標記峰位的資料集（visible dots at exact peak positions）
+  const peakMarkers = SPECTRUM_PEAKS.map(p => {
+    const idx = labels.findIndex(l => l === p.x);
+    return { x: p.x, y: data[idx] + 0.04, color: p.color };
+  });
+
+  window.spectrumChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: '光譜',
+          data: data,
+          borderColor: '#00d4ff',
+          backgroundColor: 'rgba(0,212,255,0.08)',
+          fill: true,
+          tension: 0.2,
+          pointRadius: 0,
+          borderWidth: 2,
+          order: 2
+        },
+        {
+          label: '可點擊峰位',
+          data: SPECTRUM_PEAKS.map(p => ({ x: p.x, y: peakMarkers.find(m => m.x === p.x).y })),
+          backgroundColor: SPECTRUM_PEAKS.map(p => p.color),
+          borderColor: SPECTRUM_PEAKS.map(p => p.color),
+          pointRadius: 8,
+          pointHoverRadius: 12,
+          pointStyle: 'circle',
+          showLine: false,
+          order: 1,
+          parsing: false
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'nearest', axis: 'x', intersect: false },
+      onHover: (e, els) => {
+        canvas.style.cursor = els.length ? 'pointer' : 'crosshair';
+      },
+      plugins: {
+        legend: { display:false },
+        tooltip: {
+          backgroundColor: 'rgba(10,14,39,0.95)',
+          borderColor: '#00d4ff',
+          borderWidth: 1,
+          titleColor: '#00d4ff',
+          bodyColor: '#fff',
+          padding: 10,
+          callbacks: {
+            title: items => {
+              const wn = items[0].parsed.x;
+              const near = findNearestPeak(wn);
+              return near ? near.x + ' cm⁻¹  👆 點擊查看' : Math.round(wn) + ' cm⁻¹';
+            },
+            label: items => {
+              const wn = items[0].parsed.x;
+              const near = findNearestPeak(wn);
+              return near ? near.group : '吸收度 ' + items[0].parsed.y.toFixed(2);
+            }
+          }
+        }
+      },
+      onClick: (e) => {
+        // 把畫面像素 → x 軸值 (wavenumber)
+        const xScale = window.spectrumChart.scales.x;
+        const rect = canvas.getBoundingClientRect();
+        const xPx = e.x ?? (e.native ? e.native.offsetX : 0);
+        const wn = xScale.getValueForPixel(xPx);
+        const near = findNearestPeak(wn);
+        if (near) {
+          showPeakInfo(near);
+          recordKnowledge('spectrum_peak_' + near.x, true);
+        }
+      },
+      scales: {
+        x: {
+          type: 'linear',
+          reverse: true,
+          min: 600, max: 4000,
+          title: { display:true, text:'Wavenumber (cm⁻¹)', color:'#b8c5e0', font:{family:'JetBrains Mono'} },
+          ticks: { color:'#7a8bb8', maxTicksLimit:10, callback: v => v },
+          grid: { color:'rgba(255,255,255,0.05)' }
+        },
+        y: {
+          title: { display:true, text:'Absorbance', color:'#b8c5e0', font:{family:'JetBrains Mono'} },
+          ticks: { color:'#7a8bb8' },
+          grid: { color:'rgba(255,255,255,0.05)' }
+        }
+      }
+    }
+  });
+
+  // 讓 Line dataset 也用 x-y 模式（避免與第二個 scatter 對不齊）
+  window.spectrumChart.data.datasets[0].data = labels.map((x,i) => ({ x, y: data[i] }));
+  window.spectrumChart.update();
+}
+
+function findNearestPeak(wn){
+  let best = null, bestDist = Infinity;
+  for (const p of SPECTRUM_PEAKS) {
+    const d = Math.abs(p.x - wn);
+    if (d < p.w && d < bestDist) { best = p; bestDist = d; }
+  }
+  return best;
+}
+
+function showPeakInfo(peak){
+  // 浮動資訊面板（取代難看的 alert）
+  let panel = document.getElementById('peak-info-panel');
+  if (!panel) {
+    panel = document.createElement('div');
+    panel.id = 'peak-info-panel';
+    panel.style.cssText = `
+      position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      background: rgba(10,14,39,0.97); border: 2px solid ${peak.color};
+      border-radius: 16px; padding: 24px 32px; z-index: 999;
+      box-shadow: 0 0 40px ${peak.color}66;
+      backdrop-filter: blur(10px);
+      min-width: 320px; text-align: center;
+      animation: peakPop 0.3s ease-out;
+    `;
+    document.body.appendChild(panel);
+  } else {
+    panel.style.borderColor = peak.color;
+    panel.style.boxShadow = `0 0 40px ${peak.color}66`;
+  }
+  panel.innerHTML = `
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.8rem; letter-spacing:.1em; color:${peak.color}; margin-bottom:6px;">${peak.cat.toUpperCase()}</div>
+    <div style="font-size:1.8rem; font-weight:900; color:${peak.color}; margin-bottom:8px;">${peak.x} cm⁻¹</div>
+    <div style="font-size:1rem; color:#fff; margin-bottom:14px;">${peak.group}</div>
+    <button class="btn" style="background:${peak.color};" onclick="document.getElementById('peak-info-panel').remove()">了解了 ✓</button>
+  `;
+  // 點外面也關閉
+  setTimeout(() => {
+    const closeHandler = (e) => {
+      if (!panel.contains(e.target)) {
+        panel.remove();
+        document.removeEventListener('click', closeHandler);
+      }
+    };
+    document.addEventListener('click', closeHandler);
+  }, 100);
+}
+
+// ============ Slide 20: Game 1 - 配對 ============
+const G1_PAIRS = [
+  { wn: '1740 cm⁻¹', target: '酯類 C=O（脂肪三酸甘油酯）', explain: '脂肪酸酯類的 C=O 伸縮在 1740；游離脂肪酸的 C=O 在 1711。' },
+  { wn: '3300 cm⁻¹', target: '醯胺 A — N-H 伸縮（蛋白質）', explain: '蛋白質骨架的 N-H 伸縮，常與 O-H 區重疊。' },
+  { wn: '1640 cm⁻¹', target: '醯胺 I — C=O（蛋白質）', explain: '蛋白質二級結構鑑定的金標準峰位（α-helix vs β-sheet）。' },
+  { wn: '995 cm⁻¹', target: '醣苷鍵（碳水化合物）', explain: 'Glycosidic linkage，醣類間的 C-O-C 鍵結特徵。' },
+  { wn: '3500 cm⁻¹', target: 'O-H 伸縮（水）', explain: '水的 O-H 伸縮，寬而強，常是 NIR 的主導訊號。' },
+  { wn: '2950 cm⁻¹', target: 'C-H 伸縮（脂肪烷基鏈）', explain: '長鏈脂肪酸的 -CH₂-、-CH₃ 伸縮，3000-2800 區域。' },
+];
+
+let g1State = { selected: null, matched: 0, attempts: 0, startedAt: 0, finished: false };
+let g1Timer = null;
+
+function initGame1(){
+  window.g1Init = true;
+  g1State = { selected: null, matched: 0, attempts: 0, startedAt: Date.now(), finished: false };
+
+  // 渲染目標（官能基）
+  const targetsEl = document.getElementById('g1-targets');
+  targetsEl.innerHTML = '';
+  G1_PAIRS.forEach((p, i) => {
+    const t = document.createElement('div');
+    t.className = 'match-target';
+    t.dataset.idx = i;
+    t.textContent = p.target;
+    t.onclick = () => selectG1Target(i);
+    targetsEl.appendChild(t);
+  });
+
+  // 渲染來源（波數）— 隨機順序
+  const sources = G1_PAIRS.map((p,i) => ({ wn: p.wn, originalIdx: i }));
+  for (let i = sources.length-1; i > 0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [sources[i], sources[j]] = [sources[j], sources[i]];
+  }
+  const sourcesEl = document.getElementById('g1-sources');
+  sourcesEl.innerHTML = '';
+  sources.forEach(s => {
+    const c = document.createElement('div');
+    c.className = 'match-card';
+    c.dataset.idx = s.originalIdx;
+    c.textContent = s.wn;
+    c.onclick = () => selectG1Source(s.originalIdx, c);
+    sourcesEl.appendChild(c);
+  });
+
+  // 啟動計時器
+  if (g1Timer) clearInterval(g1Timer);
+  g1Timer = setInterval(() => {
+    if (g1State.finished) return;
+    const sec = Math.floor((Date.now() - g1State.startedAt)/1000);
+    document.getElementById('g1-time').textContent = Math.floor(sec/60) + ':' + String(sec%60).padStart(2,'0');
+  }, 500);
+
+  updateG1Dots();
+  document.getElementById('g1-feedback').className = 'feedback';
+}
+
+function selectG1Source(idx, el){
+  if (el.classList.contains('matched')) return;
+  document.querySelectorAll('#g1-sources .match-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  g1State.selected = idx;
+}
+
+function selectG1Target(targetIdx){
+  if (g1State.selected === null) {
+    showG1Feedback(false, '先點選右邊的波數，再點左邊的官能基配對。');
+    return;
+  }
+  g1State.attempts++;
+  const sourceIdx = g1State.selected;
+  const sourceEl = document.querySelector(`#g1-sources .match-card[data-idx="${sourceIdx}"]`);
+  const targetEl = document.querySelector(`#g1-targets .match-target[data-idx="${targetIdx}"]`);
+
+  if (sourceIdx === targetIdx) {
+    sourceEl.classList.remove('selected');
+    sourceEl.classList.add('matched');
+    targetEl.classList.add('matched');
+    targetEl.textContent = G1_PAIRS[targetIdx].wn + ' ✓ ' + G1_PAIRS[targetIdx].target;
+    g1State.matched++;
+    recordKnowledge('g1_'+G1_PAIRS[targetIdx].wn, true);
+    showG1Feedback(true, '正確！' + G1_PAIRS[targetIdx].explain);
+    g1State.selected = null;
+    updateG1Dots();
+    if (g1State.matched === G1_PAIRS.length) {
+      document.getElementById('g1-next-btn').disabled = false;
+      g1State.finished = true;
+      saveG1Result();
+    }
+  } else {
+    recordKnowledge('g1_'+G1_PAIRS[sourceIdx].wn, false);
+    sourceEl.classList.remove('selected');
+    sourceEl.style.animation = 'shake 0.3s';
+    setTimeout(() => sourceEl.style.animation = '', 300);
+    showG1Feedback(false, '配錯了！再試試。');
+    g1State.selected = null;
+  }
+}
+
+function updateG1Dots(){
+  const dots = document.querySelectorAll('#g1-dots .dot');
+  dots.forEach((d, i) => {
+    d.classList.remove('current', 'done', 'wrong');
+    if (i < g1State.matched) d.classList.add('done');
+    else if (i === g1State.matched) d.classList.add('current');
+  });
+  document.getElementById('g1-score').textContent = g1State.matched + ' / ' + G1_PAIRS.length;
+}
+
+function showG1Feedback(good, msg){
+  const f = document.getElementById('g1-feedback');
+  f.className = 'feedback show ' + (good ? 'good' : 'bad');
+  f.textContent = (good ? '✅ ' : '❌ ') + msg;
+}
+
+function resetGame1(){
+  if (g1Timer) clearInterval(g1Timer);
+  window.g1Init = false;
+  initGame1();
+}
+
+function saveG1Result(){
+  const sec = Math.floor((Date.now() - g1State.startedAt)/1000);
+  session.games.g1 = {
+    score: g1State.matched,
+    total: G1_PAIRS.length,
+    attempts: g1State.attempts,
+    timeSec: sec,
+    completedAt: new Date().toISOString()
+  };
+  localStorage.setItem('chap8_session', JSON.stringify(session));
+  appendToHistory();
+}
+
+function finishGame1(){ nextSlide(); }
+
+// ============ Slide 21: Game 2 - 情境技術選擇 ============
+const G2_QUESTIONS = [
+  {
+    q: '你在乳品工廠的生產線上，要<strong>每分鐘監測一次</strong>原料牛奶的脂肪、蛋白、乳糖含量。樣品是<em>液體 + 高含水</em>。最適合？',
+    options: ['Mid-IR (FTIR)', 'Near-IR (NIR)', 'Raman 光譜', '只能用 Kjeldahl 法'],
+    answer: 1,
+    explain: 'NIR 在乳品分析是業界標準。穿透深、含水樣品 OK、能同時定量多個成分、線上速度快。Mid-IR 也可（牛奶分析儀），但 NIR 更適合線上連續監測。',
+    topic: 'milk_online'
+  },
+  {
+    q: '你懷疑一批進口橄欖油被攙偽，需要<strong>30 秒內現場判斷</strong>，而且樣品還在<em>玻璃瓶內未開封</em>。最適合？',
+    options: ['Mid-IR transmission', '掌上型 Raman', 'Near-IR (NIR)', '需送回實驗室 ATR-FTIR'],
+    answer: 1,
+    explain: 'Raman 可以穿透玻璃容器！且 1064 nm 雷射避開螢光干擾。Mid-IR 過不了玻璃；NIR 也可但 Raman 提供更清楚的脂肪酸結構資訊。',
+    topic: 'olive_oil_field'
+  },
+  {
+    q: '你要在辣椒粉中偵測<strong>ppb 等級</strong>的「蘇丹紅」工業染料。常規光譜法靈敏度不夠。最適合？',
+    options: ['ATR-FTIR + PLS', 'NIR + MLR', 'SERS (表面增強拉曼)', '紫外可見光譜'],
+    answer: 2,
+    explain: 'SERS 靈敏度可達 ppb 甚至單分子等級，因為金/銀奈米結構讓拉曼訊號暴增 10⁴-10¹¹ 倍。其他光譜法對 ppb 級分析力不足。',
+    topic: 'sers_ppb'
+  },
+  {
+    q: '你要做<strong>未知有機化合物</strong>的官能基鑑定，找出它是酮、酯、醯胺、還是酸？樣品是純的固體粉末。最適合？',
+    options: ['Mid-IR (FTIR)', 'Near-IR (NIR)', 'UV-Vis 光譜', '原子吸收光譜'],
+    answer: 0,
+    explain: 'Mid-IR 是官能基鑑定的黃金區，C=O 在 1700-1750 區域不同位置可分辨酯、酮、酸、醯胺。Near-IR 重疊嚴重，主要用於定量。',
+    topic: 'mid_ir_functional'
+  },
+  {
+    q: '一袋未開封的<strong>麵粉（紙袋包裝）</strong>進廠，你要快速確認蛋白質含量是否合格 (≥ 11%)。最適合？',
+    options: ['打開袋子做 Kjeldahl', '掌上型 NIR 隔袋量測', 'Mid-IR ATR', 'SERS'],
+    answer: 1,
+    explain: '掌上型 NIR 可直接打到紙袋表面測（漫反射、穿透深度 mm 級），AACC 已將 NIR 列為穀物蛋白測定的官方方法。Kjeldahl 雖準但慢；Mid-IR ATR 需破袋且 mm-級穿透不足。',
+    topic: 'nir_grain'
+  }
+];
+
+let g2State = { current: 0, score: 0, answers: [] };
+
+function initGame2(){
+  window.g2Init = true;
+  g2State = { current: 0, score: 0, answers: [], startedAt: Date.now() };
+  loadG2Question();
+}
+
+function loadG2Question(){
+  const q = G2_QUESTIONS[g2State.current];
+  document.getElementById('g2-question').innerHTML = q.q;
+  document.getElementById('g2-current').textContent = g2State.current + 1;
+  const optsEl = document.getElementById('g2-options');
+  optsEl.innerHTML = '';
+  q.options.forEach((opt, i) => {
+    const b = document.createElement('button');
+    b.className = 'option';
+    b.textContent = String.fromCharCode(65+i) + '. ' + opt;
+    b.onclick = () => answerG2(i, b);
+    optsEl.appendChild(b);
+  });
+  document.getElementById('g2-feedback').className = 'feedback';
+  document.getElementById('g2-next-btn').disabled = true;
+  document.getElementById('g2-next-btn').textContent = (g2State.current === G2_QUESTIONS.length-1) ? '查看成績 →' : '下一題 →';
+  updateG2Dots();
+}
+
+function answerG2(choice, btn){
+  const q = G2_QUESTIONS[g2State.current];
+  const correct = (choice === q.answer);
+  g2State.answers.push({ q: g2State.current, choice, correct });
+  recordKnowledge('g2_'+q.topic, correct);
+
+  document.querySelectorAll('#g2-options .option').forEach((b,i) => {
+    b.classList.add('disabled');
+    b.onclick = null;
+    if (i === q.answer) b.classList.add('correct');
+    if (i === choice && !correct) b.classList.add('wrong');
+  });
+
+  if (correct) g2State.score++;
+  const f = document.getElementById('g2-feedback');
+  f.className = 'feedback show ' + (correct ? 'good' : 'bad');
+  f.innerHTML = (correct ? '✅ 正確！' : '❌ 答錯，正解：' + String.fromCharCode(65+q.answer)) +
+    '<div class="explain">' + q.explain + '</div>';
+  document.getElementById('g2-score').textContent = g2State.score + ' / ' + G2_QUESTIONS.length;
+  document.getElementById('g2-next-btn').disabled = false;
+  updateG2Dots();
+}
+
+function updateG2Dots(){
+  const dots = document.querySelectorAll('#g2-dots .dot');
+  dots.forEach((d, i) => {
+    d.classList.remove('current', 'done', 'wrong');
+    if (i < g2State.answers.length) {
+      d.classList.add(g2State.answers[i].correct ? 'done' : 'wrong');
+    } else if (i === g2State.answers.length) d.classList.add('current');
+  });
+}
+
+function nextG2Question(){
+  if (g2State.current < G2_QUESTIONS.length - 1) {
+    g2State.current++;
+    loadG2Question();
+  } else {
+    saveG2Result();
+    nextSlide();
+  }
+}
+
+function saveG2Result(){
+  const sec = Math.floor((Date.now() - g2State.startedAt)/1000);
+  session.games.g2 = {
+    score: g2State.score,
+    total: G2_QUESTIONS.length,
+    timeSec: sec,
+    answers: g2State.answers,
+    completedAt: new Date().toISOString()
+  };
+  localStorage.setItem('chap8_session', JSON.stringify(session));
+  appendToHistory();
+}
+
+// ============ Slide 22: Game 3 - 光譜識讀 ============
+const G3_QUESTIONS = [
+  {
+    title: '光譜 A — 強峰位置：1740 (高)、2950 (高)、1465',
+    context: '此光譜在 3300 區域<em>無顯著吸收</em>，在 1080-1030 區域<em>無顯著吸收</em>。',
+    spectrum: [
+      {x:3500,h:0.1,w:120},{x:2950,h:0.85,w:50},{x:2850,h:0.7,w:40},
+      {x:1740,h:0.95,w:30},{x:1465,h:0.45,w:25},{x:1163,h:0.3,w:30},{x:966,h:0.2,w:20}
+    ],
+    q: '這份 Mid-IR 光譜最可能屬於？',
+    options: ['牛奶（高蛋白）', '純植物油 (大豆油)', '白麵粉（高澱粉）', '蜂蜜（高糖）'],
+    answer: 1,
+    explain: '高 C-H (2950, 2850) + 高 C=O 酯 (1740) + 無蛋白 (3300/1640 缺) + 無醣 (1080 缺) → 純脂肪 / 植物油。',
+    topic: 'g3_olive_oil'
+  },
+  {
+    title: '光譜 B — 強峰位置：3300、1640、1540、2950',
+    context: '相較於純脂肪，<em>3300 與 1540 醯胺帶清楚出現</em>。',
+    spectrum: [
+      {x:3300,h:0.85,w:80},{x:2950,h:0.55,w:45},{x:1740,h:0.2,w:25},
+      {x:1640,h:0.75,w:40},{x:1540,h:0.6,w:35},{x:1390,h:0.3,w:30}
+    ],
+    q: '這份光譜的主要成分？',
+    options: ['純脂肪', '蛋白質（如乳清蛋白）', '純澱粉', '純糖溶液'],
+    answer: 1,
+    explain: '醯胺 A (3300) + 醯胺 I (1640) + 醯胺 II (1540) 是蛋白質骨架的特徵三聯峰，缺一不可。',
+    topic: 'g3_protein'
+  },
+  {
+    title: '光譜 C — 強峰位置：3300 (寬)、1080、1030、995',
+    context: '指紋區 (1500-900 cm⁻¹) 的吸收<em>非常豐富</em>。',
+    spectrum: [
+      {x:3300,h:0.7,w:120},{x:2920,h:0.35,w:40},{x:1640,h:0.25,w:35},
+      {x:1150,h:0.6,w:30},{x:1080,h:0.85,w:25},{x:1030,h:0.95,w:25},{x:995,h:0.7,w:20},{x:930,h:0.4,w:25}
+    ],
+    q: '這份光譜最可能是？',
+    options: ['脂肪', '蛋白質', '碳水化合物（澱粉/糖）', '純水'],
+    answer: 2,
+    explain: '指紋區 1150-900 的多峰是醣類 C-O-C、C-O-H、醣苷鍵的特徵；1030 強峰是澱粉結晶。',
+    topic: 'g3_carb'
+  },
+  {
+    title: '光譜 D — 比對：橄欖油 vs 攙偽橄欖油',
+    context: '已知純特級初榨橄欖油在 <em>3009 cm⁻¹</em> (順式 =C-H) 有特徵峰。本樣品在 3009 區域強度<em>明顯降低</em>。',
+    spectrum: [
+      {x:3009,h:0.15,w:25},{x:2950,h:0.7,w:45},{x:2850,h:0.55,w:40},
+      {x:1740,h:0.9,w:30},{x:1465,h:0.4,w:25}
+    ],
+    q: '這份結果暗示什麼？',
+    options: [
+      '橄欖油是真的',
+      '可能被<em>菜籽油 / 大豆油</em>攙偽（順式雙鍵減少）',
+      '橄欖油氧化變質',
+      '光譜儀校正錯誤'
+    ],
+    answer: 1,
+    explain: '橄欖油富含油酸（C18:1 順式雙鍵）→ 3009 強。若被高飽和脂肪或反式脂肪取代，3009 訊號會減弱。這是文獻中橄欖油攙偽偵測的關鍵指標之一。',
+    topic: 'g3_adulteration'
+  }
+];
+
+let g3State = { current: 0, score: 0, answers: [] };
+let g3Chart = null;
+
+function initGame3(){
+  window.g3Init = true;
+  g3State = { current: 0, score: 0, answers: [], startedAt: Date.now() };
+  loadG3Question();
+}
+
+function loadG3Question(){
+  const q = G3_QUESTIONS[g3State.current];
+  document.getElementById('g3-context').innerHTML = '<strong style="color:var(--accent);">' + q.title + '</strong><br>' + q.context;
+  document.getElementById('g3-question').innerHTML = q.q;
+  document.getElementById('g3-current').textContent = g3State.current + 1;
+
+  // 繪製光譜
+  const labels = [];
+  const data = [];
+  for (let x = 4000; x >= 600; x -= 15) {
+    labels.push(x);
+    let y = 0.05 + (Math.random()-0.5) * 0.01;
+    for (const p of q.spectrum) y += p.h * Math.exp(-Math.pow((x-p.x)/p.w, 2));
+    data.push(y);
+  }
+  if (g3Chart) g3Chart.destroy();
+  g3Chart = new Chart(document.getElementById('g3-chart').getContext('2d'), {
+    type: 'line',
+    data: { labels, datasets: [{
+      data, borderColor: '#ff006e', backgroundColor: 'rgba(255,0,110,0.08)',
+      fill: true, tension: 0.2, pointRadius: 0, borderWidth: 2
+    }]},
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display:false }, tooltip: { callbacks: { title: i => i[0].label + ' cm⁻¹' } } },
+      scales: {
+        x: { reverse: true, title:{display:true,text:'Wavenumber (cm⁻¹)',color:'#b8c5e0'}, ticks:{color:'#7a8bb8',maxTicksLimit:8}, grid:{color:'rgba(255,255,255,0.05)'} },
+        y: { title:{display:true,text:'Abs',color:'#b8c5e0'}, ticks:{color:'#7a8bb8'}, grid:{color:'rgba(255,255,255,0.05)'} }
+      }
+    }
+  });
+
+  const optsEl = document.getElementById('g3-options');
+  optsEl.innerHTML = '';
+  q.options.forEach((opt, i) => {
+    const b = document.createElement('button');
+    b.className = 'option';
+    b.innerHTML = String.fromCharCode(65+i) + '. ' + opt;
+    b.onclick = () => answerG3(i, b);
+    optsEl.appendChild(b);
+  });
+
+  document.getElementById('g3-feedback').className = 'feedback';
+  document.getElementById('g3-next-btn').disabled = true;
+  document.getElementById('g3-next-btn').textContent = (g3State.current === G3_QUESTIONS.length-1) ? '查看儀表板 →' : '下一題 →';
+  updateG3Dots();
+}
+
+function answerG3(choice, btn){
+  const q = G3_QUESTIONS[g3State.current];
+  const correct = (choice === q.answer);
+  g3State.answers.push({ q: g3State.current, choice, correct });
+  recordKnowledge('g3_'+q.topic, correct);
+
+  document.querySelectorAll('#g3-options .option').forEach((b,i) => {
+    b.classList.add('disabled');
+    b.onclick = null;
+    if (i === q.answer) b.classList.add('correct');
+    if (i === choice && !correct) b.classList.add('wrong');
+  });
+
+  if (correct) g3State.score++;
+  const f = document.getElementById('g3-feedback');
+  f.className = 'feedback show ' + (correct ? 'good' : 'bad');
+  f.innerHTML = (correct ? '✅ 正確！' : '❌ 答錯，正解：' + String.fromCharCode(65+q.answer)) +
+    '<div class="explain">' + q.explain + '</div>';
+  document.getElementById('g3-score').textContent = g3State.score + ' / ' + G3_QUESTIONS.length;
+  document.getElementById('g3-next-btn').disabled = false;
+  updateG3Dots();
+}
+
+function updateG3Dots(){
+  const dots = document.querySelectorAll('#g3-dots .dot');
+  dots.forEach((d, i) => {
+    d.classList.remove('current', 'done', 'wrong');
+    if (i < g3State.answers.length) d.classList.add(g3State.answers[i].correct ? 'done' : 'wrong');
+    else if (i === g3State.answers.length) d.classList.add('current');
+  });
+}
+
+function nextG3Question(){
+  if (g3State.current < G3_QUESTIONS.length - 1) {
+    g3State.current++;
+    loadG3Question();
+  } else {
+    saveG3Result();
+    nextSlide();
+  }
+}
+
+function saveG3Result(){
+  const sec = Math.floor((Date.now() - g3State.startedAt)/1000);
+  session.games.g3 = {
+    score: g3State.score,
+    total: G3_QUESTIONS.length,
+    timeSec: sec,
+    answers: g3State.answers,
+    completedAt: new Date().toISOString()
+  };
+  localStorage.setItem('chap8_session', JSON.stringify(session));
+  appendToHistory();
+}
+
+// ============ Slide 23: 儀表板 ============
+let dashChart = null;
+function updateDashboard(){
+  const g1 = session.games.g1, g2 = session.games.g2, g3 = session.games.g3;
+  const totalScore = (g1?.score||0) + (g2?.score||0) + (g3?.score||0);
+  const totalMax = 6 + 5 + 4;
+  document.getElementById('dash-total-score').textContent = totalScore + ' / ' + totalMax;
+  const acc = totalMax > 0 ? Math.round(totalScore/totalMax*100) : 0;
+  document.getElementById('dash-accuracy').textContent = acc + '%';
+  const totalSec = (g1?.timeSec||0) + (g2?.timeSec||0) + (g3?.timeSec||0);
+  document.getElementById('dash-time').textContent = Math.floor(totalSec/60)+':'+String(totalSec%60).padStart(2,'0');
+  document.getElementById('dash-attempts').textContent = (g1?.attempts||0);
+
+  // 雷達圖
+  if (dashChart) dashChart.destroy();
+  dashChart = new Chart(document.getElementById('dash-game-chart').getContext('2d'), {
+    type: 'radar',
+    data: {
+      labels: ['官能基配對', '情境技術選擇', '光譜識讀'],
+      datasets: [{
+        label: '答對率 (%)',
+        data: [
+          g1 ? Math.round(g1.score/g1.total*100) : 0,
+          g2 ? Math.round(g2.score/g2.total*100) : 0,
+          g3 ? Math.round(g3.score/g3.total*100) : 0
+        ],
+        backgroundColor: 'rgba(0,212,255,0.2)',
+        borderColor: '#00d4ff',
+        pointBackgroundColor: '#00d4ff',
+        pointRadius: 5
+      }]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins: { legend:{ labels:{ color:'#b8c5e0' } } },
+      scales: {
+        r: {
+          beginAtZero: true, max: 100,
+          ticks: { color:'#7a8bb8', backdropColor:'transparent' },
+          grid: { color:'rgba(255,255,255,0.1)' },
+          angleLines: { color:'rgba(255,255,255,0.15)' },
+          pointLabels: { color:'#fff', font:{ size:13 } }
+        }
+      }
+    }
+  });
+
+  // 知識點掌握度
+  const kEl = document.getElementById('dash-knowledge');
+  kEl.innerHTML = '';
+  const knowledgeSummary = [
+    { name:'脂肪官能基（C=O, C-H）', topics:['g1_1740 cm⁻¹','g1_2950 cm⁻¹','g3_olive_oil'] },
+    { name:'蛋白質官能基（醯胺 A/I/II）', topics:['g1_3300 cm⁻¹','g1_1640 cm⁻¹','g3_protein'] },
+    { name:'醣類官能基（C-OH, 醣苷鍵）', topics:['g1_995 cm⁻¹','g3_carb'] },
+    { name:'水的吸收（O-H）', topics:['g1_3500 cm⁻¹'] },
+    { name:'技術選擇判斷', topics:['g2_milk_online','g2_olive_oil_field','g2_nir_grain','g2_mid_ir_functional'] },
+    { name:'SERS 高靈敏應用', topics:['g2_sers_ppb'] },
+    { name:'攙偽偵測思維', topics:['g3_adulteration'] },
+  ];
+  knowledgeSummary.forEach(item => {
+    let right = 0, total = 0;
+    item.topics.forEach(t => {
+      const k = session.knowledge[t];
+      if (k) { right += k.right; total += k.right + k.wrong; }
+    });
+    const pct = total > 0 ? Math.round(right/total*100) : 0;
+    const color = total === 0 ? 'var(--ink-4)' : pct >= 80 ? 'var(--good)' : pct >= 50 ? 'var(--warn)' : 'var(--bad)';
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex; align-items:center; gap:10px; padding:6px 0;';
+    row.innerHTML = `
+      <div style="flex:1; font-size:.88rem;">${item.name}</div>
+      <div style="width:120px; height:6px; background:rgba(255,255,255,0.06); border-radius:3px; overflow:hidden;">
+        <div style="height:100%; width:${pct}%; background:${color}; transition:width .4s;"></div>
+      </div>
+      <div style="width:50px; text-align:right; font-family:'JetBrains Mono',monospace; font-size:.85rem; color:${color};">${total===0?'--':pct+'%'}</div>
+    `;
+    kEl.appendChild(row);
+  });
+}
+
+// ============ CSV 匯出 ============
+function exportCSV(){
+  const rows = [
+    ['Field','Value'],
+    ['Session ID', session.id],
+    ['Student Name', session.student.name],
+    ['Student ID', session.student.id],
+    ['Class', session.student.class],
+    ['Started At', session.startedAt],
+    ['Slides Visited', session.visitedSlides.join(';')],
+    [''],
+    ['Game','Score','Total','Time (sec)','Attempts','Completed At']
+  ];
+  ['g1','g2','g3'].forEach(g => {
+    const r = session.games[g];
+    if (r) rows.push([
+      g === 'g1' ? 'Game1-官能基配對' : g === 'g2' ? 'Game2-情境選擇' : 'Game3-光譜識讀',
+      r.score, r.total, r.timeSec || '', r.attempts || '', r.completedAt
+    ]);
+  });
+  rows.push(['']);
+  rows.push(['Knowledge Topic','Right','Wrong','Accuracy %']);
+  Object.keys(session.knowledge).forEach(t => {
+    const k = session.knowledge[t];
+    const tot = k.right + k.wrong;
+    rows.push([t, k.right, k.wrong, tot > 0 ? Math.round(k.right/tot*100) : '--']);
+  });
+  downloadCSV(rows, `chap8_${session.student.name||'guest'}_${Date.now()}.csv`);
+}
+
+function exportClassCSV(){
+  // 教師密碼驗證
+  document.getElementById('teacher-pw-modal').style.display = 'flex';
+  document.getElementById('teacher-pw-input').value = '';
+  document.getElementById('teacher-pw-error').textContent = '';
+  setTimeout(() => document.getElementById('teacher-pw-input').focus(), 60);
+}
+
+function verifyTeacherPassword(){
+  const pw = document.getElementById('teacher-pw-input').value;
+  if (pw !== TEACHER_PASSWORD) {
+    const err = document.getElementById('teacher-pw-error');
+    err.textContent = '❌ 密碼錯誤';
+    document.getElementById('teacher-pw-input').focus();
+    document.getElementById('teacher-pw-input').select();
+    return;
+  }
+  document.getElementById('teacher-pw-modal').style.display = 'none';
+  doExportClassCSV();
+}
+
+function cancelTeacherPw(){
+  document.getElementById('teacher-pw-modal').style.display = 'none';
+}
+
+function doExportClassCSV(){
+  const history = JSON.parse(localStorage.getItem('chap8_history') || '[]');
+  if (history.length === 0) { alert('還沒有任何學生紀錄'); return; }
+  const rows = [['Session ID','Name','Student ID','Class','Started At','Slides Visited','G1 Score','G1 Time','G1 Attempts','G2 Score','G2 Time','G3 Score','G3 Time','Total Score','Total Time','Accuracy %']];
+  history.forEach(s => {
+    const g1 = s.games?.g1, g2 = s.games?.g2, g3 = s.games?.g3;
+    const totalScore = (g1?.score||0) + (g2?.score||0) + (g3?.score||0);
+    const totalMax = 6 + 5 + 4;
+    const totalTime = (g1?.timeSec||0) + (g2?.timeSec||0) + (g3?.timeSec||0);
+    rows.push([
+      s.id, s.student?.name||'', s.student?.id||'', s.student?.class||'',
+      s.startedAt||'', (s.visitedSlides||[]).length,
+      g1?.score||'', g1?.timeSec||'', g1?.attempts||'',
+      g2?.score||'', g2?.timeSec||'',
+      g3?.score||'', g3?.timeSec||'',
+      totalScore + '/' + totalMax, totalTime, Math.round(totalScore/totalMax*100)
+    ]);
+  });
+  downloadCSV(rows, `chap8_class_${Date.now()}.csv`);
+}
+
+function downloadCSV(rows, filename){
+  const csv = rows.map(r => r.map(c => {
+    const s = String(c ?? '');
+    return /[",\n]/.test(s) ? '"' + s.replace(/"/g,'""') + '"' : s;
+  }).join(',')).join('\n');
+  const blob = new Blob(['﻿' + csv], { type:'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
+}
+
+function resetAllData(){
+  if (!confirm('將清除這位學生的所有遊戲紀錄與知識點數據，確定嗎？')) return;
+  localStorage.removeItem('chap8_session');
+  // 不刪 history（教師可能還要用），也不刪 student
+  location.reload();
+}
+
+// ============ Slide 25/26: 酒精稀釋計算器 ============
+function initDilutionCalc(){
+  window.dilInit = true;
+  updateDilutionCalc();
+  // 初始化 8 試管
+  for (let pct = 10; pct <= 80; pct += 10) {
+    const fill = document.querySelector(`.tube-fill[data-pct="${pct}"]`);
+    if (fill) {
+      // 試管視覺：高度反映該濃度需取的 95% 酒精比例 (V₁/V₂)
+      const v1Ratio = (pct / 95) * 100;
+      requestAnimationFrame(() => { fill.style.height = v1Ratio + '%'; });
+    }
+  }
+}
+
+function updateDilutionCalc(){
+  const slider = document.getElementById('dilution-slider');
+  if (!slider) return;
+  const c2 = parseInt(slider.value);
+  const v2 = 10;       // 目標體積 10 mL
+  const c1 = 95;       // 儲液濃度 95%
+  const v1 = (c2 * v2) / c1;
+  const vw = v2 - v1;
+
+  document.getElementById('dil-conc').textContent = c2;
+  document.getElementById('dil-c2-formula').textContent = c2;
+  document.getElementById('dil-v1').textContent = v1.toFixed(2);
+  document.getElementById('dil-vw').textContent = vw.toFixed(2);
+
+  // 試管動畫
+  const tube = document.getElementById('calc-tube-fill');
+  if (tube) tube.style.height = ((v1 / v2) * 100) + '%';
+
+  // 對照表 highlight
+  document.querySelectorAll('.dilution-row').forEach(r => r.classList.remove('active'));
+  const active = document.querySelector(`.dilution-row[data-pct="${c2}"]`);
+  if (active) active.classList.add('active');
+}
+
+function highlightDilutionRow(pct){
+  const slider = document.getElementById('dilution-slider');
+  if (slider) {
+    slider.value = pct;
+    updateDilutionCalc();
+  }
+}
+
+// ============ Cover 背景動畫 ============
+function initCoverBg(){
+  const bg = document.getElementById('cover-bg');
+  for (let i = 0; i < 12; i++) {
+    const w = document.createElement('div');
+    w.className = 'wave-line';
+    w.style.top = (Math.random()*100) + '%';
+    w.style.width = (200 + Math.random()*400) + 'px';
+    w.style.left = (Math.random()*100) + '%';
+    w.style.opacity = (0.1 + Math.random()*0.3);
+    w.style.animationDuration = (5 + Math.random()*8) + 's';
+    w.style.animationDelay = (-Math.random()*5) + 's';
+    bg.appendChild(w);
+  }
+}
+
+// 加入動畫
+const style = document.createElement('style');
+style.textContent = `
+@keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+@keyframes peakPop {
+  0% { transform: translate(-50%,-50%) scale(0.7); opacity: 0; }
+  100% { transform: translate(-50%,-50%) scale(1); opacity: 1; }
+}
+`;
+document.head.appendChild(style);
+
+// ============ 啟動 ============
+initCoverBg();
+showSlide(1);
+</script>
+
+<!-- ============ Slide 25: 酒精稀釋原理 + 互動計算器 ============ -->
+<section class="slide" data-slide="25" data-section="實驗實作">
+  <div class="slide-inner">
+    <div class="kicker">— 實驗實作 ｜ Lab Practical —</div>
+    <h2 class="slide-h2" style="margin-bottom:4px;">用 95% 酒精配製 10%—80% 標準液</h2>
+    <p style="margin-bottom:14px; font-size:.92rem;">建立 <em>NIR / Raman 校正曲線</em>、酒類與調味料品管的基本功。每瓶 <strong>10 mL</strong>。</p>
+
+    <div class="grid-2" style="gap:18px;">
+      <!-- 左：原理 + 公式 + 範例 -->
+      <div class="card" style="padding:18px;">
+        <h3 class="slide-h3" style="color:var(--accent); margin-bottom:10px; font-size:1.05rem;">稀釋公式</h3>
+        <div class="calc-formula" style="font-size:1.3rem; font-weight:700; margin-bottom:10px;">
+          C₁ · V₁ = C₂ · V₂
+        </div>
+        <div style="font-size:.88rem; line-height:1.7; color:var(--ink-2);">
+          <div>📌 已知 <em>C₁ = 95%</em>（儲液濃度）</div>
+          <div>📌 已知 <em>V₂ = 10 mL</em>（目標體積）</div>
+          <div>📌 求 <strong>V₁</strong>（要取的 95% 酒精量）</div>
+          <div>📌 求 <strong>V_w</strong> = V₂ − V₁（要加的水）</div>
+        </div>
+        <div style="margin-top:14px; padding:12px; background:rgba(255,184,0,0.06); border-left:3px solid var(--warn); border-radius:6px;">
+          <strong style="color:var(--warn); font-size:.88rem;">⚗️ 範例：配 50% × 10 mL</strong>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:.85rem; margin-top:6px; line-height:1.7;">
+            V₁ = (50 × 10) / 95<br>
+            &nbsp;&nbsp;&nbsp;= <em style="color:var(--accent);">5.26 mL</em> 的 95% 酒精<br>
+            V_w = 10 − 5.26 = <em style="color:#4fc3f7;">4.74 mL</em> 水
+          </div>
+        </div>
+        <div style="margin-top:12px; padding:10px; background:rgba(255,68,102,0.08); border-radius:6px; font-size:.82rem;">
+          <strong style="color:var(--bad);">⚠️ 為何不是直接「10% = 1 mL 酒精 + 9 mL 水」？</strong>
+          <div style="margin-top:4px; color:var(--ink-2);">因為儲液是 <em>95%</em> 而非 100%！必須用 C₁V₁=C₂V₂ 修正。</div>
+        </div>
+      </div>
+
+      <!-- 右：互動計算器 -->
+      <div class="card" style="padding:18px; border-color:var(--accent);">
+        <h3 class="slide-h3" style="color:var(--accent); margin-bottom:8px; font-size:1.05rem;">🎚️ 互動計算器</h3>
+        <div style="margin-bottom:10px; display:flex; justify-content:space-between; align-items:baseline;">
+          <span style="font-size:.85rem; color:var(--ink-3);">拖動滑桿，看計算結果</span>
+          <span style="font-family:'JetBrains Mono',monospace; font-size:1.8rem; font-weight:900; color:var(--accent);"><span id="dil-conc">50</span>%</span>
+        </div>
+        <input type="range" class="dilution-slider" min="10" max="80" step="10" value="50" id="dilution-slider" oninput="updateDilutionCalc()"/>
+        <div style="display:flex; justify-content:space-between; font-family:'JetBrains Mono',monospace; font-size:.7rem; color:var(--ink-4); margin-top:4px;">
+          <span>10%</span><span>20%</span><span>30%</span><span>40%</span><span>50%</span><span>60%</span><span>70%</span><span>80%</span>
+        </div>
+
+        <div style="display:flex; gap:14px; align-items:center; margin-top:16px;">
+          <!-- 試管視覺化 -->
+          <div style="display:flex; flex-direction:column; align-items:center;">
+            <div class="tube tube-lg">
+              <div class="tube-fill" id="calc-tube-fill" style="height:52.6%;"></div>
+            </div>
+            <div style="margin-top:4px; font-size:.7rem; color:var(--ink-3); font-family:'JetBrains Mono',monospace;">95% 酒精</div>
+          </div>
+
+          <!-- 計算結果 -->
+          <div class="calc-result" style="flex:1;">
+            <div class="row alc">
+              <span style="font-size:.85rem;">📍 95% 酒精</span>
+              <span class="val" style="color:var(--accent);"><span id="dil-v1">5.26</span> mL</span>
+            </div>
+            <div class="row water">
+              <span style="font-size:.85rem;">💧 蒸餾水</span>
+              <span class="val" style="color:#4fc3f7;"><span id="dil-vw">4.74</span> mL</span>
+            </div>
+            <div class="row total">
+              <span style="font-size:.85rem;">📋 總體積</span>
+              <span class="val" style="color:var(--good);">10.00 mL</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px; padding:8px 12px; background:rgba(0,212,255,0.06); border-radius:6px; font-family:'JetBrains Mono',monospace; font-size:.78rem; color:var(--ink-2); text-align:center;">
+          V₁ = (<span id="dil-c2-formula">50</span> × 10) / 95
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Slide 26: 配製對照表 + 步驟 + 試管 ============ -->
+<section class="slide" data-slide="26" data-section="實驗實作">
+  <div class="slide-inner">
+    <div class="kicker">— 配製工作表 ｜ Worksheet —</div>
+    <h2 class="slide-h2" style="margin-bottom:4px;">8 個濃度，一表搞定</h2>
+    <p style="margin-bottom:10px; font-size:.88rem;">點擊試管或表格列查看詳情。表格上方為視覺化（高度 = 95% 酒精佔比）。</p>
+
+    <!-- 8 試管視覺化 -->
+    <div class="tube-row" style="margin-bottom:12px;">
+      <div class="tube-item" onclick="highlightDilutionRow(10)">
+        <div class="tube"><div class="tube-fill" data-pct="10"></div></div>
+        <div class="tube-label">10%</div>
+        <div class="tube-sublabel">1.05 mL</div>
+      </div>
+      <div class="tube-item" onclick="highlightDilutionRow(20)">
+        <div class="tube"><div class="tube-fill" data-pct="20"></div></div>
+        <div class="tube-label">20%</div>
+        <div class="tube-sublabel">2.11 mL</div>
+      </div>
+      <div class="tube-item" onclick="highlightDilutionRow(30)">
+        <div class="tube"><div class="tube-fill" data-pct="30"></div></div>
+        <div class="tube-label">30%</div>
+        <div class="tube-sublabel">3.16 mL</div>
+      </div>
+      <div class="tube-item" onclick="highlightDilutionRow(40)">
+        <div class="tube"><div class="tube-fill" data-pct="40"></div></div>
+        <div class="tube-label">40%</div>
+        <div class="tube-sublabel">4.21 mL</div>
+      </div>
+      <div class="tube-item" onclick="highlightDilutionRow(50)">
+        <div class="tube"><div class="tube-fill" data-pct="50"></div></div>
+        <div class="tube-label">50%</div>
+        <div class="tube-sublabel">5.26 mL</div>
+      </div>
+      <div class="tube-item" onclick="highlightDilutionRow(60)">
+        <div class="tube"><div class="tube-fill" data-pct="60"></div></div>
+        <div class="tube-label">60%</div>
+        <div class="tube-sublabel">6.32 mL</div>
+      </div>
+      <div class="tube-item" onclick="highlightDilutionRow(70)">
+        <div class="tube"><div class="tube-fill" data-pct="70"></div></div>
+        <div class="tube-label">70%</div>
+        <div class="tube-sublabel">7.37 mL</div>
+      </div>
+      <div class="tube-item" onclick="highlightDilutionRow(80)">
+        <div class="tube"><div class="tube-fill" data-pct="80"></div></div>
+        <div class="tube-label">80%</div>
+        <div class="tube-sublabel">8.42 mL</div>
+      </div>
+    </div>
+
+    <div class="grid-2" style="gap:14px;">
+      <!-- 左：對照表 -->
+      <div>
+        <table class="tbl" id="dilution-table">
+          <thead>
+            <tr>
+              <th>目標濃度</th>
+              <th>95% 酒精 (mL)</th>
+              <th>蒸餾水 (mL)</th>
+              <th>典型應用</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="dilution-row" data-pct="10" onclick="highlightDilutionRow(10)"><td><span class="badge">10%</span></td><td>1.05</td><td>8.95</td><td style="font-size:.82rem;">麥芽汁 / 低酒精飲料</td></tr>
+            <tr class="dilution-row" data-pct="20" onclick="highlightDilutionRow(20)"><td><span class="badge">20%</span></td><td>2.11</td><td>7.89</td><td style="font-size:.82rem;">啤酒 / 清酒範圍</td></tr>
+            <tr class="dilution-row" data-pct="30" onclick="highlightDilutionRow(30)"><td><span class="badge">30%</span></td><td>3.16</td><td>6.84</td><td style="font-size:.82rem;">米酒 / 葡萄酒下限</td></tr>
+            <tr class="dilution-row" data-pct="40" onclick="highlightDilutionRow(40)"><td><span class="badge">40%</span></td><td>4.21</td><td>5.79</td><td style="font-size:.82rem;">強化葡萄酒</td></tr>
+            <tr class="dilution-row" data-pct="50" onclick="highlightDilutionRow(50)"><td><span class="badge">50%</span></td><td>5.26</td><td>4.74</td><td style="font-size:.82rem;">利口酒 / 中藥酒</td></tr>
+            <tr class="dilution-row" data-pct="60" onclick="highlightDilutionRow(60)"><td><span class="badge">60%</span></td><td>6.32</td><td>3.68</td><td style="font-size:.82rem;">紹興酒 / 白蘭地</td></tr>
+            <tr class="dilution-row" data-pct="70" onclick="highlightDilutionRow(70)"><td><span class="badge">70%</span></td><td>7.37</td><td>2.63</td><td style="font-size:.82rem;">消毒酒精 / 烈酒</td></tr>
+            <tr class="dilution-row" data-pct="80" onclick="highlightDilutionRow(80)"><td><span class="badge">80%</span></td><td>8.42</td><td>1.58</td><td style="font-size:.82rem;">高粱酒 / 伏特加</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 右：步驟 + 注意事項 -->
+      <div>
+        <h3 class="slide-h3" style="color:var(--accent); margin-bottom:8px; font-size:1rem;">📋 配製步驟</h3>
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <div class="card" style="padding:8px 12px; display:flex; align-items:center; gap:10px;">
+            <span style="background:var(--accent); color:#000; padding:3px 9px; border-radius:50%; font-weight:900; font-size:.8rem;">1</span>
+            <div style="font-size:.85rem;">準備乾燥的 <em>10 mL 容量瓶</em>或刻度試管</div>
+          </div>
+          <div class="card" style="padding:8px 12px; display:flex; align-items:center; gap:10px;">
+            <span style="background:var(--accent); color:#000; padding:3px 9px; border-radius:50%; font-weight:900; font-size:.8rem;">2</span>
+            <div style="font-size:.85rem;">用 <em>移液管</em>精準量取所需 95% 酒精</div>
+          </div>
+          <div class="card" style="padding:8px 12px; display:flex; align-items:center; gap:10px;">
+            <span style="background:var(--accent); color:#000; padding:3px 9px; border-radius:50%; font-weight:900; font-size:.8rem;">3</span>
+            <div style="font-size:.85rem;">加蒸餾水至 <em>10 mL 標線</em>（不是直接加計算量的水）</div>
+          </div>
+          <div class="card" style="padding:8px 12px; display:flex; align-items:center; gap:10px;">
+            <span style="background:var(--accent-2); color:#fff; padding:3px 9px; border-radius:50%; font-weight:900; font-size:.8rem;">4</span>
+            <div style="font-size:.85rem;">蓋蓋，<em>倒置混合 5-10 次</em></div>
+          </div>
+          <div class="card" style="padding:8px 12px; display:flex; align-items:center; gap:10px;">
+            <span style="background:var(--accent-2); color:#fff; padding:3px 9px; border-radius:50%; font-weight:900; font-size:.8rem;">5</span>
+            <div style="font-size:.85rem;">貼標籤：<em>濃度 + 日期 + 配製者</em></div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px; padding:10px 12px; background:rgba(255,68,102,0.06); border-left:3px solid var(--bad); border-radius:6px; font-size:.82rem;">
+          <strong style="color:var(--bad);">⚠️ 三大注意事項</strong>
+          <ul style="margin-top:4px; padding-left:18px; color:var(--ink-2); line-height:1.5;">
+            <li><em>酒精易揮發</em>：現配現用，密封冷藏</li>
+            <li><em>體積收縮</em>：加水到標線而非加固定量水（酒精+水混合後體積會略縮）</li>
+            <li><em>容器須乾燥</em>：殘留水分會稀釋影響濃度</li>
+          </ul>
+        </div>
+
+        <div style="margin-top:8px; padding:8px 12px; background:rgba(0,212,255,0.06); border-radius:6px; font-size:.78rem; color:var(--ink-2);">
+          💡 <strong>為什麼學這個？</strong>NIR/Raman 校正酒精含量需要 6-8 個已知濃度建立 PLS 模型，這是進實驗室第一週要會的基本功。
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 教師密碼 Modal ============ -->
+<div id="teacher-pw-modal" class="modal-overlay" style="display:none;">
+  <div class="modal modal-warning">
+    <h2>🔒 教師驗證</h2>
+    <p>「全班紀錄」功能僅限教師使用，請輸入教師密碼。</p>
+    <input type="password" id="teacher-pw-input" placeholder="教師密碼" maxlength="40"
+           onkeydown="if(event.key==='Enter'){event.preventDefault();verifyTeacherPassword();}"/>
+    <div id="teacher-pw-error" style="color:var(--bad); font-size:.85rem; min-height:1.2em; margin-bottom:8px;"></div>
+    <div class="modal-buttons">
+      <button class="btn btn-outline" onclick="cancelTeacherPw()">取消</button>
+      <button class="btn" style="background:var(--warn); color:#000;" onclick="verifyTeacherPassword()">驗證並匯出</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ Student Modal ============ -->
+<div id="student-modal" class="modal-overlay" style="display:none;">
+  <div class="modal">
+    <h2>👋 開始學習前</h2>
+    <p>請輸入你的姓名與學號，這份紀錄會儲存在本機，<em>不會上傳到網路</em>。教師可在課堂上集中匯出 CSV。</p>
+    <input type="text" id="student-name-input" placeholder="姓名" maxlength="20"/>
+    <input type="text" id="student-id-input" placeholder="學號 (選填)" maxlength="20"/>
+    <input type="text" id="student-class-input" placeholder="班級 (e.g. 食科二A)" maxlength="20"/>
+    <div class="modal-buttons">
+      <button class="btn btn-outline" onclick="cancelStudentModal()">取消</button>
+      <button class="btn" onclick="saveStudent()">確認</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch7 文字雲顯示 — 教師投影用</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0D1B2A;
+    color: #ECEEF2;
+    font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+    overflow: hidden;
+    width: 100vw; height: 100vh;
+  }
+
+  #topbar {
+    position: fixed; top: 0; left: 0; right: 0;
+    height: 56px;
+    background: rgba(10,20,35,0.92);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    z-index: 100;
+    border-bottom: 1px solid #1A3050;
+  }
+  #topbar .left { display: flex; align-items: center; gap: 16px; }
+  #topbar h1 { font-size: 18px; font-weight: 700; color: #00C6FF; }
+  #counter {
+    background: #1A3050;
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 13px;
+    color: #7A91B0;
+  }
+  #counter span { color: #FFD700; font-weight: 700; font-size: 16px; }
+  #topbar .right { display: flex; gap: 10px; }
+  .ctrl-btn {
+    padding: 7px 16px;
+    border-radius: 8px;
+    border: 1px solid #2A4A6A;
+    background: transparent;
+    color: #7A91B0;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+  .ctrl-btn:hover { border-color: #00C6FF; color: #00C6FF; }
+  .ctrl-btn.danger:hover { border-color: #E74C3C; color: #E74C3C; }
+
+  #question {
+    position: fixed;
+    top: 56px; left: 0; right: 0;
+    padding: 20px 40px 10px;
+    text-align: center;
+    z-index: 50;
+    pointer-events: none;
+  }
+  #question h2 {
+    font-size: clamp(18px, 3vw, 28px);
+    font-weight: 700;
+    color: rgba(255,215,0,0.9);
+    text-shadow: 0 2px 12px rgba(0,0,0,0.8);
+  }
+  #question .sub {
+    font-size: 14px;
+    color: rgba(0,198,255,0.7);
+    margin-top: 4px;
+  }
+
+  #canvas-wrap {
+    position: fixed;
+    top: 56px; left: 0; right: 0; bottom: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  canvas { display: block; }
+
+  #empty {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    pointer-events: none;
+  }
+  #empty .emoji { font-size: 64px; margin-bottom: 16px; }
+  #empty p { font-size: 18px; color: #4A6080; }
+  #empty .hint { font-size: 14px; color: #2A4A6A; margin-top: 8px; }
+
+  #ticker {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 36px;
+    background: rgba(10,20,35,0.85);
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    border-top: 1px solid #1A3050;
+  }
+  #ticker-label {
+    font-size: 11px;
+    color: #00C6FF;
+    font-weight: 700;
+    padding: 0 12px;
+    white-space: nowrap;
+    border-right: 1px solid #1A3050;
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
+  #ticker-inner {
+    display: flex;
+    gap: 24px;
+    padding: 0 16px;
+    animation: scroll-x 20s linear infinite;
+    white-space: nowrap;
+  }
+  @keyframes scroll-x {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+  .ticker-word { font-size: 13px; color: #7A91B0; }
+  .ticker-word.new-word { color: #2ECC71; font-weight: 700; }
+
+  #fs-hint {
+    position: fixed;
+    bottom: 44px; right: 16px;
+    font-size: 11px;
+    color: #2A4A6A;
+  }
+
+  #confirm-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+  }
+  #confirm-overlay.show { display: flex; }
+  #confirm-box {
+    background: #1A3050;
+    border-radius: 16px;
+    padding: 32px;
+    max-width: 340px;
+    text-align: center;
+  }
+  #confirm-box h3 { font-size: 20px; margin-bottom: 10px; }
+  #confirm-box p  { font-size: 14px; color: #7A91B0; margin-bottom: 24px; }
+  #confirm-box .btns { display: flex; gap: 12px; }
+  #confirm-box .btns button { flex: 1; padding: 12px; border-radius: 10px; border: none; font-size: 15px; font-family: inherit; cursor: pointer; }
+  #cancel-btn  { background: #0F2133; color: #7A91B0; }
+  #confirm-btn { background: #E74C3C; color: #fff; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <div class="left">
+    <h1>☁️ Ch7 開場文字雲</h1>
+    <div id="counter">已收到 <span id="count">0</span> 則</div>
+  </div>
+  <div class="right">
+    <button class="ctrl-btn" id="fsBtn">全螢幕 ⛶</button>
+    <button class="ctrl-btn" id="pauseBtn">暫停更新</button>
+    <button class="ctrl-btn danger" id="clearBtn">清除所有詞</button>
+  </div>
+</div>
+
+<div id="question">
+  <h2>你覺得「Beer's Law」的精髓是什麼？</h2>
+  <div class="sub">Ch7 · UV-Vis 與螢光光譜法</div>
+</div>
+
+<div id="canvas-wrap">
+  <canvas id="wc"></canvas>
+</div>
+
+<div id="empty">
+  <div class="emoji">🔬</div>
+  <p>等待學生輸入中...</p>
+  <p class="hint">學生掃描 QR Code → wordcloud_student.html</p>
+</div>
+
+<div id="ticker">
+  <div id="ticker-label">最新投稿</div>
+  <div id="ticker-inner"><span class="ticker-word">等待第一則投稿...</span></div>
+</div>
+
+<div id="fs-hint">按 F 全螢幕</div>
+
+<div id="qr-panel" style="position:fixed;top:64px;right:20px;background:rgba(10,20,35,0.96);backdrop-filter:blur(16px);border:1px solid #2A4A6A;border-radius:16px;padding:16px 18px;text-align:center;z-index:90;box-shadow:0 8px 32px rgba(0,0,0,0.6);width:230px">
+  <div style="font-size:13px;font-weight:700;color:#00C6FF;margin-bottom:10px">📱 學生掃碼投稿</div>
+  <img id="qr-img" src="" alt="QR Code" style="width:194px;height:194px;border-radius:10px;background:#fff;display:block;margin:0 auto 10px;padding:5px">
+  <div id="qr-url-text" style="font-size:10px;color:#7A91B0;word-break:break-all;line-height:1.5;margin-bottom:12px"></div>
+  <button onclick="document.getElementById('qr-panel').style.display='none'"
+    style="padding:6px 20px;background:#1A3050;color:#7A91B0;border:1px solid #2A4A6A;border-radius:8px;cursor:pointer;font-size:12px;font-family:inherit;width:100%">
+    收起 ✕
+  </button>
+</div>
+
+<div id="confirm-overlay">
+  <div id="confirm-box">
+    <h3>⚠️ 確認清除</h3>
+    <p>將刪除 Firestore 中所有 Ch7 文字雲資料，<br>此動作不可還原。</p>
+    <div class="btns">
+      <button id="cancel-btn">取消</button>
+      <button id="confirm-btn">確認清除</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/wordcloud2.js/1.1.0/wordcloud2.min.js"></script>
+
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+  import { getFirestore, collection, onSnapshot, deleteDoc, doc, getDocs }
+    from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+  import { getAuth, GoogleAuthProvider, signInWithPopup }
+    from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+
+  // ──────────────────────────────────────────────
+  const firebaseConfig = {
+    apiKey:            "FIREBASE_API_KEY_REMOVED",
+    authDomain:        "my-teaching-tools-517a0.firebaseapp.com",
+    projectId:         "my-teaching-tools-517a0",
+    storageBucket:     "my-teaching-tools-517a0.firebasestorage.app",
+    messagingSenderId: "244288457011",
+    appId:             "1:244288457011:web:4b3ff8a846a6c50b169646"
+  };
+  // ──────────────────────────────────────────────
+
+  const COLLECTION  = "ch7_wordcloud_words";
+  // 學生投稿頁網址：自動以同站點解析 (food-analysis-ch7-tw.web.app/wordcloud_student.html)
+  const STUDENT_URL = new URL("wordcloud_student.html", window.location.href).href;
+
+  const qrImg  = document.getElementById('qr-img');
+  const qrText = document.getElementById('qr-url-text');
+  if (qrImg)  qrImg.src         = `https://api.qrserver.com/v1/create-qr-code/?size=194x194&format=png&data=${encodeURIComponent(STUDENT_URL)}`;
+  if (qrText) qrText.textContent = STUDENT_URL;
+
+  const COLORS = ["#00C6FF","#FFD700","#2ECC71","#E74C3C","#9B59B6","#F39C12","#1ABC9C","#E67E22"];
+
+  const app  = initializeApp(firebaseConfig);
+  const db   = getFirestore(app);
+  const auth = getAuth(app);
+
+  const canvas      = document.getElementById('wc');
+  const countEl     = document.getElementById('count');
+  const emptyEl     = document.getElementById('empty');
+  const pauseBtn    = document.getElementById('pauseBtn');
+  const clearBtn    = document.getElementById('clearBtn');
+  const fsBtn       = document.getElementById('fsBtn');
+  const tickerInner = document.getElementById('ticker-inner');
+  const overlay     = document.getElementById('confirm-overlay');
+
+  let paused     = false;
+  let latestDocs = [];
+
+  function resizeCanvas() {
+    const wrap = document.getElementById('canvas-wrap');
+    canvas.width  = wrap.clientWidth;
+    canvas.height = wrap.clientHeight;
+  }
+  resizeCanvas();
+  window.addEventListener('resize', () => { resizeCanvas(); renderCloud(latestDocs); });
+
+  function countWords(docs) {
+    const freq = {};
+    docs.forEach(d => {
+      const w = (d.word || '').trim();
+      if (w) freq[w] = (freq[w] || 0) + 1;
+    });
+    return Object.entries(freq).sort((a,b) => b[1]-a[1]);
+  }
+
+  function renderCloud(docs) {
+    if (paused) return;
+    const list = countWords(docs);
+    emptyEl.style.display = list.length ? 'none' : 'block';
+    if (!list.length) return;
+
+    const maxFreq = list[0][1];
+    const data = list.map(([word, freq]) => [
+      word,
+      Math.max(20, Math.round((freq / maxFreq) * 90) + 20)
+    ]);
+
+    WordCloud(canvas, {
+      list: data,
+      gridSize: Math.round(16 * canvas.width / 1024),
+      weightFactor: 1,
+      fontFamily: '"Noto Sans TC", "Microsoft JhengHei", sans-serif',
+      color: () => COLORS[Math.floor(Math.random() * COLORS.length)],
+      rotateRatio: 0.2,
+      rotationSteps: 2,
+      backgroundColor: 'transparent',
+      drawOutOfBound: false,
+      shuffle: true,
+      shrinkToFit: true,
+    });
+  }
+
+  function updateTicker(docs) {
+    const recent = docs.slice(-20);
+    const words = recent.map(d => d.word).filter(Boolean);
+    if (!words.length) return;
+    const doubled = [...words, ...words];
+    tickerInner.innerHTML = doubled
+      .map((w, i) => `<span class="ticker-word${i < words.length ? ' new-word' : ''}">${w}</span>`)
+      .join('');
+  }
+
+  onSnapshot(collection(db, COLLECTION), (snap) => {
+    latestDocs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    countEl.textContent = latestDocs.length;
+    renderCloud(latestDocs);
+    updateTicker(latestDocs);
+  });
+
+  pauseBtn.addEventListener('click', () => {
+    paused = !paused;
+    pauseBtn.textContent = paused ? '▶ 繼續更新' : '暫停更新';
+    pauseBtn.style.color = paused ? '#FFD700' : '';
+    pauseBtn.style.borderColor = paused ? '#FFD700' : '';
+    if (!paused) renderCloud(latestDocs);
+  });
+
+  clearBtn.addEventListener('click', () => overlay.classList.add('show'));
+  document.getElementById('cancel-btn').addEventListener('click', () => overlay.classList.remove('show'));
+  document.getElementById('confirm-btn').addEventListener('click', async () => {
+    overlay.classList.remove('show');
+    try {
+      // 規則限定：只有老師 Google 帳號可清除。若未登入，跳出登入 popup。
+      if (!auth.currentUser) {
+        await signInWithPopup(auth, new GoogleAuthProvider());
+      }
+      const snap = await getDocs(collection(db, COLLECTION));
+      await Promise.all(snap.docs.map(d => deleteDoc(doc(db, COLLECTION, d.id))));
+    } catch (e) {
+      console.error('清除失敗:', e);
+      alert('清除失敗：' + (e.code || e.message) + '\n請確認你以老師帳號 (tsyeh0909@gmail.com) 登入');
+    }
+  });
+
+  function toggleFs() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {});
+    else document.exitFullscreen();
+  }
+  fsBtn.addEventListener('click', toggleFs);
+  document.addEventListener('keydown', (e) => { if (e.key === 'f' || e.key === 'F') toggleFs(); });
+</script>
+</body>
+</html>

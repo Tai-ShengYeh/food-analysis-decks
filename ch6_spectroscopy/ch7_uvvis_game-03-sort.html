@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CH7 遊戲 3 — UV-Vis 操作流程排序</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:#0D1B2A; --card:#1A3050; --card2:#122540;
+  --pri:#00C6FF; --hi:#FFD700; --txt:#ECEEF2; --muted:#7A91B0;
+  --grn:#2ECC71; --red:#E74C3C; --pur:#9B59B6;
+}
+body {
+  font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
+  background: var(--bg);
+  color: var(--txt);
+  min-height: 100vh;
+  padding: 16px;
+  font-size: 16px;
+}
+.container { max-width: 720px; margin: 0 auto; }
+.nav-link {
+  display: inline-block;
+  margin-bottom: 10px;
+  color: var(--pri);
+  text-decoration: none;
+  font-size: 14px;
+}
+.nav-link:hover { text-decoration: underline; }
+header {
+  background: var(--card);
+  padding: 18px 20px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  border-left: 4px solid var(--pri);
+}
+header h1 { font-size: 22px; margin-bottom: 6px; color: var(--pri); }
+header .subtitle { color: var(--muted); font-size: 13px; }
+.round-progress {
+  background: var(--card2);
+  padding: 10px 16px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.round-progress .step {
+  padding: 3px 10px;
+  border-radius: 12px;
+  background: var(--card);
+  font-size: 12px;
+}
+.round-progress .step.active { background: var(--pri); color: var(--bg); font-weight: bold; }
+.round-progress .step.done { background: var(--grn); color: var(--bg); }
+.score-bar {
+  background: var(--card2);
+  padding: 10px 18px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.task-card {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.task-prompt {
+  font-size: 17px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: var(--hi);
+  line-height: 1.5;
+}
+.task-hint {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+.pool {
+  background: var(--card2);
+  border: 2px dashed #2A4A6E;
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 16px;
+}
+.pool-title {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.item {
+  background: var(--card);
+  border: 2px solid #2A4A6E;
+  border-radius: 8px;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 15px;
+  font-weight: bold;
+  user-select: none;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+.item:hover { border-color: var(--pri); }
+.slot-area {
+  background: var(--card2);
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 16px;
+}
+.slot {
+  display: flex;
+  align-items: stretch;
+  background: var(--card);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  border: 2px solid #2A4A6E;
+  min-height: 50px;
+  overflow: hidden;
+}
+.slot-num {
+  background: var(--card2);
+  color: var(--muted);
+  padding: 12px 14px;
+  font-weight: bold;
+  font-size: 14px;
+  min-width: 60px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.slot-content {
+  flex: 1;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  color: var(--txt);
+}
+.slot.filled .slot-content:hover { color: var(--red); }
+.slot.filled .slot-content::after {
+  content: ' ✕';
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 13px;
+}
+.slot.correct { border-color: var(--grn); background: rgba(46, 204, 113, 0.1); }
+.slot.correct .slot-num { background: var(--grn); color: var(--bg); }
+.slot.correct .slot-content::after { content: ''; }
+.slot.wrong { border-color: var(--red); background: rgba(231, 76, 60, 0.1); }
+.slot.wrong .slot-num { background: var(--red); color: var(--bg); }
+.slot.wrong .slot-content::after { content: ''; }
+.slot-correct-tag {
+  font-size: 11px;
+  color: var(--grn);
+  margin-left: 8px;
+  font-weight: normal;
+}
+.btn {
+  background: var(--pri);
+  color: var(--bg);
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+  min-height: 44px;
+}
+.btn:hover { background: #00A0CC; }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-secondary { background: #5B6777; color: var(--txt); }
+.btn-secondary:hover { background: #455260; }
+.controls { text-align: center; margin: 16px 0; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+.feedback {
+  background: rgba(255, 215, 0, 0.08);
+  border-left: 3px solid var(--hi);
+  padding: 12px 16px;
+  border-radius: 6px;
+  margin-top: 12px;
+  font-size: 14px;
+  color: var(--txt);
+  line-height: 1.6;
+  display: none;
+}
+.feedback.show { display: block; }
+.complete-message {
+  background: var(--grn);
+  color: var(--bg);
+  padding: 24px;
+  border-radius: 12px;
+  margin: 20px 0;
+  text-align: center;
+  display: none;
+  font-weight: bold;
+}
+.complete-message.partial { background: var(--hi); }
+.complete-message h2 { font-size: 22px; margin-bottom: 12px; }
+.complete-message .score { font-size: 30px; font-weight: bold; margin: 8px 0; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="ch6_spectroscopy.html" class="nav-link">← 回投影片</a>
+  <header>
+    <h1>🔢 CH7 遊戲 3：UV-Vis 操作流程排序</h1>
+    <div class="subtitle">4 個排序關卡：儀器光路、標準曲線、A↔T 換算、定量決策</div>
+  </header>
+
+  <div class="round-progress" id="roundProgress"></div>
+
+  <div class="score-bar">
+    <span>關卡 <span id="curRound">1</span> / <span id="totalRounds">4</span></span>
+    <span style="color:var(--grn)">總得分：<span id="totalScore">0</span></span>
+  </div>
+
+  <div id="taskArea"></div>
+
+  <div id="completeMessage" class="complete-message">
+    <h2 id="completeTitle">🎉 全部完成！</h2>
+    <div class="score" id="completeScore">— / —</div>
+    <div id="finalComment"></div>
+    <br>
+    <button class="btn" onclick="restart()">再玩一次</button>
+  </div>
+</div>
+
+<script type="module">
+import { initGameSession, logEvent } from './game_firebase.js';
+
+const ALL_ROUNDS = [
+  {
+    "id": "instrument-flow",
+    "prompt": "分光光度計光路（從光源到訊號）",
+    "hint": "提示：先「產生」單色光，再「通過樣品」、最後「偵測」",
+    "items": [
+      "光源（鎢燈/氘燈）",
+      "單色器（光柵分光）",
+      "入射狹縫 + 樣品池（比色槽）",
+      "偵測器（PMT/陣列）",
+      "訊號放大與顯示"
+    ],
+    "feedback": "五元件背熟：光、單、樣、偵、訊。雙光束設計在單色器後分束，一束過樣品、一束過 blank。"
+  },
+  {
+    "id": "calibration-flow",
+    "prompt": "標準曲線法定量流程",
+    "hint": "提示：先建線，再量未知",
+    "items": [
+      "配製 4–6 點濃度標準液",
+      "選 λmax 並做 blank",
+      "依序量測各標準液 A",
+      "繪 A vs c 標準曲線",
+      "量測未知樣品 A",
+      "內插回算濃度"
+    ],
+    "feedback": "標準液間距宜涵蓋預期未知濃度區間。R² > 0.999 才合格。樣品 A 落在標準範圍中段最準。"
+  },
+  {
+    "id": "AT-conversion",
+    "prompt": "T → A 計算思路（給 %T 算 A）",
+    "hint": "%T = 25% 時 A = ?",
+    "items": [
+      "將 %T 除以 100，得到 T",
+      "取 T 的對數",
+      "加負號得 A",
+      "檢查 A 是否在 0.2–0.8 線性區",
+      "若 A 超範圍 → 稀釋重測"
+    ],
+    "feedback": "T = 0.25 → log(0.25) = −0.602 → A = 0.602。屬線性區，OK。記憶：T=10% → A=1；T=1% → A=2。"
+  },
+  {
+    "id": "food-strategy",
+    "prompt": "食品成分定量策略決策（從目標到方法）",
+    "hint": "提示：先想要量什麼，再對應發色團與試劑",
+    "items": [
+      "確認分析目標（蛋白？酚類？色素？）",
+      "查文獻找該物質 λmax 或衍生反應",
+      "選擇對應顯色試劑（如 Bradford、Folin、Griess）",
+      "配標準曲線 + 處理樣品",
+      "量測 A 並回算濃度"
+    ],
+    "feedback": "常見：蛋白→Bradford 595 nm；酚→Folin 765 nm；亞硝酸→Griess 540 nm；β-胡蘿蔔素→直接 450 nm 不需試劑。"
+  }
+];
+
+// 支援 ?round=N 只玩特定 round（1-indexed）；?rounds=1,3 玩多個 round
+const _urlParams = new URLSearchParams(location.search);
+const _roundParam = _urlParams.get('round') || _urlParams.get('rounds');
+let ROUNDS;
+if (_roundParam) {
+  const indices = _roundParam.split(',').map(n => parseInt(n.trim()) - 1).filter(n => n >= 0 && n < ALL_ROUNDS.length);
+  ROUNDS = indices.length > 0 ? indices.map(i => ALL_ROUNDS[i]) : ALL_ROUNDS;
+} else {
+  ROUNDS = ALL_ROUNDS;
+}
+
+let currentRound = 0;
+let totalScore = 0;
+let state = {
+  pool: [],         // 待選 items
+  slots: [],        // 已放 slots（按順序）
+  checked: false,
+  selectedPoolIdx: null,
+};
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function initRound() {
+  const round = ROUNDS[currentRound];
+  state.pool = shuffle(round.items.map((text, i) => ({ text, correctOrder: i })));
+  state.slots = round.items.map(() => null);
+  state.checked = false;
+  state.selectedPoolIdx = null;
+  renderRoundProgress();
+  renderTask();
+}
+
+function renderRoundProgress() {
+  const el = document.getElementById('roundProgress');
+  el.innerHTML = '<span>關卡：</span>' +
+    ROUNDS.map((r, i) => {
+      const cls = i < currentRound ? 'done' : (i === currentRound ? 'active' : '');
+      return `<span class="step ${cls}">${i + 1}</span>`;
+    }).join('');
+  document.getElementById('curRound').textContent = currentRound + 1;
+  document.getElementById('totalRounds').textContent = ROUNDS.length;
+  document.getElementById('totalScore').textContent = totalScore;
+}
+
+function renderTask() {
+  const round = ROUNDS[currentRound];
+  const allFilled = state.slots.every(s => s !== null);
+
+  document.getElementById('taskArea').innerHTML = `
+    <div class="task-card">
+      <div class="task-prompt">${round.prompt}</div>
+      <div class="task-hint">💡 ${round.hint}（點下方卡片 → 點上方欄位填入；再點欄位內卡片可取回）</div>
+
+      <div class="slot-area" id="slotArea"></div>
+
+      <div class="pool">
+        <div class="pool-title">📦 待排序卡片（${state.pool.length} 張剩餘）</div>
+        <div class="items" id="poolArea"></div>
+      </div>
+
+      <div id="feedbackBox" class="feedback"></div>
+
+      <div class="controls">
+        <button class="btn" id="checkBtn" ${allFilled && !state.checked ? '' : 'disabled'}>對答案</button>
+        <button class="btn btn-secondary" id="resetBtn">🔄 重排</button>
+        <button class="btn" id="nextBtn" style="display:${state.checked ? 'inline-block' : 'none'}">
+          ${currentRound === ROUNDS.length - 1 ? '查看結果 →' : '下一關 →'}
+        </button>
+      </div>
+    </div>
+  `;
+  renderSlots();
+  renderPool();
+
+  document.getElementById('checkBtn').addEventListener('click', checkAnswers);
+  document.getElementById('resetBtn').addEventListener('click', resetRound);
+  document.getElementById('nextBtn').addEventListener('click', nextRound);
+}
+
+function renderSlots() {
+  const slotArea = document.getElementById('slotArea');
+  slotArea.innerHTML = '';
+  state.slots.forEach((item, idx) => {
+    const slot = document.createElement('div');
+    slot.className = 'slot' + (item ? ' filled' : '');
+    if (state.checked && item) {
+      const isCorrect = item.correctOrder === idx;
+      slot.classList.add(isCorrect ? 'correct' : 'wrong');
+    }
+    const correctTag = state.checked && item && item.correctOrder !== idx
+      ? `<span class="slot-correct-tag">應在第 ${item.correctOrder + 1} 位</span>` : '';
+    slot.innerHTML = `
+      <div class="slot-num">${idx + 1}</div>
+      <div class="slot-content">${item ? item.text + correctTag : '（點下方卡片填入）'}</div>
+    `;
+    if (item && !state.checked) {
+      slot.querySelector('.slot-content').addEventListener('click', () => takeBack(idx));
+    } else if (!item && !state.checked) {
+      slot.querySelector('.slot-content').addEventListener('click', () => dropToSlot(idx));
+    }
+    slotArea.appendChild(slot);
+  });
+}
+
+function renderPool() {
+  const poolArea = document.getElementById('poolArea');
+  poolArea.innerHTML = '';
+  state.pool.forEach((item, idx) => {
+    const el = document.createElement('div');
+    el.className = 'item';
+    if (state.selectedPoolIdx === idx) {
+      el.style.borderColor = 'var(--pri)';
+      el.style.background = 'rgba(0,198,255,0.15)';
+    }
+    el.textContent = item.text;
+    if (!state.checked) {
+      el.addEventListener('click', () => selectFromPool(idx));
+    }
+    poolArea.appendChild(el);
+  });
+}
+
+function selectFromPool(idx) {
+  if (state.checked) return;
+  // 點同一張取消選取，否則切換
+  state.selectedPoolIdx = state.selectedPoolIdx === idx ? null : idx;
+  // 若有空 slot 自動填到最前面空 slot
+  if (state.selectedPoolIdx !== null) {
+    const firstEmpty = state.slots.findIndex(s => s === null);
+    if (firstEmpty !== -1) {
+      const item = state.pool[state.selectedPoolIdx];
+      state.pool.splice(state.selectedPoolIdx, 1);
+      state.slots[firstEmpty] = item;
+      state.selectedPoolIdx = null;
+    }
+  }
+  renderTask();
+}
+
+function dropToSlot(slotIdx) {
+  if (state.checked) return;
+  if (state.selectedPoolIdx === null) return;
+  if (state.slots[slotIdx] !== null) return;
+  const item = state.pool[state.selectedPoolIdx];
+  state.pool.splice(state.selectedPoolIdx, 1);
+  state.slots[slotIdx] = item;
+  state.selectedPoolIdx = null;
+  renderTask();
+}
+
+function takeBack(slotIdx) {
+  if (state.checked) return;
+  const item = state.slots[slotIdx];
+  if (!item) return;
+  state.slots[slotIdx] = null;
+  state.pool.push(item);
+  renderTask();
+}
+
+function resetRound() {
+  initRound();
+}
+
+function checkAnswers() {
+  const round = ROUNDS[currentRound];
+  state.checked = true;
+  let correctCount = 0;
+  state.slots.forEach((item, idx) => {
+    if (item && item.correctOrder === idx) correctCount++;
+  });
+  totalScore += correctCount;
+  logEvent({
+    event_type: 'answer',
+    question_id: round.id,
+    is_correct: correctCount === round.items.length,
+    attempts: 1,
+    final_score: correctCount,
+  });
+
+  const fb = document.getElementById('feedbackBox');
+  fb.innerHTML = `<strong>得分 ${correctCount}/${round.items.length}</strong><br>💡 ${round.feedback}`;
+  fb.classList.add('show');
+  renderTask();
+  // 重新渲染後 feedback 被清掉，再顯示一次
+  document.getElementById('feedbackBox').innerHTML = `<strong>得分 ${correctCount}/${round.items.length}</strong><br>💡 ${round.feedback}`;
+  document.getElementById('feedbackBox').classList.add('show');
+  renderRoundProgress();
+}
+
+function nextRound() {
+  if (currentRound < ROUNDS.length - 1) {
+    currentRound++;
+    initRound();
+  } else {
+    showComplete();
+  }
+}
+
+function showComplete() {
+  const total = ROUNDS.reduce((s, r) => s + r.items.length, 0);
+  const msg = document.getElementById('completeMessage');
+  msg.classList.remove('partial');
+  document.getElementById('completeScore').textContent = `${totalScore} / ${total}`;
+  let comment = '';
+  if (totalScore === total) {
+    document.getElementById('completeTitle').textContent = '🎉 全部正確！光譜流程已內化！';
+    comment = '可以挑戰真正的食品分析情境題了。';
+  } else if (totalScore >= total * 0.7) {
+    document.getElementById('completeTitle').textContent = '👍 大部分對！';
+    comment = '重點看「應在第 X 位」的紅字，回去複習相關投影片。';
+    msg.classList.add('partial');
+  } else {
+    document.getElementById('completeTitle').textContent = '🔁 再玩一次！';
+    comment = 'Jablonski 與 Beer-Lambert 流程要熟記，建議重看投影片 14–16。';
+    msg.classList.add('partial');
+  }
+  document.getElementById('finalComment').textContent = comment;
+  document.getElementById('taskArea').innerHTML = '';
+  msg.style.display = 'block';
+  msg.scrollIntoView({ behavior: 'smooth' });
+
+  logEvent({
+    event_type: 'session_complete',
+    final_score: totalScore,
+    attempts: ROUNDS.length,
+  });
+}
+
+function restart() {
+  currentRound = 0;
+  totalScore = 0;
+  document.getElementById('completeMessage').style.display = 'none';
+  initRound();
+}
+
+window.restart = restart;
+
+await initGameSession({ chapter: 'ch7', game: 'sort' });
+initRound();
+</script>
+</body>
+</html>

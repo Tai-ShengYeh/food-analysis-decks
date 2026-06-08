@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>遊戲 5：食品分析情境填空 · Ch6</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0e27; --bg-2:#11163a; --card:#1A3050; --card2:#122540;
+  --ink:#eef3ff; --ink-2:#b8c5e0; --muted:#7a8bb8;
+  --accent:#00d4ff; --accent-2:#ff006e; --grn:#00e08a; --red:#e74c3c; --warn:#ffb800;
+}
+body{
+  font-family:'Noto Sans TC','Microsoft JhengHei',sans-serif;
+  background:radial-gradient(ellipse at top, #11163a 0%, #0a0e27 60%);
+  color:var(--ink); min-height:100vh; padding:16px; font-size:16px;
+}
+.container{max-width:820px; margin:0 auto}
+.nav-link{display:inline-block; margin-bottom:10px; color:var(--accent); text-decoration:none; font-size:14px}
+.nav-link:hover{text-decoration:underline}
+header{
+  background:var(--card); padding:18px 20px; border-radius:12px;
+  margin-bottom:16px; border-left:4px solid var(--accent-2);
+}
+header h1{font-size:22px; margin-bottom:6px; color:var(--accent-2)}
+header .subtitle{color:var(--muted); font-size:13px}
+.progress-bar{
+  height:6px; background:var(--card2); border-radius:3px;
+  margin-bottom:16px; overflow:hidden;
+}
+.progress-bar .fill{
+  height:100%; background:linear-gradient(90deg,var(--accent),var(--accent-2));
+  width:0%; transition:width .4s ease;
+}
+.score-bar{
+  background:var(--card2); padding:10px 18px; border-radius:8px;
+  margin-bottom:16px; display:flex; justify-content:space-between;
+  font-size:14px; font-weight:bold;
+}
+.scenario-card{
+  background:var(--card); border-radius:12px; padding:22px;
+  margin-bottom:14px;
+}
+.q-num{
+  font-family:'JetBrains Mono',monospace; font-size:12px;
+  color:var(--accent); letter-spacing:.15em; margin-bottom:8px;
+}
+.scene-tag{
+  display:inline-block; background:rgba(255,184,0,.15);
+  color:var(--warn); padding:3px 10px; border-radius:12px;
+  font-size:11px; font-family:'JetBrains Mono',monospace;
+  margin-bottom:8px;
+}
+.scenario{
+  font-size:15px; line-height:1.65; margin-bottom:18px;
+  padding:14px; background:var(--card2); border-radius:8px;
+  border-left:3px solid var(--warn);
+}
+.question{
+  font-size:16px; line-height:1.5; margin-bottom:14px; font-weight:700;
+}
+.blanks{display:flex; flex-direction:column; gap:10px; margin-bottom:14px}
+.blank-row{
+  display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+}
+.blank-label{
+  font-size:14px; color:var(--ink-2);
+  min-width:140px; flex-shrink:0;
+}
+.blank-input{
+  flex:1; min-width:160px;
+  padding:10px 14px;
+  background:var(--card2); border:2px solid #2A4A6E;
+  border-radius:8px; font-size:15px; font-family:'JetBrains Mono',monospace;
+  color:var(--ink); outline:none;
+}
+.blank-input:focus{border-color:var(--accent)}
+.blank-input.correct{border-color:var(--grn); background:rgba(0,224,138,.08); color:var(--grn)}
+.blank-input.wrong{border-color:var(--red); background:rgba(231,76,60,.08); color:var(--red)}
+.blank-hint{
+  font-size:12px; color:var(--muted);
+  font-family:'JetBrains Mono',monospace;
+}
+.feedback{
+  display:none; padding:14px 16px; border-radius:10px;
+  font-size:14px; line-height:1.6; margin-top:10px;
+}
+.feedback.show{display:block}
+.feedback.correct{background:rgba(0,224,138,.08); border-left:3px solid var(--grn)}
+.feedback.wrong{background:rgba(255,184,0,.08); border-left:3px solid var(--warn)}
+.feedback strong{color:var(--accent)}
+.feedback .right-ans{
+  display:inline-block; background:rgba(0,224,138,.15);
+  color:var(--grn); padding:2px 8px; border-radius:6px;
+  font-family:'JetBrains Mono',monospace; margin:0 4px;
+}
+.btn{
+  border:none; padding:10px 22px; border-radius:8px;
+  font-size:15px; font-weight:bold; cursor:pointer;
+  font-family:inherit; min-height:44px;
+}
+.btn-primary{background:var(--accent); color:var(--bg); width:100%}
+.btn-primary:hover{background:#00a8d4}
+.btn-next{
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  color:var(--bg); width:100%; display:none; margin-top:10px;
+}
+.btn-next.show{display:block}
+.complete{
+  background:linear-gradient(135deg,var(--grn),var(--accent));
+  color:var(--bg); padding:28px; border-radius:14px;
+  text-align:center; display:none; margin-bottom:14px;
+}
+.complete h2{font-size:24px; margin-bottom:10px}
+.complete .score{font-size:42px; font-weight:900; margin:14px 0}
+.complete .btn{background:var(--bg); color:var(--ink)}
+.qr-foot{text-align:center; margin-top:24px; padding:14px; border-top:1px solid rgba(255,255,255,.06)}
+.qr-foot img{border-radius:8px; background:white; padding:6px}
+.qr-foot p{font-size:.75rem; color:var(--muted); margin-top:6px}
+@media (max-width:600px){
+  .blank-label{min-width:100%}
+  .blank-input{width:100%}
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="ch6_spectroscopy.html" class="nav-link">← 回投影片</a>
+  <header>
+    <h1>🔬 遊戲 5：食品分析情境填空</h1>
+    <div class="subtitle">真實實驗室情境，依描述填入正確的光譜法名稱、波長範圍、或數值。大小寫不拘。</div>
+  </header>
+
+  <div class="progress-bar"><div class="fill" id="fill"></div></div>
+  <div class="score-bar">
+    <span>進度：<span id="cur">1</span> / <span id="total">6</span></span>
+    <span style="color:var(--grn)">答對：<span id="correct">0</span></span>
+  </div>
+
+  <div id="complete" class="complete">
+    <h2>🎉 全部情境完成！</h2>
+    <div class="score" id="finalScore">0 / 6</div>
+    <div id="finalMsg"></div>
+    <br>
+    <button class="btn" onclick="restart()">再玩一次</button>
+  </div>
+
+  <div id="quizArea"></div>
+
+  <div class="qr-foot">
+    <img id="qr-img" width="120" height="120" alt="QR">
+    <p>手機掃描即可開啟此遊戲</p>
+  </div>
+</div>
+
+<script type="module">
+import { initGameSession, logEvent } from './game_firebase.js';
+
+// 答案接受多種寫法，用 OR 陣列；比對前會 trim + 統一小寫 + 去掉空白
+const SCENARIOS = [
+  {
+    tag: 'CASE 1 · 蛋白質定量',
+    scenario: '你在分析牛奶的蛋白質含量，使用 Lowry 法。試劑與蛋白反應後產生藍紫色錯合物，最大吸收約在 750 nm。',
+    q: '這是哪一種光譜法？吸收的是哪一類能階躍遷？',
+    blanks: [
+      { label: '光譜法名稱', placeholder: '英文縮寫，例如 NMR', ans: ['uv-vis', 'uvvis', 'uv/vis', 'uv vis', 'uv-visible'], hint: '提示：可見光 380–780 nm' },
+      { label: '能階躍遷類型', placeholder: '中文：電子／振動／轉動', ans: ['電子', 'electronic', '電子能階'], hint: '價電子跳到更高軌道' },
+    ],
+    expl: 'Lowry 反應產物在可見光 750 nm 吸收，屬 UV-Vis 吸收光譜，量測「電子躍遷」。'
+  },
+  {
+    tag: 'CASE 2 · 黃麴毒素',
+    scenario: '花生樣品中可能含有 AFB1（黃麴毒素 B1）。你用 365 nm UV 光照射 TLC 板，AFB1 會放出藍綠色螢光。',
+    q: '使用何種光譜法？放射光波長比激發光長／短／相等？',
+    blanks: [
+      { label: '光譜法名稱', placeholder: '中文：螢光／磷光', ans: ['螢光', 'fluorescence', '螢光光譜'], hint: '奈秒級放光' },
+      { label: '放射光波長相對激發光是？', placeholder: '中文：長／短／相等', ans: ['長', '較長', 'longer', '更長'], hint: 'Stokes 位移' },
+    ],
+    expl: 'AFB1 吸收 365 nm UV → 放出 425 nm 藍綠光，這是螢光。因 Stokes 位移，放射波長一定 ≥ 激發波長。'
+  },
+  {
+    tag: 'CASE 3 · 重金屬檢測',
+    scenario: '檢測米粒中的鉛（Pb）含量。樣品消化後霧化進入石墨爐，原子吸收特定波長的光（283.3 nm）。',
+    q: '這是哪一種光譜法？激發的是什麼能階？',
+    blanks: [
+      { label: '光譜法縮寫', placeholder: 'AAS 或 ICP-OES 等', ans: ['aas', '原子吸收', 'atomic absorption'], hint: '元素特徵波長' },
+      { label: '能階類型', placeholder: '中文', ans: ['電子', 'electronic', '原子電子', '電子能階'], hint: '原子的內、外層電子' },
+    ],
+    expl: 'AAS（原子吸收光譜）量測原子化後元素特徵 UV-Vis 波長吸收，本質仍是電子躍遷（原子的）。'
+  },
+  {
+    tag: 'CASE 4 · 油脂氧化',
+    scenario: '研究油脂氧化時，你用紅外光譜偵測 C=O（羰基）官能基。新鮮油與氧化油在 1740 cm⁻¹ 附近吸收強度不同。',
+    q: 'IR 對應哪一類能階？1740 cm⁻¹ 的波數對應波長為多少 μm（保留 2 位小數）？',
+    blanks: [
+      { label: '能階類型', placeholder: '中文', ans: ['振動', 'vibrational', '振動能階'], hint: '化學鍵的伸縮' },
+      { label: '波長 (μm)', placeholder: '例如 5.75', ans: ['5.75', '5.7', '5.8'], hint: 'λ(μm) = 10000 / ν̄(cm⁻¹)' },
+    ],
+    expl: 'IR = 振動能階躍遷。10000 / 1740 ≈ 5.75 μm（中紅外區）。C=O 是油脂氧化指標。'
+  },
+  {
+    tag: 'CASE 5 · 穀物快篩',
+    scenario: '工廠出貨前要快速量測小麥粉的蛋白、脂肪、水分含量。樣品不需前處理，直接掃描 780–2500 nm 範圍，搭配化學計量學模型即可。',
+    q: '使用何種光譜法？吸收的是「基頻」或「泛音／組合」振動？',
+    blanks: [
+      { label: '光譜法縮寫', placeholder: '英文縮寫', ans: ['nir', '近紅外', 'near-ir', 'near ir', 'near-infrared'], hint: '介於 Vis 與 Mid-IR 之間' },
+      { label: '振動類型', placeholder: '中文：基頻／泛音', ans: ['泛音', '泛音與組合', '泛音組合', 'overtone'], hint: '不是 fundamental' },
+    ],
+    expl: 'NIR（780–2500 nm）對應泛音與組合振動，吸收較弱但穿透深，配合 PLS 等模型可同時定量多種分析物。'
+  },
+  {
+    tag: 'CASE 6 · 橄欖油產地',
+    scenario: '你想判定一瓶橄欖油是否來自義大利產區。用 ¹H 與 ¹³C 光譜建立指紋，並用化學計量學分類。需在外加 11.75 T 磁場下進行。',
+    q: '使用何種光譜法？激發的是何種能階？',
+    blanks: [
+      { label: '光譜法縮寫', placeholder: '三個字母', ans: ['nmr', '核磁共振', '核磁'], hint: '射頻範圍' },
+      { label: '能階類型', placeholder: '中文', ans: ['核自旋', 'nuclear spin', '核自旋能階'], hint: '只在外加磁場下才存在' },
+    ],
+    expl: 'NMR 使用 ¹H、¹³C 等核自旋能階；只有外加磁場時這些能階才存在。橄欖油 ¹H-NMR 是常用真偽鑑定法。'
+  },
+];
+
+let cur = 0;
+let correct = 0;
+let answered = false;
+
+function normalize(s) {
+  return (s || '').toString().trim().toLowerCase().replace(/\s+/g, '');
+}
+
+function render() {
+  if (cur >= SCENARIOS.length) { showComplete(); return; }
+  const sc = SCENARIOS[cur];
+  document.getElementById('cur').textContent = cur + 1;
+  document.getElementById('total').textContent = SCENARIOS.length;
+  document.getElementById('correct').textContent = correct;
+  document.getElementById('fill').style.width = (cur / SCENARIOS.length * 100) + '%';
+
+  const blanksHtml = sc.blanks.map((b, i) => `
+    <div class="blank-row">
+      <span class="blank-label">${b.label}：</span>
+      <input class="blank-input" id="blank-${i}" type="text" placeholder="${b.placeholder}" autocomplete="off">
+      <span class="blank-hint">${b.hint}</span>
+    </div>
+  `).join('');
+
+  document.getElementById('quizArea').innerHTML = `
+    <div class="scenario-card">
+      <div class="q-num">Q ${cur + 1} / ${SCENARIOS.length}</div>
+      <span class="scene-tag">${sc.tag}</span>
+      <div class="scenario">${sc.scenario}</div>
+      <div class="question">${sc.q}</div>
+      <div class="blanks">${blanksHtml}</div>
+      <button class="btn btn-primary" id="checkBtn">✓ 檢查答案</button>
+      <button class="btn btn-next" id="nextBtn">下一題 →</button>
+      <div class="feedback" id="feedback"></div>
+    </div>
+  `;
+
+  answered = false;
+  document.getElementById('checkBtn').addEventListener('click', checkAnswer);
+  document.getElementById('nextBtn').addEventListener('click', next);
+  document.getElementById('blank-0').focus();
+
+  // Enter 自動觸發檢查
+  sc.blanks.forEach((_, i) => {
+    document.getElementById(`blank-${i}`).addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        if (i < sc.blanks.length - 1) document.getElementById(`blank-${i+1}`).focus();
+        else checkAnswer();
+      }
+    });
+  });
+}
+
+function checkAnswer() {
+  if (answered) return;
+  const sc = SCENARIOS[cur];
+  let allRight = true;
+  const userAns = [];
+  sc.blanks.forEach((b, i) => {
+    const inp = document.getElementById(`blank-${i}`);
+    const val = inp.value;
+    userAns.push(val);
+    const norm = normalize(val);
+    const isOk = b.ans.map(normalize).includes(norm);
+    inp.classList.remove('correct', 'wrong');
+    inp.classList.add(isOk ? 'correct' : 'wrong');
+    if (!isOk) allRight = false;
+  });
+
+  answered = true;
+  const fb = document.getElementById('feedback');
+  if (allRight) {
+    correct++;
+    document.getElementById('correct').textContent = correct;
+    fb.innerHTML = `<strong style="color:var(--grn)">✅ 完全正確！</strong> ${sc.expl}`;
+    fb.classList.remove('wrong');
+    fb.classList.add('show', 'correct');
+  } else {
+    const ansList = sc.blanks.map((b, i) =>
+      `<span class="right-ans">${b.label}：${b.ans[0]}</span>`
+    ).join('');
+    fb.innerHTML = `<strong style="color:var(--warn)">▸ 部分錯誤</strong><br>正確答案：${ansList}<br>${sc.expl}`;
+    fb.classList.remove('correct');
+    fb.classList.add('show', 'wrong');
+  }
+  document.getElementById('checkBtn').style.display = 'none';
+  document.getElementById('nextBtn').classList.add('show');
+
+  logEvent({
+    event_type: 'answer',
+    question_id: `Q${cur + 1}`,
+    is_correct: allRight,
+    attempts: 1,
+  });
+}
+
+function next() {
+  cur++;
+  render();
+}
+
+function showComplete() {
+  document.getElementById('quizArea').innerHTML = '';
+  document.getElementById('fill').style.width = '100%';
+  document.getElementById('complete').style.display = 'block';
+  document.getElementById('finalScore').textContent = `${correct} / ${SCENARIOS.length}`;
+  const pct = correct / SCENARIOS.length;
+  document.getElementById('finalMsg').textContent =
+    pct === 1 ? '🌟 滿分！你已能融會貫通光譜學在食品分析的應用！' :
+    pct >= 0.8 ? '👍 很棒！少數案例再加強就完美。' :
+    pct >= 0.5 ? '💪 大致掌握，建議再讀一次投影片的方法比較表。' :
+    '📚 應用題比較難，回去再讀一次方法比較表，重玩一次會更好！';
+  logEvent({ event_type: 'session_complete', final_score: correct, attempts: SCENARIOS.length });
+}
+
+function restart() {
+  cur = 0; correct = 0; answered = false;
+  document.getElementById('complete').style.display = 'none';
+  render();
+}
+window.restart = restart;
+
+await initGameSession({ chapter: 'ch6_soil_2026', game: 'scenario-fill' });
+render();
+
+document.getElementById('qr-img').src =
+  'https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=' +
+  encodeURIComponent(window.location.href);
+</script>
+</body>
+</html>

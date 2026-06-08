@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch6 遊戲 2 — 光譜原理選擇題</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:#0D1B2A; --card:#1A3050; --card2:#122540;
+  --pri:#00C6FF; --hi:#FFD700; --txt:#ECEEF2; --muted:#7A91B0;
+  --grn:#2ECC71; --red:#E74C3C; --pur:#9B59B6;
+}
+body {
+  font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
+  background: var(--bg);
+  color: var(--txt);
+  min-height: 100vh;
+  padding: 16px;
+  font-size: 16px;
+}
+.container { max-width: 720px; margin: 0 auto; }
+.nav-link {
+  display: inline-block;
+  margin-bottom: 10px;
+  color: var(--pri);
+  text-decoration: none;
+  font-size: 14px;
+}
+.nav-link:hover { text-decoration: underline; }
+header {
+  background: var(--card);
+  padding: 18px 20px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  border-left: 4px solid var(--pri);
+}
+header h1 { font-size: 22px; margin-bottom: 6px; color: var(--pri); }
+header .subtitle { color: var(--muted); font-size: 13px; }
+.score-bar {
+  background: var(--card2);
+  padding: 10px 18px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.progress-bar-bg {
+  flex: 1 1 200px;
+  min-width: 100px;
+  height: 8px;
+  background: var(--card);
+  border-radius: 4px;
+  margin: 0 12px;
+  overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: var(--grn);
+  width: 0%;
+  transition: width 0.3s;
+}
+.section-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+.section-badge.pre { background: var(--hi); color: var(--bg); }
+.section-badge.mid { background: var(--pri); color: var(--bg); }
+.section-badge.post { background: var(--pur); color: var(--txt); }
+.question-card {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+.q-num {
+  display: inline-block;
+  background: var(--pri);
+  color: var(--bg);
+  font-weight: bold;
+  font-size: 13px;
+  padding: 3px 10px;
+  border-radius: 12px;
+  margin-right: 8px;
+  margin-bottom: 8px;
+}
+.q-text {
+  font-size: 17px;
+  font-weight: bold;
+  margin-bottom: 16px;
+  line-height: 1.5;
+  color: var(--txt);
+}
+.options { display: grid; gap: 8px; }
+.option {
+  background: var(--card2);
+  border: 2px solid transparent;
+  border-radius: 8px;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 15px;
+  font-family: inherit;
+  text-align: left;
+  min-height: 44px;
+  width: 100%;
+  color: var(--txt);
+}
+.option:hover { background: #1f3a5e; border-color: var(--pri); }
+.option.correct {
+  background: rgba(46, 204, 113, 0.2);
+  border-color: var(--grn);
+  color: var(--grn);
+  font-weight: bold;
+}
+.option.wrong {
+  background: rgba(231, 76, 60, 0.2);
+  border-color: var(--red);
+  color: var(--red);
+}
+.option:disabled { cursor: default; }
+.option.correct::before { content: '✅ '; }
+.option.wrong::before { content: '❌ '; }
+.explain {
+  background: rgba(255, 215, 0, 0.08);
+  border-left: 3px solid var(--hi);
+  padding: 12px 16px;
+  border-radius: 6px;
+  margin-top: 12px;
+  font-size: 14px;
+  color: var(--txt);
+  line-height: 1.6;
+  display: none;
+}
+.explain.show { display: block; }
+.btn {
+  background: var(--pri);
+  color: var(--bg);
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+  min-height: 44px;
+}
+.btn:hover { background: #00A0CC; }
+.btn-secondary { background: #5B6777; color: var(--txt); }
+.btn-secondary:hover { background: #455260; }
+.controls { text-align: center; margin: 20px 0; }
+.complete-message {
+  background: var(--grn);
+  color: var(--bg);
+  padding: 24px;
+  border-radius: 12px;
+  margin: 20px 0;
+  text-align: center;
+  display: none;
+}
+.complete-message.partial { background: var(--hi); }
+.complete-message.low { background: var(--red); color: var(--txt); }
+.complete-message h2 { font-size: 22px; margin-bottom: 12px; }
+.complete-message .score { font-size: 32px; font-weight: bold; margin: 12px 0; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="ch6_spectroscopy.html" class="nav-link">← 回投影片</a>
+  <header>
+    <h1>📊 Ch6 遊戲 2：光譜原理選擇題</h1>
+    <div class="subtitle">17 題覆蓋光的本質、量子能階、Beer-Lambert、Boltzmann、Jablonski、七大方法。</div>
+  </header>
+
+  <div class="score-bar">
+    <span>第 <span id="curQ">1</span> / <span id="totalQ">17</span> 題</span>
+    <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill"></div></div>
+    <span style="color:var(--grn)">答對 <span id="score">0</span></span>
+  </div>
+
+  <div id="quizArea"></div>
+
+  <div id="completeMessage" class="complete-message">
+    <h2 id="completeTitle">🎉 完成！</h2>
+    <div>你的分數</div>
+    <div class="score"><span id="finalScore">0</span> / 17</div>
+    <div id="finalComment"></div>
+    <br>
+    <button class="btn" onclick="restart()">再玩一次</button>
+  </div>
+</div>
+
+<script type="module">
+import { initGameSession, logEvent } from './game_firebase.js';
+
+const QUESTIONS = [
+  // ─── 前測（喚出迷思）─────────
+  { section: 'pre', q: '頻率越高的光，在真空中跑得越快？',
+    options: ['對', '錯，頻率越高波長越短但速度相同', '錯，頻率越高跑得越慢', '無法判斷'], correct: 1,
+    explain: '迷思警報：學生常把「能量高」誤當「速度快」。真空中所有電磁波速度相同 = c ≈ 3×10⁸ m/s。' },
+  { section: 'pre', q: '一個紫外光光子 vs 一個紅外光光子，誰的能量較高？',
+    options: ['紅外線', '兩者相同', '紫外線', '視介質而定'], correct: 2,
+    explain: 'E = hν = hc/λ。紫外光 λ 短 → ν 高 → E 大。' },
+  { section: 'pre', q: '食品中蛋白質含量可以用「光」來測量，是因為？',
+    options: ['蛋白質會反射特定顏色', '蛋白質分子吸收特定波長後訊號可定量', '光可以把蛋白質切斷', '光讓溶液溫度升高'], correct: 1,
+    explain: 'Beer-Lambert 定律 A=εbc。蛋白質吸收特定 λ（如 595 nm Bradford 法），A 與濃度成正比。' },
+  { section: 'pre', q: 'NMR 比 UV-Vis 需要的射頻能量小很多，所以 NMR 的靈敏度比 UV-Vis？',
+    options: ['高很多', '相同', '低很多', '無關'], correct: 2,
+    explain: 'Boltzmann 鋪墊：ΔE 小 → N′/N ≈ 1 → 激發態 vs 基態幾乎相等 → 訊號弱 → 靈敏度低。NMR 要強磁場補償。' },
+  { section: 'pre', q: '同一杯螢光樣品，螢光偵測器放在與激發光 90° 方向，主要目的是？',
+    options: ['讓樣品升溫更均勻', '避免偵測到直射激發光', '增加激發能量', '配合儀器外觀'], correct: 1,
+    explain: '螢光弱，必須避免強激發光直射偵測器。90° 配置只收散射 + 螢光，扣除激發光干擾。' },
+  // ─── 段落測（量子能階 + Beer-Lambert + Jablonski）─────
+  { section: 'mid', q: '「能量只能取特定階梯值」這個概念稱為？',
+    options: ['波粒二象性', '能量量子化', "Beer's law", '共振頻率'], correct: 1,
+    explain: '量子化（quantization）— Planck 與 Bohr 的核心發現，光譜學基礎。' },
+  { section: 'mid', q: 'UV-Vis 吸收主要對應哪一類能階躍遷？',
+    options: ['核自旋', '轉動', '振動', '電子'], correct: 3,
+    explain: '電子能階 ΔE 最大（~ eV），對應 UV-Vis 波段 200–700 nm。' },
+  { section: 'mid', q: 'IR 吸收（2.5–25 μm）主要對應哪一類躍遷？',
+    options: ['電子', '振動', '核自旋', '質量'], correct: 1,
+    explain: '振動能階對應 IR 區。記憶口訣：「電子 > 振動 > 轉動 > 核自旋」（能量由大到小）。' },
+  { section: 'mid', q: '四類能階中能量差最大的是？',
+    options: ['核自旋', '轉動', '振動', '電子'], correct: 3,
+    explain: '電子（UV-Vis）> 振動（IR）> 轉動（遠 IR/微波）> 核自旋（NMR 射頻）。' },
+  { section: 'mid', q: '螢光發射波長通常比激發波長長，原因是？',
+    options: ['偵測器放大了', '部分能量先以振動弛豫（熱）散失', '樣品濃度提高', '光速變慢'], correct: 1,
+    explain: 'Stokes shift：S₁ 先振動弛豫到最低點才發射，能量比吸收時少 → 波長變長。' },
+  { section: 'mid', q: 'Jablonski 圖中，T₁ → S₀ 放出的發射稱為？',
+    options: ['螢光', '磷光', '拉曼散射', '熱輻射'], correct: 1,
+    explain: '磷光（phosphorescence）：T₁ 為三重態（自旋禁制），壽命 ms～s，所以慢且低溫才明顯。' },
+  // ─── 後測（總整理 + 食品應用）──────
+  { section: 'post', q: 'E = hν = hc/λ 中，h 是？',
+    options: ['光速', '普朗克常數', '吸光係數', '波數'], correct: 1,
+    explain: 'h = 6.626×10⁻³⁴ J·s，量子化的「量值」單位。' },
+  { section: 'post', q: 'Boltzmann 分佈 N′/N = e^(−ΔE/kT)：UV 能階差大，N′/N 值？',
+    options: ['接近 1', '接近 0', '大於 10', '無法計算'], correct: 1,
+    explain: 'ΔE 大 → 指數項極小 → N′/N ≈ 0 → 幾乎沒人在激發態 → 吸收訊號強。這就是 UV-Vis 為何靈敏度比 NMR 高。' },
+  { section: 'post', q: '只有 E_光子 精確等於 ΔE 時才發生吸收，因此形成光譜的？',
+    options: ['拉曼位移', '指紋圖', '偏振態', '散射角'], correct: 1,
+    explain: '每個分子有獨特的能階圖 → 吸收的 λ 也獨特 → IR 指紋區（< 1500 cm⁻¹）可作為「化學身份證」。' },
+  { section: 'post', q: '測量蜂蜜是否摻假，最適合使用哪種方法？',
+    options: ['UV-Vis Bradford 法', 'NMR 糖圖譜', 'AAS 重金屬', 'TBARS 法'], correct: 1,
+    explain: '蜂蜜摻假用 ¹H NMR + chemometrics（SGF Profiling®）已是國際商業標準，可看糖類與胺基酸全圖譜。' },
+  { section: 'post', q: '要偵測醬油中 ppb 級鉛（Pb），應選用？',
+    options: ['UV-Vis', '螢光', 'AAS', 'NMR'], correct: 2,
+    explain: 'AAS（原子吸收）對重金屬靈敏度高（ppb 級），是食品安全檢驗的標配。' },
+  { section: 'post', q: '七大光譜方法中，靈敏度最高（★★★★★）的是？',
+    options: ['UV-Vis', 'IR', 'NMR', '螢光'], correct: 3,
+    explain: '螢光：發射光從零背景上偵測，比 UV-Vis 高 100–1000 倍。例：黃麴毒素 B1 ppb 級偵測。' },
+];
+
+const SECTION_INFO = {
+  pre: { name: '前測 · 喚出迷思', cls: 'pre' },
+  mid: { name: '段落測 · 量子能階', cls: 'mid' },
+  post: { name: '後測 · 總整理', cls: 'post' },
+};
+
+let curIdx = 0;
+let score = 0;
+let answered = false;
+
+function renderQuestion() {
+  const q = QUESTIONS[curIdx];
+  const info = SECTION_INFO[q.section];
+  const area = document.getElementById('quizArea');
+  area.innerHTML = `
+    <div class="question-card">
+      <span class="section-badge ${info.cls}">${info.name}</span>
+      <div>
+        <span class="q-num">第 ${curIdx + 1} 題</span>
+      </div>
+      <div class="q-text">${q.q}</div>
+      <div class="options" id="optionsBox">
+        ${q.options.map((opt, i) => `<button class="option" data-i="${i}">${opt}</button>`).join('')}
+      </div>
+      <div id="explainBox" class="explain"></div>
+      <div class="controls" id="nextBox" style="display:none;">
+        <button class="btn" id="nextBtn">${curIdx === QUESTIONS.length - 1 ? '查看結果 →' : '下一題 →'}</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('curQ').textContent = curIdx + 1;
+  document.getElementById('totalQ').textContent = QUESTIONS.length;
+  document.getElementById('progressFill').style.width = `${(curIdx / QUESTIONS.length) * 100}%`;
+  answered = false;
+
+  document.querySelectorAll('.option').forEach(b => {
+    b.addEventListener('click', () => pick(parseInt(b.dataset.i)));
+  });
+  document.getElementById('nextBtn').addEventListener('click', next);
+}
+
+function pick(i) {
+  if (answered) return;
+  answered = true;
+  const q = QUESTIONS[curIdx];
+  const opts = document.querySelectorAll('.option');
+  opts.forEach(o => o.disabled = true);
+  const isCorrect = i === q.correct;
+  logEvent({
+    event_type: 'answer',
+    question_id: 'Q' + (curIdx + 1) + '-' + q.section,
+    is_correct: isCorrect,
+    attempts: 1,
+  });
+  if (isCorrect) {
+    opts[i].classList.add('correct');
+    score++;
+    document.getElementById('score').textContent = score;
+  } else {
+    opts[i].classList.add('wrong');
+    opts[q.correct].classList.add('correct');
+  }
+  const ex = document.getElementById('explainBox');
+  ex.innerHTML = '💡 ' + q.explain;
+  ex.classList.add('show');
+  document.getElementById('nextBox').style.display = 'block';
+}
+
+function next() {
+  if (curIdx < QUESTIONS.length - 1) {
+    curIdx++;
+    renderQuestion();
+  } else {
+    document.getElementById('progressFill').style.width = '100%';
+    document.getElementById('quizArea').innerHTML = '';
+    document.getElementById('finalScore').textContent = score;
+    const msg = document.getElementById('completeMessage');
+    msg.classList.remove('partial', 'low');
+    let comment = '';
+    if (score >= 14) {
+      document.getElementById('completeTitle').textContent = '🎉 光譜原理掌握度極佳！';
+      comment = '可以開始挑戰 Ch7 UV-Vis 詳細儀器了。';
+    } else if (score >= 10) {
+      document.getElementById('completeTitle').textContent = '👍 基礎穩固！';
+      comment = '把答錯題的觀念再看一次投影片就完美。';
+      msg.classList.add('partial');
+    } else {
+      document.getElementById('completeTitle').textContent = '🔁 建議重看 Boltzmann + Jablonski 部分';
+      comment = '回到投影片 17（Boltzmann）、15-16（Jablonski），再玩一次。';
+      msg.classList.add('low');
+    }
+    document.getElementById('finalComment').textContent = comment;
+    msg.style.display = 'block';
+    msg.scrollIntoView({ behavior: 'smooth' });
+    logEvent({
+      event_type: 'session_complete',
+      final_score: score,
+      attempts: QUESTIONS.length,
+    });
+  }
+}
+
+function restart() {
+  curIdx = 0;
+  score = 0;
+  answered = false;
+  document.getElementById('score').textContent = '0';
+  document.getElementById('completeMessage').style.display = 'none';
+  renderQuestion();
+}
+
+window.restart = restart;
+
+await initGameSession({ chapter: 'ch6', game: 'mcq' });
+renderQuestion();
+</script>
+</body>
+</html>

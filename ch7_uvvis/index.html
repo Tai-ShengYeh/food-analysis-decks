@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nielsen Food Analysis Ch7 — UV-Vis 與螢光光譜法</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0D1B2A;--bg2:#0F2133;--card:#1A3050;--card2:#122540;
+  --pri:#00C6FF;--hi:#FFD700;--txt:#ECEEF2;--muted:#7A91B0;
+  --grn:#2ECC71;--red:#E74C3C;--pur:#9B59B6;
+}
+html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);color:var(--txt);font-family:'Noto Sans TC','Microsoft JhengHei',sans-serif;font-size:18px}
+#progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--pri);transition:width .4s ease;z-index:100;box-shadow:0 0 8px var(--pri)}
+#section-tag{position:fixed;top:10px;left:16px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);z-index:100;letter-spacing:.1em}
+#page-info{position:fixed;bottom:14px;right:20px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);z-index:100}
+#hint{position:fixed;bottom:14px;left:16px;font-size:11px;color:var(--muted);z-index:100;opacity:.5}
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:52px 72px;opacity:0;pointer-events:none;transition:opacity .5s ease,transform .5s ease;transform:translateY(14px);overflow:hidden}
+.slide.active{opacity:1;pointer-events:auto;transform:translateY(0)}
+.slide-inner{width:100%;max-width:1320px}
+.badge{display:inline-block;padding:4px 14px;border-radius:6px;font-size:clamp(.7rem,1.1vw,.95rem);font-weight:700;margin-bottom:10px}
+.slide-title{font-size:clamp(1.4rem,3vw,2.5rem);font-weight:700;color:var(--txt);margin-bottom:8px;line-height:1.3}
+.rule{height:3px;border-radius:2px;margin-bottom:18px}
+.card{background:var(--card);border-radius:10px;padding:16px 18px}
+.card2{background:var(--card2);border-radius:10px;padding:16px 18px}
+.bullet-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px}
+.dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.section-divider{background:var(--bg2)!important}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.four-col{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px}
+.col-header{height:4px;border-radius:2px;margin-bottom:10px}
+.tag{display:inline-block;padding:2px 10px;border-radius:4px;font-size:.75rem;font-weight:700;margin-right:6px}
+
+/* Quiz */
+.quiz-opt{background:var(--card);border-radius:8px;padding:12px 16px;margin-bottom:8px;cursor:pointer;transition:background .25s,opacity .25s;border:2px solid transparent;font-size:clamp(.85rem,1.3vw,1.05rem)}
+.quiz-opt:hover{opacity:.82;border-color:var(--pri)}
+.opt-correct{background:#1a7a3a!important;border-color:#2ECC71!important;color:#fff!important;font-weight:700!important}
+.opt-wrong{background:#7a1a1a!important;border-color:#E74C3C!important;color:#ffaaaa!important}
+.opt-dimmed{opacity:.35!important;pointer-events:none!important}
+.opt-locked{pointer-events:none!important}
+.answer-panel{margin-top:12px;background:var(--card2);border-radius:8px;padding:14px 16px;border-left:4px solid var(--grn);opacity:0;transition:opacity .4s;font-size:clamp(.8rem,1.2vw,1rem);line-height:1.6}
+.answer-panel.show{opacity:1}
+
+/* Table */
+.data-table{width:100%;border-collapse:collapse;font-size:clamp(.75rem,1.1vw,.95rem)}
+.data-table th{background:var(--pri);color:var(--bg);padding:8px 10px;font-size:clamp(.8rem,1.2vw,1rem)}
+.data-table td{padding:7px 10px;text-align:center;border-bottom:1px solid rgba(255,255,255,.05)}
+.data-table tr:nth-child(odd) td{background:var(--card)}
+.data-table tr:nth-child(even) td{background:var(--card2)}
+
+/* Platform slides */
+.platform-card{border-radius:14px;padding:24px;text-align:center;border:2px solid transparent}
+.platform-card.kahoot{background:#2a1040;border-color:#9B59B6}
+.platform-card.wordwall{background:#0a2a1a;border-color:#2ECC71}
+.platform-card.gimkit{background:#2a1a00;border-color:#FFD700}
+.platform-card.wayground{background:#0a1a2a;border-color:#00C6FF}
+.platform-logo{font-size:3rem;margin-bottom:10px}
+.platform-name{font-size:1.4rem;font-weight:700;margin-bottom:6px}
+.platform-desc{font-size:.9rem;color:var(--muted);line-height:1.6}
+.platform-badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:700;margin-top:10px}
+
+/* Nav click zones */
+#nav-left,#nav-right{position:fixed;top:0;bottom:0;width:22%;z-index:50;cursor:pointer}
+#nav-left{left:0}#nav-right{right:0}
+</style>
+</head>
+<body>
+<div id="progress-bar" style="width:3.125%"></div>
+<div id="section-tag">— 引起動機 —</div>
+<div id="page-info">開場</div>
+<div id="hint">← → 切換　|　F 全螢幕　|　點擊左右側</div>
+<div id="nav-left" onclick="go(-1)"></div>
+<div id="nav-right" onclick="go(1)"></div>
+
+<!-- ══════════════════════════════════════════════════
+     0  開場文字雲
+══════════════════════════════════════════════════ -->
+<section class="slide active" data-slide="0" data-section="引起動機" style="background:#0D1B2A">
+<div class="slide-inner" style="text-align:center">
+  <div style="font-size:3.5rem;margin-bottom:16px">🔬</div>
+  <div class="badge" style="background:var(--pri);color:var(--bg)">Ch7 · UV-Vis 與螢光光譜法</div>
+  <h1 class="slide-title" style="font-size:clamp(2rem,4vw,3.2rem);margin:16px 0">開場文字雲</h1>
+  <p style="font-size:1.1rem;color:var(--muted);margin-bottom:32px">你覺得「Beer's Law」的精髓是什麼？<br>用手機投稿，共同建立今天的文字雲</p>
+  <div style="display:inline-block;background:var(--card);border-radius:16px;padding:20px 32px;margin-bottom:24px">
+    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&format=png&data=https://my-teaching-tools-517a0.web.app/ch7/wordcloud_student.html" style="width:160px;height:160px;border-radius:8px;background:#fff;padding:4px;display:block;margin:0 auto 12px">
+    <p style="font-size:.8rem;color:var(--muted)">掃碼或開啟 wordcloud_student.html</p>
+  </div>
+  <p style="font-size:.9rem;color:var(--muted)">教師端：開啟 <span style="color:var(--pri)">wordcloud_display.html</span> 投影文字雲</p>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     1  Kahoot 前測
+══════════════════════════════════════════════════ -->
+<section class="slide" data-slide="1" data-section="引起動機" style="background:#0D1B2A">
+<div class="slide-inner">
+  <div class="badge" style="background:#9B59B6;color:#fff">🎮 Kahoot 前測</div>
+  <h2 class="slide-title">前測 5 題 — 喚出迷思，答錯沒關係</h2>
+  <div class="rule" style="background:var(--pur)"></div>
+  <div class="platform-card kahoot" style="margin-bottom:16px;text-align:left;padding:16px 20px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+      <span style="font-size:1.8rem">🎯</span>
+      <span style="font-weight:700;color:#9B59B6;font-size:1.1rem">Kahoot 遊戲碼 → 貼在黑板上</span>
+    </div>
+    <p style="font-size:.9rem;color:var(--muted)">前測目的：讓學生暴露直覺迷思，而非評分。用錯誤最多的題開始討論。</p>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div class="card2" style="border-left:3px solid var(--hi)">
+      <div style="font-weight:700;color:var(--hi);margin-bottom:6px">Q1 迷思：T vs A</div>
+      <p style="font-size:.85rem;color:var(--muted)">%T = 50%，A = ？<br>→ 常見錯誤：A = 0.5（直接抄 T 值）</p>
+    </div>
+    <div class="card2" style="border-left:3px solid var(--hi)">
+      <div style="font-weight:700;color:var(--hi);margin-bottom:6px">Q2 迷思：線性關係</div>
+      <p style="font-size:.85rem;color:var(--muted)">Beer's Law 中，T 正比於 c？<br>→ 錯！A 才正比於 c</p>
+    </div>
+    <div class="card2" style="border-left:3px solid var(--hi)">
+      <div style="font-weight:700;color:var(--hi);margin-bottom:6px">Q3 迷思：儀器元件</div>
+      <p style="font-size:.85rem;color:var(--muted)">離心機是分光光度計元件？<br>→ 混淆前處理與量測儀器</p>
+    </div>
+    <div class="card2" style="border-left:3px solid var(--hi)">
+      <div style="font-weight:700;color:var(--hi);margin-bottom:6px">Q4–5 迷思：螢光靈敏度</div>
+      <p style="font-size:.85rem;color:var(--muted)">螢光法靈敏→因光源更強？<br>A = 1.8 要怎麼處理？</p>
+    </div>
+  </div>
+  <p style="margin-top:14px;font-size:.85rem;color:var(--muted);text-align:center">匯入檔：<span style="color:var(--pri)">game_imports/kahoot_ch7.xlsx</span>（前 5 題）</p>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     2  封面
+══════════════════════════════════════════════════ -->
+<section class="slide" data-slide="2" data-section="引起動機" style="background:#0D1B2A">
+<div class="slide-inner" style="text-align:center">
+  <p style="color:var(--muted);font-size:.9rem;margin-bottom:8px">Nielsen Food Analysis · Chapter 7</p>
+  <h1 style="font-size:clamp(2.5rem,6vw,5rem);font-weight:900;color:var(--pri);line-height:1.1;margin-bottom:12px">UV-Vis 與螢光<br>光譜法</h1>
+  <p style="font-size:1.2rem;color:var(--txt);margin-bottom:20px">Ultraviolet, Visible, and Fluorescence Spectroscopy</p>
+  <div style="width:200px;height:3px;background:var(--hi);margin:0 auto 20px"></div>
+  <p style="color:var(--muted);font-size:.95rem">大學食品營養系二年級　｜　2–3 小時課程</p>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     3  學習地圖
+══════════════════════════════════════════════════ -->
+<section class="slide" data-slide="3" data-section="引起動機" style="background:#0D1B2A">
+<div class="slide-inner">
+  <div class="badge" style="background:var(--hi);color:var(--bg)">引起動機</div>
+  <h2 class="slide-title">今日四大主題</h2>
+  <div class="rule" style="background:var(--hi)"></div>
+  <div class="four-col" style="margin-bottom:16px">
+    <div class="card" style="text-align:center;border-top:4px solid var(--pri)">
+      <div style="font-size:2rem;margin:10px 0">01</div>
+      <div style="font-weight:700;color:var(--pri);margin-bottom:6px">T → A<br>數學轉換</div>
+      <div style="font-size:.8rem;color:var(--muted)">為何用 A 不用 T</div>
+    </div>
+    <div class="card" style="text-align:center;border-top:4px solid var(--hi)">
+      <div style="font-size:2rem;margin:10px 0">02</div>
+      <div style="font-weight:700;color:var(--hi);margin-bottom:6px">Beer's Law<br>成立條件</div>
+      <div style="font-size:.8rem;color:var(--muted)">偏離的三種情境</div>
+    </div>
+    <div class="card" style="text-align:center;border-top:4px solid var(--grn)">
+      <div style="font-size:2rem;margin:10px 0">03</div>
+      <div style="font-weight:700;color:var(--grn);margin-bottom:6px">儀器五元件<br>光路設計</div>
+      <div style="font-size:.8rem;color:var(--muted)">單光束 vs 雙光束</div>
+    </div>
+    <div class="card" style="text-align:center;border-top:4px solid var(--pur)">
+      <div style="font-size:2rem;margin:10px 0">04</div>
+      <div style="font-weight:700;color:var(--pur);margin-bottom:6px">螢光光譜<br>高靈敏度</div>
+      <div style="font-size:.8rem;color:var(--muted)">比 UV-Vis 強 1000×</div>
+    </div>
+  </div>
+  <div class="card" style="background:#122540;text-align:center;padding:12px">
+    <span style="color:var(--hi);font-weight:700">今天學完，你就能看懂分光光度計的讀數，並知道何時該信任它。</span>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     4  透光率 T 核心定義
+══════════════════════════════════════════════════ -->
+<section class="slide" data-slide="4" data-section="Beer's Law 基礎" style="background:#0D1B2A">
+<div class="slide-inner">
+  <div class="badge" style="background:var(--pri);color:var(--bg)">核心定義</div>
+  <h2 class="slide-title">透光率 T：光通過溶液後剩多少？</h2>
+  <div class="rule" style="background:var(--pri)"></div>
+  <div class="two-col" style="gap:20px;margin-bottom:16px">
+    <div>
+      <div class="card" style="padding:20px;margin-bottom:12px;border-left:4px solid var(--pri)">
+        <div style="font-size:2.2rem;font-weight:900;color:var(--pri);font-family:'JetBrains Mono',monospace;margin-bottom:8px">T = P / P₀</div>
+        <p style="font-size:.9rem;color:var(--muted)">P = 透射光強度　P₀ = 入射光強度<br>無單位，範圍 0–1（或用 %T = T×100）</p>
+      </div>
+      <div class="card" style="padding:20px;border-left:4px solid var(--hi)">
+        <div style="font-size:2.2rem;font-weight:900;color:var(--hi);font-family:'JetBrains Mono',monospace;margin-bottom:8px">A = −log T</div>
+        <p style="font-size:.9rem;color:var(--muted)">= log(P₀/P) = 2 − log%T<br>吸光度（Absorbance），無單位</p>
+      </div>
+    </div>
+    <div>
+      <table class="data-table">
+        <thead><tr><th>%T</th><th>T</th><th>A</th><th>判斷</th></tr></thead>
+        <tbody>
+          <tr><td>100%</td><td>1.0</td><td style="color:var(--grn)">0</td><td>完全透射</td></tr>
+          <tr><td>65%</td><td>0.65</td><td style="color:var(--grn)">0.187</td><td style="color:var(--grn)">✓ 最佳下限</td></tr>
+          <tr><td>50%</td><td>0.50</td><td style="color:var(--hi)">0.301</td><td>常考數值</td></tr>
+          <tr><td>15%</td><td>0.15</td><td style="color:var(--grn)">0.824</td><td style="color:var(--grn)">✓ 最佳上限</td></tr>
+          <tr><td>10%</td><td>0.10</td><td style="color:var(--red)">1.0</td><td style="color:var(--red)">✗ 太高</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card" style="background:#122540;text-align:center;padding:10px">
+    <span style="color:var(--hi);font-weight:700">記憶技巧：%T = 50% → A = 0.301（log 2 = 0.301）</span>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     5  迷思澄清：T 不正比於 c
+══════════════════════════════════════════════════ -->
+<section class="slide" data-slide="5" data-section="Beer's Law 基礎" style="background:#0D1B2A">
+<div class="slide-inner">
+  <div class="badge" style="background:var(--red);color:#fff">迷思澄清 ★</div>
+  <h2 class="slide-title">T 正比於濃度？—— 不是！A 才是。</h2>
+  <div class="rule" style="background:var(--red)"></div>
+  <div class="two-col" style="gap:20px;margin-bottom:16px">
+    <div class="card" style="border-top:4px solid var(--red)">
+      <div style="font-weight:700;color:var(--red);margin-bottom:10px;font-size:1.1rem">❌ 錯誤觀念</div>
+      <p style="margin-bottom:8px">「透光率 T 越低 = 吸收越多 = 濃度越高」</p>
+      <p style="font-size:.85rem;color:var(--muted)">T 與 c 的關係是指數：<br>T = 10<sup>−εbc</sup></p>
+      <div style="margin-top:12px;background:#2a0a0a;border-radius:8px;padding:12px">
+        <p style="font-size:.85rem;color:#ffaaaa">如果用 T 做校正曲線 → 曲線彎曲 → 高濃度誤差爆增</p>
+      </div>
+    </div>
+    <div class="card" style="border-top:4px solid var(--grn)">
+      <div style="font-weight:700;color:var(--grn);margin-bottom:10px;font-size:1.1rem">✅ 正確觀念</div>
+      <p style="margin-bottom:8px">A = εbc → A 與 c 嚴格線性正比</p>
+      <p style="font-size:.85rem;color:var(--muted)">取對數之後消去了指數關係：<br>A = −logT = log(P₀/P)</p>
+      <div style="margin-top:12px;background:#0a2a0a;border-radius:8px;padding:12px">
+        <p style="font-size:.85rem;color:#aaffaa">校正曲線用 A 對 c → 直線 → 可做線性回歸</p>
+      </div>
+    </div>
+  </div>
+  <!-- Interactive quiz -->
+  <div class="card2" style="padding:14px">
+    <p style="font-weight:700;color:var(--hi);margin-bottom:10px">🎯 即時小測：%T = 25%，A = ？</p>
+    <div class="quiz-opt" onclick="doQuiz(this,'wrong')">A　0.25</div>
+    <div class="quiz-opt" onclick="doQuiz(this,'wrong')">B　0.75</div>
+    <div class="quiz-opt" onclick="doQuiz(this,'correct')">C　0.602</div>
+    <div class="quiz-opt" onclick="doQuiz(this,'wrong')">D　1.5</div>
+    <div class="answer-panel" id="ap5">A = 2 − log25 = 2 − 1.398 = 0.602　　也可用 A = −log(0.25) = log 4 = 0.602</div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     6  Beer's Law A = εbc
+══════════════════════════════════════════════════ -->
+<section class="slide" data-slide="6" data-section="Beer's Law 基礎" style="background:#0D1B2A">
+<div class="slide-inner">
+  <div class="badge" style="background:var(--pri);color:var(--bg)">Beer's Law</div>
+  <h2 class="slide-title">A = εbc　分光光度法的核心方程</h2>
+  <div class="rule" style="background:var(--pri)"></div>
+  <div class="card" style="text-align:center;padding:18px;margin-bottom:16px">
+    <div style="font-size:clamp(2.5rem,5vw,4rem);font-weight:900;color:var(--pri);font-family:'JetBrains Mono',monospace">A = ε · b · c</div>
+  </div>
+  <div class="four-col">
+    <div class="card2" style="border-top:3px solid var(--pri)">
+      <div style="font-size:2rem;font-weight:900;color:var(--pri);margin-bottom:4px">A</div>
+      <div style="font-weight:700;margin-bottom:4px">吸光度</div>
+      <p style="font-size:.8rem;color:var(--muted)">無單位，最佳 0.2–0.8</p>
+    </div>
+    <div class="card2" style="border-top:3px solid var(--hi)">
+      <div style="font-size:2rem;font-weight:900;color:var(--hi);margin-bottom:4px">ε</div>
+      <div style="font-weight:700;margin-bottom:4px">莫耳吸光係數</div>
+      <p style="font-size:.8rem;color:var(--muted)">L·mol⁻¹·cm⁻¹<br>物質特性，λ 決定</p>
+    </div>
+    <div class="card2" style="border-top:3px solid var(--grn)">
+      <div style="font-size:2rem;font-weight:900;color:var(--grn);margin-bottom:4px">b</div>
+      <div style="font-weight:700;margin-bottom:4px">光徑長</div>
+      <p style="font-size:.8rem;color:var(--muted)">cm，通常 1 cm<br>校正時須一致</p>
+    </div>
+    <div class="card2" style="border-top:3px solid var(--red)">
+      <div style="font-size:2rem;font-weight:900;color:var(--red);margin-bottom:4px">c</div>
+      <div style="font-weight:700;margin-bottom:4px">莫耳濃度</div>
+      <p style="font-size:.8rem;color:var(--muted)">mol/L<br>← 我們要測的！</p>
+    </div>
+  </div>
+  <div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div class="card2" style="padding:10px 14px;border-left:3px solid var(--hi)">
+      <span style="color:var(--hi);font-weight:700">ε 越大</span> → 吸光能力強 → 更低 c 即可得到足夠 A → 靈敏度高
+    </div>
+    <div class="card2" style="padding:10px 14px;border-left:3px solid var(--pri)">
+      <span style="color:var(--pri);font-weight:700">線性條件：</span> 稀溶液（&lt;10 mM）＋ 單色光 ＋ 無化學平衡干擾
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     7  ε 食品應用表
+══════════════════════════════════════════════════ -->
+<section class="slide" data-slide="7" data-section="Beer's Law 基礎" style="background:#0D1B2A">
+<div class="slide-inner">
+  <div class="badge" style="background:var(--pri);color:var(--bg)">深入理解</div>
+  <h2 class="slide-title">ε 莫耳吸光係數：物質吸光能力的身分證</h2>
+  <div class="rule" style="background:var(--pri)"></div>
+  <div class="card" style="padding:12px 16px;margin-bottom:14px;background:#0a2033">
+    <span style="color:var(--hi);font-weight:700">ε 越大 → 在特定波長吸收越強 → 可用更低濃度得到夠大的 A → 靈敏度越高</span>
+  </div>
+  <table class="data-table">
+    <thead>
+      <tr><th>物質</th><th>λmax (nm)</th><th>ε (L·mol⁻¹·cm⁻¹)</th><th>食品應用</th><th>靈敏度</th></tr>
+    </thead>
+    <tbody>
+      <tr><td style="text-align:left">β-胡蘿蔔素</td><td>465</td><td style="color:var(--hi);font-weight:700">125,000</td><td style="text-align:left">色素定量，高靈敏</td><td>★★★★★</td></tr>
+      <tr><td style="text-align:left">1,3-丁二烯共軛體</td><td>217</td><td style="color:var(--pri);font-weight:700">21,000</td><td style="text-align:left">脂質氧化指標</td><td>★★★★</td></tr>
+      <tr><td style="text-align:left">色胺酸 Trp</td><td>278</td><td>5,579</td><td style="text-align:left">蛋白質定量（278 nm）</td><td>★★★</td></tr>
+      <tr><td style="text-align:left">苯酚 Phenol</td><td>270</td><td>1,450</td><td style="text-align:left">酚類含量測定</td><td>★★</td></tr>
+      <tr><td style="text-align:left">醋酸 R-COOH</td><td>208</td><td style="color:var(--red)">32</td><td style="text-align:left">有機酸（靈敏度極低！）</td><td style="color:var(--red)">★</td></tr>
+    </tbody>
+  </table>
+  <div class="card" style="background:#122540;padding:10px 14px;margin-top:12px;text-align:center">
+    <span style="color:var(--hi)">共軛體系越長 → ε 越大 → λmax 紅移（向長波長移動）→ β-胡蘿蔔素是典型例子</span>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     8  最佳量測範圍
+══════════════════════════════════════════════════ -->
+<section class="slide" data-slide="8" data-section="Beer's Law 基礎" style="background:#0D1B2A">
+<div class="slide-inner">
+  <div class="badge" style="background:var(--hi);color:var(--bg)">關鍵實作 ★</div>
+  <h2 class="slide-title">最佳量測範圍：A = 0.2–0.8</h2>
+  <div class="rule" style="background:var(--hi)"></div>
+  <div class="three-col" style="margin-bottom:16px">
+    <div class="card" style="border-top:4px solid var(--red);text-align:center">
+      <div style="font-size:1.5rem;margin:8px 0">🔴</div>
+      <div style="font-weight:700;color:var(--red);margin-bottom:6px">太低 A &lt; 0.2<br>（%T &gt; 65%）</div>
+      <p style="font-size:.85rem;color:var(--muted)">光幾乎全透過<br>P ≈ P₀，差值太小<br>→ 相對誤差大</p>
+      <div style="margin-top:10px;background:#1a0a0a;border-radius:6px;padding:8px">
+        <p style="font-size:.8rem;color:var(--red)">處理：濃縮樣品<br>或換更長光徑</p>
+      </div>
+    </div>
+    <div class="card" style="border-top:4px solid var(--grn);text-align:center">
+      <div style="font-size:1.5rem;margin:8px 0">🟢</div>
+      <div style="font-weight:700;color:var(--grn);margin-bottom:6px">最佳範圍<br>A = 0.2–0.8</div>
+      <p style="font-size:.85rem;color:var(--muted)">（15–65%T）<br>相對誤差最小<br>Beer's Law 最準確</p>
+      <div style="margin-top:10px;background:#0a1a0a;border-radius:6px;padding:8px">
+        <p style="font-size:.8rem;color:var(--grn)">最佳點：A = 0.43<br>（%T = 37%）</p>
+      </div>
+    </div>
+    <div class="card" style="border-top:4px solid var(--red);text-align:center">
+      <div style="font-size:1.5rem;margin:8px 0">🔴</div>
+      <div style="font-weight:700;color:var(--red);margin-bottom:6px">太高 A &gt; 0.8<br>（%T &lt; 15%）</div>
+      <p style="font-size:.85rem;color:var(--muted)">光幾乎被吸盡<br>P 極小，噪音比例高<br>→ 相對誤差爆增</p>
+      <div style="margin-top:10px;background:#1a0a0a;border-radius:6px;padding:8px">
+        <p style="font-size:.8rem;color:var(--red)">處理：稀釋樣品<br>後重測</p>
+      </div>
+    </div>
+  </div>
+  <!-- Quiz -->
+  <div class="card2" style="padding:12px">
+    <p style="font-weight:700;color:var(--hi);margin-bottom:8px">🎯 你量到 A = 1.95，下一步？</p>
+    <div class="quiz-opt" onclick="doQuiz(this,'wrong')">A　繼續記錄，數字大更準確</div>
+    <div class="quiz-opt" onclick="doQuiz(this,'correct')">B　稀釋樣品後重測</div>
+    <div class="quiz-opt" onclick="doQuiz(this,'wrong')">C　換波長重測</div>
+    <div class="answer-panel" id="ap8">A = 1.95 遠超 0.8，%T ≈ 1.1%，光幾乎全被吸收，噪音比例極高。正確做法：稀釋（如 10 倍），使 A 落在 0.2–0.8，再回算濃度時乘以稀釋倍數。</div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     9  Wordwall Match A
+══════════════════════════════════════════════════ -->
+<section class="slide" data-slide="9" data-section="Beer's Law 基礎" style="background:#0D1B2A">
+<div class="slide-inner">
+  <div class="badge" style="background:var(--grn);color:var(--bg)">🎮 Wordwall 配對 A</div>
+  <h2 class="slide-title">鞏固：T、A 與 Beer's Law 核心詞卡</h2>
+  <div class="rule" style="background:var(--grn)"></div>
+  <div class="platform-card wordwall" style="margin-bottom:16px;padding:16px">
+    <div style="font-size:1.5rem;margin-bottom:8px">🃏 Wordwall Match — 組 A</div>
+    <p style="font-size:.9rem;color:var(--muted)">匯入：<span style="color:var(--grn)">game_imports/wordwall_ch7_match_A.csv</span></p>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <div class="card2" style="padding:10px 14px"><span style="color:var(--pri);font-weight:700">透光率 T</span> ↔ P/P₀，無單位，範圍 0–1</div>
+    <div class="card2" style="padding:10px 14px"><span style="color:var(--hi);font-weight:700">吸光度 A</span> ↔ log(P₀/P) = 2 − log%T</div>
+    <div class="card2" style="padding:10px 14px"><span style="color:var(--grn);font-weight:700">A = 0.301 時</span> ↔ %T = 50%</div>
+    <div class="card2" style="padding:10px 14px"><span style="color:var(--pri);font-weight:700">Beer's Law</span> ↔ A = εbc，A 與 c 線性正比</div>
+    <div class="card2" style="padding:10px 14px"><span style="color:var(--hi);font-weight:700">ε 莫耳吸光係數</span> ↔ L·mol⁻¹·cm⁻¹，物質吸光身分證</div>
+    <div class="card2" style="padding:10px 14px"><span style="color:var(--grn);font-weight:700">最佳量測範圍</span> ↔ A = 0.2–0.8（15–65%T）</div>
+    <div class="card2" style="padding:10px 14px"><span style="color:var(--red);font-weight:700">負偏離</span> ↔ 高濃度時 ε 改變，A 低於線性預測</div>
+    <div class="card2" style="padding:10px 14px"><span style="color:var(--pri);font-weight:700">λmax</span> ↔ 最大吸收峰，靈敏度最高且 ε 最平坦</div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     10  Beer's Law 偏離①
+══════════════════════════════════════════════════ -->
+<section class="slide" data-slide="10" data-section="Beer's Law 偏離" style="background:#0D1B2A">
+<div class="slide-inner">
+  <div class="badge" style="background:var(--red);color:#fff">偏離情境①</div>
+  <h2 class="slide-title">Beer's Law 偏離①：濃度過高</h2>
+  <div class="rule" style="background:var(--red)"></div>
+  <div class="two-col" style="gap:16px;margin-bottom:14px">
+    <div class="card" style="border-top:3px solid var(--red)">
+      <div style="font-weight:700;color:var(--red);margin-bottom:8px">負偏離（A 偏低）</div>
+      <div class="bullet-item"><div class="dot" style="background:var(--red)"></div><p style="font-size:.9rem">高濃度時分子間距縮短</p></div>
+      <div class="bullet-item"><div class="dot" style="background:var(--red)"></div><p style="font-size:.9rem">分子互相影響彼此的電荷分布</p></div>
+      <div class="bullet-item"><div class="dot" style="background:var(--red)"></div><p style="font-size:.9rem">ε 隨濃度改變 → 線性關係崩潰</p></div>
+      <div style="margin-top:10px;background:#1a0a0a;border-radius:6px;padding:8px;font-size:.85rem;color:#ffaaaa">
+        實作：大多數分析物在 &lt;10 mM 時符合 Beer's Law
+      </div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--hi)">
+      <div style="font-weight:700;color:var(--hi);margin-bottom:8px">正偏離（A 偏高）</div>
+      <div class="bullet-item"><div class="dot" style="background:var(--hi)"></div><p style="font-size:.9rem">弱酸/弱鹼 pH 改變時，解離/未解離型態比例改變</p></div>
+      <div class="bullet-item"><div class="dot" style="background:var(--hi)"></div><p style="font-size:.9rem">兩種型態的 ε 不同</p></div>
+      <div class="bullet-item"><div class="dot" style="background:var(--hi)"></div><p style="font-size:.9rem">稀釋改變平衡 → 有效 ε 改變</p></div>
+      <div style="margin-top:10px;background:#1a1200;border-radius:6px;padding:8px;font-size:.85rem;color:#ffe080">
+        對策：加緩衝液固定 pH，確保單一吸光型態
+      </div>
+    </div>
+  </div>
+  <div class="card" style="border-top:3px solid var(--grn)">
+    <div style="font-weight:700;color:var(--grn);margin-bottom:8px">偏離②：非單色光（Bandwidth）</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div style="font-size:.9rem"><span style="color:var(--pri);font-weight:700">理想單色光：</span> ε 固定 → A = εbc 嚴格成立 → 完美線性校正曲線</div>
+      <div style="font-size:.9rem"><span style="color:var(--red);font-weight:700">多波長混合：</span> 每個 λ 的 ε 不同 → 平均 ε 隨 A 改變 → 高 A 端正偏離<br><em style="color:var(--muted)">對策：縮小出射狹縫；選 λmax 附近平坦區</em></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     11  校正曲線與標準添加法
+══════════════════════════════════════════════════ -->
+<section class="slide" data-slide="11" data-section="Beer's Law 偏離" style="background:#0D1B2A">
+<div class="slide-inner">
+  <div class="badge" style="background:var(--grn);color:var(--bg)">定量方法</div>
+  <h2 class="slide-title">校正曲線 × 標準添加法</h2>
+  <div class="rule" style="background:var(--grn)"></div>
+  <div class="two-col" style="gap:16px">
+    <div class="card" style="border-top:3px solid var(--pri)">
+      <div style="font-weight:700;color:var(--pri);margin-bottom:8px;font-size:1.05rem">📈 線性校正曲線（常規法）</div>
+      <div class="bullet-item"><div class="dot" style="background:var(--pri)"></div><p style="font-size:.88rem">配製標準系列（涵蓋未知樣品濃度）</p></div>
+      <div class="bullet-item"><div class="dot" style="background:var(--pri)"></div><p style="font-size:.88rem">測空白（blank）設 A = 0 基準</p></div>
+      <div class="bullet-item"><div class="dot" style="background:var(--pri)"></div><p style="font-size:.88rem">建 A vs c 圖，線性回歸，r² &gt; 0.999</p></div>
+      <div class="bullet-item"><div class="dot" style="background:var(--pri)"></div><p style="font-size:.88rem">由方程求未知樣品濃度</p></div>
+      <div style="margin-top:8px;background:#0a1a2a;border-radius:6px;padding:8px;font-size:.82rem;color:var(--muted)">
+        限制：基質複雜時，基質效應干擾結果
+      </div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--hi)">
+      <div style="font-weight:700;color:var(--hi);margin-bottom:8px;font-size:1.05rem">➕ 標準添加法（基質複雜時）</div>
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:.85rem;align-items:center">
+        <span style="color:var(--hi);font-weight:700">①</span><span>取多份等量未知液 Vᵤ</span>
+        <span style="color:var(--hi);font-weight:700">②</span><span>各加不同體積標準液 Vₛ（Cₛ）</span>
+        <span style="color:var(--hi);font-weight:700">③</span><span>稀釋至相同總體積 Vₜ</span>
+        <span style="color:var(--hi);font-weight:700">④</span><span>量測各瓶 A 值</span>
+        <span style="color:var(--hi);font-weight:700">⑤</span><span>作 A vs Vₛ，延長線截距求 Cᵤ</span>
+      </div>
+      <div style="margin-top:8px;background:#1a1200;border-radius:6px;padding:8px;font-size:.82rem;color:var(--hi)">
+        優點：自動補償基質效應。適合成分複雜的真實食品
+      </div>
+    </div>
+  </div>
+  <div class="card2" style="margin-top:12px;padding:10px 14px">
+    <p style="font-weight:700;color:var(--muted);margin-bottom:6px">操作三決策</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;font-size:.85rem">
+      <div><span style="color:var(--pri);font-weight:700">① 選 λmax</span> — 靈敏度最高，ε 最平坦，Beer's Law 最準確</div>
+      <div><span style="color:var(--hi);font-weight:700">② 比色槽材質</span> — UV(&lt;380nm)→石英；Vis→矽酸鹽玻璃</div>
+      <div><span style="color:var(--grn);font-weight:700">③ Blank 設計</span> — 含所有試劑但無分析物，排除背景吸光</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     12  Kahoot 段落小測
+══════════════════════════════════════════════════ -->
+<section class="slide" data-slide="12" data-section="Beer's Law 偏離" style="background:#0D1B2A">
+<div class="slide-inner">
+  <div class="badge" style="background:#9B59B6;color:#fff">🎮 Kahoot 段落小測</div>
+  <h2 class="slide-title">段落小測 6 題 — Beer's Law 偏離 + 儀器</h2>
+  <div class="rule" style="background:var(--pur)"></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div class="card2" style="border-left:3px solid var(--pri)">
+      <div style="font-weight:700;color:var(--pri);margin-bottom:4px">Q6　b 加倍 → A？</div>
+      <p style="font-size:.85rem;color:var(--muted)">A = εbc，b 從 1→2 cm，A = 2A₀（正確答案：加倍）</p>
+    </div>
+    <div class="card2" style="border-left:3px solid var(--red)">
+      <div style="font-weight:700;color:var(--red);margin-bottom:4px">Q7　負偏離根本原因</div>
+      <p style="font-size:.85rem;color:var(--muted)">高濃度分子間距縮短 → ε 改變（非光源問題）</p>
+    </div>
+    <div class="card2" style="border-left:3px solid var(--hi)">
+      <div style="font-weight:700;color:var(--hi);margin-bottom:4px">Q8　非單色光影響</div>
+      <p style="font-size:.85rem;color:var(--muted)">寬 bandwidth → 高 A 端正偏離（非無影響）</p>
+    </div>
+    <div class="card2" style="border-left:3px solid var(--grn)">
+      <div style="font-weight:700;color:var(--grn);margin-bottom:4px">Q9　UV 比色槽材質</div>
+      <p style="font-size:.85rem;color:var(--muted)">石英/熔融矽（玻璃吸 UV 光）</p>
+    </div>
+    <div class="card2" style="border-left:3px solid var(--pri)">
+      <div style="font-weight:700;color:var(--pri);margin-bottom:4px">Q10　雙光束優點</div>
+      <p style="font-size:.85rem;color:var(--muted)">補償光源漂移（非光更強）</p>
+    </div>
+    <div class="card2" style="border-left:3px solid var(--pur)">
+      <div style="font-weight:700;color:var(--pur);margin-bottom:4px">Q11　PMT 優點</div>
+      <p style="font-size:.85rem;color:var(--muted)">多 dynode 串聯放大，靈敏度極高（非全波長）</p>
+    </div>
+  </div>
+  <p style="margin-top:12px;font-size:.85rem;color:var(--muted);text-align:center">匯入檔：<span style="color:var(--pri)">game_imports/kahoot_ch7.xlsx</span>（題 6–11）</p>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     13  儀器過渡頁
+══════════════════════════════════════════════════ -->
+<section class="slide section-divider" data-slide="13" data-section="儀器世界" style="background:#0F2133">
+<div class="slide-inner" style="text-align:center">
+  <p style="color:var(--muted);font-size:1.1rem;margin-bottom:16px">第二段</p>
+  <h2 style="font-size:clamp(2.5rem,5vw,4rem);font-weight:900;color:var(--pri);margin-bottom:12px">分光光度計的<br>儀器世界</h2>
+  <p style="font-size:1.4rem;color:var(--txt)">五大元件 × 兩種設計</p>
+  <div style="width:160px;height:3px;background:var(--pri);margin:20px auto"></div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     14  五大元件
+══════════════════════════════════════════════════ -->
+<section class="slide" data-slide="14" data-section="儀器世界" style="background:#0D1B2A">
+<div class="slide-inner">
+  <div class="badge" style="background:var(--hi);color:var(--bg)">關鍵圖解 ★</div>
+  <h2 class="slide-title">分光光度計五大元件光路</h2>
+  <div class="rule" style="background:var(--hi)"></div>
+  <div style="display:flex;align-items:stretch;gap:10px;margin-bottom:14px">
+    <div class="card" style="flex:1;text-align:center;border-top:3px solid var(--hi)">
+      <div style="font-size:1.8rem;margin:6px 0">💡</div>
+      <div style="font-weight:700;color:var(--hi);margin-bottom:4px">①光源</div>
+      <p style="font-size:.8rem;color:var(--muted)">鎢絲燈<br>（Vis）<br>或氘燈<br>（UV）</p>
+    </div>
+    <div style="display:flex;align-items:center;color:var(--muted);font-size:1.5rem">→</div>
+    <div class="card" style="flex:1;text-align:center;border-top:3px solid var(--pri)">
+      <div style="font-size:1.8rem;margin:6px 0">🌈</div>
+      <div style="font-weight:700;color:var(--pri);margin-bottom:4px">②單色器</div>
+      <p style="font-size:.8rem;color:var(--muted)">反射光柵<br>分出單一 λ<br>狹縫控制<br>bandwidth</p>
+    </div>
+    <div style="display:flex;align-items:center;color:var(--muted);font-size:1.5rem">→</div>
+    <div class="card" style="flex:1;text-align:center;border-top:3px solid var(--grn)">
+      <div style="font-size:1.8rem;margin:6px 0">🧪</div>
+      <div style="font-weight:700;color:var(--grn);margin-bottom:4px">③樣品槽</div>
+      <p style="font-size:.8rem;color:var(--muted)">石英或<br>玻璃比色槽<br>通常 1 cm<br>光徑</p>
+    </div>
+    <div style="display:flex;align-items:center;color:var(--muted);font-size:1.5rem">→</div>
+    <div class="card" style="flex:1;text-align:center;border-top:3px solid var(--pur)">
+      <div style="font-size:1.8rem;margin:6px 0">👁️</div>
+      <div style="font-weight:700;color:var(--pur);margin-bottom:4px">④偵測器</div>
+      <p style="font-size:.8rem;color:var(--muted)">光電管<br>PMT<br>或 DAD<br>（陣列）</p>
+    </div>
+    <div style="display:flex;align-items:center;color:var(--muted);font-size:1.5rem">→</div>
+    <div class="card" style="flex:1;text-align:center;border-top:3px solid var(--red)">
+      <div style="font-size:1.8rem;margin:6px 0">💻</div>
+      <div style="font-weight:700;color:var(--red);margin-bottom:4px">⑤讀出</div>
+      <p style="font-size:.8rem;color:var(--muted)">電腦/顯示<br>輸出 A 值<br>或光譜圖</p>
+    </div>
+  </div>
+  <div class="two-col" style="gap:12px">
+    <div class="card2" style="border-left:3px solid var(--pri)">
+      <div style="font-weight:700;color:var(--pri);margin-bottom:6px">單光束（Single-Beam）</div>
+      <p style="font-size:.85rem">✅ 結構簡單、S/N 較佳<br>❌ 空白與樣品需分開測，光源漂移影響大</p>
+    </div>
+    <div class="card2" style="border-left:3px solid var(--hi)">
+      <div style="font-weight:700;color:var(--hi);margin-bottom:6px">雙光束（Double-Beam）</div>
+      <p style="font-size:.85rem">✅ 同時測空白與樣品，補償光源漂移，可掃光譜<br>❌ 光強減半，S/N 降低；結構複雜</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     15  光源 + 偵測器
+══════════════════════════════════════════════════ -->
+<section class="slide" data-slide="15" data-section="儀器世界" style="background:#0D1B2A">
+<div class="slide-inner">
+  <div class="badge" style="background:var(--pri);color:var(--bg)">元件細節</div>
+  <h2 class="slide-title">光源 vs 偵測器：選型關鍵</h2>
+  <div class="rule" style="background:var(--pri)"></div>
+  <div class="two-col" style="gap:14px;margin-bottom:14px">
+    <div class="card" style="border-top:3px solid var(--hi)">
+      <div style="font-weight:700;color:var(--hi);margin-bottom:8px">💡 光源</div>
+      <table class="data-table" style="font-size:.82rem">
+        <thead><tr><th>光源</th><th>範圍</th><th>用途</th></tr></thead>
+        <tbody>
+          <tr><td>鎢絲燈</td><td>350–2500 nm</td><td>可見光+近紅外</td></tr>
+          <tr><td>氘放電燈</td><td>160–375 nm</td><td>UV 範圍</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:.8rem;color:var(--muted);margin-top:8px">多數儀器雙燈配備，約 340–380 nm 自動切換</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--pur)">
+      <div style="font-weight:700;color:var(--pur);margin-bottom:8px">👁️ 偵測器</div>
+      <table class="data-table" style="font-size:.82rem">
+        <thead><tr><th>偵測器</th><th>特點</th><th>靈敏度</th></tr></thead>
+        <tbody>
+          <tr><td>光電管</td><td>無放大，簡單</td><td>低</td></tr>
+          <tr><td style="color:var(--pri);font-weight:700">PMT</td><td>多 dynode 放大 10⁶–10⁹×</td><td style="color:var(--hi);font-weight:700">極高</td></tr>
+          <tr><td>DAD（陣列）</td><td>同時偵測所有 λ</td><td>中</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:.8rem;color:var(--muted);margin-top:8px">PMT 最適合螢光/弱光；DAD 適合快速掃描光譜</p>
+    </div>
+  </div>
+  <!-- Quiz -->
+  <div class="card2" style="padding:12px">
+    <p style="font-weight:700;color:var(--hi);margin-bottom:8px">🎯 測量茶葉中咖啡因（UV 275 nm），用一般玻璃比色槽可以嗎？</p>
+    <div class="quiz-opt" onclick="doQuiz(this,'wrong')">A　可以，玻璃透明所以沒問題</div>
+    <div class="quiz-opt" onclick="doQuiz(this,'correct')">B　不行，玻璃在 &lt;320 nm 強烈吸收 UV，必須換石英槽</div>
+    <div class="quiz-opt" onclick="doQuiz(this,'wrong')">C　可以，但要加校正因子</div>
+    <div class="answer-panel" id="ap15">矽酸鹽玻璃在 &lt;320 nm 有強烈吸收，UV 光無法通過，測量值完全失真。UV 波段（&lt;380 nm）必須使用石英或熔融矽比色槽。</div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     16  發色團與共軛
+══════════════════════════════════════════════════ -->
+<section class="slide" data-slide="16" data-section="儀器世界" style="background:#0D1B2A">
+<div class="slide-inner">
+  <div class="badge" style="background:var(--pri);color:var(--bg)">吸收物種</div>
+  <h2 class="slide-title">發色團與共軛效應：決定 λmax 的化學結構</h2>
+  <div class="rule" style="background:var(--pri)"></div>
+  <div class="two-col" style="gap:16px;margin-bottom:14px">
+    <div class="card" style="border-top:3px solid var(--muted)">
+      <div style="font-weight:700;color:var(--muted);margin-bottom:8px">無共軛（孤立 C=O）</div>
+      <div class="bullet-item"><div class="dot" style="background:var(--muted)"></div><p style="font-size:.88rem">R-CHO、R-CO、R-COOH</p></div>
+      <div class="bullet-item"><div class="dot" style="background:var(--muted)"></div><p style="font-size:.88rem">ε 極小（&lt;100 L·mol⁻¹·cm⁻¹）</p></div>
+      <div class="bullet-item"><div class="dot" style="background:var(--muted)"></div><p style="font-size:.88rem">需高濃度或衍生化才能定量</p></div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--hi)">
+      <div style="font-weight:700;color:var(--hi);margin-bottom:8px">共軛越長 → λmax 紅移</div>
+      <div class="bullet-item"><div class="dot" style="background:var(--hi)"></div><p style="font-size:.88rem">共軛雙鍵增加 → 電子離域化程度增加</p></div>
+      <div class="bullet-item"><div class="dot" style="background:var(--hi)"></div><p style="font-size:.88rem">HOMO-LUMO 能隙縮小 → 需更低能量光子（更長 λ）</p></div>
+      <div class="bullet-item"><div class="dot" style="background:var(--hi)"></div><p style="font-size:.88rem">ε 同步增大 → 靈敏度提升</p></div>
+    </div>
+  </div>
+  <table class="data-table">
+    <thead><tr><th>物質</th><th>共軛雙鍵數</th><th>λmax (nm)</th><th>ε</th><th>食品意義</th></tr></thead>
+    <tbody>
+      <tr><td style="text-align:left">1,3-丁二烯</td><td>2</td><td>217</td><td>21,000</td><td style="text-align:left">脂質氧化指標</td></tr>
+      <tr><td style="text-align:left">番茄紅素</td><td>11（開鏈）</td><td>470</td><td>~185,000</td><td style="text-align:left">紅色色素</td></tr>
+      <tr><td style="text-align:left">β-胡蘿蔔素</td><td>11（環化）</td><td style="color:var(--hi);font-weight:700">465</td><td style="color:var(--hi);font-weight:700">125,000</td><td style="text-align:left">橘黃色素，高靈敏</td></tr>
+    </tbody>
+  </table>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     17  Wordwall Match B
+══════════════════════════════════════════════════ -->
+<section class="slide" data-slide="17" data-section="儀器世界" style="background:#0D1B2A">
+<div class="slide-inner">
+  <div class="badge" style="background:var(--grn);color:var(--bg)">🎮 Wordwall 配對 B</div>
+  <h2 class="slide-title">鞏固：儀器 + 發色團 + 螢光詞卡</h2>
+  <div class="rule" style="background:var(--grn)"></div>
+  <div class="platform-card wordwall" style="margin-bottom:14px;padding:12px">
+    <p style="font-size:.9rem;color:var(--muted)">匯入：<span style="color:var(--grn)">game_imports/wordwall_ch7_match_B.csv</span></p>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <div class="card2" style="padding:10px 14px"><span style="color:var(--pri);font-weight:700">氘放電燈</span> ↔ 160–375 nm，UV 範圍光源</div>
+    <div class="card2" style="padding:10px 14px"><span style="color:var(--hi);font-weight:700">鎢絲燈</span> ↔ 350–2500 nm，可見光+近紅外</div>
+    <div class="card2" style="padding:10px 14px"><span style="color:var(--pur);font-weight:700">PMT</span> ↔ 靈敏度最高偵測器，多 dynode 串聯放大</div>
+    <div class="card2" style="padding:10px 14px"><span style="color:var(--hi);font-weight:700">DAD</span> ↔ 同時偵測所有波長，快速掃描全光譜</div>
+    <div class="card2" style="padding:10px 14px"><span style="color:var(--grn);font-weight:700">雙光束設計</span> ↔ 同時量空白與樣品，補償光源漂移</div>
+    <div class="card2" style="padding:10px 14px"><span style="color:var(--grn);font-weight:700">螢光 90° 偵測</span> ↔ 量 Pf 發射光，幾乎零背景</div>
+    <div class="card2" style="padding:10px 14px"><span style="color:var(--hi);font-weight:700">共軛越長</span> ↔ λmax 紅移，ε 增大，靈敏度提升</div>
+    <div class="card2" style="padding:10px 14px"><span style="color:var(--hi);font-weight:700">β-胡蘿蔔素</span> ↔ λmax 465 nm，ε = 125,000</div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     18  螢光過渡頁
+══════════════════════════════════════════════════ -->
+<section class="slide section-divider" data-slide="18" data-section="螢光光譜" style="background:#0F2133">
+<div class="slide-inner" style="text-align:center">
+  <p style="color:var(--muted);font-size:1.1rem;margin-bottom:16px">第三段</p>
+  <h2 style="font-size:clamp(2.5rem,5vw,4rem);font-weight:900;color:var(--grn);margin-bottom:12px">螢光光譜法</h2>
+  <p style="font-size:1.4rem;color:var(--txt)">為什麼靈敏度比 UV-Vis 高 1000 倍？</p>
+  <div style="width:160px;height:3px;background:var(--grn);margin:20px auto"></div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     19  螢光 vs UV-Vis 比較表
+══════════════════════════════════════════════════ -->
+<section class="slide" data-slide="19" data-section="螢光光譜" style="background:#0D1B2A">
+<div class="slide-inner">
+  <div class="badge" style="background:var(--grn);color:var(--bg)">螢光光譜</div>
+  <h2 class="slide-title">螢光光譜 vs UV-Vis：靈敏度差 1000 倍的祕密</h2>
+  <div class="rule" style="background:var(--grn)"></div>
+  <table class="data-table" style="margin-bottom:14px">
+    <thead>
+      <tr>
+        <th style="background:var(--card);color:var(--muted)">比較項目</th>
+        <th style="background:var(--pri);color:var(--bg)">UV-Vis 吸收法</th>
+        <th style="background:var(--grn);color:var(--bg)">螢光光譜法</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td style="text-align:left;color:var(--muted)">訊號來源</td><td>P₀ − P（被吸收的光）</td><td style="color:var(--grn)">Pf（激發後發射的光）</td></tr>
+      <tr><td style="text-align:left;color:var(--muted)">量測角度</td><td>與入射光同軸（180°）</td><td style="color:var(--grn)">垂直入射光（90°）</td></tr>
+      <tr><td style="text-align:left;color:var(--muted)">核心公式</td><td>A = εbc</td><td style="color:var(--grn)">Pf = k · P₀ · c</td></tr>
+      <tr><td style="text-align:left;color:var(--muted)">靈敏度</td><td>★★★（ppm 級）</td><td style="color:var(--hi);font-weight:700">★★★★★（ppb 級）</td></tr>
+      <tr><td style="text-align:left;color:var(--muted)">靈敏度原因</td><td>差值訊號，背景干擾大</td><td style="color:var(--grn)">零背景量測，S/N 極高</td></tr>
+      <tr><td style="text-align:left;color:var(--muted)">食品應用</td><td>蛋白質、色素、還原糖</td><td>黃麴毒素、葉綠素、維生素 B₂</td></tr>
+      <tr><td style="text-align:left;color:var(--muted)">限制</td><td>A > 0.01 才可偵測</td><td>需有螢光基團（或衍生化）</td></tr>
+    </tbody>
+  </table>
+  <div class="card" style="background:#0a2a0a;border-left:4px solid var(--grn);padding:10px 14px">
+    <span style="color:var(--grn);font-weight:700">90° 的關鍵：</span>偵測器位於垂直方向 → 激發光幾乎不進入偵測器 → 訊號/背景比（S/N）極高 → 可偵測極微量螢光物質
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     20  螢光儀器與食品應用
+══════════════════════════════════════════════════ -->
+<section class="slide" data-slide="20" data-section="螢光光譜" style="background:#0D1B2A">
+<div class="slide-inner">
+  <div class="badge" style="background:var(--grn);color:var(--bg)">螢光儀器</div>
+  <h2 class="slide-title">螢光儀器：兩個單色器 + 食品分析應用</h2>
+  <div class="rule" style="background:var(--grn)"></div>
+  <div class="two-col" style="gap:16px">
+    <div class="card" style="border-top:3px solid var(--grn)">
+      <div style="font-weight:700;color:var(--grn);margin-bottom:10px">儀器架構特點</div>
+      <div class="bullet-item"><div class="dot" style="background:var(--pri)"></div><p style="font-size:.88rem"><span style="color:var(--pri);font-weight:700">兩個單色器：</span>激發波長（λex）+ 發射波長（λem）各一</p></div>
+      <div class="bullet-item"><div class="dot" style="background:var(--hi)"></div><p style="font-size:.88rem"><span style="color:var(--hi);font-weight:700">90° 偵測：</span>最小化散射干擾，零背景效果</p></div>
+      <div class="bullet-item"><div class="dot" style="background:var(--grn)"></div><p style="font-size:.88rem"><span style="color:var(--grn);font-weight:700">Pf = k·P₀·c：</span>低濃度時線性；高濃度內濾效應使線性崩潰</p></div>
+      <div class="bullet-item"><div class="dot" style="background:var(--pur)"></div><p style="font-size:.88rem"><span style="color:var(--pur);font-weight:700">量子效率 φ：</span>發射光子數 ÷ 吸收光子數，越高越靈敏</p></div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--hi)">
+      <div style="font-weight:700;color:var(--hi);margin-bottom:10px">食品螢光分析應用</div>
+      <div style="margin-bottom:8px;background:#0a1500;border-radius:6px;padding:10px">
+        <div style="font-weight:700;color:var(--grn)">黃麴毒素 B1</div>
+        <p style="font-size:.82rem;color:var(--muted)">λex 365 nm / λem 440 nm　ppm → ppb 級偵測</p>
+      </div>
+      <div style="margin-bottom:8px;background:#0a1500;border-radius:6px;padding:10px">
+        <div style="font-weight:700;color:var(--grn)">葉綠素 a/b</div>
+        <p style="font-size:.82rem;color:var(--muted)">λex 430 nm / λem 670 nm　植物食品品質鑑定</p>
+      </div>
+      <div style="margin-bottom:8px;background:#0a1500;border-radius:6px;padding:10px">
+        <div style="font-weight:700;color:var(--grn)">維生素 B₂（核黃素）</div>
+        <p style="font-size:.82rem;color:var(--muted)">λex 450 nm / λem 520 nm　天然螢光，不需衍生</p>
+      </div>
+      <div style="background:#0a1500;border-radius:6px;padding:10px">
+        <div style="font-weight:700;color:var(--grn)">胺基酸 OPA 衍生</div>
+        <p style="font-size:.82rem;color:var(--muted)">衍生後具螢光　蛋白質水解分析</p>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     21  Wayground 開放題
+══════════════════════════════════════════════════ -->
+<section class="slide" data-slide="21" data-section="螢光光譜" style="background:#0D1B2A">
+<div class="slide-inner">
+  <div class="badge" style="background:var(--pri);color:var(--bg)">🗣️ Wayground 小組討論</div>
+  <h2 class="slide-title">小組推理：三大主題開放題</h2>
+  <div class="rule" style="background:var(--pri)"></div>
+  <div class="three-col" style="gap:12px">
+    <div class="card" style="border-top:3px solid var(--hi)">
+      <div style="font-weight:700;color:var(--hi);margin-bottom:8px;font-size:.95rem">第一組：Beer's Law 定量</div>
+      <p style="font-size:.82rem;color:var(--muted);margin-bottom:6px">① ε=5,000 vs 125,000：哪個靈敏？用多少 c 達到 A=0.5？</p>
+      <p style="font-size:.82rem;color:var(--muted);margin-bottom:6px">② 標準曲線第 6 點往下偏，可能原因？補救？</p>
+      <p style="font-size:.82rem;color:var(--muted)">③ 橄欖油樣品含大量葉綠素干擾，如何設計 blank？</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--pri)">
+      <div style="font-weight:700;color:var(--pri);margin-bottom:8px;font-size:.95rem">第二組：儀器選擇</div>
+      <p style="font-size:.82rem;color:var(--muted);margin-bottom:6px">① 掃描 200–800 nm 全光譜，單光束或雙光束？為什麼？</p>
+      <p style="font-size:.82rem;color:var(--muted);margin-bottom:6px">② 窄狹縫讓 Beer's Law 更準，但有什麼副作用？</p>
+      <p style="font-size:.82rem;color:var(--muted)">③ 咖啡因在 UV 275 nm，用玻璃槽可以嗎？</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--grn)">
+      <div style="font-weight:700;color:var(--grn);margin-bottom:8px;font-size:.95rem">第三組：螢光食品分析</div>
+      <p style="font-size:.82rem;color:var(--muted);margin-bottom:6px">① 黃麴毒素為何選螢光而非 UV-Vis？靈敏度差從哪來？</p>
+      <p style="font-size:.82rem;color:var(--muted);margin-bottom:6px">② 橄欖油 vs 大豆油，用螢光法如何快速區分？</p>
+      <p style="font-size:.82rem;color:var(--muted)">③ Pf = kP₀c 在高濃度線性崩潰，原因？如何驗證？</p>
+    </div>
+  </div>
+  <div class="card2" style="margin-top:12px;padding:10px 14px;text-align:center">
+    <p style="font-size:.85rem;color:var(--muted)">討論後全班報告 5 分鐘 | 參考答案：<span style="color:var(--pri)">game_imports/wayground_ch7.txt</span></p>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     22  計算練習
+══════════════════════════════════════════════════ -->
+<section class="slide" data-slide="22" data-section="計算練習" style="background:#0D1B2A">
+<div class="slide-inner">
+  <div class="badge" style="background:var(--red);color:#fff">喚起行動</div>
+  <h2 class="slide-title">計算練習：用 Beer's Law 解答真實問題</h2>
+  <div class="rule" style="background:var(--red)"></div>
+  <div class="card" style="border-top:3px solid var(--pri);margin-bottom:14px">
+    <div style="display:flex;gap:12px;align-items:center;margin-bottom:8px">
+      <span style="font-size:1.2rem;font-weight:900;color:var(--pri)">題目一</span>
+      <p>色素 ε = 3,800 L·mol⁻¹·cm⁻¹（at 510 nm），b = 1 cm，c = 2×10⁻⁴ mol/L</p>
+    </div>
+    <p style="margin-bottom:8px">求：(a) A = ？　(b) %T = ？</p>
+    <div class="card2" style="padding:10px 14px">
+      <p style="color:var(--hi);font-weight:700;font-family:'JetBrains Mono',monospace">解：A = εbc = 3,800 × 1 × 2×10⁻⁴ = 0.76</p>
+      <p style="color:var(--hi);font-weight:700;font-family:'JetBrains Mono',monospace">%T = 10^(2−A) = 10^(1.24) = 17.4%</p>
+    </div>
+  </div>
+  <div class="card" style="border-top:3px solid var(--grn);margin-bottom:14px">
+    <div style="display:flex;gap:12px;align-items:center;margin-bottom:8px">
+      <span style="font-size:1.2rem;font-weight:900;color:var(--grn)">題目二</span>
+      <p>量到 %T = 50%，b = 1 cm，c = 5×10⁻⁴ M</p>
+    </div>
+    <p style="margin-bottom:8px">求：(a) A = ？　(b) ε = ？</p>
+    <div class="card2" style="padding:10px 14px">
+      <p style="color:var(--hi);font-weight:700;font-family:'JetBrains Mono',monospace">解：(a) A = −log(0.5) = 0.301</p>
+      <p style="color:var(--hi);font-weight:700;font-family:'JetBrains Mono',monospace">(b) ε = A/(bc) = 0.301/(1×5×10⁻⁴) = 602 L·mol⁻¹·cm⁻¹</p>
+    </div>
+  </div>
+  <div class="card2" style="padding:10px 14px;border-left:3px solid var(--hi)">
+    <span style="color:var(--hi);font-weight:700">⚠️ 題目一 A = 0.76 → 在最佳範圍（0.2–0.8）內，可直接使用。</span>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     23  Gimkit 快答
+══════════════════════════════════════════════════ -->
+<section class="slide" data-slide="23" data-section="計算練習" style="background:#0D1B2A">
+<div class="slide-inner">
+  <div class="badge" style="background:var(--hi);color:var(--bg)">🎮 Gimkit 快答</div>
+  <h2 class="slide-title">Gimkit — 36 題術語 × 公式 × 數值快答</h2>
+  <div class="rule" style="background:var(--hi)"></div>
+  <div class="platform-card gimkit" style="margin-bottom:14px;padding:14px 20px">
+    <p style="font-size:.9rem;color:var(--muted)">匯入：<span style="color:var(--hi)">game_imports/gimkit_ch7.csv</span> | 備用 Quizlet 格式：<span style="color:var(--hi)">gimkit_ch7_quizlet.tsv</span></p>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;font-size:.83rem">
+    <div class="card2" style="padding:10px">
+      <div style="font-weight:700;color:var(--pri);margin-bottom:6px">T & A 基礎</div>
+      <p>T = P/P₀ → 透光率</p>
+      <p>A = −logT → 吸光度</p>
+      <p>%T=50% → A=0.301</p>
+      <p>A 最佳範圍 → 0.2–0.8</p>
+    </div>
+    <div class="card2" style="padding:10px">
+      <div style="font-weight:700;color:var(--hi);margin-bottom:6px">Beer's Law 參數</div>
+      <p>A = εbc 各變數</p>
+      <p>ε 單位 → L/mol/cm</p>
+      <p>偏離原因①②③</p>
+      <p>校正曲線 r² → &gt;0.999</p>
+    </div>
+    <div class="card2" style="padding:10px">
+      <div style="font-weight:700;color:var(--grn);margin-bottom:6px">儀器 & 螢光</div>
+      <p>UV 光源 → 氘燈</p>
+      <p>靈敏最高偵測器 → PMT</p>
+      <p>螢光角度 → 90°</p>
+      <p>黃麴毒素 → 365/440 nm</p>
+    </div>
+    <div class="card2" style="padding:10px">
+      <div style="font-weight:700;color:var(--pur);margin-bottom:6px">食品應用數值</div>
+      <p>β-胡蘿蔔素 ε → 125,000</p>
+      <p>β-胡蘿蔔素 λmax → 465 nm</p>
+      <p>Bradford 波長 → 595 nm</p>
+      <p>Trp λmax → 278 nm</p>
+    </div>
+    <div class="card2" style="padding:10px">
+      <div style="font-weight:700;color:var(--red);margin-bottom:6px">螢光數值</div>
+      <p>螢光靈敏 → UV-Vis 100–1000×</p>
+      <p>Pf 公式 → k·P₀·c</p>
+      <p>量子效率 φ → 發射/吸收光子</p>
+      <p>VitB₂ λem → 520 nm</p>
+    </div>
+    <div class="card2" style="padding:10px">
+      <div style="font-weight:700;color:var(--muted);margin-bottom:6px">操作細節</div>
+      <p>UV 比色槽 → 石英</p>
+      <p>雙光束優點 → 補償漂移</p>
+      <p>Blank 作用 → 排除背景</p>
+      <p>標準添加法 → 補償基質效應</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     24  Kahoot 後測
+══════════════════════════════════════════════════ -->
+<section class="slide" data-slide="24" data-section="總結" style="background:#0D1B2A">
+<div class="slide-inner">
+  <div class="badge" style="background:#9B59B6;color:#fff">🎮 Kahoot 後測</div>
+  <h2 class="slide-title">後測 6 題 — 與前測對比進步</h2>
+  <div class="rule" style="background:var(--pur)"></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+    <div class="card2" style="border-left:3px solid var(--pri)">
+      <div style="font-weight:700;color:var(--pri);margin-bottom:4px">Q12　%T=10%，A=？</div>
+      <p style="font-size:.85rem;color:var(--muted)">A = 2 − log10 = 2 − 1 = 1.0</p>
+    </div>
+    <div class="card2" style="border-left:3px solid var(--hi)">
+      <div style="font-weight:700;color:var(--hi);margin-bottom:4px">Q13　ε 大代表什麼？</div>
+      <p style="font-size:.85rem;color:var(--muted)">吸光能力強 → 靈敏度高（非分子量大）</p>
+    </div>
+    <div class="card2" style="border-left:3px solid var(--grn)">
+      <div style="font-weight:700;color:var(--grn);margin-bottom:4px">Q14　標準添加法優點</div>
+      <p style="font-size:.85rem;color:var(--muted)">補償基質效應（非不需標準品）</p>
+    </div>
+    <div class="card2" style="border-left:3px solid var(--pur)">
+      <div style="font-weight:700;color:var(--pur);margin-bottom:4px">Q15　螢光偵測器 90° 原因</div>
+      <p style="font-size:.85rem;color:var(--muted)">避免激發光進入偵測器（非節省空間）</p>
+    </div>
+    <div class="card2" style="border-left:3px solid var(--grn)">
+      <div style="font-weight:700;color:var(--grn);margin-bottom:4px">Q16　黃麴毒素選螢光法</div>
+      <p style="font-size:.85rem;color:var(--muted)">天然螢光，ppb 級偵測（非濃度高）</p>
+    </div>
+    <div class="card2" style="border-left:3px solid var(--hi)">
+      <div style="font-weight:700;color:var(--hi);margin-bottom:4px">Q17　β-胡蘿蔔素高 ε 原因</div>
+      <p style="font-size:.85rem;color:var(--muted)">共軛越長 λmax 紅移 ε 越大（非沸點）</p>
+    </div>
+  </div>
+  <p style="font-size:.85rem;color:var(--muted);text-align:center">匯入檔：<span style="color:var(--pri)">game_imports/kahoot_ch7.xlsx</span>（題 12–17）</p>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     25  五大收攏
+══════════════════════════════════════════════════ -->
+<section class="slide" data-slide="25" data-section="總結" style="background:#0D1B2A">
+<div class="slide-inner">
+  <div class="badge" style="background:var(--red);color:#fff">喚起行動</div>
+  <h2 class="slide-title">今日五點收攏</h2>
+  <div class="rule" style="background:var(--red)"></div>
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <div class="card" style="display:flex;align-items:center;gap:14px;border-left:4px solid var(--pri)">
+      <div style="min-width:32px;height:32px;border-radius:50%;background:var(--pri);display:flex;align-items:center;justify-content:center;font-weight:900;color:var(--bg)">01</div>
+      <p style="font-size:.92rem">A = −logT = 2−log%T：吸光度是對數關係，A 正比於 c，%T 不是。</p>
+    </div>
+    <div class="card" style="display:flex;align-items:center;gap:14px;border-left:4px solid var(--hi)">
+      <div style="min-width:32px;height:32px;border-radius:50%;background:var(--hi);display:flex;align-items:center;justify-content:center;font-weight:900;color:var(--bg)">02</div>
+      <p style="font-size:.92rem">Beer's Law A = εbc 在稀溶液（&lt;10 mM）且單色光條件下成立；高濃度或多色光會偏離。</p>
+    </div>
+    <div class="card2" style="display:flex;align-items:center;gap:14px;border-left:4px solid var(--grn)">
+      <div style="min-width:32px;height:32px;border-radius:50%;background:var(--grn);display:flex;align-items:center;justify-content:center;font-weight:900;color:var(--bg)">03</div>
+      <p style="font-size:.92rem">最佳量測範圍 A = 0.2–0.8（15–65%T）：太高或太低都使相對誤差增大。</p>
+    </div>
+    <div class="card" style="display:flex;align-items:center;gap:14px;border-left:4px solid var(--pur)">
+      <div style="min-width:32px;height:32px;border-radius:50%;background:var(--pur);display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff">04</div>
+      <p style="font-size:.92rem">分光光度計五元件：光源→單色器→樣品槽→偵測器→讀出。雙光束自動補償光源漂移。</p>
+    </div>
+    <div class="card2" style="display:flex;align-items:center;gap:14px;border-left:4px solid var(--grn)">
+      <div style="min-width:32px;height:32px;border-radius:50%;background:var(--grn);display:flex;align-items:center;justify-content:center;font-weight:900;color:var(--bg)">05</div>
+      <p style="font-size:.92rem">螢光光譜 90° 偵測，Pf = kP₀c，靈敏度比 UV-Vis 高 1000×，適合毒素、維生素等微量分析。</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     26  結語
+══════════════════════════════════════════════════ -->
+<section class="slide" data-slide="26" data-section="總結" style="background:#0D1B2A">
+<div class="slide-inner" style="text-align:center">
+  <div style="height:3px;background:var(--pri);margin-bottom:40px"></div>
+  <h2 style="font-size:clamp(1.8rem,4vw,3rem);font-weight:900;color:var(--txt);margin-bottom:16px">吸光度 A = εbc，</h2>
+  <h2 style="font-size:clamp(1.5rem,3.5vw,2.5rem);font-weight:900;color:var(--pri);margin-bottom:32px">一束光的衰減，就是食品成分濃度的答案。</h2>
+  <div style="width:200px;height:3px;background:var(--hi);margin:0 auto 32px"></div>
+  <p style="font-size:1.1rem;color:var(--muted);margin-bottom:16px">下次課程：紅外線光譜法（IR Spectroscopy）</p>
+  <div style="display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin-top:20px">
+    <div class="platform-badge" style="background:#2a1040;color:#9B59B6;border:1px solid #9B59B6">🎮 Kahoot 前/段/後測</div>
+    <div class="platform-badge" style="background:#0a2a1a;color:#2ECC71;border:1px solid #2ECC71">🃏 Wordwall A+B+C</div>
+    <div class="platform-badge" style="background:#2a1a00;color:#FFD700;border:1px solid #FFD700">⚡ Gimkit 36 題</div>
+    <div class="platform-badge" style="background:#0a1a2a;color:#00C6FF;border:1px solid #00C6FF">🗣️ Wayground 3 組</div>
+  </div>
+  <p style="margin-top:24px;font-size:.85rem;color:var(--muted)">Nielsen's Food Analysis, 6th Ed. · Chapter 7</p>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     JS
+══════════════════════════════════════════════════ -->
+<script>
+const slides = document.querySelectorAll('.slide');
+const total  = slides.length;
+let cur = 0;
+
+function go(dir) {
+  slides[cur].classList.remove('active');
+  cur = Math.max(0, Math.min(total - 1, cur + dir));
+  slides[cur].classList.add('active');
+  updateUI();
+}
+
+function updateUI() {
+  const pct = ((cur + 1) / total * 100).toFixed(2);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  const s = slides[cur];
+  document.getElementById('section-tag').textContent = '— ' + (s.dataset.section || '') + ' —';
+  const labels = ['開場','前測','封面','學習地圖','T 定義','T vs A','Beer\'s Law','ε 係數','最佳範圍','配對A','偏離①②','校正曲線','段落測','儀器過渡','五大元件','光源偵測器','發色團','配對B','螢光過渡','螢光比較','螢光儀器','Wayground','計算','Gimkit','後測','五點收攏','結語'];
+  document.getElementById('page-info').textContent = (labels[cur] || `投影片 ${cur+1}`) + ` (${cur+1}/${total})`;
+}
+
+function doQuiz(el, type) {
+  const parent = el.closest('.card2') || el.parentElement;
+  const opts   = parent.querySelectorAll('.quiz-opt');
+  const apId   = 'ap' + slides[cur].dataset.slide;
+  const ap     = document.getElementById(apId);
+  opts.forEach(o => {
+    o.classList.add('opt-locked');
+    if (o !== el) o.classList.add('opt-dimmed');
+  });
+  el.classList.add(type === 'correct' ? 'opt-correct' : 'opt-wrong');
+  if (ap) ap.classList.add('show');
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); go(1); }
+  if (e.key === 'ArrowLeft')                    { e.preventDefault(); go(-1); }
+  if (e.key === 'f' || e.key === 'F') {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{});
+    else document.exitFullscreen();
+  }
+});
+
+updateUI();
+</script>
+
+<!-- ══════════════════════════════════════════════════
+     QR Code 浮動按鈕 + Firestore 紀錄 (4-1 模板)
+══════════════════════════════════════════════════ -->
+<style>
+  #qrFab,#wcFab{position:fixed;right:20px;width:62px;height:62px;border-radius:50%;color:#fff;border:none;cursor:pointer;font-size:11px;font-weight:900;line-height:1.1;z-index:90;transition:transform .2s;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1px;}
+  #qrFab{bottom:60px;background:linear-gradient(135deg,#00C6FF,#0072FF);box-shadow:0 4px 18px rgba(0,114,255,.45);}
+  #wcFab{bottom:140px;background:linear-gradient(135deg,#FFD700,#F39C12);box-shadow:0 4px 18px rgba(243,156,18,.45);color:#0D1B2A;}
+  #qrFab:hover,#wcFab:hover{transform:scale(1.08)}
+  #qrFab span:first-child,#wcFab span:first-child{font-size:22px;line-height:1}
+  #qrModal{position:fixed;inset:0;background:rgba(6,17,30,.92);display:none;align-items:center;justify-content:center;z-index:200;backdrop-filter:blur(6px)}
+  #qrModal.show{display:flex}
+  .qr-box{background:#fff;border-radius:18px;padding:32px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.5);max-width:90vw}
+  .qr-box .qr-title{font-size:1.5rem;font-weight:900;color:#0072FF;margin-bottom:6px;font-family:'Noto Sans TC',sans-serif}
+  .qr-box .qr-sub{color:#64748B;font-size:.85rem;margin-bottom:18px;font-family:'Noto Sans TC',sans-serif}
+  .qr-box .qr-img{display:flex;justify-content:center;margin-bottom:18px}
+  .qr-box .qr-url{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:#475569;background:#F1F5F9;padding:6px 12px;border-radius:6px;display:inline-block;word-break:break-all}
+  .qr-box .qr-close{margin-top:18px;background:#0072FF;color:#fff;border:none;padding:8px 22px;border-radius:9999px;font-weight:700;cursor:pointer;font-family:'Noto Sans TC',sans-serif}
+</style>
+<button id="wcFab" title="開場文字雲（老師投影頁）" onclick="window.open('wordcloud_display.html','_blank')"><span>☁️</span><span>文字雲</span></button>
+<button id="qrFab" title="掃 QR Code 進入隨堂小遊戲"><span>📱</span><span>小遊戲</span></button>
+<div id="qrModal" onclick="if(event.target.id==='qrModal')document.getElementById('qrModal').classList.remove('show')">
+  <div class="qr-box">
+    <div class="qr-title">📱 Chapter 7 隨堂小遊戲</div>
+    <div class="qr-sub">UV-Vis 與螢光光譜法｜共 17 題</div>
+    <div class="qr-img" id="qrcode"></div>
+    <div class="qr-url" id="qrurl"></div>
+    <div style="margin-top:10px;font-size:.75rem;color:#94A3B8">系統會記錄你的姓名、答題結果、用時</div>
+    <button class="qr-close" onclick="document.getElementById('qrModal').classList.remove('show')">關閉</button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script>
+(function(){
+  const quizURL = new URL("quiz.html", window.location.href).href;
+  document.getElementById('qrurl').textContent = quizURL;
+  new QRCode(document.getElementById('qrcode'), {
+    text: quizURL, width: 240, height: 240,
+    colorDark: "#0072FF", colorLight: "#ffffff",
+    correctLevel: QRCode.CorrectLevel.H
+  });
+  document.getElementById('qrFab').addEventListener('click', () => {
+    document.getElementById('qrModal').classList.add('show');
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'q' || e.key === 'Q') {
+      document.getElementById('qrModal').classList.toggle('show');
+    }
+    if (e.key === 'Escape') {
+      document.getElementById('qrModal').classList.remove('show');
+    }
+  });
+})();
+</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, addDoc, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { firebaseConfig, VIEW_COLLECTION } from "./firebase-config.js";
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+(async () => {
+  try {
+    await addDoc(collection(db, VIEW_COLLECTION), {
+      type: "slide_view",
+      userAgent: navigator.userAgent.substring(0, 200),
+      lang: navigator.language,
+      screenWidth: window.innerWidth,
+      timestamp: serverTimestamp()
+    });
+  } catch (e) { console.warn("[Firestore] 寫入瀏覽紀錄失敗:", e); }
+})();
+</script>
+
+</body>
+</html>

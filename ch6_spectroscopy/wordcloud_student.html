@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>開場文字雲 — 學生投稿</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0D1B2A;
+    color: #ECEEF2;
+    font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .card {
+    background: #1A3050;
+    border-radius: 20px;
+    padding: 36px 28px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+  .icon { font-size: 48px; text-align: center; margin-bottom: 12px; }
+  h1 {
+    font-size: 22px;
+    font-weight: 700;
+    text-align: center;
+    color: #00C6FF;
+    margin-bottom: 8px;
+  }
+  .subtitle {
+    font-size: 14px;
+    color: #7A91B0;
+    text-align: center;
+    margin-bottom: 28px;
+    line-height: 1.6;
+  }
+  .question-box {
+    background: #0D1B2A;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 24px;
+    border-left: 4px solid #FFD700;
+  }
+  .question-box p {
+    font-size: 16px;
+    color: #FFD700;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .question-box span {
+    font-size: 13px;
+    color: #7A91B0;
+  }
+  input[type="text"] {
+    width: 100%;
+    padding: 16px 18px;
+    font-size: 20px;
+    border: 2px solid #2A4A6A;
+    border-radius: 12px;
+    background: #0F2133;
+    color: #ECEEF2;
+    outline: none;
+    font-family: inherit;
+    margin-bottom: 16px;
+    transition: border-color 0.2s;
+  }
+  input[type="text"]:focus { border-color: #00C6FF; }
+  input[type="text"]::placeholder { color: #4A6080; }
+  .char-count {
+    text-align: right;
+    font-size: 12px;
+    color: #7A91B0;
+    margin-top: -12px;
+    margin-bottom: 16px;
+  }
+  button {
+    width: 100%;
+    padding: 18px;
+    font-size: 18px;
+    font-weight: 700;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+  #submitBtn {
+    background: #00C6FF;
+    color: #0D1B2A;
+  }
+  #submitBtn:hover { background: #00A8D6; transform: translateY(-1px); }
+  #submitBtn:active { transform: translateY(0); }
+  #submitBtn:disabled { background: #2A4A6A; color: #4A6080; cursor: not-allowed; transform: none; }
+
+  .success {
+    display: none;
+    text-align: center;
+    padding: 32px 0;
+  }
+  .success .big-icon { font-size: 64px; margin-bottom: 16px; }
+  .success h2 { font-size: 24px; color: #2ECC71; margin-bottom: 8px; }
+  .success p { font-size: 14px; color: #7A91B0; line-height: 1.6; }
+  .again-btn {
+    margin-top: 24px;
+    background: transparent;
+    border: 2px solid #2A4A6A;
+    color: #7A91B0;
+    font-size: 14px;
+    padding: 12px;
+    border-radius: 10px;
+  }
+  .again-btn:hover { border-color: #00C6FF; color: #00C6FF; }
+
+  .counter {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 12px;
+    color: #4A6080;
+  }
+  .counter span { color: #00C6FF; font-weight: 700; }
+
+  .error-msg {
+    color: #E74C3C;
+    font-size: 13px;
+    margin-top: -10px;
+    margin-bottom: 12px;
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div id="formArea">
+    <div class="icon">💭</div>
+    <h1>開場文字雲</h1>
+    <p class="subtitle">分享你的想法，<br>一起建立今天的文字雲！</p>
+
+    <div class="question-box">
+      <p>你認為「食品分析」最重要的一件事是？</p>
+      <span>輸入 1–4 個詞，點送出即可</span>
+    </div>
+
+    <input type="text" id="wordInput" placeholder="例如：安全、精準、快速..." maxlength="12" autocomplete="off">
+    <div class="char-count"><span id="charCount">0</span> / 12 字</div>
+    <div class="error-msg" id="errorMsg">請輸入至少 1 個字</div>
+
+    <button id="submitBtn">送出 ✨</button>
+  </div>
+
+  <div class="success" id="successArea">
+    <div class="big-icon">🌟</div>
+    <h2>已送出！</h2>
+    <p>你的詞已出現在文字雲上了<br>看看大家的想法有什麼共通點</p>
+    <button class="again-btn" id="againBtn">再送一個</button>
+  </div>
+
+  <div class="counter">今日已收到 <span id="totalCount">0</span> 則回覆</div>
+</div>
+
+<!-- ⚠️ 請替換為你的 Firebase 設定 -->
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+  import { getFirestore, collection, addDoc, onSnapshot, query, serverTimestamp }
+    from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+  // ──────────────────────────────────────────────
+  const firebaseConfig = {
+    apiKey:            "FIREBASE_API_KEY_REMOVED",
+    authDomain:        "my-teaching-tools-517a0.firebaseapp.com",
+    projectId:         "my-teaching-tools-517a0",
+    storageBucket:     "my-teaching-tools-517a0.firebasestorage.app",
+    messagingSenderId: "244288457011",
+    appId:             "1:244288457011:web:4b3ff8a846a6c50b169646",
+  };
+  // ──────────────────────────────────────────────
+
+  const COLLECTION = "wordcloud_words";   // Firestore 集合名稱
+  const SESSION_ID = new Date().toISOString().slice(0, 10);  // 今天日期作為 session
+
+  const app = initializeApp(firebaseConfig);
+  const db  = getFirestore(app);
+
+  const wordInput   = document.getElementById('wordInput');
+  const submitBtn   = document.getElementById('submitBtn');
+  const formArea    = document.getElementById('formArea');
+  const successArea = document.getElementById('successArea');
+  const againBtn    = document.getElementById('againBtn');
+  const charCount   = document.getElementById('charCount');
+  const totalCount  = document.getElementById('totalCount');
+  const errorMsg    = document.getElementById('errorMsg');
+
+  // 即時更新送出數量
+  onSnapshot(query(collection(db, COLLECTION)), (snap) => {
+    totalCount.textContent = snap.size;
+  });
+
+  // 字數計數
+  wordInput.addEventListener('input', () => {
+    charCount.textContent = wordInput.value.length;
+    errorMsg.style.display = 'none';
+  });
+
+  // 送出
+  submitBtn.addEventListener('click', async () => {
+    const word = wordInput.value.trim();
+    if (!word) {
+      errorMsg.style.display = 'block';
+      wordInput.focus();
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = '送出中...';
+
+    try {
+      await addDoc(collection(db, COLLECTION), {
+        word,
+        session: SESSION_ID,
+        timestamp: serverTimestamp(),
+        ua: navigator.userAgent.substring(0, 50),
+      });
+
+      formArea.style.display = 'none';
+      successArea.style.display = 'block';
+    } catch (err) {
+      console.error(err);
+      submitBtn.disabled = false;
+      submitBtn.textContent = '送出 ✨';
+      alert('送出失敗，請確認網路連線後重試');
+    }
+  });
+
+  // 再送一個
+  againBtn.addEventListener('click', () => {
+    wordInput.value = '';
+    charCount.textContent = '0';
+    submitBtn.disabled = false;
+    submitBtn.textContent = '送出 ✨';
+    successArea.style.display = 'none';
+    formArea.style.display = 'block';
+    wordInput.focus();
+  });
+
+  // Enter 鍵送出
+  wordInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') submitBtn.click();
+  });
+</script>
+</body>
+</html>

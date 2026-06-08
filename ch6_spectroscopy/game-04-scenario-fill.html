@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch6 遊戲 4 — 食品光譜情境填空</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:#0D1B2A; --card:#1A3050; --card2:#122540;
+  --pri:#00C6FF; --hi:#FFD700; --txt:#ECEEF2; --muted:#7A91B0;
+  --grn:#2ECC71; --red:#E74C3C; --pur:#9B59B6; --org:#E67E22;
+}
+body {
+  font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
+  background: var(--bg);
+  color: var(--txt);
+  min-height: 100vh;
+  padding: 16px;
+  font-size: 16px;
+}
+.container { max-width: 720px; margin: 0 auto; }
+.nav-link {
+  display: inline-block;
+  margin-bottom: 10px;
+  color: var(--pri);
+  text-decoration: none;
+  font-size: 14px;
+}
+.nav-link:hover { text-decoration: underline; }
+header {
+  background: var(--card);
+  padding: 18px 20px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  border-left: 4px solid var(--pri);
+}
+header h1 { font-size: 22px; margin-bottom: 6px; color: var(--pri); }
+header .subtitle { color: var(--muted); font-size: 13px; }
+.score-bar {
+  background: var(--card2);
+  padding: 10px 18px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.progress-bar-bg {
+  flex: 1 1 200px;
+  min-width: 100px;
+  height: 8px;
+  background: var(--card);
+  border-radius: 4px;
+  margin: 0 12px;
+  overflow: hidden;
+  align-self: center;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: var(--grn);
+  width: 0%;
+  transition: width 0.3s;
+}
+.scenario-card {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 22px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+.q-num {
+  display: inline-block;
+  background: var(--pri);
+  color: var(--bg);
+  font-weight: bold;
+  font-size: 13px;
+  padding: 3px 10px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+}
+.theme-tag {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: bold;
+  margin-left: 6px;
+  margin-bottom: 10px;
+}
+.theme-tag.food { background: var(--org); color: var(--bg); }
+.theme-tag.theory { background: var(--pur); color: var(--txt); }
+.theme-tag.lab { background: var(--hi); color: var(--bg); }
+.scenario {
+  font-size: 17px;
+  line-height: 1.9;
+  margin: 16px 0;
+  color: var(--txt);
+}
+.blank {
+  display: inline-block;
+  min-width: 100px;
+  padding: 4px 14px;
+  margin: 0 4px;
+  background: var(--card2);
+  border-bottom: 2px dashed var(--pri);
+  border-radius: 6px 6px 0 0;
+  font-weight: bold;
+  text-align: center;
+  color: var(--pri);
+}
+.blank.filled { background: rgba(0, 198, 255, 0.15); color: var(--txt); }
+.blank.correct {
+  background: rgba(46, 204, 113, 0.2);
+  border-bottom-color: var(--grn);
+  color: var(--grn);
+}
+.blank.wrong {
+  background: rgba(231, 76, 60, 0.2);
+  border-bottom-color: var(--red);
+  color: var(--red);
+}
+.options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.option-chip {
+  background: var(--card2);
+  border: 2px solid transparent;
+  border-radius: 8px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 15px;
+  font-family: inherit;
+  font-weight: bold;
+  color: var(--txt);
+  min-height: 40px;
+}
+.option-chip:hover { background: #1f3a5e; border-color: var(--pri); }
+.option-chip:disabled { opacity: 0.35; cursor: not-allowed; }
+.explain {
+  background: rgba(255, 215, 0, 0.08);
+  border-left: 3px solid var(--hi);
+  padding: 12px 16px;
+  border-radius: 6px;
+  margin-top: 12px;
+  font-size: 14px;
+  color: var(--txt);
+  line-height: 1.7;
+  display: none;
+}
+.explain.show { display: block; }
+.explain strong { color: var(--hi); }
+.btn {
+  background: var(--pri);
+  color: var(--bg);
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+  min-height: 44px;
+}
+.btn:hover { background: #00A0CC; }
+.btn-secondary { background: #5B6777; color: var(--txt); }
+.btn-secondary:hover { background: #455260; }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.controls { text-align: center; margin: 16px 0; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+.complete-message {
+  background: var(--grn);
+  color: var(--bg);
+  padding: 24px;
+  border-radius: 12px;
+  margin: 20px 0;
+  text-align: center;
+  display: none;
+  font-weight: bold;
+}
+.complete-message.partial { background: var(--hi); }
+.complete-message h2 { font-size: 22px; margin-bottom: 12px; }
+.complete-message .score { font-size: 32px; font-weight: bold; margin: 12px 0; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="ch6_spectroscopy.html" class="nav-link">← 回投影片</a>
+  <header>
+    <h1>🧪 Ch6 遊戲 4：食品光譜情境填空</h1>
+    <div class="subtitle">8 個真實食品案例。把詞語拖入空格，每題答完看完整解說。</div>
+  </header>
+
+  <div class="score-bar">
+    <span>第 <span id="curQ">1</span> / <span id="totalQ">8</span> 題</span>
+    <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill"></div></div>
+    <span style="color:var(--grn)">答對 <span id="score">0</span></span>
+  </div>
+
+  <div id="quizArea"></div>
+
+  <div id="completeMessage" class="complete-message">
+    <h2 id="completeTitle">🎉 完成！</h2>
+    <div>你的分數</div>
+    <div class="score"><span id="finalScore">0</span> / 8</div>
+    <div id="finalComment"></div>
+    <br>
+    <button class="btn" onclick="restart()">再玩一次</button>
+  </div>
+</div>
+
+<script type="module">
+import { initGameSession, logEvent } from './game_firebase.js';
+
+// 每題：sentence 含多個 {0} {1} placeholder；answers 是正確答案陣列；options 是候選詞（含干擾項）
+const QUESTIONS = [
+  {
+    theme: 'food', themeName: '🍯 食品摻假',
+    sentence: '懷疑奶粉摻三聚氰胺時，優先選 {0} 方法，因為它可以偵測到三聚氰胺的特定 {1} 振動鍵結。',
+    answers: ['FTIR', '化學鍵'],
+    options: ['FTIR', 'AAS', '化學鍵', '元素譜線', 'NMR', '熱量'],
+    explain: '<strong>2008 三聚氰胺奶粉</strong>事件後，FTIR 成為奶粉摻假快篩標準。三聚氰胺的 1550 cm⁻¹（三嗪環）是特徵峰，操作快、樣品不破壞。',
+  },
+  {
+    theme: 'theory', themeName: '⚛️ Jablonski 機制',
+    sentence: '黃麴毒素 B1 在 365 nm 激發後，發射波長 440 nm。發射波長比激發波長長的現象稱為 {0}，原因是 S₁ 經過 {1} 才發射。',
+    answers: ['Stokes shift', '振動弛豫'],
+    options: ['Stokes shift', '系間跨越', '振動弛豫', '光電效應', 'Beer-Lambert', '量子化'],
+    explain: '<strong>Stokes shift</strong>：能量在激發態被振動弛豫（熱）耗掉一些，回到 S₁ 最低振動態才發射。這也是螢光偵測 90° 配置能避免直射激發光的原因。',
+  },
+  {
+    theme: 'food', themeName: '🐝 蜂蜜真偽',
+    sentence: '蜂蜜摻糖漿檢測，國際商業標準用 {0} 方法搭配 {1} 統計分析比對全圖譜。',
+    answers: ['NMR', '多變量'],
+    options: ['NMR', 'UV-Vis', '多變量', '單變量', 'AAS', 'TBARS'],
+    explain: '<strong>SGF Profiling®（NMR + chemometrics）</strong>已是蜂蜜真偽的全球商業標準。¹H NMR 看糖類、有機酸、胺基酸全圖譜，比 HPLC 單點偵測更難造假。',
+  },
+  {
+    theme: 'lab', themeName: '🔬 Beer-Lambert',
+    sentence: '做 Bradford 蛋白質檢量線時，A 值量到 1.8 超出線性範圍（0.2–0.8），下一步應該 {0}。同一批菠菜萃取物，水溶液與乙醇溶液量出的 A 不同，是因為 {1} 影響吸收係數 ε。',
+    answers: ['稀釋樣品', '溶劑極性'],
+    options: ['稀釋樣品', '濃縮樣品', '溶劑極性', '光徑長度', '波長', '溫度'],
+    explain: 'Beer-Lambert A=εbc 只在低濃度線性。A>0.8 偏離 → 稀釋。溶劑極性會改變分子周圍環境 → ε 不同 → 標準與樣品溶劑要一致。',
+  },
+  {
+    theme: 'food', themeName: '🥩 重金屬殘留',
+    sentence: '偵測醬油中 ppb 級鉛（Pb）時，應該選 {0}，因為它對 {1} 有極高靈敏度。',
+    answers: ['AAS', '重金屬'],
+    options: ['AAS', '螢光', 'NMR', '重金屬', '有機物', '糖類'],
+    explain: '<strong>AAS（原子吸收）</strong>把樣品原子化後，元素吸收自身特徵線，重金屬偵測極限可達 ppb（μg/L）。食安檢驗鉛、鎘、砷、汞首選。',
+  },
+  {
+    theme: 'theory', themeName: '📊 Boltzmann 靈敏度',
+    sentence: 'NMR 比 UV-Vis 靈敏度低很多，原因是 NMR 的 ΔE 小，根據 Boltzmann 分佈 N′/N ≈ {0}，激發態與基態粒子數幾乎 {1}。',
+    answers: ['1', '相等'],
+    options: ['1', '0', '相等', '相差很大', '無關', '隨機'],
+    explain: 'Boltzmann：N′/N = e^(−ΔE/kT)。NMR 射頻能量極小 → 指數項 ≈ 0 → e⁰ = 1 → 兩態幾乎一樣多 → 淨吸收訊號弱 → 要用強磁場 + 數百次累加。',
+  },
+  {
+    theme: 'food', themeName: '🫒 油脂分析',
+    sentence: '橄欖油摻假檢測，常用 {0} 看葉綠素的天然螢光來鑑定真偽。若要精確產地鑑別，則用 {1} 結合多變量分析。',
+    answers: ['螢光', 'NMR'],
+    options: ['螢光', 'UV-Vis', 'NMR', 'AAS', 'IR', '質譜'],
+    explain: '初榨橄欖油含葉綠素（Ex 410, Em 660 nm）→ 螢光快篩。深度產地鑑別用 NMR + chemometrics，可區分義大利、希臘、西班牙不同產區。',
+  },
+  {
+    theme: 'food', themeName: '🥬 農藥快檢',
+    sentence: '蔬菜農藥殘留兩段式策略：先用 {0} 做快速低成本初篩，再用 {1} 確認結構並排除干擾。',
+    answers: ['UV-Vis', 'LC-MS'],
+    options: ['UV-Vis', 'LC-MS', 'NMR', 'AAS', '螢光', 'IR'],
+    explain: 'UV-Vis 便宜快速做大量快篩，但易受基質干擾；LC-MS 解析度極高但貴。兩段式策略：UV-Vis 篩可疑 → LC-MS 確認。這也是衛福部食藥署的標準流程。',
+  },
+];
+
+let curIdx = 0;
+let score = 0;
+let userAnswers = [];
+
+function renderQuestion() {
+  const q = QUESTIONS[curIdx];
+  userAnswers = new Array(q.answers.length).fill(null);
+
+  // 用 split + map 處理 {N} placeholder
+  let sentenceHtml = q.sentence.replace(/\{(\d+)\}/g, (m, n) => {
+    return `<span class="blank" data-blank="${n}" id="blank-${n}">＿＿＿</span>`;
+  });
+
+  const shuffledOpts = shuffle(q.options.map(opt => ({ text: opt })));
+
+  document.getElementById('quizArea').innerHTML = `
+    <div class="scenario-card">
+      <div>
+        <span class="q-num">第 ${curIdx + 1} 題</span>
+        <span class="theme-tag ${q.theme}">${q.themeName}</span>
+      </div>
+      <div class="scenario">${sentenceHtml}</div>
+      <div style="font-size:13px; color:var(--muted); margin-bottom:10px;">點下方詞語填入空格；再點一次空格可清除。</div>
+      <div class="options" id="optionsBox">
+        ${shuffledOpts.map(o => `<button class="option-chip" data-text="${o.text}">${o.text}</button>`).join('')}
+      </div>
+      <div id="explainBox" class="explain"></div>
+      <div class="controls">
+        <button class="btn" id="checkBtn" disabled>對答案</button>
+        <button class="btn btn-secondary" id="nextBtn" style="display:none;">
+          ${curIdx === QUESTIONS.length - 1 ? '查看結果 →' : '下一題 →'}
+        </button>
+      </div>
+    </div>
+  `;
+  document.getElementById('curQ').textContent = curIdx + 1;
+  document.getElementById('totalQ').textContent = QUESTIONS.length;
+  document.getElementById('progressFill').style.width = `${(curIdx / QUESTIONS.length) * 100}%`;
+
+  document.querySelectorAll('.blank').forEach(b => {
+    b.addEventListener('click', () => clearBlank(parseInt(b.dataset.blank)));
+  });
+  document.querySelectorAll('.option-chip').forEach(o => {
+    o.addEventListener('click', () => pickOption(o.dataset.text, o));
+  });
+  document.getElementById('checkBtn').addEventListener('click', checkQuestion);
+  document.getElementById('nextBtn').addEventListener('click', next);
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function pickOption(text, el) {
+  const emptyIdx = userAnswers.findIndex(a => a === null);
+  if (emptyIdx === -1) return;
+  userAnswers[emptyIdx] = text;
+  const blank = document.getElementById('blank-' + emptyIdx);
+  blank.textContent = text;
+  blank.classList.add('filled');
+  el.disabled = true;
+  el.dataset.usedFor = emptyIdx;
+  if (userAnswers.every(a => a !== null)) {
+    document.getElementById('checkBtn').disabled = false;
+  }
+}
+
+function clearBlank(idx) {
+  if (userAnswers[idx] === null) return;
+  const text = userAnswers[idx];
+  userAnswers[idx] = null;
+  const blank = document.getElementById('blank-' + idx);
+  blank.textContent = '＿＿＿';
+  blank.classList.remove('filled', 'correct', 'wrong');
+  document.querySelectorAll('.option-chip').forEach(o => {
+    if (o.dataset.text === text && o.dataset.usedFor === String(idx)) {
+      o.disabled = false;
+      delete o.dataset.usedFor;
+    }
+  });
+  document.getElementById('checkBtn').disabled = true;
+}
+
+function checkQuestion() {
+  const q = QUESTIONS[curIdx];
+  let allCorrect = true;
+  q.answers.forEach((correctAns, i) => {
+    const blank = document.getElementById('blank-' + i);
+    if (userAnswers[i] === correctAns) {
+      blank.classList.add('correct');
+    } else {
+      blank.classList.add('wrong');
+      blank.textContent = userAnswers[i] + ' → ' + correctAns;
+      allCorrect = false;
+    }
+  });
+  if (allCorrect) {
+    score++;
+    document.getElementById('score').textContent = score;
+  }
+  logEvent({
+    event_type: 'answer',
+    question_id: 'Q' + (curIdx + 1) + '-' + q.theme,
+    is_correct: allCorrect,
+    attempts: 1,
+  });
+  document.querySelectorAll('.option-chip').forEach(o => o.disabled = true);
+  const ex = document.getElementById('explainBox');
+  ex.innerHTML = '💡 ' + q.explain;
+  ex.classList.add('show');
+  document.getElementById('checkBtn').style.display = 'none';
+  document.getElementById('nextBtn').style.display = 'inline-block';
+}
+
+function next() {
+  if (curIdx < QUESTIONS.length - 1) {
+    curIdx++;
+    renderQuestion();
+  } else {
+    document.getElementById('progressFill').style.width = '100%';
+    document.getElementById('quizArea').innerHTML = '';
+    document.getElementById('finalScore').textContent = score;
+    const msg = document.getElementById('completeMessage');
+    msg.classList.remove('partial');
+    let comment = '';
+    if (score >= 7) {
+      document.getElementById('completeTitle').textContent = '🎉 食品光譜應用很強！';
+      comment = '你已能把 Ch6 原理對應到實際食品案例。';
+    } else if (score >= 5) {
+      document.getElementById('completeTitle').textContent = '👍 大方向對！';
+      comment = '回去看答錯題的解說，特別注意「方法選擇」邏輯。';
+      msg.classList.add('partial');
+    } else {
+      document.getElementById('completeTitle').textContent = '🔁 多看食品案例！';
+      comment = '建議重看投影片 23–30（七大方法 + 應用），再玩一次。';
+      msg.classList.add('partial');
+    }
+    document.getElementById('finalComment').textContent = comment;
+    msg.style.display = 'block';
+    msg.scrollIntoView({ behavior: 'smooth' });
+    logEvent({
+      event_type: 'session_complete',
+      final_score: score,
+      attempts: QUESTIONS.length,
+    });
+  }
+}
+
+function restart() {
+  curIdx = 0;
+  score = 0;
+  document.getElementById('score').textContent = '0';
+  document.getElementById('completeMessage').style.display = 'none';
+  renderQuestion();
+}
+
+window.restart = restart;
+
+await initGameSession({ chapter: 'ch6', game: 'scenario-fill' });
+renderQuestion();
+</script>
+</body>
+</html>

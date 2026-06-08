@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch6 班級學習紀錄</title>
+<style>
+:root {
+  --bg:#0D1B2A; --bg2:#11223A; --card:#122540; --card2:#0f1e32;
+  --ink:#ECEEF2; --ink2:#B8C5E0; --muted:#7A91B0;
+  --cyan:#00C6FF; --gold:#FFD700; --green:#2ECC71;
+  --red:#E74C3C; --purple:#9B59B6; --orange:#E67E22;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--ink);font-family:'Segoe UI','Microsoft JhengHei',sans-serif;min-height:100vh}
+
+/* ── Header ── */
+.header{background:var(--bg2);border-bottom:1px solid rgba(255,255,255,.08);padding:18px 32px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.header h1{font-size:1.4rem;font-weight:700;color:var(--cyan)}
+.header h1 span{font-size:.9rem;color:var(--muted);font-weight:400;margin-left:10px}
+
+/* ── Picker ── */
+.picker{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-left:auto}
+.picker label{font-size:.85rem;color:var(--muted)}
+.picker input[type=date],
+.picker select{background:var(--card);border:1px solid rgba(255,255,255,.12);color:var(--ink);padding:7px 12px;border-radius:8px;font-size:.9rem;cursor:pointer}
+.picker input[type=date]:focus,
+.picker select:focus{outline:none;border-color:var(--cyan)}
+.btn-load{background:var(--cyan);color:#000;font-weight:700;padding:8px 20px;border-radius:8px;border:none;cursor:pointer;font-size:.9rem;transition:opacity .2s}
+.btn-load:hover{opacity:.85}
+
+/* ── Session badge ── */
+.session-banner{text-align:center;padding:14px 32px;font-size:.85rem;color:var(--muted);border-bottom:1px solid rgba(255,255,255,.05)}
+.session-banner strong{color:var(--gold);font-family:'JetBrains Mono',monospace;font-size:1rem}
+
+/* ── Main grid ── */
+.main{padding:28px 32px;display:flex;flex-direction:column;gap:28px}
+
+/* ── Section card ── */
+.section-card{background:var(--card);border-radius:14px;overflow:hidden}
+.section-header{padding:16px 22px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:12px}
+.section-header h2{font-size:1rem;font-weight:700;color:var(--ink)}
+.badge-count{background:var(--cyan);color:#000;font-weight:700;font-size:.8rem;padding:3px 10px;border-radius:20px;margin-left:auto}
+.badge-correct{background:var(--green);color:#000;font-size:.75rem;padding:3px 8px;border-radius:6px}
+
+/* ── Quiz section ── */
+.quiz-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:20px}
+@media(max-width:700px){.quiz-grid{grid-template-columns:1fr}}
+.quiz-card{background:var(--card2);border-radius:10px;padding:18px}
+.quiz-q{font-size:.95rem;font-weight:700;color:var(--gold);margin-bottom:14px;line-height:1.4}
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.bar-label{width:26px;font-size:.85rem;font-weight:700;color:var(--ink2);flex-shrink:0;text-align:center}
+.bar-track{flex:1;background:rgba(255,255,255,.07);border-radius:4px;height:22px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;transition:width .5s ease;min-width:2px}
+.bar-fill.correct{background:var(--green)}
+.bar-fill.wrong{background:var(--red)}
+.bar-count{font-size:.8rem;color:var(--muted);width:48px;text-align:right;flex-shrink:0}
+.bar-count strong{color:var(--ink)}
+.correct-mark{font-size:.75rem;color:var(--green);font-weight:700;width:32px;flex-shrink:0}
+.quiz-total{font-size:.8rem;color:var(--muted);margin-top:10px;text-align:right}
+.rate-correct{color:var(--green);font-weight:700}
+
+/* ── DT responses ── */
+.dt-body{padding:20px}
+.method-group{margin-bottom:16px}
+.method-header{display:flex;align-items:center;gap:10px;margin-bottom:8px;cursor:pointer;user-select:none}
+.method-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+.method-name{font-size:.95rem;font-weight:700}
+.method-pct{font-size:.8rem;color:var(--muted);margin-left:auto}
+.method-bar-wrap{height:6px;background:rgba(255,255,255,.07);border-radius:3px;margin-bottom:10px;overflow:hidden}
+.method-bar{height:100%;border-radius:3px;transition:width .5s}
+.student-table{width:100%;border-collapse:collapse;font-size:.82rem}
+.student-table th{color:var(--muted);font-weight:600;padding:6px 10px;border-bottom:1px solid rgba(255,255,255,.08);text-align:left}
+.student-table td{padding:7px 10px;border-bottom:1px solid rgba(255,255,255,.04);color:var(--ink2);vertical-align:top}
+.student-table tr:last-child td{border-bottom:none}
+.reason-text{color:var(--muted);font-size:.8rem;line-height:1.4}
+.toggle-btn{font-size:.75rem;color:var(--cyan);background:none;border:none;cursor:pointer;padding:2px 0}
+
+/* ── Empty / loading ── */
+.empty{text-align:center;padding:40px;color:var(--muted);font-size:.9rem}
+.empty .icon{font-size:2.5rem;margin-bottom:10px}
+.live-dot{display:inline-block;width:8px;height:8px;background:var(--green);border-radius:50%;margin-right:6px;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ── Last update ── */
+.last-update{font-size:.78rem;color:var(--muted);text-align:right;padding:0 22px 14px}
+</style>
+</head>
+<body>
+
+<!-- ── Header / Picker ── -->
+<div class="header">
+  <h1>📊 班級學習紀錄 <span id="course-subtitle">Nielsen 食品分析 · 光譜學</span></h1>
+  <div class="picker">
+    <label>科目</label>
+    <select id="course-input" onchange="onCourseChange()">
+      <option value="fa">食品分析（fa）</option>
+      <option value="fc">食品化學（fc）</option>
+      <option value="vn">越南班華語文（vn）</option>
+    </select>
+    <label>日期</label>
+    <input type="date" id="date-input">
+    <label id="class-label">班級</label>
+    <select id="class-input">
+      <option value="">不分班</option>
+      <option value="A">A 班（四技）</option>
+      <option value="B">B 班（五專）</option>
+    </select>
+    <button class="btn-load" onclick="loadSession()">載入紀錄</button>
+  </div>
+</div>
+
+<div class="session-banner" id="session-banner" style="display:none">
+  目前檢視：<strong id="session-display"></strong>
+  <span style="margin-left:16px"><span class="live-dot"></span>即時同步中</span>
+</div>
+
+<!-- ── Main content ── -->
+<div class="main" id="main-content">
+  <div class="empty" id="empty-initial">
+    <div class="icon">📋</div>
+    <p>請選擇日期與班級後，點擊「載入紀錄」</p>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getFirestore, collection, onSnapshot }
+  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+// ── Firebase 設定從 Hosting 保留端點取得，API Key 不寫死在原始碼 ────
+// /__/firebase/init.json 只有 Firebase Hosting 會回應；
+// 本機 file:// 或其他伺服器開啟時 db = undefined，即時功能靜默停用。
+let db;
+try {
+  const _r = await fetch('/__/firebase/init.json');
+  if (!_r.ok) throw new Error('not Firebase Hosting');
+  const FB = await _r.json();
+  db = getFirestore(initializeApp(FB));
+} catch (_e) {
+  console.warn('[Firebase] 即時功能停用（請由 Firebase Hosting 開啟）', _e.message);
+}
+
+// ── Quiz question definitions ─────────────────────────────────
+const QUIZ = {
+  26: {
+    question: 'A 值越高，測量越準確？（濃度過高時應如何處理）',
+    correct:  'C',
+    options: {
+      A: '直接記錄，濃度極高',
+      B: '換用其他波長重測',
+      C: '稀釋後重測',
+      D: '更換比色管'
+    }
+  },
+  27: {
+    question: '黃麴毒素加越多，螢光越強？（螢光濃度效應）',
+    correct:  'B',
+    options: {
+      A: '線性增加',
+      B: '先增後減（濃度淬滅）',
+      C: '不變',
+      D: '無法用螢光法偵測'
+    }
+  }
+};
+
+// ── Method color map ──────────────────────────────────────────
+const METHOD_COLORS = {
+  'AAS / ICP-OES':    '#00C6FF',
+  'UV-Vis 分光光度法': '#FFD700',
+  '螢光光譜法':        '#2ECC71',
+  'NMR 核磁共振':      '#9B59B6',
+  'FTIR 紅外線':       '#E67E22',
+  'Raman 拉曼':        '#1ABC9C',
+  'FTIR 現場快篩':     '#E74C3C',
+  'LC-MS 液質聯用':    '#F39C12',
+};
+function colorFor(m) { return METHOD_COLORS[m] || '#7A91B0'; }
+
+// ── Active listeners ─────────────────────────────────────────
+let unsubs = [];
+function clearListeners() { unsubs.forEach(f => f()); unsubs = []; }
+
+// ── Course subtitle map ───────────────────────────────────────
+const COURSE_NAMES = {
+  fa: 'Nielsen 食品分析 · 光譜學',
+  fc: '食品化學',
+  vn: '越南班華語文閱讀與寫作',
+};
+// Only food analysis (fa) has A/B classes
+window.onCourseChange = function() {
+  const c = document.getElementById('course-input').value;
+  const classWrap = document.getElementById('class-label');
+  const classEl   = document.getElementById('class-input');
+  const show = (c === 'fa');
+  classWrap.style.display = show ? '' : 'none';
+  classEl.style.display   = show ? '' : 'none';
+  document.getElementById('course-subtitle').textContent = COURSE_NAMES[c] || c;
+};
+
+// ── Load session ─────────────────────────────────────────────
+window.loadSession = function() {
+  const dateVal   = document.getElementById('date-input').value;   // YYYY-MM-DD
+  const courseVal = document.getElementById('course-input').value || 'fa';
+  const classVal  = document.getElementById('class-input').value;
+  if (!dateVal) { alert('請選擇日期'); return; }
+
+  const dateKey = dateVal.replace(/-/g, '');                       // YYYYMMDD
+  // Session format: YYYYMMDD_courseCode[_classCode]
+  const session = classVal ? `${dateKey}_${courseVal}_${classVal}` : `${dateKey}_${courseVal}`;
+  renderPage(session);
+};
+
+function renderPage(session) {
+  clearListeners();
+
+  // Update banner
+  const banner = document.getElementById('session-banner');
+  banner.style.display = '';
+  document.getElementById('session-display').textContent = session;
+
+  // Build main content
+  const main = document.getElementById('main-content');
+  main.innerHTML = `
+    <div class="section-card" id="quiz-card">
+      <div class="section-header">
+        <span>🧠</span>
+        <h2>即時問答結果</h2>
+        <span class="badge-count" id="quiz-total-badge">—</span>
+      </div>
+      <div class="quiz-grid">
+        <div class="quiz-card" id="quiz-26"></div>
+        <div class="quiz-card" id="quiz-27"></div>
+      </div>
+      <div class="last-update" id="quiz-update"></div>
+    </div>
+
+    <div class="section-card" id="dt-card">
+      <div class="section-header">
+        <span>🌿</span>
+        <h2>決策樹：方法選擇回應</h2>
+        <span class="badge-count" id="dt-total-badge">—</span>
+      </div>
+      <div class="dt-body" id="dt-body">
+        <div class="empty"><div class="icon">📭</div><p>尚無回應</p></div>
+      </div>
+      <div class="last-update" id="dt-update"></div>
+    </div>
+  `;
+
+  // ── Subscribe to quiz votes ────────────────────────────────
+  const quizState = { 26: {A:0,B:0,C:0,D:0}, 27: {A:0,B:0,C:0,D:0} };
+
+  [26, 27].forEach(q => {
+    const pollId = `${session}_${q}`;
+    const u = onSnapshot(collection(db, 'quiz_votes', pollId, 'votes'), snap => {
+      const counts = {A:0, B:0, C:0, D:0};
+      snap.forEach(d => { const c = d.data().choice; if (c in counts) counts[c]++; });
+      quizState[q] = counts;
+      renderQuiz(q, counts);
+      updateQuizBadge(quizState);
+      document.getElementById('quiz-update').textContent =
+        `最後更新：${new Date().toLocaleTimeString('zh-TW')}`;
+    });
+    unsubs.push(u);
+  });
+
+  // ── Subscribe to decision tree ─────────────────────────────
+  const u2 = onSnapshot(
+    collection(db, 'decision_tree_responses', session, 'responses'),
+    snap => {
+      const docs = [];
+      snap.forEach(d => docs.push(d.data()));
+      renderDT(docs);
+      document.getElementById('dt-total-badge').textContent = docs.length;
+      document.getElementById('dt-update').textContent =
+        `最後更新：${new Date().toLocaleTimeString('zh-TW')}`;
+    }
+  );
+  unsubs.push(u2);
+}
+
+// ── Render quiz bar chart ─────────────────────────────────────
+function renderQuiz(q, counts) {
+  const def   = QUIZ[q];
+  const total = Object.values(counts).reduce((a,b)=>a+b,0);
+  const el    = document.getElementById(`quiz-${q}`);
+
+  const bars = ['A','B','C','D'].map(opt => {
+    const n   = counts[opt] || 0;
+    const pct = total > 0 ? Math.round(n/total*100) : 0;
+    const isCorrect = opt === def.correct;
+    return `
+      <div class="bar-row">
+        <div class="bar-label">${opt}</div>
+        <div class="bar-track">
+          <div class="bar-fill ${isCorrect?'correct':'wrong'}" style="width:${pct}%"></div>
+        </div>
+        <div class="bar-count"><strong>${n}</strong> (${pct}%)</div>
+        <div class="correct-mark">${isCorrect ? '✓' : ''}</div>
+      </div>`;
+  }).join('');
+
+  const correctN   = counts[def.correct] || 0;
+  const correctPct = total > 0 ? Math.round(correctN/total*100) : 0;
+
+  el.innerHTML = `
+    <div class="quiz-q">Q${q === 26 ? 1 : 2}：${def.question}</div>
+    ${bars}
+    <div class="quiz-total">
+      共 <strong>${total}</strong> 票 ·
+      答對率：<span class="rate-correct">${correctPct}%</span>
+    </div>`;
+}
+
+function updateQuizBadge(state) {
+  const total = Object.values(state[26]).reduce((a,b)=>a+b,0)
+              + Object.values(state[27]).reduce((a,b)=>a+b,0);
+  document.getElementById('quiz-total-badge').textContent = `${total} 票`;
+}
+
+// ── Render decision tree responses ────────────────────────────
+function renderDT(docs) {
+  const body = document.getElementById('dt-body');
+  if (docs.length === 0) {
+    body.innerHTML = '<div class="empty"><div class="icon">📭</div><p>尚無回應</p></div>';
+    return;
+  }
+
+  // Group by method
+  const groups = {};
+  docs.forEach(d => {
+    const m = d.method || '（未標示）';
+    if (!groups[m]) groups[m] = [];
+    groups[m].push(d);
+  });
+
+  const sorted = Object.entries(groups).sort((a,b) => b[1].length - a[1].length);
+  const total  = docs.length;
+
+  body.innerHTML = sorted.map(([method, list]) => {
+    const pct   = Math.round(list.length / total * 100);
+    const color = colorFor(method);
+    const rows  = list.map((d, i) => `
+      <tr>
+        <td style="color:var(--cyan)">${d.student_id || d.name || `學生 ${i+1}`}</td>
+        <td class="reason-text">${d.reason || '—'}</td>
+      </tr>`).join('');
+
+    return `
+      <div class="method-group">
+        <div class="method-header">
+          <div class="method-dot" style="background:${color}"></div>
+          <span class="method-name" style="color:${color}">${method}</span>
+          <span style="font-size:.85rem;color:var(--ink2)">${list.length} 人</span>
+          <span class="method-pct">${pct}%</span>
+        </div>
+        <div class="method-bar-wrap">
+          <div class="method-bar" style="width:${pct}%;background:${color}"></div>
+        </div>
+        <table class="student-table">
+          <thead><tr>
+            <th style="width:130px">學號 / 姓名</th>
+            <th>理由</th>
+          </tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>`;
+  }).join('<hr style="border:none;border-top:1px solid rgba(255,255,255,.06);margin:8px 0">');
+}
+
+// ── Init: read URL params ─────────────────────────────────────
+// Supports:
+//   ?session=20260506_fa_A          (full session key)
+//   ?date=2026-05-06&course=fa&class=A
+//   ?date=2026-05-06&course=fc      (no class for fc/vn)
+const params = new URLSearchParams(location.search);
+
+let initSession = params.get('session');
+let initCourse  = 'fa';
+let initClass   = '';
+
+if (initSession) {
+  // Parse session: YYYYMMDD_course[_class]
+  const parts = initSession.split('_');
+  if (parts.length >= 2) initCourse = parts[1];
+  if (parts.length >= 3) initClass  = parts[2];
+} else {
+  const d = params.get('date');
+  initCourse = params.get('course') || 'fa';
+  initClass  = params.get('class')  || '';
+  if (d) {
+    const dateKey = d.replace(/-/g,'');
+    initSession = initClass ? `${dateKey}_${initCourse}_${initClass}` : `${dateKey}_${initCourse}`;
+  }
+}
+
+// Set pickers
+const todayStr = new Date().toISOString().slice(0,10);
+document.getElementById('course-input').value = initCourse;
+document.getElementById('date-input').value   =
+  initSession ? initSession.slice(0,4)+'-'+initSession.slice(4,6)+'-'+initSession.slice(6,8) : todayStr;
+document.getElementById('class-input').value  = initClass;
+onCourseChange();   // toggle class visibility based on course
+
+if (initSession) renderPage(initSession);
+</script>
+</body>
+</html>

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>老師後台｜Chapter 7 學生答題紀錄</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root { --brand: #0072FF; --brand2: #00C6FF; }
+        html, body { font-family: 'Noto Sans TC', sans-serif; background: #f0f7ff; }
+        .card { background: white; border-radius: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border: 1px solid #e0f2fe; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: var(--brand); color: white; padding: 10px; font-size: 13px; text-align: left; }
+        td { padding: 10px; border-bottom: 1px solid #f3f4f6; font-size: 13px; }
+        tr:nth-child(even) td { background: #f8fafc; }
+        .pill { display: inline-block; padding: 2px 8px; border-radius: 9999px; font-size: 11px; font-weight: 700; }
+        .pill-green { background: #DCFCE7; color: #16A34A; }
+        .pill-amber { background: #FEF3C7; color: #B45309; }
+        .pill-red { background: #FEE2E2; color: #DC2626; }
+        .stat-card { background: linear-gradient(135deg, #DBEAFE 0%, #ffffff 100%); border: 1px solid #BFDBFE; }
+    </style>
+</head>
+<body class="text-stone-800 p-4 md:p-8">
+
+<div class="max-w-7xl mx-auto">
+    <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+        <div>
+            <h1 class="text-3xl font-black" style="color:var(--brand);">📊 老師後台</h1>
+            <p class="text-stone-600 text-sm mt-1">Nielsen Food Analysis Ch7｜UV-Vis 與螢光光譜法</p>
+        </div>
+        <div class="flex gap-2">
+            <button id="reloadBtn" class="bg-white border-2 px-4 py-2 rounded-lg font-bold text-sm" style="border-color:var(--brand);color:var(--brand);">🔄 重新整理</button>
+            <button id="exportBtn" class="text-white px-4 py-2 rounded-lg font-bold text-sm" style="background:var(--brand);">📥 匯出 CSV</button>
+        </div>
+    </div>
+
+    <div id="authBox" class="card p-6 mb-6">
+        <div class="font-bold mb-2">🔒 需要登入</div>
+        <p class="text-sm text-stone-600 mb-4">請使用 Google 帳號登入後才可查看資料。</p>
+        <button id="loginBtn" class="text-white px-6 py-2 rounded-lg font-bold" style="background:var(--brand);">🔑 Google 登入</button>
+        <div id="authError" class="text-red-600 text-xs mt-3 hidden"></div>
+    </div>
+
+    <div id="dataArea" class="hidden">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div class="stat-card card p-4">
+                <div class="text-stone-500 text-xs">總提交人次</div>
+                <div class="text-3xl font-black mt-1" id="statTotal">-</div>
+            </div>
+            <div class="stat-card card p-4">
+                <div class="text-stone-500 text-xs">平均分數</div>
+                <div class="text-3xl font-black mt-1" id="statAvg">-</div>
+            </div>
+            <div class="stat-card card p-4">
+                <div class="text-stone-500 text-xs">最高分</div>
+                <div class="text-3xl font-black mt-1" id="statMax">-</div>
+            </div>
+            <div class="stat-card card p-4">
+                <div class="text-stone-500 text-xs">平均用時</div>
+                <div class="text-3xl font-black mt-1" id="statTime">-</div>
+            </div>
+        </div>
+
+        <div class="card p-4 mb-6">
+            <div class="font-bold mb-3">📊 各題正確率（17 題）</div>
+            <div id="perQuestion" class="grid grid-cols-3 md:grid-cols-6 gap-2"></div>
+        </div>
+
+        <div class="card overflow-x-auto">
+            <table>
+                <thead>
+                    <tr>
+                        <th>時間</th>
+                        <th>班級</th>
+                        <th>學號</th>
+                        <th>姓名</th>
+                        <th>分數</th>
+                        <th>用時</th>
+                        <th>每題</th>
+                    </tr>
+                </thead>
+                <tbody id="rows">
+                    <tr><td colspan="7" class="text-center text-stone-400 py-8">載入中...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { firebaseConfig, QUIZ_COLLECTION } from "./firebase-config.js";
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+let allRecords = [];
+const QUIZ_LEN = 17;
+
+document.getElementById('loginBtn').addEventListener('click', async () => {
+    try { await signInWithPopup(auth, provider); }
+    catch (e) {
+        const err = document.getElementById('authError');
+        err.textContent = "登入失敗：" + e.message;
+        err.classList.remove('hidden');
+    }
+});
+
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        document.getElementById('authBox').classList.add('hidden');
+        document.getElementById('dataArea').classList.remove('hidden');
+        await loadData();
+    } else {
+        document.getElementById('authBox').classList.remove('hidden');
+        document.getElementById('dataArea').classList.add('hidden');
+    }
+});
+
+document.getElementById('reloadBtn').addEventListener('click', loadData);
+
+async function loadData() {
+    document.getElementById('rows').innerHTML = '<tr><td colspan="7" class="text-center text-stone-400 py-8">載入中...</td></tr>';
+    try {
+        const q = query(collection(db, QUIZ_COLLECTION), orderBy('timestamp', 'desc'));
+        const snap = await getDocs(q);
+        allRecords = [];
+        snap.forEach(doc => allRecords.push({ id: doc.id, ...doc.data() }));
+        renderData();
+    } catch (e) {
+        document.getElementById('rows').innerHTML = `<tr><td colspan="7" class="text-center text-red-600 py-8">讀取失敗：${e.message}<br><span class="text-xs text-stone-500">請先在 Firebase Console 設定 Firestore 規則允許老師讀取。</span></td></tr>`;
+    }
+}
+
+function renderData() {
+    const rowsEl = document.getElementById('rows');
+    if (allRecords.length === 0) {
+        rowsEl.innerHTML = '<tr><td colspan="7" class="text-center text-stone-400 py-8">尚無學生提交紀錄</td></tr>';
+        ['statTotal','statAvg','statMax','statTime'].forEach(id => document.getElementById(id).textContent = '—');
+        document.getElementById('statTotal').textContent = '0';
+        return;
+    }
+    const total = allRecords.length;
+    const avg = (allRecords.reduce((s,r)=>s+r.score,0) / total).toFixed(1);
+    const max = Math.max(...allRecords.map(r=>r.score));
+    const avgTime = Math.round(allRecords.reduce((s,r)=>s+(r.totalTimeTaken||0),0) / total);
+    document.getElementById('statTotal').textContent = total;
+    document.getElementById('statAvg').textContent = avg;
+    document.getElementById('statMax').textContent = max;
+    document.getElementById('statTime').textContent = avgTime + "秒";
+
+    const perQ = {};
+    allRecords.forEach(r => {
+        (r.answers || []).forEach(a => {
+            if (!perQ[a.questionIndex]) perQ[a.questionIndex] = { correct: 0, total: 0 };
+            perQ[a.questionIndex].total++;
+            if (a.isCorrect) perQ[a.questionIndex].correct++;
+        });
+    });
+    const perQuestionEl = document.getElementById('perQuestion');
+    perQuestionEl.innerHTML = '';
+    for (let i = 0; i < QUIZ_LEN; i++) {
+        const data = perQ[i] || { correct: 0, total: 0 };
+        const pct = data.total ? Math.round((data.correct / data.total) * 100) : 0;
+        const colorClass = pct >= 80 ? 'pill-green' : pct >= 50 ? 'pill-amber' : 'pill-red';
+        perQuestionEl.innerHTML += `
+          <div class="bg-stone-50 p-3 rounded-lg text-center">
+            <div class="text-xs text-stone-500">Q${i+1}</div>
+            <div class="font-black text-lg mt-1">${pct}%</div>
+            <div class="text-xs ${colorClass} pill mt-1">${data.correct}/${data.total}</div>
+          </div>
+        `;
+    }
+
+    rowsEl.innerHTML = allRecords.map(r => {
+        const ts = r.timestamp?.toDate ? r.timestamp.toDate().toLocaleString('zh-TW') : '--';
+        const scoreClass = r.percent >= 80 ? 'pill-green' : r.percent >= 60 ? 'pill-amber' : 'pill-red';
+        const perAns = (r.answers || []).map(a => a.isCorrect ? '✓' : '✗').join('');
+        return `
+          <tr>
+            <td class="text-stone-500 text-xs">${ts}</td>
+            <td>${r.student?.class || ''}</td>
+            <td>${r.student?.studentId || ''}</td>
+            <td class="font-bold">${r.student?.name || ''}</td>
+            <td><span class="pill ${scoreClass}">${r.score}/${r.total} (${r.percent}%)</span></td>
+            <td>${r.totalTimeTaken}秒</td>
+            <td class="font-mono text-xs">${perAns}</td>
+          </tr>
+        `;
+    }).join('');
+}
+
+document.getElementById('exportBtn').addEventListener('click', () => {
+    if (allRecords.length === 0) { alert("尚無資料可匯出"); return; }
+    const headers = ["時間","班級","學號","姓名","分數","總分","百分比","用時(秒)"];
+    for (let i = 0; i < QUIZ_LEN; i++) headers.push(`Q${i+1}`);
+    const rows = [headers];
+    allRecords.forEach(r => {
+        const ts = r.timestamp?.toDate ? r.timestamp.toDate().toLocaleString('zh-TW') : '';
+        const row = [ts, r.student?.class || '', r.student?.studentId || '', r.student?.name || '',
+                     r.score, r.total, r.percent + '%', r.totalTimeTaken];
+        const ans = {};
+        (r.answers || []).forEach(a => ans[a.questionIndex] = a.isCorrect ? '對' : '錯');
+        for (let i = 0; i < QUIZ_LEN; i++) row.push(ans[i] || '');
+        rows.push(row);
+    });
+    const csv = "﻿" + rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `ch7_隨堂遊戲_${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+});
+</script>
+
+</body>
+</html>

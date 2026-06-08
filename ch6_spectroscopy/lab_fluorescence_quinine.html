@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>螢光實驗：通寧水中奎寧的螢光定量 | Nielsen Ch7</title>
+<style>
+:root {
+  --bg: #0D1B2A; --bg2: #152236; --bg3: #1c2e45;
+  --accent: #C980FF; --gold: #FFD700;
+  --green: #00E676; --red: #FF5252; --yellow: #FFD740; --cyan: #00C6FF;
+  --ink: #E8F4FD; --ink2: #90A4AE; --ink3: #546E7A;
+  --border: rgba(201,128,255,0.25);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--ink);
+  font-family: 'Segoe UI','Microsoft JhengHei',sans-serif; line-height: 1.7; }
+
+#topbar { position: sticky; top: 0; z-index: 100;
+  background: rgba(13,27,42,0.95); backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 24px; gap: 16px; }
+#topbar .brand { color: var(--accent); font-weight: 700; font-size: 15px; }
+#topbar nav { display: flex; gap: 8px; flex-wrap: wrap; }
+#topbar nav a { color: var(--ink2); text-decoration: none; font-size: 13px;
+  padding: 4px 10px; border-radius: 20px; border: 1px solid transparent; transition: all .2s; }
+#topbar nav a:hover { color: var(--accent); border-color: var(--border); }
+#progress-bar { height: 3px; background: var(--border); position: fixed; top: 0; left: 0; right: 0; z-index: 200; }
+#progress-fill { height: 100%; background: linear-gradient(90deg,var(--accent),var(--gold)); width: 0; transition: width .3s; }
+
+.hero { background: linear-gradient(135deg,#0D1B2A 0%,#1a0f2e 60%,#1f1040 100%);
+  padding: 60px 24px 48px; text-align: center; position: relative; overflow: hidden; }
+.hero::before { content:''; position:absolute; inset:0;
+  background: radial-gradient(ellipse at 70% 50%, rgba(201,128,255,0.08) 0%, transparent 60%); }
+.hero .kicker { color: var(--accent); font-size: 13px; letter-spacing: 2px;
+  text-transform: uppercase; margin-bottom: 12px; }
+.hero h1 { font-size: clamp(24px,5vw,40px); font-weight: 900;
+  background: linear-gradient(90deg,var(--ink),var(--accent)); -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent; margin-bottom: 12px; }
+.hero p { color: var(--ink2); font-size: 16px; max-width: 600px; margin: 0 auto 20px; }
+.badges { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.badge { background: rgba(201,128,255,0.1); border: 1px solid var(--border);
+  color: var(--accent); padding: 4px 12px; border-radius: 20px; font-size: 12px; }
+.badge.gold { background: rgba(255,215,0,0.1); border-color: rgba(255,215,0,0.3); color: var(--gold); }
+.badge.cyan { background: rgba(0,198,255,0.1); border-color: rgba(0,198,255,0.3); color: var(--cyan); }
+
+.section { padding: 48px 24px; max-width: 960px; margin: 0 auto; }
+.section + .section { padding-top: 0; }
+h2 { font-size: 22px; font-weight: 800; color: var(--accent);
+  margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+h2::after { content:''; flex: 1; height: 1px; background: var(--border); }
+h3 { font-size: 16px; font-weight: 700; color: var(--gold); margin-bottom: 12px; }
+
+.card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 16px; }
+.card.highlight { border-color: rgba(255,215,0,0.35); }
+.info-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(200px,1fr)); gap: 12px; }
+.info-box { background: var(--bg3); border-radius: 8px; padding: 16px; }
+.info-box .label { color: var(--ink2); font-size: 12px; margin-bottom: 4px; }
+.info-box .value { color: var(--ink); font-size: 15px; font-weight: 600; }
+
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(200px,1fr)); gap: 12px; }
+label { display: block; font-size: 13px; color: var(--ink2); margin-bottom: 4px; }
+input[type="text"], input[type="date"], input[type="number"], textarea, select {
+  width: 100%; background: var(--bg3); border: 1px solid var(--border);
+  color: var(--ink); border-radius: 8px; padding: 8px 12px; font-size: 14px;
+  font-family: inherit; outline: none; transition: border-color .2s; }
+input:focus, textarea:focus, select:focus { border-color: var(--accent); }
+textarea { resize: vertical; min-height: 80px; }
+
+.data-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 14px; }
+.data-table th { background: rgba(201,128,255,0.1); color: var(--accent);
+  padding: 10px 12px; text-align: center; border: 1px solid var(--border); font-size: 13px; }
+.data-table td { padding: 8px 10px; border: 1px solid var(--border); text-align: center; vertical-align: middle; }
+.data-table td:first-child { text-align: left; font-weight: 500; }
+.data-table input[type="number"] { width: 100px; background: var(--bg3);
+  border: 1px solid var(--border); color: var(--ink); border-radius: 6px;
+  padding: 5px 8px; text-align: center; font-size: 13px; }
+.data-table input:focus { border-color: var(--accent); outline: none; }
+.auto-result { color: var(--gold); font-weight: 700; font-size: 14px; }
+
+.btn { padding: 10px 24px; border-radius: 8px; border: none; cursor: pointer;
+  font-size: 14px; font-weight: 700; font-family: inherit; transition: all .2s; }
+.btn-primary { background: var(--accent); color: #0D1B2A; }
+.btn-primary:hover { background: #d99aff; transform: translateY(-1px); }
+.btn-gold { background: var(--gold); color: #0D1B2A; }
+.btn-gold:hover { background: #ffe14d; transform: translateY(-1px); }
+.btn-outline { background: transparent; border: 1px solid var(--accent); color: var(--accent); }
+.btn-outline:hover { background: rgba(201,128,255,0.1); }
+.btn-lg { padding: 14px 36px; font-size: 16px; }
+.btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+
+.eq-box { background: rgba(201,128,255,0.06); border: 1px solid var(--border);
+  border-radius: 10px; padding: 16px 20px; margin: 12px 0; font-family: 'Courier New',monospace; }
+.eq-box .eq-title { font-family: inherit; color: var(--ink2); font-size: 12px; margin-bottom: 8px; }
+.eq-box .eq { color: var(--accent); font-size: 15px; margin: 4px 0; }
+.eq-box .eq-note { font-family: inherit; color: var(--ink2); font-size: 12px; margin-top: 8px; }
+.eq-box.gold { background: rgba(255,215,0,0.05); border-color: rgba(255,215,0,0.2); }
+.eq-box.gold .eq { color: var(--gold); }
+.eq-box.cyan { background: rgba(0,198,255,0.05); border-color: rgba(0,198,255,0.2); }
+.eq-box.cyan .eq { color: var(--cyan); }
+
+.steps { counter-reset: step; }
+.step { display: flex; gap: 14px; margin-bottom: 14px; align-items: flex-start; }
+.step::before { counter-increment: step; content: counter(step);
+  min-width: 28px; height: 28px; background: var(--accent); color: #0D1B2A;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 13px; flex-shrink: 0; }
+.step-body { background: var(--bg3); border-radius: 8px; padding: 12px 16px; flex: 1; }
+.step-title { font-weight: 700; color: var(--ink); font-size: 14px; margin-bottom: 2px; }
+.step-desc { color: var(--ink2); font-size: 13px; }
+.step-warn .step-title { color: var(--gold); }
+
+.highlight-box { background: rgba(255,215,0,0.05); border: 1px solid rgba(255,215,0,0.2);
+  border-radius: 8px; padding: 14px 18px; margin: 12px 0; }
+.highlight-box p { font-size: 14px; }
+
+.quiz-q { background: var(--bg3); border-radius: 10px; padding: 16px 20px; margin: 10px 0;
+  border-left: 3px solid var(--accent); }
+.quiz-q .q-num { color: var(--accent); font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+.quiz-q .q-text { font-size: 14px; margin-bottom: 10px; }
+.quiz-options label { display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 4px 0; font-size: 13px; }
+.quiz-options input[type="radio"] { accent-color: var(--accent); }
+.q-feedback { font-size: 13px; padding: 8px 12px; border-radius: 6px; margin-top: 8px; display: none; }
+.q-feedback.correct { background: rgba(0,230,118,0.1); color: var(--green); border: 1px solid rgba(0,230,118,0.3); }
+.q-feedback.incorrect { background: rgba(255,82,82,0.1); color: var(--red); border: 1px solid rgba(255,82,82,0.3); }
+
+.results-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(200px,1fr)); gap: 12px; margin: 16px 0; }
+.result-card { background: var(--bg3); border-radius: 10px; padding: 16px; text-align: center; border: 1px solid var(--border); }
+.result-card .r-label { font-size: 12px; color: var(--ink2); margin-bottom: 6px; }
+.result-card .r-value { font-size: 22px; font-weight: 800; color: var(--gold); }
+.result-card .r-unit { font-size: 11px; color: var(--ink3); margin-top: 4px; }
+
+.method-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 12px 0; }
+.method-box { border-radius: 10px; padding: 16px; border: 1px solid; }
+.method-box.direct { background: rgba(0,198,255,0.05); border-color: rgba(0,198,255,0.3); }
+.method-box.deriv { background: rgba(201,128,255,0.05); border-color: rgba(201,128,255,0.3); }
+.method-title { font-weight: 700; font-size: 14px; margin-bottom: 8px; }
+.method-box.direct .method-title { color: var(--cyan); }
+.method-box.deriv .method-title { color: var(--accent); }
+
+.scatter-svg { width: 100%; max-width: 500px; }
+
+#submit-status { margin-top: 16px; padding: 12px 16px; border-radius: 8px; font-size: 14px; display: none; }
+#submit-status.ok { background: rgba(0,230,118,0.1); color: var(--green); border: 1px solid rgba(0,230,118,0.3); }
+#submit-status.err { background: rgba(255,82,82,0.1); color: var(--red); border: 1px solid rgba(255,82,82,0.3); }
+
+.mat-list { display: grid; grid-template-columns: repeat(auto-fill,minmax(200px,1fr)); gap: 8px; }
+.mat-item { background: var(--bg3); border-radius: 6px; padding: 8px 12px; font-size: 13px; display: flex; align-items: center; gap: 8px; }
+.mat-item::before { content: '◆'; color: var(--accent); font-size: 10px; }
+
+.ttest-box { background: var(--bg3); border-radius: 10px; padding: 16px; margin: 12px 0;
+  border: 1px solid rgba(0,198,255,0.2); }
+
+footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 24px;
+  text-align: center; color: var(--ink3); font-size: 13px; }
+
+@media(max-width:600px){ .method-compare { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"><div id="progress-fill"></div></div>
+
+<div id="topbar">
+  <div class="brand">🔬 螢光光譜實驗</div>
+  <nav>
+    <a href="#objectives">目標</a>
+    <a href="#theory">理論</a>
+    <a href="#materials">試劑</a>
+    <a href="#procedure">步驟</a>
+    <a href="#data">數據</a>
+    <a href="#results">結果</a>
+    <a href="#ttest">統計</a>
+    <a href="#discussion">討論</a>
+    <a href="#submit">送出</a>
+  </nav>
+</div>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="kicker">Nielsen Food Analysis · Ch7 · Fluorescence Spectroscopy</div>
+  <h1>通寧水中奎寧的螢光定量實驗</h1>
+  <p>直接發射法 vs 一階導數法：兩種螢光定量策略的比較</p>
+  <div class="badges">
+    <span class="badge">⏱ 3 小時</span>
+    <span class="badge">🔮 Fluorometry</span>
+    <span class="badge cyan">📊 一階導數法</span>
+    <span class="badge gold">📄 Pandey et al., J. Chem. Educ. 1999</span>
+  </div>
+</div>
+
+<!-- Student Info -->
+<div class="section" id="student-info">
+  <h2>📋 學生資訊</h2>
+  <div class="card">
+    <div class="form-grid">
+      <div><label>學號 *</label><input type="text" id="sid" placeholder="請輸入學號"></div>
+      <div><label>姓名</label><input type="text" id="sname" placeholder="請輸入姓名"></div>
+      <div><label>班級</label><input type="text" id="sclass" placeholder="例：A班"></div>
+      <div><label>組別</label><input type="text" id="sgroup" placeholder="例：第2組"></div>
+      <div><label>實驗日期</label><input type="date" id="labdate"></div>
+      <div><label>通寧水品牌</label><input type="text" id="brand" placeholder="例：Schweppes"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Objectives -->
+<div class="section" id="objectives">
+  <h2>🎯 學習目標</h2>
+  <div class="card">
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="label">🔮 螢光原理</div>
+        <div class="value" style="font-size:14px;margin-top:4px;">理解螢光激發/發射過程、Stokes 位移與 90° 偵測</div>
+      </div>
+      <div class="info-box">
+        <div class="label">📈 標準曲線</div>
+        <div class="value" style="font-size:14px;margin-top:4px;">建立奎寧螢光強度 vs 濃度的線性回歸方程式</div>
+      </div>
+      <div class="info-box">
+        <div class="label">📐 導數光譜法</div>
+        <div class="value" style="font-size:14px;margin-top:4px;">應用一階導數分析消除背景干擾，提升選擇性</div>
+      </div>
+      <div class="info-box">
+        <div class="label">📊 統計比較</div>
+        <div class="value" style="font-size:14px;margin-top:4px;">t 檢定比較兩種方法的結果是否存在顯著差異</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Pre-lab Quiz -->
+<div class="section">
+  <h2>📝 課前自我測驗</h2>
+  <div class="card">
+    <div class="quiz-q">
+      <div class="q-num">Q1</div>
+      <div class="q-text">螢光光譜法相比 UV-Vis 吸光度法，靈敏度（偵測下限）：</div>
+      <div class="quiz-options">
+        <label><input type="radio" name="q1" value="a"> 較低（不如吸光度法靈敏）</label>
+        <label><input type="radio" name="q1" value="b"> 相同</label>
+        <label><input type="radio" name="q1" value="c"> 高 1–3 個數量級（10–1000 倍）</label>
+        <label><input type="radio" name="q1" value="d"> 只適用於有機分子</label>
+      </div>
+      <button class="btn btn-outline" style="margin-top:8px;font-size:12px;padding:4px 12px"
+        onclick="checkQ('q1','c','螢光測量的是二次輻射（非衰減），可藉由放大激發光強度來提高靈敏度，因此比吸光度法靈敏 1–3 個數量級（Nielsen p.87）。')">確認答案</button>
+      <div class="q-feedback" id="q1-feedback"></div>
+    </div>
+
+    <div class="quiz-q">
+      <div class="q-num">Q2</div>
+      <div class="q-text">為何螢光偵測器放置在與激發光呈 90° 的方向？</div>
+      <div class="quiz-options">
+        <label><input type="radio" name="q2" value="a"> 因為螢光只在 90° 方向發射</label>
+        <label><input type="radio" name="q2" value="b"> 避免偵測到穿透的激發光，降低背景干擾</label>
+        <label><input type="radio" name="q2" value="c"> 增加偵測光程長度</label>
+        <label><input type="radio" name="q2" value="d"> 符合 Beer-Lambert 定律要求</label>
+      </div>
+      <button class="btn btn-outline" style="margin-top:8px;font-size:12px;padding:4px 12px"
+        onclick="checkQ('q2','b','螢光向各方向均勻發射，但激發光沿直線前進。90° 偵測能避開強烈的激發光直射，大幅降低背景信號（散射光、溶劑本底）。')">確認答案</button>
+      <div class="q-feedback" id="q2-feedback"></div>
+    </div>
+
+    <div class="quiz-q">
+      <div class="q-num">Q3</div>
+      <div class="q-text">什麼是 Stokes 位移（Stokes shift）？請說明其物理意義。</div>
+      <textarea id="q3-ans" rows="3" placeholder="請用自己的話描述..."></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- Theory -->
+<div class="section" id="theory">
+  <h2>📚 理論背景</h2>
+
+  <div class="card">
+    <h3>螢光原理與 Jablonski 能階圖</h3>
+    <!-- Simple Jablonski SVG -->
+    <div style="text-align:center;margin:12px 0;overflow-x:auto">
+      <svg width="500" height="220" viewBox="0 0 500 220" style="max-width:100%">
+        <!-- S0 ground state -->
+        <line x1="50" y1="190" x2="180" y2="190" stroke="#90A4AE" stroke-width="2"/>
+        <text x="100" y="207" fill="#90A4AE" font-size="12" text-anchor="middle">S₀（基態）</text>
+        <!-- S1 excited state -->
+        <line x1="230" y1="80" x2="360" y2="80" stroke="#C980FF" stroke-width="2"/>
+        <text x="295" y="68" fill="#C980FF" font-size="12" text-anchor="middle">S₁（激發態）</text>
+        <!-- S2 higher excited -->
+        <line x1="340" y1="30" x2="450" y2="30" stroke="#FF6B6B" stroke-width="1" stroke-dasharray="4"/>
+        <text x="395" y="20" fill="#FF6B6B" font-size="11" text-anchor="middle">S₂（更高）</text>
+        <!-- Absorption arrow S0 -> S2 -->
+        <defs>
+          <marker id="ah" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#00C6FF"/>
+          </marker>
+          <marker id="af" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#C980FF"/>
+          </marker>
+          <marker id="aic" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#90A4AE"/>
+          </marker>
+        </defs>
+        <!-- Absorption: S0 -> S2 (blue) -->
+        <line x1="120" y1="190" x2="380" y2="35" stroke="#00C6FF" stroke-width="2" marker-end="url(#ah)"/>
+        <text x="220" y="120" fill="#00C6FF" font-size="11" transform="rotate(-40,220,120)">激發（350 nm）</text>
+        <!-- Internal conversion S2->S1 -->
+        <line x1="400" y1="30" x2="360" y2="78" stroke="#90A4AE" stroke-width="1.5" stroke-dasharray="4" marker-end="url(#aic)"/>
+        <text x="420" y="55" fill="#90A4AE" font-size="10">IC</text>
+        <!-- Fluorescence S1->S0 (purple) -->
+        <line x1="290" y1="80" x2="160" y2="188" stroke="#C980FF" stroke-width="2" marker-end="url(#af)"/>
+        <text x="195" y="145" fill="#C980FF" font-size="11" transform="rotate(35,195,145)">螢光（450 nm）</text>
+        <!-- Stokes shift label -->
+        <text x="350" y="160" fill="#FFD700" font-size="11">← Stokes 位移 →</text>
+        <text x="350" y="175" fill="#FFD700" font-size="11">350→450 nm (+100 nm)</text>
+      </svg>
+    </div>
+    <div class="eq-box">
+      <div class="eq-title">螢光強度方程式（低濃度線性近似）：</div>
+      <div class="eq">F = φ · P₀ · (1 − 10^(−εbc)) ≈ 2.303 · φ · ε · b · c · P₀</div>
+      <div class="eq">→ F = k · P₀ · c　（c 小時）</div>
+      <div class="eq-note">φ：量子效率（0–1）　P₀：激發光強度　k = 2.303φεb
+      奎寧在 0.05 M H₂SO₄ 中：φ ≈ 0.546</div>
+    </div>
+    <div class="highlight-box">
+      <p>⚠️ <strong>非線性警告</strong>：濃度過高時（inner filter effect），螢光被自身吸收，導致 F 偏低。
+      本實驗樣品需稀釋 20 倍，確保在線性範圍內（c ≤ 10 ppm）。</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>一階導數螢光光譜法</h3>
+    <p style="font-size:14px;color:var(--ink2);margin-bottom:12px;">
+      對螢光光譜取一階導數 dF/dλ，可以：
+      <br>① 消除緩慢變化的背景螢光干擾
+      <br>② 在重疊峰中提高解析度
+      <br>③ 在過零點（zero-crossing）選擇選擇性好的測量波長
+    </p>
+    <div class="eq-box cyan">
+      <div class="eq-title">一階導數在過零點的特性：</div>
+      <div class="eq">dF/dλ|₄₂₂ₙₘ = 0.186c + 0.037　(r² = 0.9988)　← 422 nm 過零點</div>
+      <div class="eq">dF/dλ|₄₇₇ₙₘ = −0.127c − 0.034　(r² = 0.9976)　← 477 nm 過零點</div>
+      <div class="eq-note">在各自的過零點測量，可獨立確定兩種螢光物質的濃度</div>
+    </div>
+    <div class="eq-box gold">
+      <div class="eq-title">直接發射法（參考值）：</div>
+      <div class="eq">F(450 nm) = 19.598c + 4.354　(r² = 0.9983)</div>
+      <div class="eq-note">Ex = 350 nm，Em = 450 nm，在 0.05 M H₂SO₄ 中測量</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>奎寧（Quinine）簡介</h3>
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="label">來源</div>
+        <div class="value" style="font-size:13px;margin-top:4px;">金雞納樹（Cinchona）樹皮提取物，19世紀重要抗瘧疾藥</div>
+      </div>
+      <div class="info-box">
+        <div class="label">在通寧水中的用途</div>
+        <div class="value" style="font-size:13px;margin-top:4px;">提供特有的苦味，FDA 規定食品中 ≤ 83 ppm</div>
+      </div>
+      <div class="info-box">
+        <div class="label">螢光特性</div>
+        <div class="value" style="font-size:13px;margin-top:4px;">λex = 350 nm，λem = 450 nm，在酸性介質（H₂SO₄）中螢光最強</div>
+      </div>
+      <div class="info-box">
+        <div class="label">分析優勢</div>
+        <div class="value" style="font-size:13px;margin-top:4px;">螢光靈敏度比 UV-Vis 高 1000 倍，可測至 ppb 濃度</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Materials -->
+<div class="section" id="materials">
+  <h2>🧪 材料與儀器</h2>
+  <div class="card">
+    <h3>試劑</h3>
+    <div class="mat-list">
+      <div class="mat-item">通寧水樣品</div>
+      <div class="mat-item">0.05 M H₂SO₄（硫酸）</div>
+      <div class="mat-item">奎寧硫酸鹽標準品（1000 ppm 儲備液）</div>
+      <div class="mat-item">蒸餾水</div>
+    </div>
+    <h3 style="margin-top:16px;">儀器</h3>
+    <div class="mat-list">
+      <div class="mat-item">螢光光譜儀（fluorometer）</div>
+      <div class="mat-item">石英比色管（必須用石英，Ex=350nm UV光）</div>
+      <div class="mat-item">容量瓶 100 mL × 1（樣品稀釋）</div>
+      <div class="mat-item">容量瓶 100 mL × 6（標準液系列）</div>
+      <div class="mat-item">微量吸管（0.4, 1, 3, 5, 8, 10 mL 等）</div>
+      <div class="mat-item">量筒 5 mL</div>
+    </div>
+    <div class="highlight-box" style="margin-top:12px;">
+      <p>⚠️ <strong>石英比色管</strong>：激發波長 350 nm 屬於 UV 範圍，玻璃會吸收 UV 光，必須使用石英（SiO₂）比色管！</p>
+    </div>
+  </div>
+</div>
+
+<!-- Procedure -->
+<div class="section" id="procedure">
+  <h2>📋 實驗步驟</h2>
+  <div class="card">
+    <h3>Part A：樣品製備</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="step-body">
+          <div class="step-title">量取通寧水</div>
+          <div class="step-desc">精確量取 5.00 mL 通寧水，置於 100 mL 容量瓶。</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-body step-warn">
+          <div class="step-title">⚠️ 定容稀釋</div>
+          <div class="step-desc">以 0.05 M H₂SO₄ 定容至 100 mL（稀釋 20 倍）。注意：必須用 H₂SO₄ 而非蒸餾水，因為奎寧在酸性介質中螢光量子效率最高。</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-body">
+          <div class="step-title">混勻備用</div>
+          <div class="step-desc">充分搖勻，靜置 5 分鐘後使用。通寧水的碳酸氣泡會干擾測量，靜置可讓氣泡消散。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Part B：標準系列製備</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="step-body">
+          <div class="step-title">配製標準系列</div>
+          <div class="step-desc">由 1000 ppm 奎寧儲備液稀釋，在 100 mL 容量瓶中以 0.05 M H₂SO₄ 定容：</div>
+        </div>
+      </div>
+    </div>
+    <table class="data-table" style="margin-top:8px">
+      <thead>
+        <tr><th>標準液編號</th><th>取樣量 (mL)</th><th>最終濃度 (ppm)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>STD 0（空白）</td><td>0</td><td>0</td></tr>
+        <tr><td>STD 1</td><td>0.04</td><td>0.4</td></tr>
+        <tr><td>STD 2</td><td>0.10</td><td>1.0</td></tr>
+        <tr><td>STD 3</td><td>0.30</td><td>3.0</td></tr>
+        <tr><td>STD 4</td><td>0.50</td><td>5.0</td></tr>
+        <tr><td>STD 5</td><td>0.80</td><td>8.0</td></tr>
+        <tr><td>STD 6</td><td>1.00</td><td>10.0</td></tr>
+      </tbody>
+    </table>
+    <div class="steps" style="margin-top:12px">
+      <div class="step">
+        <div class="step-body">
+          <div class="step-title">設定儀器參數</div>
+          <div class="step-desc">激發波長 λex = 350 nm，掃描發射光譜 400–550 nm，狹縫寬度依機型設定（通常 10 nm）。</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-body">
+          <div class="step-title">記錄螢光強度</div>
+          <div class="step-desc">依序測量 STD 0 至 STD 6，在 450 nm 記錄直接發射強度 F(450 nm)。</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-body">
+          <div class="step-title">（選做）記錄導數值</div>
+          <div class="step-desc">若儀器支援，記錄一階導數 dF/dλ 在 422 nm 和 477 nm 的值。</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-body">
+          <div class="step-title">測量樣品</div>
+          <div class="step-desc">同條件測量樣品（稀釋 20 倍後），記錄 F(450 nm)；若做導數法，同時記錄 422 nm 和 477 nm 的導數值。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Data Entry -->
+<div class="section" id="data">
+  <h2>📊 數據記錄</h2>
+
+  <!-- Standard curve data -->
+  <div class="card">
+    <h3>Part B：標準曲線數據</h3>
+    <p style="font-size:13px;color:var(--ink2);margin-bottom:12px;">
+      輸入各標準液在三個波長的測量值，系統將自動計算線性回歸。
+    </p>
+    <div style="overflow-x:auto">
+      <table class="data-table" id="std-table">
+        <thead>
+          <tr>
+            <th>標準濃度 (ppm)</th>
+            <th>F(450 nm)<br><small>直接發射</small></th>
+            <th>dF/dλ (422 nm)<br><small>一階導數</small></th>
+            <th>dF/dλ (477 nm)<br><small>一階導數</small></th>
+          </tr>
+        </thead>
+        <tbody id="std-tbody">
+          <!-- Generated by JS -->
+        </tbody>
+      </table>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="calcStdCurve()">📈 建立標準曲線</button>
+      <button class="btn btn-outline" onclick="fillExample()">📋 填入範例數據</button>
+    </div>
+    <div id="std-results" style="display:none;margin-top:16px"></div>
+  </div>
+
+  <!-- Sample measurement -->
+  <div class="card">
+    <h3>樣品測量數據</h3>
+    <div class="form-grid">
+      <div><label>稀釋體積 (mL 樣品 → mL 定容)</label>
+        <input type="text" value="5 mL → 100 mL" id="dil-info" readonly style="background:var(--bg)"></div>
+      <div><label>稀釋倍數（固定 20×）</label>
+        <input type="number" id="dil-factor" value="20" readonly style="background:var(--bg)"></div>
+    </div>
+    <div style="overflow-x:auto;margin-top:12px">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>測量次數</th>
+            <th>F(450 nm)</th>
+            <th>dF/dλ (422 nm)</th>
+            <th>dF/dλ (477 nm)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>測量 1</td>
+            <td><input type="number" id="s_F450_1" step="0.01" oninput="updateSampleStats()"></td>
+            <td><input type="number" id="s_d422_1" step="0.001" oninput="updateSampleStats()"></td>
+            <td><input type="number" id="s_d477_1" step="0.001" oninput="updateSampleStats()"></td>
+          </tr>
+          <tr>
+            <td>測量 2</td>
+            <td><input type="number" id="s_F450_2" step="0.01" oninput="updateSampleStats()"></td>
+            <td><input type="number" id="s_d422_2" step="0.001" oninput="updateSampleStats()"></td>
+            <td><input type="number" id="s_d477_2" step="0.001" oninput="updateSampleStats()"></td>
+          </tr>
+          <tr>
+            <td>測量 3</td>
+            <td><input type="number" id="s_F450_3" step="0.01" oninput="updateSampleStats()"></td>
+            <td><input type="number" id="s_d422_3" step="0.001" oninput="updateSampleStats()"></td>
+            <td><input type="number" id="s_d477_3" step="0.001" oninput="updateSampleStats()"></td>
+          </tr>
+          <tr>
+            <td><strong>平均 ± SD</strong></td>
+            <td class="auto-result" id="s_F450_stat">—</td>
+            <td class="auto-result" id="s_d422_stat">—</td>
+            <td class="auto-result" id="s_d477_stat">—</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="calcSample()">⚡ 計算奎寧濃度</button>
+    </div>
+  </div>
+</div>
+
+<!-- Results -->
+<div class="section" id="results">
+  <h2>🎯 計算結果</h2>
+  <div class="card highlight" id="results-panel">
+    <p style="color:var(--ink2);font-size:14px;">請先建立標準曲線並輸入樣品數據，再點擊「計算奎寧濃度」。</p>
+  </div>
+</div>
+
+<!-- t-test -->
+<div class="section" id="ttest">
+  <h2>📊 統計比較（t 檢定）</h2>
+  <div class="card">
+    <h3>比較直接法 vs 導數法</h3>
+    <p style="font-size:14px;color:var(--ink2);margin-bottom:16px;">
+      t 檢定用來判斷兩種測定方法的結果是否存在顯著差異（α = 0.05）。
+    </p>
+    <div class="ttest-box">
+      <h3 style="color:var(--cyan);margin-bottom:12px;">手動輸入各組實驗數據進行比對</h3>
+      <p style="font-size:13px;color:var(--ink2);margin-bottom:12px;">
+        請向其他組別收集數據，填入下表後計算 t 值：
+      </p>
+      <div style="overflow-x:auto">
+        <table class="data-table" id="ttest-table">
+          <thead>
+            <tr><th>組別</th><th>直接法結果 (ppm)</th><th>導數法結果 (ppm)</th></tr>
+          </thead>
+          <tbody id="ttest-tbody">
+            <!-- Generated by JS -->
+          </tbody>
+        </table>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="calcTTest()">計算 t 值</button>
+      </div>
+      <div id="ttest-result" style="margin-top:12px;display:none"></div>
+    </div>
+    <div class="highlight-box" style="margin-top:12px">
+      <p>📌 <strong>判斷標準</strong>：t 臨界值（雙尾，α = 0.05）：<br>
+      df=4: t_crit=2.776　df=5: t_crit=2.571　df=6: t_crit=2.447　df=7: t_crit=2.365</p>
+    </div>
+  </div>
+</div>
+
+<!-- Discussion -->
+<div class="section" id="discussion">
+  <h2>💬 問題討論</h2>
+  <div class="card">
+    <div class="quiz-q">
+      <div class="q-num">討論 1</div>
+      <div class="q-text">你的標準曲線 R² 是否 ≥ 0.999？若不是，可能的原因是？</div>
+      <textarea id="disc1" rows="3" placeholder="請討論線性度..."></textarea>
+    </div>
+    <div class="quiz-q">
+      <div class="q-num">討論 2</div>
+      <div class="q-text">你測得的通寧水奎寧濃度是否接近 83 ppm（FDA 最高限量）？請與文獻比較。</div>
+      <textarea id="disc2" rows="3" placeholder="Schweppes 通常含約 43 ppm 奎寧..."></textarea>
+    </div>
+    <div class="quiz-q">
+      <div class="q-num">討論 3</div>
+      <div class="q-text">與 UV-Vis 吸光度法相比，本實驗為何需要更嚴格的稀釋和基質匹配（用 H₂SO₄ 定容）？</div>
+      <textarea id="disc3" rows="3" placeholder="請從量子效率、Inner Filter Effect 等方面說明..."></textarea>
+    </div>
+    <div class="quiz-q">
+      <div class="q-num">討論 4</div>
+      <div class="q-text">t 檢定結果如何？兩種方法是否有顯著差異？哪種方法更適合用於食品實際分析？</div>
+      <textarea id="disc4" rows="3" placeholder="請根據你的 t 值與臨界值比較，討論兩法的優缺點..."></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- Submit -->
+<div class="section" id="submit">
+  <h2>📤 送出實驗報告</h2>
+  <div class="card">
+    <p style="color:var(--ink2);font-size:14px;margin-bottom:16px;">
+      確認填寫完整後送出數據。若 Firebase 失敗，系統將自動本地備份。
+    </p>
+    <div class="btn-row">
+      <button class="btn btn-gold btn-lg" onclick="submitReport()">📤 送出至 Firebase</button>
+      <button class="btn btn-outline" onclick="saveLocal()">💾 本地備份</button>
+      <button class="btn btn-outline" onclick="exportCSV()">📊 匯出 CSV</button>
+    </div>
+    <div id="submit-status"></div>
+  </div>
+</div>
+
+<footer>
+  <p>Nielsen's Food Analysis 6th ed. · Ch7 Fluorescence Spectroscopy<br>
+  實驗設計參考：Pandey et al. (1999), <em>J. Chem. Educ.</em> 76, 1640–1641</p>
+</footer>
+
+<script>
+const PROJECT_ID = 'my-teaching-tools-517a0';
+const API_KEY    = 'FIREBASE_API_KEY_REMOVED';
+
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const pct = (h.scrollTop || document.body.scrollTop) / (h.scrollHeight - h.clientHeight);
+  document.getElementById('progress-fill').style.width = (pct * 100) + '%';
+});
+document.getElementById('labdate').value = new Date().toISOString().slice(0, 10);
+
+// ── Standard curve concentrations ────────────────────────────────
+const STD_CONCS = [0, 0.4, 1, 3, 5, 8, 10];
+
+// Build standard curve table
+(function buildStdTable() {
+  const tbody = document.getElementById('std-tbody');
+  STD_CONCS.forEach((c, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${c === 0 ? '0 (空白)' : c}</td>
+      <td><input type="number" id="std_F_${i}" step="0.01" oninput="calcStdCurve()"></td>
+      <td><input type="number" id="std_D422_${i}" step="0.001" oninput="calcStdCurve()"></td>
+      <td><input type="number" id="std_D477_${i}" step="0.001" oninput="calcStdCurve()"></td>`;
+    tbody.appendChild(tr);
+  });
+})();
+
+// ── Build t-test table ───────────────────────────────────────────
+(function buildTTestTable() {
+  const tbody = document.getElementById('ttest-tbody');
+  for (let g = 1; g <= 8; g++) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>第 ${g} 組</td>
+      <td><input type="number" id="tt_direct_${g}" step="0.1" oninput="calcTTest(false)"></td>
+      <td><input type="number" id="tt_deriv_${g}" step="0.1" oninput="calcTTest(false)"></td>`;
+    tbody.appendChild(tr);
+  }
+})();
+
+// ── Pre-lab quiz ─────────────────────────────────────────────────
+function checkQ(qName, correct, explanation) {
+  const sel = document.querySelector(`input[name="${qName}"]:checked`);
+  const fb  = document.getElementById(qName + '-feedback');
+  if (!sel) { fb.style.display='block'; fb.className='q-feedback incorrect'; fb.textContent='請先選擇一個答案。'; return; }
+  fb.style.display = 'block';
+  if (sel.value === correct) {
+    fb.className = 'q-feedback correct';
+    fb.innerHTML = '✅ 正確！' + explanation;
+  } else {
+    fb.className = 'q-feedback incorrect';
+    fb.innerHTML = '❌ 再想想。提示：' + explanation;
+  }
+}
+
+// ── Linear regression ─────────────────────────────────────────────
+function linReg(xs, ys) {
+  const n = xs.length;
+  if (n < 2) return null;
+  const sumX = xs.reduce((a,b)=>a+b,0), sumY = ys.reduce((a,b)=>a+b,0);
+  const sumXY = xs.reduce((s,x,i)=>s+x*ys[i],0), sumX2 = xs.reduce((s,x)=>s+x*x,0);
+  const slope = (n*sumXY - sumX*sumY) / (n*sumX2 - sumX*sumX);
+  const inter = (sumY - slope*sumX) / n;
+  const yMean = sumY/n;
+  const ssTot = ys.reduce((s,y)=>s+Math.pow(y-yMean,2),0);
+  const ssRes = ys.reduce((s,y,i)=>s+Math.pow(y-(slope*xs[i]+inter),2),0);
+  const r2    = 1 - ssRes/ssTot;
+  return { slope, inter, r2, n };
+}
+
+// Store regression results
+window._regs = {};
+
+function calcStdCurve() {
+  const methods = [
+    { key: 'F', name: 'F(450 nm) 直接法', idPrefix: 'std_F_' },
+    { key: 'D422', name: 'dF/dλ(422 nm) 導數法', idPrefix: 'std_D422_' },
+    { key: 'D477', name: 'dF/dλ(477 nm) 導數法', idPrefix: 'std_D477_' },
+  ];
+  const resDiv = document.getElementById('std-results');
+  let html = '<h3>📈 線性回歸結果</h3><div class="info-grid" style="margin-top:8px">';
+
+  methods.forEach(m => {
+    const xs=[], ys=[];
+    STD_CONCS.forEach((c,i) => {
+      const v = parseFloat(document.getElementById(m.idPrefix+i).value);
+      if (!isNaN(v)) { xs.push(c); ys.push(v); }
+    });
+    if (xs.length >= 3) {
+      const r = linReg(xs, ys);
+      window._regs[m.key] = r;
+      const intercSign = r.inter >= 0 ? '+' : '';
+      html += `<div class="info-box">
+        <div class="label">${m.name}</div>
+        <div class="value" style="font-size:12px;margin-top:4px;font-family:monospace">
+          y = ${r.slope.toFixed(4)}x ${intercSign}${r.inter.toFixed(4)}<br>
+          R² = <span style="color:${r.r2>=0.999?'var(--green)':'var(--yellow)'}">${r.r2.toFixed(5)}</span>
+          (n=${r.n})
+        </div>
+      </div>`;
+    } else {
+      html += `<div class="info-box"><div class="label">${m.name}</div>
+        <div class="value" style="font-size:12px;color:var(--ink2);">需至少 3 個數據點</div></div>`;
+    }
+  });
+  html += '</div>';
+  resDiv.innerHTML = html;
+  resDiv.style.display = 'block';
+}
+
+// ── Fill example data ─────────────────────────────────────────────
+function fillExample() {
+  // From Pandey 1999 Table 1 (approximate)
+  const exF    = [4.4, 12.2, 24.0, 63.2, 102.3, 161.2, 200.3];
+  const exD422 = [0.037, 0.112, 0.223, 0.596, 0.968, 1.526, 1.896];
+  const exD477 = [-0.034,-0.088,-0.161,-0.415,-0.665,-1.050,-1.304];
+  STD_CONCS.forEach((_, i) => {
+    document.getElementById(`std_F_${i}`).value   = exF[i];
+    document.getElementById(`std_D422_${i}`).value = exD422[i];
+    document.getElementById(`std_D477_${i}`).value = exD477[i];
+  });
+  calcStdCurve();
+  // Example sample
+  ['1','2','3'].forEach(n => {
+    document.getElementById(`s_F450_${n}`).value  = (857 + Math.random()*5).toFixed(1);
+    document.getElementById(`s_d422_${n}`).value  = (8.14 + Math.random()*0.05).toFixed(3);
+    document.getElementById(`s_d477_${n}`).value  = (-5.57 - Math.random()*0.05).toFixed(3);
+  });
+  updateSampleStats();
+}
+
+// ── Sample stats ─────────────────────────────────────────────────
+function getVals3(id) {
+  return [1,2,3].map(n => parseFloat(document.getElementById(id+n).value)).filter(v=>!isNaN(v));
+}
+function meanSd(vals) {
+  if (!vals.length) return null;
+  const mean = vals.reduce((a,b)=>a+b,0)/vals.length;
+  const sd   = vals.length>1 ? Math.sqrt(vals.reduce((s,v)=>s+Math.pow(v-mean,2),0)/(vals.length-1)) : 0;
+  return {mean, sd};
+}
+
+function updateSampleStats() {
+  [['s_F450_','s_F450_stat'],['s_d422_','s_d422_stat'],['s_d477_','s_d477_stat']].forEach(([pre,out])=>{
+    const s = meanSd(getVals3(pre));
+    document.getElementById(out).textContent = s ? `${s.mean.toFixed(3)} ± ${s.sd.toFixed(3)}` : '—';
+  });
+}
+
+// ── Calculate sample concentration ───────────────────────────────
+function calcSample() {
+  const dilF = 20;
+  const sF   = meanSd(getVals3('s_F450_'));
+  const sD422 = meanSd(getVals3('s_d422_'));
+  const sD477 = meanSd(getVals3('s_d477_'));
+
+  if (!sF) { alert('請輸入樣品螢光強度數據！'); return; }
+
+  const rF    = window._regs['F'];
+  const rD422 = window._regs['D422'];
+  const rD477 = window._regs['D477'];
+
+  const results = {};
+
+  // Direct method
+  if (rF && sF) {
+    results.c_direct = (sF.mean - rF.inter) / rF.slope;
+    results.c_direct_orig = results.c_direct * dilF;
+  }
+  // Derivative 422 method
+  if (rD422 && sD422) {
+    results.c_d422 = (sD422.mean - rD422.inter) / rD422.slope;
+    results.c_d422_orig = results.c_d422 * dilF;
+  }
+  // Derivative 477 method
+  if (rD477 && sD477) {
+    results.c_d477 = (sD477.mean - rD477.inter) / rD477.slope;
+    results.c_d477_orig = results.c_d477 * dilF;
+  }
+
+  window._sampleResults = { ...results, sF, sD422, sD477, dilF };
+
+  const panel = document.getElementById('results-panel');
+  const fmtC = v => isNaN(v) || v==null ? '—' : v.toFixed(2);
+  const ppmFlag = v => {
+    if (v == null || isNaN(v)) return '';
+    if (v > 83) return '<br><span style="color:var(--red);font-size:11px">⚠️ 超過 FDA 限量 83 ppm</span>';
+    if (v > 60) return '<br><span style="color:var(--yellow);font-size:11px">⚠️ 接近 FDA 限量</span>';
+    return '<br><span style="color:var(--green);font-size:11px">✅ 符合 FDA 規範</span>';
+  };
+
+  panel.innerHTML = `
+    <h3>📊 奎寧濃度計算結果</h3>
+    <div class="results-grid">
+      <div class="result-card">
+        <div class="r-label">直接發射法<br>稀釋後濃度</div>
+        <div class="r-value">${fmtC(results.c_direct)}</div>
+        <div class="r-unit">ppm（稀釋 20× 後）</div>
+      </div>
+      <div class="result-card" style="border-color:rgba(0,230,118,0.3)">
+        <div class="r-label" style="color:var(--green)">直接發射法<br>原始濃度</div>
+        <div class="r-value" style="color:var(--green)">${fmtC(results.c_direct_orig)}</div>
+        <div class="r-unit">ppm in 通寧水 ${ppmFlag(results.c_direct_orig)}</div>
+      </div>
+      <div class="result-card">
+        <div class="r-label">導數法（422 nm）<br>稀釋後濃度</div>
+        <div class="r-value">${fmtC(results.c_d422)}</div>
+        <div class="r-unit">ppm</div>
+      </div>
+      <div class="result-card" style="border-color:rgba(0,230,118,0.3)">
+        <div class="r-label" style="color:var(--cyan)">導數法（422 nm）<br>原始濃度</div>
+        <div class="r-value" style="color:var(--cyan)">${fmtC(results.c_d422_orig)}</div>
+        <div class="r-unit">ppm in 通寧水 ${ppmFlag(results.c_d422_orig)}</div>
+      </div>
+      ${results.c_d477_orig != null ? `
+      <div class="result-card">
+        <div class="r-label">導數法（477 nm）<br>原始濃度</div>
+        <div class="r-value" style="color:var(--accent)">${fmtC(results.c_d477_orig)}</div>
+        <div class="r-unit">ppm ${ppmFlag(results.c_d477_orig)}</div>
+      </div>` : ''}
+    </div>
+    <div class="eq-box" style="margin-top:12px">
+      <div class="eq-title">計算步驟（直接法）：</div>
+      <div class="eq">c = (F − b) / a = (${sF?sF.mean.toFixed(2):'?'} − ${rF?rF.inter.toFixed(4):'?'}) / ${rF?rF.slope.toFixed(4):'?'} = ${fmtC(results.c_direct)} ppm</div>
+      <div class="eq">原始濃度 = ${fmtC(results.c_direct)} × 20 = ${fmtC(results.c_direct_orig)} ppm</div>
+    </div>
+  `;
+
+  document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+}
+
+// ── t-test ───────────────────────────────────────────────────────
+function calcTTest(showAlert=true) {
+  const directs=[], derivs=[];
+  for (let g=1;g<=8;g++) {
+    const d = parseFloat(document.getElementById(`tt_direct_${g}`).value);
+    const v = parseFloat(document.getElementById(`tt_deriv_${g}`).value);
+    if (!isNaN(d) && !isNaN(v)) { directs.push(d); derivs.push(v); }
+  }
+  const n = directs.length;
+  if (n < 2) { if(showAlert) alert('請至少輸入2組數據！'); return; }
+
+  const diffs = directs.map((d,i) => d - derivs[i]);
+  const meanD = diffs.reduce((a,b)=>a+b,0)/n;
+  const sd    = Math.sqrt(diffs.reduce((s,d)=>s+Math.pow(d-meanD,2),0)/(n-1));
+  const se    = sd / Math.sqrt(n);
+  const t     = Math.abs(meanD / se);
+  const df    = n - 1;
+  const tCrits = {1:12.706,2:4.303,3:3.182,4:2.776,5:2.571,6:2.447,7:2.365,8:2.306,9:2.262,10:2.228};
+  const tCrit  = tCrits[df] || 2.0;
+  const sig    = t > tCrit;
+
+  const div = document.getElementById('ttest-result');
+  div.style.display = 'block';
+  div.innerHTML = `
+    <div class="info-grid" style="margin-bottom:12px">
+      <div class="info-box">
+        <div class="label">配對組數 (n)</div>
+        <div class="value">${n}</div>
+      </div>
+      <div class="info-box">
+        <div class="label">差值平均 (d̄)</div>
+        <div class="value">${meanD.toFixed(3)}</div>
+      </div>
+      <div class="info-box">
+        <div class="label">差值 SD</div>
+        <div class="value">${sd.toFixed(3)}</div>
+      </div>
+      <div class="info-box">
+        <div class="label">計算 |t| 值</div>
+        <div class="value" style="color:${sig?'var(--red)':'var(--green)'}">${t.toFixed(3)}</div>
+      </div>
+      <div class="info-box">
+        <div class="label">自由度 (df)</div>
+        <div class="value">${df}</div>
+      </div>
+      <div class="info-box">
+        <div class="label">t 臨界值 (α=0.05)</div>
+        <div class="value">${tCrit}</div>
+      </div>
+    </div>
+    <div class="highlight-box" style="border-color:${sig?'rgba(255,82,82,0.3)':'rgba(0,230,118,0.3)'}">
+      <p style="color:${sig?'var(--red)':'var(--green)'}">
+        <strong>${sig ? '⚠️ 存在顯著差異' : '✅ 無顯著差異'}</strong><br>
+        |t| = ${t.toFixed(3)} ${sig ? '>' : '<'} t_crit = ${tCrit}（df=${df}, α=0.05）<br>
+        ${sig ? '兩種方法結果在統計上有顯著差異（p < 0.05）。' : '兩種方法結果在統計上沒有顯著差異（p > 0.05），結果等效。'}
+      </p>
+    </div>`;
+
+  window._ttestResult = { n, meanD, sd, t, df, tCrit, sig };
+}
+
+// ── Collect all data ─────────────────────────────────────────────
+function collectData() {
+  const r  = window._sampleResults || {};
+  const rr = window._regs || {};
+  return {
+    student_id:    document.getElementById('sid').value.trim(),
+    name:          document.getElementById('sname').value.trim(),
+    class_code:    document.getElementById('sclass').value.trim(),
+    group:         document.getElementById('sgroup').value.trim(),
+    lab_date:      document.getElementById('labdate').value,
+    brand:         document.getElementById('brand').value.trim(),
+    dil_factor:    20,
+    F450_mean:     r.sF?.mean,
+    D422_mean:     r.sD422?.mean,
+    D477_mean:     r.sD477?.mean,
+    c_direct_ppm:  r.c_direct_orig,
+    c_d422_ppm:    r.c_d422_orig,
+    c_d477_ppm:    r.c_d477_orig,
+    reg_F_slope:   rr.F?.slope,
+    reg_F_r2:      rr.F?.r2,
+    reg_D422_r2:   rr.D422?.r2,
+    ttest_t:       window._ttestResult?.t,
+    ttest_sig:     window._ttestResult?.sig,
+    disc1: document.getElementById('disc1').value.trim(),
+    disc2: document.getElementById('disc2').value.trim(),
+    disc3: document.getElementById('disc3').value.trim(),
+    disc4: document.getElementById('disc4').value.trim(),
+    prelab_q3: document.getElementById('q3-ans').value.trim(),
+    lab_type: 'fluorescence_quinine',
+  };
+}
+
+async function submitReport() {
+  const data = collectData();
+  if (!data.student_id) { alert('請填寫學號！'); return; }
+  const statusEl = document.getElementById('submit-status');
+  statusEl.style.display = 'block'; statusEl.className = ''; statusEl.textContent = '送出中...';
+
+  const url = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents/lab_results/fluorescence_quinine/submissions?key=${API_KEY}`;
+  const fields = {};
+  Object.entries(data).forEach(([k,v]) => {
+    if (v !== null && v !== undefined && v !== '') {
+      fields[k] = typeof v === 'number' ? { doubleValue: v }
+                : typeof v === 'boolean' ? { booleanValue: v }
+                : { stringValue: String(v) };
+    }
+  });
+  fields.ts = { timestampValue: new Date().toISOString() };
+
+  try {
+    const res = await fetch(url, { method:'POST',
+      headers:{'Content-Type':'application/json'}, body: JSON.stringify({fields}) });
+    if (res.ok) {
+      statusEl.className = 'submit-status ok';
+      statusEl.textContent = '送出成功！數據已儲存至 Firebase。';
+      saveLocal();
+    } else {
+      throw new Error((await res.json()).error?.message || res.status);
+    }
+  } catch(e) {
+    statusEl.className = 'submit-status err';
+    statusEl.textContent = '送出失敗：' + e.message + '（已自動本地備份）';
+    saveLocal();
+  }
+}
+
+function saveLocal() {
+  const data = collectData();
+  localStorage.setItem(`fluor_${data.student_id}_${data.lab_date}`, JSON.stringify(data));
+}
+
+function exportCSV() {
+  const data = collectData();
+  const rows = [['欄位','數值'], ...Object.entries(data).map(([k,v])=>[k,v??''])];
+  const csv  = rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `fluor_${data.student_id||'noID'}_${data.lab_date||'nodate'}.csv`;
+  a.click();
+}
+</script>
+</body>
+</html>

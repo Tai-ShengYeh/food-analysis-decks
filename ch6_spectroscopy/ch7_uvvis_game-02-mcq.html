@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CH7 遊戲 2 — UV-Vis 原理與儀器選擇題</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:#0D1B2A; --card:#1A3050; --card2:#122540;
+  --pri:#00C6FF; --hi:#FFD700; --txt:#ECEEF2; --muted:#7A91B0;
+  --grn:#2ECC71; --red:#E74C3C; --pur:#9B59B6;
+}
+body {
+  font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
+  background: var(--bg);
+  color: var(--txt);
+  min-height: 100vh;
+  padding: 16px;
+  font-size: 16px;
+}
+.container { max-width: 720px; margin: 0 auto; }
+.nav-link {
+  display: inline-block;
+  margin-bottom: 10px;
+  color: var(--pri);
+  text-decoration: none;
+  font-size: 14px;
+}
+.nav-link:hover { text-decoration: underline; }
+header {
+  background: var(--card);
+  padding: 18px 20px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  border-left: 4px solid var(--pri);
+}
+header h1 { font-size: 22px; margin-bottom: 6px; color: var(--pri); }
+header .subtitle { color: var(--muted); font-size: 13px; }
+.score-bar {
+  background: var(--card2);
+  padding: 10px 18px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.progress-bar-bg {
+  flex: 1 1 200px;
+  min-width: 100px;
+  height: 8px;
+  background: var(--card);
+  border-radius: 4px;
+  margin: 0 12px;
+  overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: var(--grn);
+  width: 0%;
+  transition: width 0.3s;
+}
+.section-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+.section-badge.pre { background: var(--hi); color: var(--bg); }
+.section-badge.mid { background: var(--pri); color: var(--bg); }
+.section-badge.post { background: var(--pur); color: var(--txt); }
+.question-card {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+.q-num {
+  display: inline-block;
+  background: var(--pri);
+  color: var(--bg);
+  font-weight: bold;
+  font-size: 13px;
+  padding: 3px 10px;
+  border-radius: 12px;
+  margin-right: 8px;
+  margin-bottom: 8px;
+}
+.q-text {
+  font-size: 17px;
+  font-weight: bold;
+  margin-bottom: 16px;
+  line-height: 1.5;
+  color: var(--txt);
+}
+.options { display: grid; gap: 8px; }
+.option {
+  background: var(--card2);
+  border: 2px solid transparent;
+  border-radius: 8px;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 15px;
+  font-family: inherit;
+  text-align: left;
+  min-height: 44px;
+  width: 100%;
+  color: var(--txt);
+}
+.option:hover { background: #1f3a5e; border-color: var(--pri); }
+.option.correct {
+  background: rgba(46, 204, 113, 0.2);
+  border-color: var(--grn);
+  color: var(--grn);
+  font-weight: bold;
+}
+.option.wrong {
+  background: rgba(231, 76, 60, 0.2);
+  border-color: var(--red);
+  color: var(--red);
+}
+.option:disabled { cursor: default; }
+.option.correct::before { content: '✅ '; }
+.option.wrong::before { content: '❌ '; }
+.explain {
+  background: rgba(255, 215, 0, 0.08);
+  border-left: 3px solid var(--hi);
+  padding: 12px 16px;
+  border-radius: 6px;
+  margin-top: 12px;
+  font-size: 14px;
+  color: var(--txt);
+  line-height: 1.6;
+  display: none;
+}
+.explain.show { display: block; }
+.btn {
+  background: var(--pri);
+  color: var(--bg);
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+  min-height: 44px;
+}
+.btn:hover { background: #00A0CC; }
+.btn-secondary { background: #5B6777; color: var(--txt); }
+.btn-secondary:hover { background: #455260; }
+.controls { text-align: center; margin: 20px 0; }
+.complete-message {
+  background: var(--grn);
+  color: var(--bg);
+  padding: 24px;
+  border-radius: 12px;
+  margin: 20px 0;
+  text-align: center;
+  display: none;
+}
+.complete-message.partial { background: var(--hi); }
+.complete-message.low { background: var(--red); color: var(--txt); }
+.complete-message h2 { font-size: 22px; margin-bottom: 12px; }
+.complete-message .score { font-size: 32px; font-weight: bold; margin: 12px 0; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="ch6_spectroscopy.html" class="nav-link">← 回投影片</a>
+  <header>
+    <h1>📊 CH7 遊戲 2：UV-Vis 原理與儀器選擇題</h1>
+    <div class="subtitle">14 題覆蓋 Beer-Lambert、偏離原因、儀器五元件、食品應用。</div>
+  </header>
+
+  <div class="score-bar">
+    <span>第 <span id="curQ">1</span> / <span id="totalQ">14</span> 題</span>
+    <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill"></div></div>
+    <span style="color:var(--grn)">答對 <span id="score">0</span></span>
+  </div>
+
+  <div id="quizArea"></div>
+
+  <div id="completeMessage" class="complete-message">
+    <h2 id="completeTitle">🎉 完成！</h2>
+    <div>你的分數</div>
+    <div class="score"><span id="finalScore">0</span> / 14</div>
+    <div id="finalComment"></div>
+    <br>
+    <button class="btn" onclick="restart()">再玩一次</button>
+  </div>
+</div>
+
+<script type="module">
+import { initGameSession, logEvent } from './game_firebase.js';
+
+const QUESTIONS = [
+  {
+    "section": "pre",
+    "q": "%T = 50%，此時吸光度 A = ？",
+    "options": [
+      "0.5",
+      "0.301",
+      "2.0",
+      "1.0"
+    ],
+    "correct": 1,
+    "explain": "A = −log T = −log(0.5) = 0.301。最常見迷思：學生抄 T 值。記憶：T=10% → A=1；T=1% → A=2。"
+  },
+  {
+    "section": "pre",
+    "q": "Beer's Law 說「A 正比於 c」，是因為？",
+    "options": [
+      "ε 會跟著增大",
+      "T 正比於 c",
+      "A = −logT，對數關係使 A 與 c 成正比",
+      "光速隨濃度改變"
+    ],
+    "correct": 2,
+    "explain": "T 隨濃度指數遞減，取 −log 後才線性。A = εbc 才是直接正比關係。"
+  },
+  {
+    "section": "pre",
+    "q": "下列哪個不是分光光度計的必要元件？",
+    "options": [
+      "光源",
+      "離心機",
+      "單色器",
+      "偵測器"
+    ],
+    "correct": 1,
+    "explain": "五元件：光源 → 單色器 → 樣品池 → 偵測器 → 訊號處理。離心機是樣品前處理用。"
+  },
+  {
+    "section": "pre",
+    "q": "你量到某樣品 A = 1.8，應該怎麼做？",
+    "options": [
+      "繼續記錄，高 A 更準",
+      "立即稀釋後重測",
+      "換更長比色槽",
+      "升高溫度幫助吸光"
+    ],
+    "correct": 1,
+    "explain": "A > 0.8 偏離 Beer-Lambert 線性、誤差爆增。線性最佳區間 A = 0.2–0.8，超出要稀釋（稀 2 倍 → A 約 0.9）。"
+  },
+  {
+    "section": "pre",
+    "q": "茶葉總酚 Folin-Ciocalteu 法的偵測波長？",
+    "options": [
+      "540 nm",
+      "595 nm",
+      "765 nm",
+      "450 nm"
+    ],
+    "correct": 2,
+    "explain": "總酚 + Folin 試劑 → 鉬鎢藍 (765 nm)。Bradford 蛋白 595 nm、Griess 亞硝酸 540 nm、β-胡蘿蔔素 450 nm。"
+  },
+  {
+    "section": "mid",
+    "q": "A = εbc，若光徑 b 從 1 cm 換成 2 cm，A 會？",
+    "options": [
+      "不變",
+      "減半",
+      "加倍",
+      "平方"
+    ],
+    "correct": 2,
+    "explain": "b 與 A 線性正比。加倍 b → A 加倍。若加倍會超過線性區間，反而要稀釋濃度。"
+  },
+  {
+    "section": "mid",
+    "q": "Beer's Law 負偏離（高濃度）的根本原因是？",
+    "options": [
+      "光源功率不足",
+      "分子間距縮短、彼此相互作用 ε 隨濃度改變",
+      "比色槽材質不對",
+      "偵測器飽和"
+    ],
+    "correct": 1,
+    "explain": "高濃度時分子間距 < 一個 λ，靜電作用使 ε 改變 → A 不再線性。一般要求濃度 < 10⁻² M。"
+  },
+  {
+    "section": "mid",
+    "q": "非單色光（寬 bandwidth）導致 Beer's Law？",
+    "options": [
+      "更準確",
+      "在高 A 端出現負偏離",
+      "完全無影響",
+      "靈敏度提高"
+    ],
+    "correct": 1,
+    "explain": "單色器 bandwidth 太寬 → 包含兩側 ε 不同的光 → 偏離理想直線。高階儀器 bandwidth ≤ 2 nm。"
+  },
+  {
+    "section": "mid",
+    "q": "UV 波段（200–380 nm）量測須選哪種比色槽？",
+    "options": [
+      "矽酸鹽玻璃",
+      "拋棄式塑膠",
+      "石英或熔融矽",
+      "不鏽鋼槽"
+    ],
+    "correct": 2,
+    "explain": "玻璃在 < 350 nm 強烈吸光。石英可透到 ~190 nm。塑膠拋棄式只能 Vis 用。"
+  },
+  {
+    "section": "mid",
+    "q": "雙光束設計優於單光束，因為？",
+    "options": [
+      "光更強",
+      "同時量樣品與空白，補償光源漂移",
+      "樣品槽更大",
+      "不需要單色器"
+    ],
+    "correct": 1,
+    "explain": "單光束須先測 blank 再測樣品（兩個時間點），中間若光源漂移會有誤差。雙光束分束同步比對，免漂移。"
+  },
+  {
+    "section": "mid",
+    "q": "PMT（光電倍增管）的核心優點是？",
+    "options": [
+      "耐振動",
+      "可同時量所有波長",
+      "多 dynode 串聯放大、靈敏度極高",
+      "造價最低"
+    ],
+    "correct": 2,
+    "explain": "PMT 內部 10 級 dynode，每級 ×5 倍增，總增益 ~10⁶。是 UV-Vis 最靈敏的單點偵測器。"
+  },
+  {
+    "section": "post",
+    "q": "量牛奶蛋白選 Bradford 法，波長是？",
+    "options": [
+      "540 nm",
+      "595 nm",
+      "765 nm",
+      "450 nm"
+    ],
+    "correct": 1,
+    "explain": "Coomassie Brilliant Blue G-250 與蛋白結合後 λmax 從 465 nm 紅移到 595 nm。Bradford = 595 nm。"
+  },
+  {
+    "section": "post",
+    "q": "亞硝酸鹽（粉腸、火腿）用 Griess 反應偵測，波長？",
+    "options": [
+      "540 nm",
+      "595 nm",
+      "765 nm",
+      "450 nm"
+    ],
+    "correct": 0,
+    "explain": "Griess 試劑與 NO₂⁻ 偶合產生紫紅色重氮鹽，λmax = 540 nm。台灣 CAS 法定法。"
+  },
+  {
+    "section": "post",
+    "q": "葡萄酒色澤評估常用三波長：420/520/620 nm，其中 520 nm 主要反映？",
+    "options": [
+      "黃色（黃酮）",
+      "紅色（花色素）",
+      "藍紫（單寧氧化）",
+      "橘色（類胡蘿蔔）"
+    ],
+    "correct": 1,
+    "explain": "420 nm 黃、520 nm 紅（花色素 anthocyanin）、620 nm 藍紫。三者比值反映酒齡與氧化狀態。"
+  }
+];
+
+const SECTION_INFO = {
+  pre: { name: '前測 · 喚出迷思', cls: 'pre' },
+  mid: { name: '段落測 · 量子能階', cls: 'mid' },
+  post: { name: '後測 · 總整理', cls: 'post' },
+};
+
+let curIdx = 0;
+let score = 0;
+let answered = false;
+
+function renderQuestion() {
+  const q = QUESTIONS[curIdx];
+  const info = SECTION_INFO[q.section];
+  const area = document.getElementById('quizArea');
+  area.innerHTML = `
+    <div class="question-card">
+      <span class="section-badge ${info.cls}">${info.name}</span>
+      <div>
+        <span class="q-num">第 ${curIdx + 1} 題</span>
+      </div>
+      <div class="q-text">${q.q}</div>
+      <div class="options" id="optionsBox">
+        ${q.options.map((opt, i) => `<button class="option" data-i="${i}">${opt}</button>`).join('')}
+      </div>
+      <div id="explainBox" class="explain"></div>
+      <div class="controls" id="nextBox" style="display:none;">
+        <button class="btn" id="nextBtn">${curIdx === QUESTIONS.length - 1 ? '查看結果 →' : '下一題 →'}</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('curQ').textContent = curIdx + 1;
+  document.getElementById('totalQ').textContent = QUESTIONS.length;
+  document.getElementById('progressFill').style.width = `${(curIdx / QUESTIONS.length) * 100}%`;
+  answered = false;
+
+  document.querySelectorAll('.option').forEach(b => {
+    b.addEventListener('click', () => pick(parseInt(b.dataset.i)));
+  });
+  document.getElementById('nextBtn').addEventListener('click', next);
+}
+
+function pick(i) {
+  if (answered) return;
+  answered = true;
+  const q = QUESTIONS[curIdx];
+  const opts = document.querySelectorAll('.option');
+  opts.forEach(o => o.disabled = true);
+  const isCorrect = i === q.correct;
+  logEvent({
+    event_type: 'answer',
+    question_id: 'Q' + (curIdx + 1) + '-' + q.section,
+    is_correct: isCorrect,
+    attempts: 1,
+  });
+  if (isCorrect) {
+    opts[i].classList.add('correct');
+    score++;
+    document.getElementById('score').textContent = score;
+  } else {
+    opts[i].classList.add('wrong');
+    opts[q.correct].classList.add('correct');
+  }
+  const ex = document.getElementById('explainBox');
+  ex.innerHTML = '💡 ' + q.explain;
+  ex.classList.add('show');
+  document.getElementById('nextBox').style.display = 'block';
+}
+
+function next() {
+  if (curIdx < QUESTIONS.length - 1) {
+    curIdx++;
+    renderQuestion();
+  } else {
+    document.getElementById('progressFill').style.width = '100%';
+    document.getElementById('quizArea').innerHTML = '';
+    document.getElementById('finalScore').textContent = score;
+    const msg = document.getElementById('completeMessage');
+    msg.classList.remove('partial', 'low');
+    let comment = '';
+    if (score >= 11) {
+      document.getElementById('completeTitle').textContent = '🎉 光譜原理掌握度極佳！';
+      comment = '可以開始挑戰 Ch7 UV-Vis 詳細儀器了。';
+    } else if (score >= 8) {
+      document.getElementById('completeTitle').textContent = '👍 基礎穩固！';
+      comment = '把答錯題的觀念再看一次投影片就完美。';
+      msg.classList.add('partial');
+    } else {
+      document.getElementById('completeTitle').textContent = '🔁 建議重看 Boltzmann + Jablonski 部分';
+      comment = '回到投影片 17（Boltzmann）、15-16（Jablonski），再玩一次。';
+      msg.classList.add('low');
+    }
+    document.getElementById('finalComment').textContent = comment;
+    msg.style.display = 'block';
+    msg.scrollIntoView({ behavior: 'smooth' });
+    logEvent({
+      event_type: 'session_complete',
+      final_score: score,
+      attempts: QUESTIONS.length,
+    });
+  }
+}
+
+function restart() {
+  curIdx = 0;
+  score = 0;
+  answered = false;
+  document.getElementById('score').textContent = '0';
+  document.getElementById('completeMessage').style.display = 'none';
+  renderQuestion();
+}
+
+window.restart = restart;
+
+await initGameSession({ chapter: 'ch7', game: 'mcq' });
+renderQuestion();
+</script>
+</body>
+</html>

@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 7 隨堂小遊戲｜UV-Vis 與螢光光譜法</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --brand: #0072FF;
+            --brand2: #00C6FF;
+            --bg: #0D1B2A;
+            --card: #1A3050;
+            --correct: #2ECC71;
+            --incorrect: #E74C3C;
+            --txt: #ECEEF2;
+            --muted: #7A91B0;
+        }
+        html, body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); color: var(--txt); }
+        body { min-height: 100vh; padding: 16px; }
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .pop { animation: pop 0.5s ease-out; }
+        @keyframes pop {
+            0% { transform: scale(0.6); opacity: 0; }
+            60% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .option-btn {
+            transition: all 0.2s ease;
+            background: var(--card);
+            border: 2px solid rgba(122,145,176,.2);
+            color: var(--txt);
+        }
+        .option-btn:hover:not(:disabled) {
+            border-color: var(--brand2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,198,255,.2);
+        }
+        .option-btn.correct {
+            background: rgba(46,204,113,.15);
+            border-color: var(--correct);
+            color: var(--correct);
+            font-weight: 700;
+        }
+        .option-btn.incorrect {
+            background: rgba(231,76,60,.15);
+            border-color: var(--incorrect);
+            color: var(--incorrect);
+            font-weight: 700;
+        }
+        .progress-bar {
+            height: 12px;
+            background: rgba(122,145,176,.15);
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--brand), var(--brand2));
+            border-radius: 9999px;
+            transition: width 0.4s ease;
+        }
+        .timer-pill {
+            background: rgba(0,198,255,.1);
+            padding: 6px 14px;
+            border-radius: 9999px;
+            font-weight: 700;
+            color: var(--brand2);
+            border: 2px solid var(--brand2);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        input[type="text"] {
+            transition: border 0.2s;
+            background: rgba(255,255,255,.06);
+            color: var(--txt);
+        }
+        input[type="text"]::placeholder { color: rgba(122,145,176,.5); }
+        input[type="text"]:focus {
+            border-color: var(--brand2);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0,198,255,.15);
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        .section-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            letter-spacing: .15em;
+            color: var(--muted);
+        }
+        .card-bg {
+            background: var(--card);
+            border: 1px solid rgba(122,145,176,.18);
+        }
+    </style>
+</head>
+<body class="flex items-start justify-center">
+
+<div id="app" class="card-bg rounded-3xl shadow-2xl max-w-2xl w-full p-6 sm:p-10 my-4">
+  <!-- 內容由 JS 動態生成 -->
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, addDoc, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { firebaseConfig, QUIZ_COLLECTION } from "./firebase-config.js";
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// =================== 題庫 (17 題, 來源: Ch7_game_questions.md) ===================
+const quizData = [
+    // ====== 前測：喚出迷思 ======
+    {
+        section: "前測｜喚出迷思",
+        question: "1. %T = 50%，此時吸光度 A = ？",
+        options: ["0.5", "0.301", "2.0", "1.0"],
+        correct: 1,
+        explanation: "A = -log T = -log(0.5) = 0.301。最常見迷思：學生認為 A = T/2 或直接抄 T 值。"
+    },
+    {
+        section: "前測｜喚出迷思",
+        question: "2. Beer's Law 說「A 正比於 c」，是因為？",
+        options: ["ε 會跟著增大", "T 正比於 c", "A = −logT，對數關係使 A 與 c 成正比", "光速隨濃度改變"],
+        correct: 2,
+        explanation: "T 與 c 為「指數關係」(P/P₀ 隨厚度與濃度指數衰減)；取對數後 A 才與 c 成正比。學生常誤以為 T 也正比於 c。"
+    },
+    {
+        section: "前測｜喚出迷思",
+        question: "3. 下列哪個不是分光光度計的必要元件？",
+        options: ["光源", "離心機", "單色器", "偵測器"],
+        correct: 1,
+        explanation: "分光光度計光路順序為：光源 → 單色器 → 樣品槽 → 偵測器 → 讀出系統。離心機是樣品前處理設備。"
+    },
+    {
+        section: "前測｜喚出迷思",
+        question: "4. 螢光法比 UV-Vis 吸收法靈敏，主要原因？",
+        options: ["激發光源功率更大", "比色槽更長", "90° 偵測發射光，背景接近零", "樣品需濃縮"],
+        correct: 2,
+        explanation: "螢光偵測器置於 90°，避免激發光直接進入；Pf = k·P₀·c，量發射光而非穿透光，背景幾乎零。靈敏度比 UV-Vis 高 100-1000 倍。"
+    },
+    {
+        section: "前測｜喚出迷思",
+        question: "5. 你量到某樣品 A = 1.8，應該怎麼做？",
+        options: ["繼續記錄，高 A 更準", "立即稀釋後重測", "換更長比色槽", "升高溫度幫助吸光"],
+        correct: 1,
+        explanation: "A 的最佳量測範圍是 0.2-0.8 (15-65 %T)。A > 0.8 時相對誤差爆增，必須稀釋樣品後重測。"
+    },
+    // ====== 段落小測 ======
+    {
+        section: "段落小測｜Beer's Law 與儀器",
+        question: "6. A = εbc，若光徑 b 從 1 cm 換成 2 cm，A 會？",
+        options: ["不變", "減半", "加倍", "平方"],
+        correct: 2,
+        explanation: "Beer's Law A = εbc，A 與光徑 b 成正比；b 加倍則 A 也加倍。"
+    },
+    {
+        section: "段落小測｜Beer's Law 與儀器",
+        question: "7. Beer's Law 負偏離（高濃度）的根本原因是？",
+        options: ["光源功率不足", "分子間距縮短，ε 隨濃度改變", "比色槽材質不對", "偵測器飽和"],
+        correct: 1,
+        explanation: "高濃度時分子互相作用，分子間距縮短，使 ε 不再是常數而隨濃度改變，A 低於線性預測值，稱為負偏離。"
+    },
+    {
+        section: "段落小測｜Beer's Law 與儀器",
+        question: "8. 非單色光（寬 bandwidth）導致 Beer's Law？",
+        options: ["更準確", "在高 A 端出現正偏離", "完全無影響", "靈敏度提高"],
+        correct: 1,
+        explanation: "非單色光在高吸光端偏離 Beer's Law（向正方向偏離）。狹縫變窄可改善單色性但會降低訊噪比。"
+    },
+    {
+        section: "段落小測｜Beer's Law 與儀器",
+        question: "9. UV 波段（200-380 nm）量測須選哪種比色槽？",
+        options: ["矽酸鹽玻璃", "拋棄式塑膠", "石英或熔融矽", "鋼鐵槽"],
+        correct: 2,
+        explanation: "矽酸鹽玻璃在 < 320 nm 會強烈吸收 UV；UV 範圍必須使用石英 (Quartz) 或熔融矽 (Fused Silica)。"
+    },
+    {
+        section: "段落小測｜Beer's Law 與儀器",
+        question: "10. 雙光束設計優於單光束，因為？",
+        options: ["光更強，偵測極限更低", "同時量樣品與空白，補償光源漂移", "樣品槽更大", "不需要單色器"],
+        correct: 1,
+        explanation: "雙光束設計同時量空白和樣品，即時自動補償光源強度漂移，特別適合長時間掃描全波長光譜。"
+    },
+    {
+        section: "段落小測｜Beer's Law 與儀器",
+        question: "11. PMT（光電倍增管）的核心優點是？",
+        options: ["耐振動", "可同時量所有波長", "多 dynode 串聯放大，靈敏度極高", "造價最低"],
+        correct: 2,
+        explanation: "PMT 透過多個 dynode 串聯，將單一光電子放大百萬倍以上，是 UV-Vis 靈敏度最高的傳統偵測器。"
+    },
+    // ====== 後測 ======
+    {
+        section: "後測｜五大收攏",
+        question: "12. %T = 10%，A = ？（公式：A = 2 − log%T）",
+        options: ["0.9", "1.0", "1.9", "2.0"],
+        correct: 1,
+        explanation: "A = 2 − log(10) = 2 − 1 = 1.0。記住：%T 與 A 的對照表 → 100%→0, 50%→0.301, 10%→1.0, 1%→2.0。"
+    },
+    {
+        section: "後測｜五大收攏",
+        question: "13. ε 很大（如 125,000）表示？",
+        options: ["分子量大", "在特定波長吸光能力強 → 靈敏度高", "溶液黏度高", "需要大光徑"],
+        correct: 1,
+        explanation: "ε (莫耳吸光係數) 是物質的「吸光身分證」，單位 L·mol⁻¹·cm⁻¹。ε 越大代表該波長吸光能力越強，可用更低濃度達到可量測的 A 值。"
+    },
+    {
+        section: "後測｜五大收攏",
+        question: "14. 標準添加法（standard addition）的主要優點？",
+        options: ["不需要標準品", "速度最快", "自動補償基質效應（matrix effect）", "可用 UV 光源"],
+        correct: 2,
+        explanation: "標準添加法在樣品中直接加入已知量標準品，可同時補償複雜基質造成的干擾，特別適合食品這類成分複雜的樣品。"
+    },
+    {
+        section: "後測｜五大收攏",
+        question: "15. 螢光偵測器置於 90°，原因是？",
+        options: ["節省空間", "避免入射激發光直接進入偵測器", "增強螢光強度", "配合儀器美觀"],
+        correct: 1,
+        explanation: "若偵測器與激發光成 0°或 180°，會被光源直接照射形成龐大背景。90° 偵測讓背景接近零，正是螢光高靈敏度的關鍵。"
+    },
+    {
+        section: "後測｜五大收攏",
+        question: "16. 黃麴毒素適合用螢光法，是因為？",
+        options: ["濃度高，不需高靈敏", "分子天然具螢光，可達 ppb 偵測", "分子量大", "可見光就能激發"],
+        correct: 1,
+        explanation: "黃麴毒素 B1 在 365 nm 激發、440 nm 發射有強天然螢光，加上螢光法背景幾乎零，可達 ppb 級偵測限，遠優於 UV-Vis。"
+    },
+    {
+        section: "後測｜五大收攏",
+        question: "17. β-胡蘿蔔素 ε = 125,000，共軛雙鍵 11 個，說明？",
+        options: ["沸點高", "水溶性好", "共軛越長，λmax 紅移，ε 越大", "需要 UV 激發"],
+        correct: 2,
+        explanation: "共軛雙鍵越多 → 分子軌道能階差越小 → λmax 紅移 (向長波長移動)、ε 增大。β-胡蘿蔔素的 11 個共軛雙鍵使它在可見光 465 nm 強烈吸光，呈橘黃色。"
+    }
+];
+
+// =================== 遊戲狀態 ===================
+let state = {
+    stage: "welcome",
+    student: { name: "", class: "", studentId: "" },
+    currentQ: 0, score: 0, answers: [],
+    quizStartTs: 0, questionStartTs: 0,
+    totalTimeTaken: 0, submitted: false
+};
+
+const app$ = document.getElementById('app');
+
+function render() {
+    if (state.stage === "welcome") return renderWelcome();
+    if (state.stage === "quiz") return renderQuiz();
+    if (state.stage === "done") return renderDone();
+}
+
+function renderWelcome() {
+    app$.innerHTML = `
+      <div class="fade-in">
+        <div class="text-center mb-6">
+          <div class="section-tag">— NIELSEN FOOD ANALYSIS · CH7 —</div>
+          <div class="badge mt-2" style="background:rgba(0,198,255,.15);color:#00C6FF;">UV-Vis & 螢光光譜法</div>
+          <h1 class="text-3xl sm:text-4xl font-black mt-3" style="color:#00C6FF;">Chapter 7 隨堂小遊戲</h1>
+          <p class="text-stone-400 mt-2 text-sm" style="color:var(--muted);">共 17 題（前測 5＋小測 6＋後測 6）</p>
+        </div>
+
+        <div class="rounded-2xl p-5 mb-6" style="background:rgba(0,198,255,.06);border:1px solid rgba(0,198,255,.2);">
+          <div class="font-bold mb-3" style="color:var(--txt);">📝 開始前請輸入：</div>
+          <div class="space-y-3">
+            <div>
+              <label class="text-xs font-bold" style="color:var(--muted);">班級</label>
+              <input id="inputClass" type="text" placeholder="例如：五專食品三甲" class="mt-1 w-full px-4 py-3 rounded-lg border-2 text-sm" style="border-color:rgba(122,145,176,.3);" />
+            </div>
+            <div>
+              <label class="text-xs font-bold" style="color:var(--muted);">學號</label>
+              <input id="inputId" type="text" placeholder="例如：411234567" class="mt-1 w-full px-4 py-3 rounded-lg border-2 text-sm" style="border-color:rgba(122,145,176,.3);" />
+            </div>
+            <div>
+              <label class="text-xs font-bold" style="color:var(--muted);">姓名</label>
+              <input id="inputName" type="text" placeholder="王小明" class="mt-1 w-full px-4 py-3 rounded-lg border-2 text-sm" style="border-color:rgba(122,145,176,.3);" />
+            </div>
+          </div>
+          <div id="welcomeError" class="text-red-400 text-xs mt-2 hidden"></div>
+        </div>
+
+        <div class="rounded-xl p-4 mb-6 text-xs" style="background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.3);color:#FFD700;">
+          ⚠️ <b>注意：</b>請確實填寫資料；答題過程會記錄你的答題用時，作為形成性評量參考。
+        </div>
+
+        <button id="startBtn" class="w-full text-white font-black py-4 rounded-xl text-lg transition" style="background:linear-gradient(135deg,#0072FF,#00C6FF);">
+          🎮 開始挑戰
+        </button>
+      </div>
+    `;
+    document.getElementById('startBtn').addEventListener('click', () => {
+        const name = document.getElementById('inputName').value.trim();
+        const cls = document.getElementById('inputClass').value.trim();
+        const sid = document.getElementById('inputId').value.trim();
+        const err = document.getElementById('welcomeError');
+        if (!name || !cls || !sid) {
+            err.textContent = "請完整填寫班級、學號與姓名！";
+            err.classList.remove('hidden');
+            return;
+        }
+        state.student = { name, class: cls, studentId: sid };
+        state.stage = "quiz";
+        state.quizStartTs = Date.now();
+        state.questionStartTs = Date.now();
+        render();
+    });
+}
+
+function renderQuiz() {
+    const q = quizData[state.currentQ];
+    const percent = ((state.currentQ) / quizData.length) * 100;
+    app$.innerHTML = `
+      <div class="fade-in">
+        <div class="section-tag mb-3">${q.section}</div>
+        <div class="flex items-center justify-between mb-4">
+          <div class="text-sm" style="color:var(--muted);">
+            <span class="font-black text-2xl" style="color:#00C6FF;">${state.currentQ + 1}</span>
+            <span> / ${quizData.length}</span>
+          </div>
+          <div class="timer-pill">⏱ <span id="timer">0</span> 秒</div>
+        </div>
+        <div class="progress-bar mb-6"><div class="progress-fill" style="width:${percent}%;"></div></div>
+
+        <h2 class="text-xl sm:text-2xl font-bold mb-6 leading-relaxed" style="color:var(--txt);">${q.question}</h2>
+        <div id="options" class="space-y-3 mb-6">
+          ${q.options.map((opt, i) => `
+            <button class="option-btn w-full text-left p-4 rounded-xl" data-i="${i}">
+              <span class="font-bold mr-2" style="color:#00C6FF;">${String.fromCharCode(65 + i)}.</span>
+              ${opt}
+            </button>
+          `).join('')}
+        </div>
+        <div id="feedback" class="hidden"></div>
+        <button id="nextBtn" class="hidden w-full text-white font-black py-3 rounded-xl text-lg transition" style="background:linear-gradient(135deg,#0072FF,#00C6FF);">
+          ${state.currentQ === quizData.length - 1 ? '🏆 查看成績' : '下一題 →'}
+        </button>
+      </div>
+    `;
+    const timerEl = document.getElementById('timer');
+    const tick = () => {
+        if (!document.body.contains(timerEl)) return;
+        const elapsed = Math.floor((Date.now() - state.questionStartTs) / 1000);
+        timerEl.textContent = elapsed;
+        requestAnimationFrame(() => setTimeout(tick, 500));
+    };
+    tick();
+    document.querySelectorAll('.option-btn').forEach(btn => {
+        btn.addEventListener('click', () => handleAnswer(parseInt(btn.dataset.i)));
+    });
+}
+
+function handleAnswer(selected) {
+    const q = quizData[state.currentQ];
+    const buttons = document.querySelectorAll('.option-btn');
+    const isCorrect = selected === q.correct;
+    const timeTaken = Math.floor((Date.now() - state.questionStartTs) / 1000);
+    buttons.forEach((b, i) => {
+        b.disabled = true;
+        if (i === q.correct) b.classList.add('correct');
+        else if (i === selected) b.classList.add('incorrect');
+    });
+    if (isCorrect) state.score++;
+    state.answers.push({
+        questionIndex: state.currentQ,
+        questionText: q.question, section: q.section,
+        selected, correctAnswer: q.correct, isCorrect, timeTaken
+    });
+    state.totalTimeTaken += timeTaken;
+    const feedback = document.getElementById('feedback');
+    feedback.classList.remove('hidden');
+    feedback.innerHTML = `
+      <div class="rounded-xl p-4 mb-4 pop" style="background:${isCorrect?'rgba(46,204,113,.12)':'rgba(231,76,60,.12)'};border:2px solid ${isCorrect?'#2ECC71':'#E74C3C'};">
+        <div class="font-black text-lg mb-2" style="color:${isCorrect?'#2ECC71':'#E74C3C'};">
+          ${isCorrect ? '✅ 答對了！' : '❌ 答錯了'}
+        </div>
+        <div class="text-sm" style="color:var(--txt);"><b style="color:#FFD700;">解析：</b>${q.explanation}</div>
+      </div>
+    `;
+    const nextBtn = document.getElementById('nextBtn');
+    nextBtn.classList.remove('hidden');
+    nextBtn.addEventListener('click', () => {
+        if (state.currentQ === quizData.length - 1) {
+            state.stage = "done";
+            render();
+        } else {
+            state.currentQ++;
+            state.questionStartTs = Date.now();
+            render();
+        }
+    });
+}
+
+function renderDone() {
+    const total = quizData.length;
+    const pct = Math.round((state.score / total) * 100);
+    const grade = pct >= 90 ? "🏆 神級！" : pct >= 80 ? "🌟 優秀" : pct >= 70 ? "👍 不錯" : pct >= 60 ? "💪 及格" : "📚 加油";
+
+    // 分段統計
+    const sections = {};
+    state.answers.forEach(a => {
+        if (!sections[a.section]) sections[a.section] = { correct: 0, total: 0 };
+        sections[a.section].total++;
+        if (a.isCorrect) sections[a.section].correct++;
+    });
+
+    app$.innerHTML = `
+      <div class="fade-in text-center">
+        <div class="text-6xl mb-2 pop">${pct >= 60 ? '🎉' : '🤔'}</div>
+        <h1 class="text-3xl font-black mb-2" style="color:#00C6FF;">挑戰完成！</h1>
+        <div class="text-sm mb-6" style="color:var(--muted);">${state.student.class}｜${state.student.studentId}｜${state.student.name}</div>
+
+        <div class="rounded-2xl p-6 mb-6" style="background:linear-gradient(135deg,rgba(0,114,255,.15),rgba(0,198,255,.05));border:2px solid rgba(0,198,255,.3);">
+          <div class="text-sm mb-1" style="color:var(--muted);">你的成績</div>
+          <div class="text-6xl font-black my-2" style="color:#00C6FF;">
+            ${state.score} <span class="text-2xl" style="color:var(--muted);">/ ${total}</span>
+          </div>
+          <div class="text-2xl font-black" style="color:var(--txt);">${pct} 分</div>
+          <div class="mt-3 text-lg">${grade}</div>
+          <div class="text-xs mt-3" style="color:var(--muted);">總用時：${state.totalTimeTaken} 秒｜平均 ${Math.round(state.totalTimeTaken/total)} 秒/題</div>
+        </div>
+
+        <div class="mb-6">
+          <div class="text-xs mb-2" style="color:var(--muted);">分段表現</div>
+          ${Object.entries(sections).map(([sec, d]) => {
+            const sp = Math.round(d.correct/d.total*100);
+            return `<div class="flex items-center justify-between p-2 mb-2 rounded-lg" style="background:rgba(122,145,176,.08);">
+              <span class="text-sm" style="color:var(--txt);">${sec}</span>
+              <span class="font-bold text-sm" style="color:${sp>=70?'#2ECC71':sp>=50?'#FFD700':'#E74C3C'};">${d.correct}/${d.total} (${sp}%)</span>
+            </div>`;
+          }).join('')}
+        </div>
+
+        <div id="uploadStatus" class="rounded-xl p-4 mb-6 text-sm" style="background:rgba(0,198,255,.1);border:1px solid rgba(0,198,255,.3);color:#00C6FF;">
+          ⏳ 上傳成績到老師後台中...
+        </div>
+
+        <div class="grid grid-cols-3 gap-2 mb-6 text-xs">
+          ${state.answers.map((a, i) => `
+            <div class="p-2 rounded-lg" style="background:${a.isCorrect?'rgba(46,204,113,.15)':'rgba(231,76,60,.15)'};color:${a.isCorrect?'#2ECC71':'#E74C3C'};">
+              ${i+1}. ${a.isCorrect ? '✓' : '✗'}
+            </div>
+          `).join('')}
+        </div>
+
+        <button id="restartBtn" class="w-full text-white font-black py-3 rounded-xl text-lg" style="background:linear-gradient(135deg,#0072FF,#00C6FF);">
+          🔄 再玩一次
+        </button>
+        <a href="index.html" class="block mt-3 text-sm underline" style="color:var(--muted);">← 回到投影片</a>
+      </div>
+    `;
+    document.getElementById('restartBtn').addEventListener('click', () => {
+        state = {
+            stage: "welcome",
+            student: { name: "", class: "", studentId: "" },
+            currentQ: 0, score: 0, answers: [],
+            quizStartTs: 0, questionStartTs: 0,
+            totalTimeTaken: 0, submitted: false
+        };
+        render();
+    });
+    if (!state.submitted) uploadResult();
+}
+
+async function uploadResult() {
+    const statusEl = document.getElementById('uploadStatus');
+    try {
+        await addDoc(collection(db, QUIZ_COLLECTION), {
+            student: state.student,
+            score: state.score,
+            total: quizData.length,
+            percent: Math.round((state.score / quizData.length) * 100),
+            totalTimeTaken: state.totalTimeTaken,
+            answers: state.answers,
+            startedAt: new Date(state.quizStartTs).toISOString(),
+            finishedAt: new Date().toISOString(),
+            timestamp: serverTimestamp(),
+            userAgent: navigator.userAgent.substring(0, 200)
+        });
+        state.submitted = true;
+        statusEl.style.background = "rgba(46,204,113,.12)";
+        statusEl.style.borderColor = "rgba(46,204,113,.3)";
+        statusEl.style.color = "#2ECC71";
+        statusEl.innerHTML = "✅ 成績已上傳！老師可在後台查看你的紀錄。";
+    } catch (e) {
+        console.error("[Firestore] 上傳失敗:", e);
+        statusEl.style.background = "rgba(231,76,60,.12)";
+        statusEl.style.borderColor = "rgba(231,76,60,.3)";
+        statusEl.style.color = "#E74C3C";
+        statusEl.innerHTML = `❌ 上傳失敗：${e.message}<br><span class="text-xs">請截圖此頁面提供給老師。</span>`;
+    }
+}
+
+render();
+</script>
+
+</body>
+</html>

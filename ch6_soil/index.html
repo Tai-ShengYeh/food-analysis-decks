@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch6 光譜學 SOIL · 課堂入口</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0e27; --bg-2:#11163a; --card:#11163a; --card2:#0f1838;
+  --ink:#eef3ff; --ink-2:#b8c5e0; --ink-3:#7a8bb8;
+  --accent:#00d4ff; --accent-2:#ff006e; --grn:#00e08a; --warn:#ffb800;
+}
+body{
+  font-family:'Noto Sans TC','Microsoft JhengHei',sans-serif;
+  background:radial-gradient(ellipse at top, #11163a 0%, #0a0e27 60%);
+  color:var(--ink); min-height:100vh; padding:24px 16px;
+}
+.container{max-width:1100px; margin:0 auto}
+
+/* Header */
+.hero{
+  text-align:center; padding:32px 20px;
+  margin-bottom:32px;
+  background:rgba(255,255,255,.02);
+  border:1px solid rgba(0,212,255,.15); border-radius:18px;
+  position:relative; overflow:hidden;
+}
+.hero::before{
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(circle at 30% 50%, rgba(0,212,255,.1), transparent 50%),
+             radial-gradient(circle at 70% 50%, rgba(255,0,110,.08), transparent 50%);
+  pointer-events:none;
+}
+.hero .badge{
+  display:inline-block; padding:5px 14px;
+  border:1px solid rgba(0,212,255,.4); border-radius:18px;
+  font-family:'JetBrains Mono',monospace; font-size:11px;
+  color:var(--accent); letter-spacing:.2em; margin-bottom:14px;
+  position:relative;
+}
+.hero h1{
+  font-size:clamp(2rem, 4.5vw, 3.5rem); font-weight:900;
+  line-height:1.1; margin-bottom:12px;
+  background:linear-gradient(135deg, #fff, var(--accent), var(--accent-2));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  background-clip:text;
+  position:relative;
+}
+.hero p{font-size:clamp(.95rem,1.5vw,1.15rem); color:var(--ink-2); position:relative}
+.hero .meta{
+  display:flex; gap:14px; justify-content:center; flex-wrap:wrap;
+  margin-top:18px; position:relative;
+}
+.hero .meta span{
+  font-family:'JetBrains Mono',monospace; font-size:.8rem;
+  color:var(--ink-3); padding:6px 12px;
+  background:rgba(255,255,255,.04); border-radius:10px;
+}
+
+/* Section */
+.section-title{
+  font-size:1.1rem; color:var(--ink-2);
+  letter-spacing:.05em; margin:32px 0 14px;
+  display:flex; align-items:center; gap:10px;
+}
+.section-title::after{content:''; flex:1; height:1px; background:rgba(255,255,255,.08)}
+.section-title .num{
+  font-family:'JetBrains Mono',monospace; font-size:.85rem;
+  color:var(--accent); background:rgba(0,212,255,.1);
+  padding:3px 10px; border-radius:8px;
+}
+
+/* Deck CTA */
+.deck-card{
+  background:linear-gradient(135deg, rgba(0,212,255,.12), rgba(255,0,110,.06));
+  border:1px solid rgba(0,212,255,.3); border-radius:18px;
+  padding:28px; display:grid; grid-template-columns:1fr auto; gap:24px;
+  align-items:center;
+}
+.deck-info h2{font-size:1.5rem; color:var(--accent); margin-bottom:8px}
+.deck-info p{color:var(--ink-2); margin-bottom:14px}
+.deck-info a{
+  display:inline-block; background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  color:var(--bg); padding:12px 24px; border-radius:10px;
+  font-weight:700; text-decoration:none; font-size:.95rem;
+  transition:transform .2s;
+}
+.deck-info a:hover{transform:translateY(-2px)}
+.deck-qr{
+  background:white; padding:8px; border-radius:10px;
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+}
+.deck-qr img{display:block}
+.deck-qr .qr-label{
+  font-family:'JetBrains Mono',monospace; font-size:10px;
+  color:#0a0e27; font-weight:700;
+}
+
+/* Game grid */
+.game-grid{
+  display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));
+  gap:20px;
+}
+.game-card{
+  background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08);
+  border-radius:14px; padding:20px;
+  display:flex; flex-direction:column; gap:14px;
+  transition:border-color .3s, transform .3s;
+}
+.game-card:hover{border-color:var(--accent); transform:translateY(-4px)}
+.game-card .num{
+  font-family:'JetBrains Mono',monospace; font-size:.75rem;
+  color:var(--accent); letter-spacing:.2em;
+}
+.game-card .icon{font-size:2.4rem; text-align:center}
+.game-card h3{font-size:1.05rem; color:var(--ink); margin-bottom:4px}
+.game-card .desc{font-size:.85rem; color:var(--ink-3); line-height:1.55}
+.game-card .qr-wrap{
+  background:white; padding:6px; border-radius:8px;
+  display:flex; justify-content:center; margin:0 auto;
+}
+.game-card .link{
+  display:block; text-align:center;
+  background:rgba(0,212,255,.1); color:var(--accent);
+  padding:8px; border-radius:8px; text-decoration:none;
+  font-size:.85rem; font-weight:700;
+  font-family:'JetBrains Mono',monospace;
+  transition:background .2s;
+}
+.game-card .link:hover{background:rgba(0,212,255,.2)}
+
+/* Class selector */
+.class-bar{
+  display:flex; gap:12px; justify-content:center;
+  margin:24px auto; max-width:520px;
+}
+.class-btn{
+  flex:1; background:rgba(255,255,255,.04);
+  border:2px solid rgba(255,255,255,.1); color:var(--ink-2);
+  padding:14px; border-radius:10px; cursor:pointer;
+  font-family:inherit; font-size:.95rem; font-weight:700;
+  transition:all .2s;
+}
+.class-btn:hover{border-color:var(--accent)}
+.class-btn.active{
+  background:rgba(0,212,255,.15); border-color:var(--accent); color:var(--accent);
+}
+
+/* Info box */
+.info-box{
+  background:rgba(255,184,0,.06); border:1px solid rgba(255,184,0,.2);
+  border-radius:12px; padding:16px 20px; margin-top:24px;
+}
+.info-box h4{color:var(--warn); margin-bottom:8px; font-size:.95rem}
+.info-box p{font-size:.85rem; color:var(--ink-2); line-height:1.6}
+.info-box code{
+  background:rgba(0,0,0,.3); padding:2px 6px; border-radius:4px;
+  font-family:'JetBrains Mono',monospace; color:var(--accent); font-size:.8rem;
+}
+
+/* Footer */
+.footer{
+  text-align:center; padding:24px; margin-top:32px;
+  color:var(--ink-3); font-size:.8rem;
+  border-top:1px solid rgba(255,255,255,.06);
+}
+.footer strong{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="hero">
+    <div class="badge">CHAPTER 6 · NIELSEN FOOD ANALYSIS 6E</div>
+    <h1>光譜學基礎</h1>
+    <p>Basic Principles of Spectroscopy · 課堂互動入口</p>
+    <div class="meta">
+      <span>📺 13 頁 SOIL 投影片</span>
+      <span>🎮 5 個小遊戲</span>
+      <span>📊 Firebase 即時紀錄</span>
+      <span>📱 手機 QR 掃描</span>
+    </div>
+  </div>
+
+  <div class="class-bar">
+    <button class="class-btn active" data-class="A">四技 A 班 · fa</button>
+    <button class="class-btn" data-class="B">五專 B 班 · fa</button>
+  </div>
+
+  <div class="section-title"><span class="num">01</span> 教師用投影片</div>
+  <div class="deck-card">
+    <div class="deck-info">
+      <h2>📺 Ch6 SOIL 教學投影片</h2>
+      <p>13 頁深色霓虹風投影片，從光的本質到七大光譜法比較。鍵盤 ← → 切頁，F 全螢幕。</p>
+      <a href="#" id="deck-link">開始講授 →</a>
+    </div>
+    <div class="deck-qr">
+      <img id="deck-qr" width="120" height="120" alt="Deck QR">
+      <div class="qr-label">講義 QR · 學生對開</div>
+    </div>
+  </div>
+
+  <div class="section-title"><span class="num">02</span> 學生互動小遊戲（QR 掃描或點按）</div>
+
+  <div class="game-grid" id="gameGrid"></div>
+
+  <div class="info-box">
+    <h4>📋 教師備註</h4>
+    <p>
+      ▸ 學生掃 QR 進入遊戲時，會先輸入「班級 + 學號」，之後在同裝置上玩其他遊戲不需重輸入。<br>
+      ▸ 答題結果即時寫入 Firebase Firestore 的 <code>student_events</code> collection，可用既有後台檢視。<br>
+      ▸ 課程代碼：四技 A 班 = <code>4y_food_analysis</code>　·　五專 B 班 = <code>5z_food_analysis</code>　·　章節 = <code>ch6_soil_2026</code>。<br>
+      ▸ URL 參數 <code>?class=A</code> 或 <code>?class=B</code> 可指定預設班級。
+    </p>
+  </div>
+
+  <div class="footer">
+    <strong>Nielsen Food Analysis 6e · Ch6</strong> · Generated with SOIL teaching deck workflow ·
+    <a href="ch6_spectroscopy.html" style="color:var(--accent)">完整投影片</a>
+  </div>
+</div>
+
+<script>
+const GAMES = [
+  { id: 1, file: 'game-01-vocab-match.html', icon: '🎯', name: '詞彙配對', desc: '3 關 18 個光譜關鍵詞，配對成功有解釋', code: 'G1 · MATCH' },
+  { id: 2, file: 'game-02-mcq.html',         icon: '📝', name: '概念選擇題', desc: '10 題單選，含詳細解析', code: 'G2 · MCQ' },
+  { id: 3, file: 'game-03-true-false.html',  icon: '⚖️', name: '是非判斷',  desc: '10 題破解常見迷思', code: 'G3 · T/F' },
+  { id: 4, file: 'game-04-sort-energy.html', icon: '📊', name: '能量排序',  desc: '3 關拖曳排序，依能量／靈敏度', code: 'G4 · ORDER' },
+  { id: 5, file: 'game-05-scenario.html',    icon: '🔬', name: '情境填空',  desc: '6 個食品分析真實案例', code: 'G5 · FILL' },
+];
+
+let currentClass = 'A';
+
+function getBaseUrl() {
+  return window.location.href.split('?')[0].replace(/index\.html?$/, '');
+}
+
+function withClassParam(file) {
+  return `${file}?class=${currentClass}`;
+}
+
+function fullUrl(file) {
+  return `${getBaseUrl()}${file}?class=${currentClass}`;
+}
+
+function qrUrl(target) {
+  return `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(target)}`;
+}
+
+function render() {
+  // Deck
+  document.getElementById('deck-link').href = withClassParam('ch6_spectroscopy.html');
+  document.getElementById('deck-qr').src = qrUrl(fullUrl('ch6_spectroscopy.html'));
+
+  // Games
+  const grid = document.getElementById('gameGrid');
+  grid.innerHTML = GAMES.map(g => `
+    <div class="game-card">
+      <div class="num">${g.code}</div>
+      <div class="icon">${g.icon}</div>
+      <div>
+        <h3>${g.name}</h3>
+        <div class="desc">${g.desc}</div>
+      </div>
+      <div class="qr-wrap">
+        <img src="${qrUrl(fullUrl(g.file))}" width="140" height="140" alt="QR ${g.id}">
+      </div>
+      <a class="link" href="${withClassParam(g.file)}">▶ 開始遊戲</a>
+    </div>
+  `).join('');
+}
+
+// Class buttons
+document.querySelectorAll('.class-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.class-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentClass = btn.dataset.class;
+    render();
+  });
+});
+
+// Initial class from URL
+const params = new URLSearchParams(location.search);
+const initClass = params.get('class');
+if (initClass === 'A' || initClass === 'B') {
+  currentClass = initClass;
+  document.querySelectorAll('.class-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.class === initClass);
+  });
+}
+
+render();
+</script>
+</body>
+</html>

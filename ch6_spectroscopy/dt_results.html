@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>決策樹即時回應 — 教師看板</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0D1B2A; --card:#1A3050; --card2:#0F2133;
+  --pri:#00C6FF; --hi:#FFD700; --grn:#2ECC71;
+  --red:#E74C3C; --pur:#9B59B6; --org:#E67E22; --teal:#1ABC9C;
+  --txt:#ECEEF2; --muted:#7A91B0;
+}
+body{
+  background:var(--bg);color:var(--txt);
+  font-family:'Noto Sans TC','Microsoft JhengHei',sans-serif;
+  min-height:100vh;padding:24px 28px;
+}
+header{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:24px;padding-bottom:16px;
+  border-bottom:1px solid rgba(255,255,255,0.08);
+}
+.header-left h1{font-size:1.5rem;font-weight:700;color:var(--pri)}
+.header-left p{font-size:0.85rem;color:var(--muted);margin-top:4px;font-family:'JetBrains Mono',monospace}
+.total-badge{
+  background:var(--card);border-radius:12px;padding:12px 20px;
+  text-align:center;border:1px solid rgba(0,198,255,0.2);
+}
+.total-num{font-size:2.6rem;font-weight:700;color:var(--pri);line-height:1}
+.total-label{font-size:0.8rem;color:var(--muted);margin-top:4px}
+.live-dot{
+  display:inline-block;width:8px;height:8px;border-radius:50%;
+  background:var(--grn);margin-right:6px;
+  animation:pulse 1.5s infinite;
+}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.last-update{font-size:0.78rem;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-top:6px}
+
+/* Method grid */
+.method-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));
+  gap:16px;margin-bottom:28px;
+}
+.method-card{
+  background:var(--card);border-radius:12px;overflow:hidden;
+  border:1px solid rgba(255,255,255,0.06);
+  transition:border-color .2s;
+}
+.method-card:hover{border-color:rgba(0,198,255,0.3)}
+.method-header{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 16px;cursor:pointer;user-select:none;
+}
+.method-color-bar{width:4px;border-radius:2px;flex-shrink:0;align-self:stretch}
+.method-name{flex:1;font-size:1rem;font-weight:700;color:var(--txt)}
+.method-count{
+  background:rgba(0,0,0,0.25);border-radius:20px;
+  padding:3px 12px;font-size:0.9rem;font-weight:700;
+  font-family:'JetBrains Mono',monospace;
+}
+.method-pct{font-size:0.8rem;color:var(--muted);margin-left:6px}
+
+/* Bar */
+.bar-track{height:6px;background:rgba(255,255,255,0.06);margin:0 16px 0}
+.bar-fill{height:100%;border-radius:3px;transition:width .6s ease}
+
+/* Reasons */
+.reasons-list{
+  padding:0 16px 14px;
+  max-height:0;overflow:hidden;transition:max-height .35s ease;
+}
+.reasons-list.open{max-height:600px}
+.reason-item{
+  display:flex;gap:10px;padding:8px 10px;margin-top:8px;
+  background:var(--card2);border-radius:8px;font-size:0.88rem;
+  color:var(--txt);line-height:1.5;
+}
+.reason-idx{
+  font-family:'JetBrains Mono',monospace;font-size:0.75rem;
+  color:var(--muted);flex-shrink:0;padding-top:1px;
+}
+.reason-text{flex:1;word-break:break-word}
+.reason-empty{font-size:0.82rem;color:var(--muted);font-style:italic;padding:10px 0 2px}
+.toggle-hint{font-size:0.75rem;color:var(--muted);margin-left:6px}
+
+/* No-data state */
+.empty-state{
+  text-align:center;padding:60px 20px;color:var(--muted);
+}
+.empty-state .icon{font-size:3rem;margin-bottom:12px}
+.empty-state p{font-size:1rem}
+
+/* Notes panel */
+.notes-panel{background:var(--card);border-radius:10px;margin-bottom:20px;border:1px solid rgba(255,215,0,0.2);overflow:hidden}
+.notes-toggle{padding:11px 16px;cursor:pointer;font-size:0.88rem;font-weight:700;color:var(--hi);display:flex;justify-content:space-between;align-items:center;user-select:none;transition:background .2s}
+.notes-toggle:hover{background:rgba(255,215,0,0.06)}
+.notes-body{padding:16px;border-top:1px solid rgba(255,215,0,0.15)}
+.notes-row2{display:grid;grid-template-columns:1fr 90px;gap:10px;margin-bottom:10px}
+.nlbl{font-size:0.72rem;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase;display:block;margin-bottom:4px}
+.ninp{width:100%;background:var(--card2);border:1px solid rgba(255,255,255,0.1);border-radius:6px;color:var(--txt);font-family:inherit;font-size:0.88rem;padding:7px 11px;outline:none;transition:border-color .2s}
+.ninp:focus{border-color:var(--hi)}
+textarea.ninp{min-height:66px;resize:vertical}
+.nbtn{padding:7px 16px;border-radius:6px;border:none;cursor:pointer;font-weight:700;font-size:0.82rem;font-family:inherit;transition:opacity .2s}
+.nbtn:hover{opacity:.82}
+
+/* Session switcher */
+.session-bar{
+  display:flex;align-items:center;gap:10px;
+  margin-bottom:20px;
+}
+.session-bar label{font-size:0.85rem;color:var(--muted)}
+.session-bar input{
+  background:var(--card2);border:1px solid rgba(255,255,255,0.1);
+  border-radius:6px;color:var(--txt);font-family:'JetBrains Mono',monospace;
+  font-size:0.9rem;padding:6px 12px;width:120px;
+}
+.session-bar button{
+  background:var(--pri);color:var(--bg);border:none;
+  border-radius:6px;padding:6px 16px;cursor:pointer;
+  font-weight:700;font-size:0.85rem;
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-left">
+    <h1><span class="live-dot"></span>決策樹即時回應</h1>
+    <p id="session-label">Session: —</p>
+    <p class="last-update" id="last-update">等待資料…</p>
+  </div>
+  <div class="total-badge">
+    <div class="total-num" id="total-count">0</div>
+    <div class="total-label">人已作答</div>
+  </div>
+</header>
+
+<div class="session-bar">
+  <label>切換班級 / 日期：</label>
+  <input type="text" id="session-input" placeholder="e.g. 20260505_A" maxlength="20">
+  <button onclick="switchSession()">載入</button>
+</div>
+
+<!-- 本週教學筆記（儲存於本機 localStorage） -->
+<div class="notes-panel">
+  <div class="notes-toggle" id="notes-toggle">
+    📋 本週教學筆記 <span id="notes-arrow">▼</span>
+  </div>
+  <div class="notes-body" id="notes-body" style="display:none">
+    <div class="notes-row2">
+      <div>
+        <span class="nlbl">課程主題</span>
+        <input class="ninp" type="text" id="n-topic" placeholder="例：Ch6 光譜學基本原理">
+      </div>
+      <div>
+        <span class="nlbl">章節</span>
+        <input class="ninp" type="text" id="n-chapter" placeholder="Ch6">
+      </div>
+    </div>
+    <div style="margin-bottom:10px">
+      <span class="nlbl">本週正確方法（逗號分隔）— 供學期報表自動判斷</span>
+      <input class="ninp" type="text" id="n-correct" placeholder="例：UV-Vis 分光光度法, 螢光光譜法">
+    </div>
+    <div style="margin-bottom:0">
+      <span class="nlbl">教師備註 / 下次改進事項</span>
+      <textarea class="ninp" id="n-notes" placeholder="本週學生常見錯誤、教學重點、改進建議..."></textarea>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap">
+      <button class="nbtn" style="background:var(--hi);color:var(--bg)" onclick="saveNotes()">💾 儲存筆記</button>
+      <button class="nbtn" style="background:var(--card2);color:var(--muted);border:1px solid rgba(255,255,255,0.1)" onclick="exportConfig()">📤 匯出學期設定 JSON</button>
+      <span id="notes-status" style="font-size:0.8rem;color:var(--grn)"></span>
+    </div>
+  </div>
+</div>
+
+<div id="method-grid" class="method-grid"></div>
+<div id="empty-state" class="empty-state" style="display:none">
+  <div class="icon">📭</div>
+  <p>尚無學生回應，等待中…</p>
+</div>
+
+<script type="module">
+import { initializeApp }  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getFirestore, collection, onSnapshot }
+  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+// ── Firebase 設定從 Hosting 保留端點取得，API Key 不寫死在原始碼 ────
+// /__/firebase/init.json 只有 Firebase Hosting 會回應；
+// 本機 file:// 或其他伺服器開啟時 db = undefined，即時功能靜默停用。
+let db;
+try {
+  const _r = await fetch('/__/firebase/init.json');
+  if (!_r.ok) throw new Error('not Firebase Hosting');
+  const FB = await _r.json();
+  db = getFirestore(initializeApp(FB));
+} catch (_e) {
+  console.warn('[Firebase] 即時功能停用（請由 Firebase Hosting 開啟）', _e.message);
+}
+
+// Method color map
+const METHOD_COLORS = {
+  'AAS / ICP-OES':      '#00C6FF',
+  'UV-Vis 分光光度法':   '#FFD700',
+  '螢光光譜法':          '#2ECC71',
+  'NMR 核磁共振':        '#9B59B6',
+  'FTIR 紅外線':         '#E67E22',
+  'Raman 拉曼':          '#1ABC9C',
+  'FTIR 現場快篩':       '#E74C3C',
+  'LC-MS 液質聯用':      '#3498DB',
+};
+function colorFor(method) {
+  for (const [key, col] of Object.entries(METHOD_COLORS)) {
+    if (method.includes(key.split(' ')[0])) return col;
+  }
+  return '#7A91B0';
+}
+
+let unsubscribe = null;
+let currentSession = null;
+
+const params = new URLSearchParams(location.search);
+const defaultSession = params.get('session') || new Date().toISOString().slice(0,10).replace(/-/g,'');
+document.getElementById('session-input').value = defaultSession;
+
+function listen(session) {
+  if (unsubscribe) unsubscribe();
+  currentSession = session;
+  window.__session = session;
+  document.getElementById('session-label').textContent = `Session: ${session}`;
+
+  unsubscribe = onSnapshot(
+    collection(db, 'decision_tree_responses', session, 'responses'),
+    snap => {
+      const docs = [];
+      snap.forEach(d => docs.push(d.data()));
+      renderDashboard(docs);
+
+      // Last update time
+      const now = new Date();
+      document.getElementById('last-update').textContent =
+        `最後更新：${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
+    },
+    err => console.error('Firestore error:', err)
+  );
+}
+
+function renderDashboard(docs) {
+  const grid = document.getElementById('method-grid');
+  const empty = document.getElementById('empty-state');
+  const total = docs.length;
+
+  document.getElementById('total-count').textContent = total;
+
+  if (total === 0) {
+    grid.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  // Group by method — store full doc objects
+  const groups = {};
+  docs.forEach(d => {
+    const m = d.method || '（未標示）';
+    if (!groups[m]) groups[m] = [];
+    groups[m].push(d);
+  });
+
+  // Sort by count desc
+  const sorted = Object.entries(groups).sort((a,b) => b[1].length - a[1].length);
+
+  // Remember which cards are expanded
+  const expanded = new Set(
+    [...grid.querySelectorAll('.reasons-list.open')]
+      .map(el => el.closest('.method-card').dataset.method)
+  );
+
+  grid.innerHTML = '';
+
+  sorted.forEach(([method, docs]) => {
+    const count  = docs.length;
+    const pct    = Math.round(count / total * 100);
+    const color  = colorFor(method);
+    const isOpen = expanded.has(method);
+
+    const hasData = docs.some(d => d.student_id || d.reason);
+
+    const card = document.createElement('div');
+    card.className = 'method-card';
+    card.dataset.method = method;
+
+    const reasonsHtml = hasData
+      ? docs.map((d, i) => `
+          <div class="reason-item">
+            <span class="reason-idx">${i+1}</span>
+            <div class="reason-text">
+              ${d.student_id ? `<span style="font-size:11px;background:rgba(0,198,255,0.15);color:#00C6FF;font-weight:700;padding:1px 7px;border-radius:10px;margin-right:6px;font-family:'JetBrains Mono',monospace">${escHtml(d.student_id)}</span>` : ''}
+              ${d.name ? `<span style="font-size:12px;color:#ECEEF2;margin-right:8px">${escHtml(d.name)}</span>` : ''}
+              ${d.reason ? `<span style="color:#B8C5E0">${escHtml(d.reason)}</span>` : '<span style="color:#4A6080;font-style:italic">（未填理由）</span>'}
+            </div>
+          </div>`).join('')
+      : `<p class="reason-empty">（學生未填寫）</p>`;
+
+    card.innerHTML = `
+      <div class="method-header" onclick="toggleCard(this)">
+        <div class="method-color-bar" style="background:${color}"></div>
+        <div class="method-name">${escHtml(method)}</div>
+        <span class="method-count" style="color:${color}">${count}</span>
+        <span class="method-pct">${pct}%</span>
+        <span class="toggle-hint">${isOpen ? '▲' : '▼'}</span>
+      </div>
+      <div class="bar-track" style="margin-bottom:4px">
+        <div class="bar-fill" style="width:${pct}%;background:${color}"></div>
+      </div>
+      <div class="reasons-list${isOpen ? ' open' : ''}">
+        ${reasonsHtml}
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function escHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+window.toggleCard = function(header) {
+  const list = header.closest('.method-card').querySelector('.reasons-list');
+  const hint = header.querySelector('.toggle-hint');
+  list.classList.toggle('open');
+  hint.textContent = list.classList.contains('open') ? '▲' : '▼';
+};
+
+window.switchSession = function() {
+  const val = document.getElementById('session-input').value.trim();
+  if (/^\d{8}(_\w+)?$/.test(val)) {
+    listen(val);
+    const url = new URL(location.href);
+    url.searchParams.set('session', val);
+    history.replaceState(null, '', url);
+  } else {
+    alert('請輸入 8 位日期，例如 20260505');
+  }
+};
+
+listen(defaultSession);
+</script>
+
+<script>
+// ── 教學筆記（儲存於 localStorage） ────────────────────────────────
+document.getElementById('notes-toggle').addEventListener('click', function() {
+  const body  = document.getElementById('notes-body');
+  const arrow = document.getElementById('notes-arrow');
+  const open  = body.style.display !== 'none';
+  body.style.display = open ? 'none' : 'block';
+  arrow.textContent  = open ? '▼' : '▲';
+});
+
+function _notesKey(sid) { return 'dt_notes_' + sid; }
+
+function loadNotes(session) {
+  const d = JSON.parse(localStorage.getItem(_notesKey(session)) || '{}');
+  document.getElementById('n-topic').value   = d.topic   || '';
+  document.getElementById('n-chapter').value = d.chapter || '';
+  document.getElementById('n-correct').value = d.correct || '';
+  document.getElementById('n-notes').value   = d.notes   || '';
+}
+
+// 監聽 session 變化（由 module script 設定 window.__session）
+new MutationObserver(() => {
+  const sid = window.__session;
+  if (sid) loadNotes(sid);
+}).observe(document.getElementById('session-label'), { childList: true, subtree: true });
+
+function saveNotes() {
+  const sid = window.__session;
+  if (!sid) return;
+  const d = {
+    session: sid,
+    topic:   document.getElementById('n-topic').value.trim(),
+    chapter: document.getElementById('n-chapter').value.trim(),
+    correct: document.getElementById('n-correct').value.trim(),
+    notes:   document.getElementById('n-notes').value.trim(),
+    saved_at: new Date().toISOString(),
+  };
+  localStorage.setItem(_notesKey(sid), JSON.stringify(d));
+  const st = document.getElementById('notes-status');
+  st.textContent = '✓ 已儲存到本機';
+  setTimeout(() => { st.textContent = ''; }, 2500);
+}
+
+function exportConfig() {
+  const all = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key && key.startsWith('dt_notes_')) {
+      try { all.push(JSON.parse(localStorage.getItem(key))); } catch(e) {}
+    }
+  }
+  if (!all.length) { alert('尚無筆記，請先儲存本週筆記後再匯出。'); return; }
+  all.sort((a,b) => (a.session||'').localeCompare(b.session||''));
+  const config = {
+    _note: "由 dt_results.html 匯出 — 供 semester_report.py 使用",
+    course: "食品分析",
+    academic_year: "",
+    sessions: all.map((d, i) => ({
+      week:            i + 1,
+      session_id:      d.session,
+      chapter:         d.chapter || '',
+      topic:           d.topic   || '',
+      correct_methods: d.correct ? d.correct.split(',').map(s=>s.trim()).filter(Boolean) : [],
+      notes:           d.notes   || '',
+    }))
+  };
+  const blob = new Blob([JSON.stringify(config, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'semester_config.json';
+  a.click();
+}
+</script>
+</body>
+</html>

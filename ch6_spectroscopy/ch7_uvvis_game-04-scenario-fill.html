@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CH7 遊戲 4 — UV-Vis 食品分析情境填空</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:#0D1B2A; --card:#1A3050; --card2:#122540;
+  --pri:#00C6FF; --hi:#FFD700; --txt:#ECEEF2; --muted:#7A91B0;
+  --grn:#2ECC71; --red:#E74C3C; --pur:#9B59B6; --org:#E67E22;
+}
+body {
+  font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
+  background: var(--bg);
+  color: var(--txt);
+  min-height: 100vh;
+  padding: 16px;
+  font-size: 16px;
+}
+.container { max-width: 720px; margin: 0 auto; }
+.nav-link {
+  display: inline-block;
+  margin-bottom: 10px;
+  color: var(--pri);
+  text-decoration: none;
+  font-size: 14px;
+}
+.nav-link:hover { text-decoration: underline; }
+header {
+  background: var(--card);
+  padding: 18px 20px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  border-left: 4px solid var(--pri);
+}
+header h1 { font-size: 22px; margin-bottom: 6px; color: var(--pri); }
+header .subtitle { color: var(--muted); font-size: 13px; }
+.score-bar {
+  background: var(--card2);
+  padding: 10px 18px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.progress-bar-bg {
+  flex: 1 1 200px;
+  min-width: 100px;
+  height: 8px;
+  background: var(--card);
+  border-radius: 4px;
+  margin: 0 12px;
+  overflow: hidden;
+  align-self: center;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: var(--grn);
+  width: 0%;
+  transition: width 0.3s;
+}
+.scenario-card {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 22px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+.q-num {
+  display: inline-block;
+  background: var(--pri);
+  color: var(--bg);
+  font-weight: bold;
+  font-size: 13px;
+  padding: 3px 10px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+}
+.theme-tag {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: bold;
+  margin-left: 6px;
+  margin-bottom: 10px;
+}
+.theme-tag.food { background: var(--org); color: var(--bg); }
+.theme-tag.theory { background: var(--pur); color: var(--txt); }
+.theme-tag.lab { background: var(--hi); color: var(--bg); }
+.scenario {
+  font-size: 17px;
+  line-height: 1.9;
+  margin: 16px 0;
+  color: var(--txt);
+}
+.blank {
+  display: inline-block;
+  min-width: 100px;
+  padding: 4px 14px;
+  margin: 0 4px;
+  background: var(--card2);
+  border-bottom: 2px dashed var(--pri);
+  border-radius: 6px 6px 0 0;
+  font-weight: bold;
+  text-align: center;
+  color: var(--pri);
+}
+.blank.filled { background: rgba(0, 198, 255, 0.15); color: var(--txt); }
+.blank.correct {
+  background: rgba(46, 204, 113, 0.2);
+  border-bottom-color: var(--grn);
+  color: var(--grn);
+}
+.blank.wrong {
+  background: rgba(231, 76, 60, 0.2);
+  border-bottom-color: var(--red);
+  color: var(--red);
+}
+.options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.option-chip {
+  background: var(--card2);
+  border: 2px solid transparent;
+  border-radius: 8px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 15px;
+  font-family: inherit;
+  font-weight: bold;
+  color: var(--txt);
+  min-height: 40px;
+}
+.option-chip:hover { background: #1f3a5e; border-color: var(--pri); }
+.option-chip:disabled { opacity: 0.35; cursor: not-allowed; }
+.explain {
+  background: rgba(255, 215, 0, 0.08);
+  border-left: 3px solid var(--hi);
+  padding: 12px 16px;
+  border-radius: 6px;
+  margin-top: 12px;
+  font-size: 14px;
+  color: var(--txt);
+  line-height: 1.7;
+  display: none;
+}
+.explain.show { display: block; }
+.explain strong { color: var(--hi); }
+.btn {
+  background: var(--pri);
+  color: var(--bg);
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+  min-height: 44px;
+}
+.btn:hover { background: #00A0CC; }
+.btn-secondary { background: #5B6777; color: var(--txt); }
+.btn-secondary:hover { background: #455260; }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.controls { text-align: center; margin: 16px 0; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+.complete-message {
+  background: var(--grn);
+  color: var(--bg);
+  padding: 24px;
+  border-radius: 12px;
+  margin: 20px 0;
+  text-align: center;
+  display: none;
+  font-weight: bold;
+}
+.complete-message.partial { background: var(--hi); }
+.complete-message h2 { font-size: 22px; margin-bottom: 12px; }
+.complete-message .score { font-size: 32px; font-weight: bold; margin: 12px 0; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="ch6_spectroscopy.html" class="nav-link">← 回投影片</a>
+  <header>
+    <h1>🧪 CH7 遊戲 4：UV-Vis 食品分析情境填空</h1>
+    <div class="subtitle">6 個真實實驗與檢驗案例</div>
+  </header>
+
+  <div class="score-bar">
+    <span>第 <span id="curQ">1</span> / <span id="totalQ">6</span> 題</span>
+    <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill"></div></div>
+    <span style="color:var(--grn)">答對 <span id="score">0</span></span>
+  </div>
+
+  <div id="quizArea"></div>
+
+  <div id="completeMessage" class="complete-message">
+    <h2 id="completeTitle">🎉 完成！</h2>
+    <div>你的分數</div>
+    <div class="score"><span id="finalScore">0</span> / 6</div>
+    <div id="finalComment"></div>
+    <br>
+    <button class="btn" onclick="restart()">再玩一次</button>
+  </div>
+</div>
+
+<script type="module">
+import { initGameSession, logEvent } from './game_firebase.js';
+
+// 每題：sentence 含多個 {0} {1} placeholder；answers 是正確答案陣列；options 是候選詞（含干擾項）
+const QUESTIONS = [
+  {
+    "theme": "lab",
+    "themeName": "🥛 Bradford 蛋白質定量",
+    "sentence": "用 Bradford 法量牛奶蛋白，波長選 {0} nm。若量到 A = 1.2 超過線性區（0.2–0.8），應該 {1} 後重測。",
+    "answers": [
+      "595",
+      "稀釋樣品"
+    ],
+    "options": [
+      "595",
+      "540",
+      "稀釋樣品",
+      "濃縮樣品",
+      "765",
+      "加熱"
+    ],
+    "explain": "Bradford 試劑（Coomassie 染料）與蛋白結合後 λmax 紅移至 <strong>595 nm</strong>。A > 0.8 偏離 Beer-Lambert，稀釋 2 倍可拉回線性區。"
+  },
+  {
+    "theme": "food",
+    "themeName": "🍖 亞硝酸鹽（火腿）",
+    "sentence": "檢測火腿中亞硝酸鹽含量，國家標準用 {0} 反應顯色，波長 {1} nm。",
+    "answers": [
+      "Griess",
+      "540"
+    ],
+    "options": [
+      "Griess",
+      "Bradford",
+      "540",
+      "595",
+      "450",
+      "Folin"
+    ],
+    "explain": "<strong>Griess 反應</strong>：NO₂⁻ + 磺胺 + N-(1-萘基)乙二胺 → 紫紅色重氮鹽，λmax 540 nm。台灣 CAS 法定法、衛福部公告。"
+  },
+  {
+    "theme": "food",
+    "themeName": "🍵 茶葉總酚",
+    "sentence": "茶葉抗氧化能力評估，用 {0} 試劑與酚類反應產生鉬鎢藍，量測波長 {1} nm，標準曲線常用沒食子酸 (GAE) 當參考。",
+    "answers": [
+      "Folin-Ciocalteu",
+      "765"
+    ],
+    "options": [
+      "Folin-Ciocalteu",
+      "Bradford",
+      "765",
+      "540",
+      "595",
+      "ABTS"
+    ],
+    "explain": "<strong>Folin-Ciocalteu</strong>法：酚還原磷鉬鎢酸 → 藍色鉬鎢藍，λmax 765 nm。結果以 mg GAE/g 樣品 表示。"
+  },
+  {
+    "theme": "theory",
+    "themeName": "📐 Beer-Lambert 換算",
+    "sentence": "若 %T = 25%，吸光度 A = {0}。將同一樣品稀釋 10 倍後，A 約變為 {1}。",
+    "answers": [
+      "0.602",
+      "0.06"
+    ],
+    "options": [
+      "0.602",
+      "1.5",
+      "0.06",
+      "0.25",
+      "6.02",
+      "0.6"
+    ],
+    "explain": "A = −log(0.25) = 0.602。稀釋 10 倍 → c 變 1/10 → A 變 1/10 = 0.06。注意 T 不是線性對應 c。"
+  },
+  {
+    "theme": "lab",
+    "themeName": "🔬 比色槽選擇",
+    "sentence": "量測蛋白質在 UV 區 280 nm 的吸收，比色槽必須選 {0}，因為一般 {1} 在 350 nm 以下會強烈吸光。",
+    "answers": [
+      "石英",
+      "玻璃"
+    ],
+    "options": [
+      "石英",
+      "玻璃",
+      "塑膠",
+      "鋼鐵",
+      "陶瓷",
+      "矽膠"
+    ],
+    "explain": "<strong>UV 量測（&lt; 350 nm）只能用石英</strong>。280 nm 是色胺酸/酪胺酸吸收峰，做蛋白純度檢測。一般玻璃只適 Vis（380 nm 以上）。"
+  },
+  {
+    "theme": "food",
+    "themeName": "🥒 抗氧化 ABTS",
+    "sentence": "蔬果抗氧化能力評估，ABTS 自由基被還原後 {0}（顏色變化方向），量測波長 {1} nm。",
+    "answers": [
+      "褪色",
+      "734"
+    ],
+    "options": [
+      "褪色",
+      "加深",
+      "734",
+      "540",
+      "595",
+      "420"
+    ],
+    "explain": "<strong>ABTS 法</strong>：ABTS•⁺ 是藍綠色（λmax 734 nm），抗氧化物還原後變無色 → A 下降，越下降抗氧化越強。Trolox 當參考。"
+  }
+];
+
+let curIdx = 0;
+let score = 0;
+let userAnswers = [];
+
+function renderQuestion() {
+  const q = QUESTIONS[curIdx];
+  userAnswers = new Array(q.answers.length).fill(null);
+
+  // 用 split + map 處理 {N} placeholder
+  let sentenceHtml = q.sentence.replace(/\{(\d+)\}/g, (m, n) => {
+    return `<span class="blank" data-blank="${n}" id="blank-${n}">＿＿＿</span>`;
+  });
+
+  const shuffledOpts = shuffle(q.options.map(opt => ({ text: opt })));
+
+  document.getElementById('quizArea').innerHTML = `
+    <div class="scenario-card">
+      <div>
+        <span class="q-num">第 ${curIdx + 1} 題</span>
+        <span class="theme-tag ${q.theme}">${q.themeName}</span>
+      </div>
+      <div class="scenario">${sentenceHtml}</div>
+      <div style="font-size:13px; color:var(--muted); margin-bottom:10px;">點下方詞語填入空格；再點一次空格可清除。</div>
+      <div class="options" id="optionsBox">
+        ${shuffledOpts.map(o => `<button class="option-chip" data-text="${o.text}">${o.text}</button>`).join('')}
+      </div>
+      <div id="explainBox" class="explain"></div>
+      <div class="controls">
+        <button class="btn" id="checkBtn" disabled>對答案</button>
+        <button class="btn btn-secondary" id="nextBtn" style="display:none;">
+          ${curIdx === QUESTIONS.length - 1 ? '查看結果 →' : '下一題 →'}
+        </button>
+      </div>
+    </div>
+  `;
+  document.getElementById('curQ').textContent = curIdx + 1;
+  document.getElementById('totalQ').textContent = QUESTIONS.length;
+  document.getElementById('progressFill').style.width = `${(curIdx / QUESTIONS.length) * 100}%`;
+
+  document.querySelectorAll('.blank').forEach(b => {
+    b.addEventListener('click', () => clearBlank(parseInt(b.dataset.blank)));
+  });
+  document.querySelectorAll('.option-chip').forEach(o => {
+    o.addEventListener('click', () => pickOption(o.dataset.text, o));
+  });
+  document.getElementById('checkBtn').addEventListener('click', checkQuestion);
+  document.getElementById('nextBtn').addEventListener('click', next);
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function pickOption(text, el) {
+  const emptyIdx = userAnswers.findIndex(a => a === null);
+  if (emptyIdx === -1) return;
+  userAnswers[emptyIdx] = text;
+  const blank = document.getElementById('blank-' + emptyIdx);
+  blank.textContent = text;
+  blank.classList.add('filled');
+  el.disabled = true;
+  el.dataset.usedFor = emptyIdx;
+  if (userAnswers.every(a => a !== null)) {
+    document.getElementById('checkBtn').disabled = false;
+  }
+}
+
+function clearBlank(idx) {
+  if (userAnswers[idx] === null) return;
+  const text = userAnswers[idx];
+  userAnswers[idx] = null;
+  const blank = document.getElementById('blank-' + idx);
+  blank.textContent = '＿＿＿';
+  blank.classList.remove('filled', 'correct', 'wrong');
+  document.querySelectorAll('.option-chip').forEach(o => {
+    if (o.dataset.text === text && o.dataset.usedFor === String(idx)) {
+      o.disabled = false;
+      delete o.dataset.usedFor;
+    }
+  });
+  document.getElementById('checkBtn').disabled = true;
+}
+
+function checkQuestion() {
+  const q = QUESTIONS[curIdx];
+  let allCorrect = true;
+  q.answers.forEach((correctAns, i) => {
+    const blank = document.getElementById('blank-' + i);
+    if (userAnswers[i] === correctAns) {
+      blank.classList.add('correct');
+    } else {
+      blank.classList.add('wrong');
+      blank.textContent = userAnswers[i] + ' → ' + correctAns;
+      allCorrect = false;
+    }
+  });
+  if (allCorrect) {
+    score++;
+    document.getElementById('score').textContent = score;
+  }
+  logEvent({
+    event_type: 'answer',
+    question_id: 'Q' + (curIdx + 1) + '-' + q.theme,
+    is_correct: allCorrect,
+    attempts: 1,
+  });
+  document.querySelectorAll('.option-chip').forEach(o => o.disabled = true);
+  const ex = document.getElementById('explainBox');
+  ex.innerHTML = '💡 ' + q.explain;
+  ex.classList.add('show');
+  document.getElementById('checkBtn').style.display = 'none';
+  document.getElementById('nextBtn').style.display = 'inline-block';
+}
+
+function next() {
+  if (curIdx < QUESTIONS.length - 1) {
+    curIdx++;
+    renderQuestion();
+  } else {
+    document.getElementById('progressFill').style.width = '100%';
+    document.getElementById('quizArea').innerHTML = '';
+    document.getElementById('finalScore').textContent = score;
+    const msg = document.getElementById('completeMessage');
+    msg.classList.remove('partial');
+    let comment = '';
+    if (score >= 5) {
+      document.getElementById('completeTitle').textContent = '🎉 食品光譜應用很強！';
+      comment = '你已能把 Ch6 原理對應到實際食品案例。';
+    } else if (score >= 3) {
+      document.getElementById('completeTitle').textContent = '👍 大方向對！';
+      comment = '回去看答錯題的解說，特別注意「方法選擇」邏輯。';
+      msg.classList.add('partial');
+    } else {
+      document.getElementById('completeTitle').textContent = '🔁 多看食品案例！';
+      comment = '建議重看投影片 23–30（七大方法 + 應用），再玩一次。';
+      msg.classList.add('partial');
+    }
+    document.getElementById('finalComment').textContent = comment;
+    msg.style.display = 'block';
+    msg.scrollIntoView({ behavior: 'smooth' });
+    logEvent({
+      event_type: 'session_complete',
+      final_score: score,
+      attempts: QUESTIONS.length,
+    });
+  }
+}
+
+function restart() {
+  curIdx = 0;
+  score = 0;
+  document.getElementById('score').textContent = '0';
+  document.getElementById('completeMessage').style.display = 'none';
+  renderQuestion();
+}
+
+window.restart = restart;
+
+await initGameSession({ chapter: 'ch7', game: 'scenario-fill' });
+renderQuestion();
+</script>
+</body>
+</html>

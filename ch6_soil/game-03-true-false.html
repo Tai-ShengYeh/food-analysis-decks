@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>遊戲 3：光譜是非判斷 · Ch6</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0e27; --bg-2:#11163a; --card:#1A3050; --card2:#122540;
+  --ink:#eef3ff; --ink-2:#b8c5e0; --muted:#7a8bb8;
+  --accent:#00d4ff; --accent-2:#ff006e; --grn:#00e08a; --red:#e74c3c; --warn:#ffb800;
+}
+body{
+  font-family:'Noto Sans TC','Microsoft JhengHei',sans-serif;
+  background:radial-gradient(ellipse at top, #11163a 0%, #0a0e27 60%);
+  color:var(--ink); min-height:100vh; padding:16px; font-size:16px;
+}
+.container{max-width:760px; margin:0 auto}
+.nav-link{display:inline-block; margin-bottom:10px; color:var(--accent); text-decoration:none; font-size:14px}
+.nav-link:hover{text-decoration:underline}
+header{
+  background:var(--card); padding:18px 20px; border-radius:12px;
+  margin-bottom:16px; border-left:4px solid var(--warn);
+}
+header h1{font-size:22px; margin-bottom:6px; color:var(--warn)}
+header .subtitle{color:var(--muted); font-size:13px}
+.score-bar{
+  background:var(--card2); padding:10px 18px; border-radius:8px;
+  margin-bottom:16px; display:flex; justify-content:space-between;
+  font-size:14px; font-weight:bold;
+}
+.statement-card{
+  background:var(--card); border-radius:14px; padding:30px 24px;
+  margin-bottom:14px; border:1px solid rgba(255,255,255,.06);
+  text-align:center;
+}
+.q-num{
+  font-family:'JetBrains Mono',monospace; font-size:12px;
+  color:var(--accent); letter-spacing:.15em; margin-bottom:10px;
+}
+.statement{
+  font-size:19px; line-height:1.6; margin-bottom:24px;
+  font-weight:700; min-height:80px;
+  display:flex; align-items:center; justify-content:center;
+}
+.tf-buttons{
+  display:grid; grid-template-columns:1fr 1fr; gap:14px;
+  margin-bottom:14px;
+}
+.tf-btn{
+  background:var(--card2); border:3px solid #2A4A6E;
+  padding:20px; border-radius:14px; cursor:pointer;
+  transition:all .2s; font-size:24px; font-weight:900;
+  font-family:inherit; color:var(--ink);
+  min-height:72px;
+}
+.tf-btn .label{font-size:13px; display:block; margin-top:4px; opacity:.7; font-weight:normal}
+.tf-btn:hover{transform:translateY(-2px)}
+.tf-btn.true{border-color:rgba(0,224,138,.4)}
+.tf-btn.true:hover{background:rgba(0,224,138,.1); border-color:var(--grn)}
+.tf-btn.false{border-color:rgba(231,76,60,.4)}
+.tf-btn.false:hover{background:rgba(231,76,60,.1); border-color:var(--red)}
+.tf-btn.correct{background:rgba(0,224,138,.2); border-color:var(--grn); color:var(--grn); pointer-events:none}
+.tf-btn.wrong-pick{background:rgba(231,76,60,.2); border-color:var(--red); color:var(--red); pointer-events:none}
+.tf-btn.muted{opacity:.4; pointer-events:none}
+.feedback{
+  display:none; padding:14px 16px; border-radius:10px;
+  font-size:14px; line-height:1.6; text-align:left;
+  margin-top:12px;
+}
+.feedback.show{display:block}
+.feedback.correct{background:rgba(0,224,138,.08); border-left:3px solid var(--grn)}
+.feedback.wrong{background:rgba(231,76,60,.08); border-left:3px solid var(--red)}
+.feedback strong{color:var(--accent)}
+.btn-next{
+  width:100%; background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  color:var(--bg); border:none; padding:14px; border-radius:10px;
+  font-size:16px; font-weight:700; cursor:pointer;
+  margin-top:14px; display:none; font-family:inherit;
+}
+.btn-next.show{display:block}
+.complete{
+  background:linear-gradient(135deg,var(--grn),var(--accent));
+  color:var(--bg); padding:28px; border-radius:14px;
+  text-align:center; display:none; margin-bottom:14px;
+}
+.complete h2{font-size:24px; margin-bottom:10px}
+.complete .score{font-size:42px; font-weight:900; margin:14px 0}
+.btn{
+  background:var(--bg); color:var(--ink); border:none;
+  padding:10px 22px; border-radius:8px; font-weight:700;
+  cursor:pointer; font-family:inherit; font-size:15px;
+}
+.progress-dots{
+  display:flex; justify-content:center; gap:6px; margin-bottom:14px;
+}
+.dot{width:10px; height:10px; border-radius:50%; background:var(--card2); border:1px solid #2A4A6E}
+.dot.done{background:var(--grn); border-color:var(--grn)}
+.dot.miss{background:var(--red); border-color:var(--red)}
+.dot.cur{background:var(--accent); border-color:var(--accent)}
+.qr-foot{text-align:center; margin-top:24px; padding:14px; border-top:1px solid rgba(255,255,255,.06)}
+.qr-foot img{border-radius:8px; background:white; padding:6px}
+.qr-foot p{font-size:.75rem; color:var(--muted); margin-top:6px}
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="ch6_spectroscopy.html" class="nav-link">← 回投影片</a>
+  <header>
+    <h1>⚖️ 遊戲 3：光譜是非判斷</h1>
+    <div class="subtitle">破解常見迷思！判斷每個敘述是「對」還是「錯」。</div>
+  </header>
+
+  <div class="progress-dots" id="dots"></div>
+  <div class="score-bar">
+    <span>進度：<span id="cur">1</span> / <span id="total">10</span></span>
+    <span style="color:var(--grn)">答對：<span id="correct">0</span></span>
+  </div>
+
+  <div id="complete" class="complete">
+    <h2>🎉 全部完成！</h2>
+    <div class="score" id="finalScore">0 / 10</div>
+    <div id="finalMsg"></div>
+    <br>
+    <button class="btn" onclick="restart()">再玩一次</button>
+  </div>
+
+  <div id="quizArea"></div>
+
+  <div class="qr-foot">
+    <img id="qr-img" width="120" height="120" alt="QR">
+    <p>手機掃描即可開啟此遊戲</p>
+  </div>
+</div>
+
+<script type="module">
+import { initGameSession, logEvent } from './game_firebase.js';
+
+const QUESTIONS = [
+  {
+    s: '可見光的波長越長，光子能量越大。',
+    a: false,
+    expl: 'E = hc/λ — 能量與波長「成反比」。波長越短（如紫光、UV）能量才越大。'
+  },
+  {
+    s: '螢光放射的光，波長一定比激發光長（或相等）。',
+    a: true,
+    expl: '這就是 Stokes 位移：激發態先振動弛緩損失能量，再放光。能量變小 → 波長變長。'
+  },
+  {
+    s: 'NMR 比 UV-Vis 光譜更靈敏，因為它用無線電波。',
+    a: false,
+    expl: '相反！NMR 的 ΔE 很小，Boltzmann 分布讓兩能階人口幾乎相等，淨吸收訊號弱 → 靈敏度比 UV-Vis 低很多。'
+  },
+  {
+    s: 'IR 紅外光譜對應分子的「振動」能階躍遷。',
+    a: true,
+    expl: '正確。IR（2.5–25 μm）的光子能量剛好等於化學鍵振動基態與第一激發態的差。'
+  },
+  {
+    s: '只要分子有振動，就一定會吸收 IR。',
+    a: false,
+    expl: '必須振動時造成「偶極矩改變」才會吸收。例如對稱分子 N₂、O₂、Cl₂ 沒有偶極矩變化 → IR 沒訊號。'
+  },
+  {
+    s: '原子放射光譜（AES）一般在室溫就能進行。',
+    a: false,
+    expl: '室溫下激發態原子幾乎為零（Boltzmann），無訊號可量。需要高溫電漿（>6000 K）讓更多原子被激發。'
+  },
+  {
+    s: '頻率 ν 等於光速 c 除以波長 λ。',
+    a: true,
+    expl: 'ν = c / λ，這是光的基本關係式（注意 c 是真空光速）。'
+  },
+  {
+    s: '光的干涉現象可以用「光的粒子性」直接解釋。',
+    a: false,
+    expl: '干涉、繞射用「波動性」最容易解釋。光的粒子性用來解釋吸收、放射、光電效應。'
+  },
+  {
+    s: '分子能階是「量子化」的，意思是只能在特定能量上停留。',
+    a: true,
+    expl: '量子化 = 離散階梯。階梯之間是禁區，光子能量必須剛好等於能階差才能造成躍遷。'
+  },
+  {
+    s: 'NIR 近紅外光譜可以「同時」測蛋白質、脂肪、水分含量。',
+    a: true,
+    expl: '正確。NIR 對應泛音／組合振動，多個分析物有不同吸收特徵；配合化學計量學模型可同時定量。'
+  },
+];
+
+let cur = 0;
+let correct = 0;
+let answered = false;
+const results = [];
+
+function renderDots() {
+  const dots = document.getElementById('dots');
+  dots.innerHTML = '';
+  for (let i = 0; i < QUESTIONS.length; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot';
+    if (results[i] === true) d.classList.add('done');
+    else if (results[i] === false) d.classList.add('miss');
+    else if (i === cur) d.classList.add('cur');
+    dots.appendChild(d);
+  }
+}
+
+function render() {
+  if (cur >= QUESTIONS.length) { showComplete(); return; }
+  const q = QUESTIONS[cur];
+  document.getElementById('cur').textContent = cur + 1;
+  document.getElementById('total').textContent = QUESTIONS.length;
+  document.getElementById('correct').textContent = correct;
+  renderDots();
+
+  document.getElementById('quizArea').innerHTML = `
+    <div class="statement-card">
+      <div class="q-num">Q ${cur + 1} / ${QUESTIONS.length}</div>
+      <div class="statement">${q.s}</div>
+      <div class="tf-buttons">
+        <button class="tf-btn true" data-ans="true">✓ 對<span class="label">TRUE</span></button>
+        <button class="tf-btn false" data-ans="false">✗ 錯<span class="label">FALSE</span></button>
+      </div>
+      <div class="feedback" id="feedback"></div>
+      <button class="btn-next" id="btn-next">下一題 →</button>
+    </div>
+  `;
+
+  answered = false;
+  document.querySelectorAll('.tf-btn').forEach(el => {
+    el.addEventListener('click', () => onSelect(el.dataset.ans === 'true', el));
+  });
+  document.getElementById('btn-next').addEventListener('click', next);
+}
+
+function onSelect(userAns, el) {
+  if (answered) return;
+  answered = true;
+  const q = QUESTIONS[cur];
+  const isCorrect = userAns === q.a;
+  results[cur] = isCorrect;
+
+  const btns = document.querySelectorAll('.tf-btn');
+  btns.forEach(b => {
+    if ((b.dataset.ans === 'true') === q.a) b.classList.add('correct');
+    else if (b === el) b.classList.add('wrong-pick');
+    else b.classList.add('muted');
+  });
+
+  const fb = document.getElementById('feedback');
+  fb.innerHTML = isCorrect
+    ? `<strong style="color:var(--grn)">✅ 正確！</strong> ${q.expl}`
+    : `<strong style="color:var(--red)">❌ 錯了</strong>　正解：<strong>${q.a ? '對' : '錯'}</strong>。${q.expl}`;
+  fb.classList.add('show', isCorrect ? 'correct' : 'wrong');
+
+  if (isCorrect) correct++;
+  document.getElementById('correct').textContent = correct;
+  renderDots();
+
+  logEvent({
+    event_type: 'answer',
+    question_id: `Q${cur + 1}`,
+    is_correct: isCorrect,
+    attempts: 1,
+  });
+
+  document.getElementById('btn-next').classList.add('show');
+}
+
+function next() {
+  cur++;
+  render();
+}
+
+function showComplete() {
+  document.getElementById('quizArea').innerHTML = '';
+  document.getElementById('complete').style.display = 'block';
+  document.getElementById('finalScore').textContent = `${correct} / ${QUESTIONS.length}`;
+  const pct = correct / QUESTIONS.length;
+  document.getElementById('finalMsg').textContent =
+    pct === 1 ? '🌟 滿分！光譜迷思全被你破解了！' :
+    pct >= 0.8 ? '👍 很棒，少數題目可以再加深印象。' :
+    pct >= 0.6 ? '💪 觀念大致正確，回頭看一次投影片。' :
+    '📚 投影片建議再讀一遍，這些迷思要小心！';
+  logEvent({ event_type: 'session_complete', final_score: correct, attempts: QUESTIONS.length });
+}
+
+function restart() {
+  cur = 0; correct = 0; answered = false;
+  results.length = 0;
+  document.getElementById('complete').style.display = 'none';
+  render();
+}
+window.restart = restart;
+
+await initGameSession({ chapter: 'ch6_soil_2026', game: 'true-false' });
+render();
+
+document.getElementById('qr-img').src =
+  'https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=' +
+  encodeURIComponent(window.location.href);
+</script>
+</body>
+</html>

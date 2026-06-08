@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>遊戲 1：光譜詞彙配對 · Ch6</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0e27; --bg-2:#11163a; --card:#1A3050; --card2:#122540;
+  --ink:#eef3ff; --ink-2:#b8c5e0; --muted:#7a8bb8;
+  --accent:#00d4ff; --accent-2:#ff006e; --grn:#00e08a; --red:#e74c3c; --warn:#ffb800;
+}
+body{
+  font-family:'Noto Sans TC','Microsoft JhengHei',sans-serif;
+  background:radial-gradient(ellipse at top, #11163a 0%, #0a0e27 60%);
+  color:var(--ink); min-height:100vh; padding:16px; font-size:16px;
+}
+.container{max-width:960px; margin:0 auto}
+.nav-link{display:inline-block; margin-bottom:10px; color:var(--accent); text-decoration:none; font-size:14px}
+.nav-link:hover{text-decoration:underline}
+header{
+  background:var(--card); padding:18px 20px; border-radius:12px;
+  margin-bottom:16px; border-left:4px solid var(--accent);
+}
+header h1{font-size:22px; margin-bottom:6px; color:var(--accent)}
+header .subtitle{color:var(--muted); font-size:13px}
+.score-bar{
+  background:var(--card2); padding:10px 18px; border-radius:8px;
+  margin-bottom:16px; display:flex; justify-content:space-between;
+  align-items:center; font-size:15px; font-weight:bold;
+  flex-wrap:wrap; gap:8px;
+}
+.score-bar .right{color:var(--accent)}
+.round-tag{
+  display:inline-block; background:var(--warn); color:var(--bg);
+  padding:3px 10px; border-radius:12px; font-size:12px; margin-right:8px;
+}
+.column-header{
+  font-size:13px; font-weight:bold; color:var(--accent);
+  text-align:center; padding:8px; background:var(--card2);
+  border-radius:6px; margin-bottom:8px;
+}
+.game-area{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px}
+.card{
+  background:var(--card); border:2px solid #2A4A6E; border-radius:10px;
+  padding:12px 14px; margin-bottom:8px; cursor:pointer;
+  transition:all 0.2s; min-height:56px; display:flex; align-items:center;
+  font-size:15px; word-break:keep-all; user-select:none;
+  line-height:1.4; color:var(--ink);
+}
+.card:hover{border-color:var(--accent); background:var(--card2)}
+.card.selected{
+  background:rgba(0,212,255,.15); border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(0,212,255,.25);
+}
+.card.matched{
+  background:rgba(0,224,138,.15); border-color:var(--grn);
+  color:var(--grn); cursor:default; pointer-events:none; opacity:.85;
+}
+.card.matched::before{content:'✅ '}
+.card.wrong{
+  animation:shake 0.4s; background:rgba(231,76,60,.15); border-color:var(--red);
+}
+@keyframes shake{
+  0%,100%{transform:translateX(0)}
+  25%{transform:translateX(-6px)}
+  75%{transform:translateX(6px)}
+}
+.term-card{font-weight:bold; flex-direction:column; align-items:flex-start}
+.term-card .sub{
+  display:block; font-size:11px; color:var(--muted);
+  font-weight:normal; margin-top:4px; font-family:'JetBrains Mono',monospace;
+}
+.term-card.matched .sub{color:var(--grn)}
+.btn{
+  background:var(--accent); color:var(--bg); border:none;
+  padding:10px 22px; border-radius:8px; font-size:15px;
+  font-weight:bold; cursor:pointer; display:inline-block;
+  font-family:inherit; min-height:44px;
+}
+.btn:hover{background:#00a8d4}
+.btn-secondary{background:#5B6777; color:var(--ink)}
+.btn-secondary:hover{background:#455260}
+.controls{text-align:center; margin:16px 0}
+.complete-message{
+  background:var(--grn); color:var(--bg); padding:24px;
+  border-radius:12px; margin:20px 0; text-align:center;
+  font-size:17px; display:none; font-weight:bold;
+}
+.complete-message h2{margin-bottom:12px; font-size:22px}
+.example-popup{
+  position:fixed; bottom:80px; left:50%; transform:translateX(-50%);
+  background:var(--card); color:var(--ink); padding:14px 24px;
+  border-radius:10px; max-width:90%; z-index:100; display:none;
+  font-size:15px; box-shadow:0 4px 16px rgba(0,0,0,.4);
+  border:1px solid var(--accent);
+}
+.example-popup strong{color:var(--warn)}
+.round-progress{
+  background:var(--card2); padding:8px 16px; border-radius:8px;
+  margin-bottom:12px; font-size:13px; color:var(--muted);
+}
+.round-progress .step{
+  display:inline-block; padding:2px 10px; margin:0 4px;
+  border-radius:12px; background:var(--card);
+}
+.round-progress .step.active{background:var(--accent); color:var(--bg); font-weight:bold}
+.round-progress .step.done{background:var(--grn); color:var(--bg)}
+.qr-foot{
+  text-align:center; margin-top:24px; padding:14px;
+  border-top:1px solid rgba(255,255,255,.06);
+}
+.qr-foot img{border-radius:8px; background:white; padding:6px}
+.qr-foot p{font-size:.75rem; color:var(--muted); margin-top:6px}
+@media (max-width: 480px){
+  .game-area{grid-template-columns:1fr}
+  .card{font-size:14px; min-height:50px}
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="ch6_spectroscopy.html" class="nav-link">← 回投影片</a>
+  <header>
+    <h1>🎯 遊戲 1：光譜詞彙配對</h1>
+    <div class="subtitle">點左邊一個詞 → 點右邊正確的解釋。配對成功會變綠色並顯示說明。</div>
+  </header>
+
+  <div class="round-progress">
+    <span>關卡進度：</span>
+    <span class="step active" id="step-1">Round 1：光的本質</span>
+    <span class="step" id="step-2">Round 2：能階與方法</span>
+    <span class="step" id="step-3">Round 3：螢光 vs 磷光</span>
+  </div>
+
+  <div class="score-bar">
+    <span><span class="round-tag" id="roundTag">Round 1</span>進度：<span id="progress">0</span> / <span id="totalPairs">6</span></span>
+    <span class="right">嘗試次數：<span id="attempts">0</span></span>
+  </div>
+
+  <div id="completeMessage" class="complete-message">
+    <h2 id="completeTitle">🎉 全部關卡完成！</h2>
+    <div id="completeDetail"></div>
+    <br>
+    <button class="btn" onclick="restart()">再玩一次</button>
+  </div>
+
+  <div class="game-area">
+    <div>
+      <div class="column-header">📖 詞語</div>
+      <div id="termsCol"></div>
+    </div>
+    <div>
+      <div class="column-header">💡 解釋／搭配</div>
+      <div id="defsCol"></div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="btn btn-secondary" onclick="restart()">🔄 重新本回合</button>
+  </div>
+
+  <div class="qr-foot">
+    <img id="qr-img" width="120" height="120" alt="QR">
+    <p>手機掃描即可開啟此遊戲</p>
+  </div>
+</div>
+
+<div id="examplePopup" class="example-popup"></div>
+
+<script type="module">
+import { initGameSession, logEvent } from './game_firebase.js';
+
+const ROUNDS = [
+  {
+    title: '光的本質',
+    pairs: [
+      { term: '波長 λ',        def: '相鄰波峰之間的距離',                sub: 'wavelength · nm', note: 'λ × ν = c；λ 越短能量越大' },
+      { term: '頻率 ν',        def: '每秒振盪的次數',                    sub: 'frequency · Hz',   note: 'ν = c / λ' },
+      { term: '光速 c',        def: '真空中恆為 2.998 × 10⁸ m/s',         sub: 'speed of light',   note: 'c = λν' },
+      { term: '光子能量 E',    def: 'E = hν = hc/λ',                     sub: 'photon energy',    note: 'h = 6.626 × 10⁻³⁴ J·s' },
+      { term: '建設性干涉',    def: '波峰對波峰 → 振幅變大 → 亮條紋',     sub: 'constructive',     note: '楊氏雙狹縫實驗' },
+      { term: '破壞性干涉',    def: '波峰對波谷 → 振幅抵銷 → 暗條紋',     sub: 'destructive',      note: '波動性證據' },
+    ]
+  },
+  {
+    title: '能階與方法',
+    pairs: [
+      { term: '電子能階',      def: 'UV-Vis（200–700 nm）',              sub: 'electronic',       note: '電子躍遷，ΔE 最大' },
+      { term: '振動能階',      def: 'IR（2.5–25 μm），需偶極矩改變',      sub: 'vibrational',      note: '化學鍵指紋' },
+      { term: '轉動能階',      def: '遠紅外 / 微波',                     sub: 'rotational',       note: '氣相分子轉動' },
+      { term: '核自旋能階',    def: 'NMR（射頻 0.1–1 m）',               sub: 'nuclear spin',     note: 'ΔE 最小，需外加磁場' },
+      { term: '基態',          def: '能量最低、最穩定的狀態',             sub: 'ground state',     note: '室溫下幾乎全部分子在此' },
+      { term: '激發態',        def: '吸收光子後跳到的高能階',             sub: 'excited state',    note: '極不穩定，會快速弛緩' },
+    ]
+  },
+  {
+    title: '螢光 vs 磷光',
+    pairs: [
+      { term: '螢光 Fluorescence',  def: 'S₁ → S₀，奈秒級放光',           sub: 'ns',              note: '自旋守恆，立即放光' },
+      { term: '磷光 Phosphorescence', def: 'T₁ → S₀，毫秒～秒，需系間跨越',  sub: 'ms ~ s',         note: '自旋翻轉，低溫才顯著' },
+      { term: 'Stokes 位移',    def: '放射波長 > 激發波長',                sub: 'Stokes shift',    note: '振動弛緩造成的能量損失' },
+      { term: 'Raman 散射',     def: '非彈性散射，可穿透包裝',             sub: 'inelastic',       note: '振動模態（與 IR 互補）' },
+      { term: 'AAS 原子吸收',   def: '原子化後元素特徵線吸收',             sub: 'ppb',             note: 'Na, K, Ca, Pb 量測' },
+      { term: 'NIR 近紅外',     def: '同時測蛋白、脂、水含量',             sub: '780–2500 nm',     note: '需化學計量學模型' },
+    ]
+  },
+];
+
+let currentRound = 0;
+let selectedTerm = null;
+let selectedDef = null;
+let matched = new Set();
+let attempts = 0;
+let totalAttempts = 0;
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function render() {
+  const round = ROUNDS[currentRound];
+  document.getElementById('roundTag').textContent = `Round ${currentRound + 1}：${round.title}`;
+  document.getElementById('totalPairs').textContent = round.pairs.length;
+  document.getElementById('progress').textContent = matched.size;
+  document.getElementById('attempts').textContent = attempts;
+
+  for (let i = 0; i < ROUNDS.length; i++) {
+    const el = document.getElementById('step-' + (i + 1));
+    el.classList.remove('active', 'done');
+    if (i < currentRound) el.classList.add('done');
+    else if (i === currentRound) el.classList.add('active');
+  }
+
+  const termsCol = document.getElementById('termsCol');
+  const defsCol = document.getElementById('defsCol');
+  termsCol.innerHTML = '';
+  defsCol.innerHTML = '';
+
+  round.pairs.forEach((v, i) => {
+    const card = document.createElement('div');
+    card.className = 'card term-card';
+    card.dataset.id = i;
+    card.innerHTML = `<span>${v.term}</span><span class="sub">${v.sub}</span>`;
+    if (matched.has(i)) card.classList.add('matched');
+    card.addEventListener('click', () => onTermClick(i, card));
+    termsCol.appendChild(card);
+  });
+
+  const shuffled = shuffle(round.pairs.map((v, i) => ({ ...v, originalId: i })));
+  shuffled.forEach((v) => {
+    const card = document.createElement('div');
+    card.className = 'card def-card';
+    card.dataset.id = v.originalId;
+    card.textContent = v.def;
+    if (matched.has(v.originalId)) card.classList.add('matched');
+    card.addEventListener('click', () => onDefClick(v.originalId, card));
+    defsCol.appendChild(card);
+  });
+}
+
+function onTermClick(id, el) {
+  if (matched.has(id)) return;
+  document.querySelectorAll('.term-card.selected').forEach(c => c.classList.remove('selected'));
+  selectedTerm = { id, el };
+  el.classList.add('selected');
+  tryMatch();
+}
+
+function onDefClick(id, el) {
+  if (matched.has(id)) return;
+  document.querySelectorAll('.def-card.selected').forEach(c => c.classList.remove('selected'));
+  selectedDef = { id, el };
+  el.classList.add('selected');
+  tryMatch();
+}
+
+function tryMatch() {
+  if (!selectedTerm || !selectedDef) return;
+  attempts++;
+  totalAttempts++;
+  document.getElementById('attempts').textContent = attempts;
+
+  const round = ROUNDS[currentRound];
+  const isCorrect = selectedTerm.id === selectedDef.id;
+  logEvent({
+    event_type: 'answer',
+    question_id: `R${currentRound + 1}-${round.pairs[selectedTerm.id].term}`,
+    is_correct: isCorrect,
+    attempts,
+  });
+
+  if (isCorrect) {
+    selectedTerm.el.classList.add('matched');
+    selectedDef.el.classList.add('matched');
+    selectedTerm.el.classList.remove('selected');
+    selectedDef.el.classList.remove('selected');
+    matched.add(selectedTerm.id);
+    document.getElementById('progress').textContent = matched.size;
+    showExample(round.pairs[selectedTerm.id]);
+    if (matched.size === round.pairs.length) {
+      setTimeout(advanceOrComplete, 1300);
+    }
+  } else {
+    const a = selectedTerm.el, b = selectedDef.el;
+    a.classList.add('wrong'); b.classList.add('wrong');
+    setTimeout(() => {
+      a.classList.remove('wrong', 'selected');
+      b.classList.remove('wrong', 'selected');
+    }, 500);
+  }
+  selectedTerm = null;
+  selectedDef = null;
+}
+
+function advanceOrComplete() {
+  if (currentRound < ROUNDS.length - 1) {
+    currentRound++;
+    matched = new Set();
+    attempts = 0;
+    render();
+  } else {
+    showComplete();
+  }
+}
+
+function showExample(v) {
+  const popup = document.getElementById('examplePopup');
+  popup.innerHTML = `✅ <strong>${v.term}</strong> — ${v.note}`;
+  popup.style.display = 'block';
+  setTimeout(() => { popup.style.display = 'none'; }, 2400);
+}
+
+function showComplete() {
+  const msg = document.getElementById('completeMessage');
+  document.getElementById('completeTitle').textContent = '🎉 全部關卡完成！';
+  const totalPairs = ROUNDS.reduce((s, r) => s + r.pairs.length, 0);
+  document.getElementById('completeDetail').innerHTML =
+    `你完成了 <strong>${ROUNDS.length}</strong> 個關卡，配對 <strong>${totalPairs}</strong> 個詞彙，<br>共嘗試 <strong>${totalAttempts}</strong> 次。`;
+  msg.style.display = 'block';
+  msg.scrollIntoView({ behavior: 'smooth' });
+  logEvent({ event_type: 'session_complete', final_score: totalPairs, attempts: totalAttempts });
+}
+
+function restart() {
+  currentRound = 0;
+  matched = new Set();
+  attempts = 0; totalAttempts = 0;
+  selectedTerm = null; selectedDef = null;
+  document.getElementById('completeMessage').style.display = 'none';
+  render();
+}
+window.restart = restart;
+
+await initGameSession({ chapter: 'ch6_soil_2026', game: 'vocab-match' });
+render();
+
+// QR Code
+document.getElementById('qr-img').src =
+  'https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=' +
+  encodeURIComponent(window.location.href);
+</script>
+</body>
+</html>

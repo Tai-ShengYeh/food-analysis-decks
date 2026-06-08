@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CH7 遊戲 1 — UV-Vis 詞彙配對</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:#0D1B2A; --card:#1A3050; --card2:#122540;
+  --pri:#00C6FF; --hi:#FFD700; --txt:#ECEEF2; --muted:#7A91B0;
+  --grn:#2ECC71; --red:#E74C3C;
+}
+body {
+  font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
+  background: var(--bg);
+  color: var(--txt);
+  min-height: 100vh;
+  padding: 16px;
+  font-size: 16px;
+}
+.container { max-width: 960px; margin: 0 auto; }
+.nav-link {
+  display: inline-block;
+  margin-bottom: 10px;
+  color: var(--pri);
+  text-decoration: none;
+  font-size: 14px;
+}
+.nav-link:hover { text-decoration: underline; }
+header {
+  background: var(--card);
+  padding: 18px 20px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  border-left: 4px solid var(--pri);
+}
+header h1 { font-size: 22px; margin-bottom: 6px; color: var(--pri); }
+header .subtitle { color: var(--muted); font-size: 13px; }
+.score-bar {
+  background: var(--card2);
+  padding: 10px 18px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 15px;
+  font-weight: bold;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.score-bar .right { color: var(--pri); }
+.round-tag {
+  display: inline-block;
+  background: var(--hi);
+  color: var(--bg);
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  margin-right: 8px;
+}
+.column-header {
+  font-size: 13px;
+  font-weight: bold;
+  color: var(--pri);
+  text-align: center;
+  padding: 8px;
+  background: var(--card2);
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+.game-area {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.card {
+  background: var(--card);
+  border: 2px solid #2A4A6E;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+  word-break: keep-all;
+  user-select: none;
+  line-height: 1.4;
+  color: var(--txt);
+}
+.card:hover { border-color: var(--pri); background: var(--card2); }
+.card.selected {
+  background: rgba(0, 198, 255, 0.15);
+  border-color: var(--pri);
+  box-shadow: 0 0 0 3px rgba(0, 198, 255, 0.25);
+}
+.card.matched {
+  background: rgba(46, 204, 113, 0.15);
+  border-color: var(--grn);
+  color: var(--grn);
+  cursor: default;
+  pointer-events: none;
+  opacity: 0.85;
+}
+.card.matched::before { content: '✅ '; }
+.card.wrong {
+  animation: shake 0.4s;
+  background: rgba(231, 76, 60, 0.15);
+  border-color: var(--red);
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+.term-card { font-weight: bold; flex-direction: column; align-items: flex-start; }
+.term-card .sub {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: normal;
+  margin-top: 4px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.term-card.matched .sub { color: var(--grn); }
+.btn {
+  background: var(--pri);
+  color: var(--bg);
+  border: none;
+  padding: 10px 22px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  display: inline-block;
+  font-family: inherit;
+  min-height: 44px;
+}
+.btn:hover { background: #00A0CC; }
+.btn-secondary { background: #5B6777; color: var(--txt); }
+.btn-secondary:hover { background: #455260; }
+.controls { text-align: center; margin: 16px 0; }
+.complete-message {
+  background: var(--grn);
+  color: var(--bg);
+  padding: 24px;
+  border-radius: 12px;
+  margin: 20px 0;
+  text-align: center;
+  font-size: 17px;
+  display: none;
+  font-weight: bold;
+}
+.complete-message h2 { margin-bottom: 12px; font-size: 22px; }
+.example-popup {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--card);
+  color: var(--txt);
+  padding: 14px 24px;
+  border-radius: 10px;
+  max-width: 90%;
+  z-index: 100;
+  display: none;
+  font-size: 15px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  border: 1px solid var(--pri);
+}
+.example-popup strong { color: var(--hi); }
+.round-progress {
+  background: var(--card2);
+  padding: 8px 16px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.round-progress .step {
+  display: inline-block;
+  padding: 2px 10px;
+  margin: 0 4px;
+  border-radius: 12px;
+  background: var(--card);
+}
+.round-progress .step.active { background: var(--pri); color: var(--bg); font-weight: bold; }
+.round-progress .step.done { background: var(--grn); color: var(--bg); }
+@media (max-width: 480px) {
+  .game-area { grid-template-columns: 1fr; }
+  .card { font-size: 14px; min-height: 50px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="ch6_spectroscopy.html" class="nav-link">← 回投影片</a>
+  <header>
+    <h1>🎯 CH7 遊戲 1：UV-Vis 詞彙配對</h1>
+    <div class="subtitle">兩關卡 16 對：基本原理 8 對 + 儀器五元件 8 對</div>
+  </header>
+
+  <div class="round-progress">
+    <span>關卡進度：</span>
+    <span class="step active" id="step-1">Round 1：基本原理</span>
+    <span class="step" id="step-2">Round 2：儀器與比色槽</span>
+  </div>
+
+  <div class="score-bar">
+    <span><span class="round-tag" id="roundTag">Round 1</span>進度：<span id="progress">0</span> / <span id="totalPairs">8</span></span>
+    <span class="right">嘗試次數：<span id="attempts">0</span></span>
+  </div>
+
+  <div id="completeMessage" class="complete-message">
+    <h2 id="completeTitle">🎉 全部配對完成！</h2>
+    <div id="completeDetail"></div>
+    <br>
+    <button class="btn" onclick="restart()">再玩一次</button>
+  </div>
+
+  <div class="game-area">
+    <div>
+      <div class="column-header">📖 詞語</div>
+      <div id="termsCol"></div>
+    </div>
+    <div>
+      <div class="column-header">💡 解釋／搭配</div>
+      <div id="defsCol"></div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="btn btn-secondary" onclick="restart()">🔄 重新本回合</button>
+  </div>
+</div>
+
+<div id="examplePopup" class="example-popup"></div>
+
+<script type="module">
+import { initGameSession, logEvent } from './game_firebase.js';
+
+const ROUNDS = [
+  {
+    "title": "基本原理",
+    "pairs": [
+      {
+        "term": "透光率 T",
+        "def": "I / I₀（透過光 / 入射光）",
+        "sub": "transmittance",
+        "note": "0–100%，T=50% → A=0.301"
+      },
+      {
+        "term": "吸光度 A",
+        "def": "A = −log T = log(I₀/I)",
+        "sub": "absorbance",
+        "note": "線性最佳區間 0.2–0.8"
+      },
+      {
+        "term": "莫耳消光係數 ε",
+        "def": "物質特有吸光能力（A=εbc 比例係數）",
+        "sub": "M⁻¹·cm⁻¹",
+        "note": "與 λ、溶劑有關"
+      },
+      {
+        "term": "光徑 b",
+        "def": "光通過樣品的距離（比色槽厚度）",
+        "sub": "cm",
+        "note": "常用 1 cm；改 2 cm 會讓 A 加倍"
+      },
+      {
+        "term": "λmax",
+        "def": "該物質吸收最強的波長",
+        "sub": "nm",
+        "note": "定量時優先選 λmax"
+      },
+      {
+        "term": "發色團",
+        "def": "含 π 鍵或孤對電子、可吸收 UV-Vis 的官能基",
+        "sub": "chromophore",
+        "note": "C=C、C=O、N=N…"
+      },
+      {
+        "term": "助色團",
+        "def": "本身不吸收，但會位移／增強發色團吸收",
+        "sub": "auxochrome",
+        "note": "−OH、−NH₂、−OR…"
+      },
+      {
+        "term": "Beer-Lambert 律",
+        "def": "A = ε · b · c，A 與 c 成正比",
+        "sub": "A=εbc",
+        "note": "定量光譜學的基石"
+      }
+    ]
+  },
+  {
+    "title": "儀器與比色槽",
+    "pairs": [
+      {
+        "term": "鎢絲燈",
+        "def": "Vis 波段光源（380–800 nm）",
+        "sub": "tungsten",
+        "note": "黑體輻射，連續光譜"
+      },
+      {
+        "term": "氘燈",
+        "def": "UV 波段光源（190–380 nm）",
+        "sub": "D₂",
+        "note": "電弧放電"
+      },
+      {
+        "term": "單色器",
+        "def": "把連續光分出單一波長（光柵）",
+        "sub": "monochromator",
+        "note": "bandwidth 越窄越好"
+      },
+      {
+        "term": "石英比色槽",
+        "def": "UV 量測必用（透 UV）",
+        "sub": "quartz",
+        "note": "玻璃會吸 UV → 不行"
+      },
+      {
+        "term": "玻璃比色槽",
+        "def": "Vis 量測即可（便宜耐用）",
+        "sub": "glass",
+        "note": "UV 區會吸光"
+      },
+      {
+        "term": "PMT",
+        "def": "光電倍增管，多 dynode 串聯放大",
+        "sub": "photomultiplier",
+        "note": "極高靈敏度"
+      },
+      {
+        "term": "光二極體陣列",
+        "def": "Diode array，全波長同步偵測",
+        "sub": "DAD",
+        "note": "搭配 HPLC 常用"
+      },
+      {
+        "term": "雙光束設計",
+        "def": "同時量樣品與空白，補償光源漂移",
+        "sub": "double-beam",
+        "note": "高階儀器標配"
+      }
+    ]
+  }
+];
+
+let currentRound = 0;
+let selectedTerm = null;
+let selectedDef = null;
+let matched = new Set();
+let attempts = 0;
+let totalAttempts = 0;
+let totalScore = 0;
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function render() {
+  const round = ROUNDS[currentRound];
+  document.getElementById('roundTag').textContent = `Round ${currentRound + 1}：${round.title}`;
+  document.getElementById('totalPairs').textContent = round.pairs.length;
+  document.getElementById('progress').textContent = matched.size;
+  document.getElementById('attempts').textContent = attempts;
+
+  // 更新關卡進度顯示
+  for (let i = 0; i < ROUNDS.length; i++) {
+    const el = document.getElementById('step-' + (i + 1));
+    el.classList.remove('active', 'done');
+    if (i < currentRound) el.classList.add('done');
+    else if (i === currentRound) el.classList.add('active');
+  }
+
+  const termsCol = document.getElementById('termsCol');
+  const defsCol = document.getElementById('defsCol');
+  termsCol.innerHTML = '';
+  defsCol.innerHTML = '';
+
+  round.pairs.forEach((v, i) => {
+    const card = document.createElement('div');
+    card.className = 'card term-card';
+    card.dataset.id = i;
+    card.innerHTML = `<span>${v.term}</span><span class="sub">${v.sub}</span>`;
+    if (matched.has(i)) card.classList.add('matched');
+    card.addEventListener('click', () => onTermClick(i, card));
+    termsCol.appendChild(card);
+  });
+
+  const shuffled = shuffle(round.pairs.map((v, i) => ({ ...v, originalId: i })));
+  shuffled.forEach((v) => {
+    const card = document.createElement('div');
+    card.className = 'card def-card';
+    card.dataset.id = v.originalId;
+    card.textContent = v.def;
+    if (matched.has(v.originalId)) card.classList.add('matched');
+    card.addEventListener('click', () => onDefClick(v.originalId, card));
+    defsCol.appendChild(card);
+  });
+}
+
+function onTermClick(id, el) {
+  if (matched.has(id)) return;
+  document.querySelectorAll('.term-card.selected').forEach(c => c.classList.remove('selected'));
+  selectedTerm = { id, el };
+  el.classList.add('selected');
+  tryMatch();
+}
+
+function onDefClick(id, el) {
+  if (matched.has(id)) return;
+  document.querySelectorAll('.def-card.selected').forEach(c => c.classList.remove('selected'));
+  selectedDef = { id, el };
+  el.classList.add('selected');
+  tryMatch();
+}
+
+function tryMatch() {
+  if (!selectedTerm || !selectedDef) return;
+  attempts++;
+  totalAttempts++;
+  document.getElementById('attempts').textContent = attempts;
+
+  const round = ROUNDS[currentRound];
+  const isCorrect = selectedTerm.id === selectedDef.id;
+  logEvent({
+    event_type: 'answer',
+    question_id: `R${currentRound + 1}-${round.pairs[selectedTerm.id].term}`,
+    is_correct: isCorrect,
+    attempts,
+  });
+
+  if (isCorrect) {
+    selectedTerm.el.classList.add('matched');
+    selectedDef.el.classList.add('matched');
+    selectedTerm.el.classList.remove('selected');
+    selectedDef.el.classList.remove('selected');
+    matched.add(selectedTerm.id);
+    document.getElementById('progress').textContent = matched.size;
+    showExample(round.pairs[selectedTerm.id]);
+    if (matched.size === round.pairs.length) {
+      totalScore += round.pairs.length;
+      setTimeout(advanceOrComplete, 1300);
+    }
+  } else {
+    const a = selectedTerm.el;
+    const b = selectedDef.el;
+    a.classList.add('wrong');
+    b.classList.add('wrong');
+    setTimeout(() => {
+      a.classList.remove('wrong', 'selected');
+      b.classList.remove('wrong', 'selected');
+    }, 500);
+  }
+  selectedTerm = null;
+  selectedDef = null;
+}
+
+function advanceOrComplete() {
+  if (currentRound < ROUNDS.length - 1) {
+    currentRound++;
+    matched = new Set();
+    attempts = 0;
+    render();
+  } else {
+    showComplete();
+  }
+}
+
+function showExample(v) {
+  const popup = document.getElementById('examplePopup');
+  popup.innerHTML = `✅ <strong>${v.term}</strong> — ${v.note}`;
+  popup.style.display = 'block';
+  setTimeout(() => { popup.style.display = 'none'; }, 2400);
+}
+
+function showComplete() {
+  const msg = document.getElementById('completeMessage');
+  document.getElementById('completeTitle').textContent = '🎉 全部關卡完成！';
+  const totalPairs = ROUNDS.reduce((s, r) => s + r.pairs.length, 0);
+  document.getElementById('completeDetail').innerHTML =
+    `你完成了 <strong>${ROUNDS.length}</strong> 個關卡，配對 <strong>${totalPairs}</strong> 個詞彙，<br>共嘗試 <strong>${totalAttempts}</strong> 次。`;
+  msg.style.display = 'block';
+  msg.scrollIntoView({ behavior: 'smooth' });
+  logEvent({
+    event_type: 'session_complete',
+    final_score: totalPairs,
+    attempts: totalAttempts,
+  });
+}
+
+function restart() {
+  currentRound = 0;
+  matched = new Set();
+  attempts = 0;
+  totalAttempts = 0;
+  totalScore = 0;
+  selectedTerm = null;
+  selectedDef = null;
+  document.getElementById('completeMessage').style.display = 'none';
+  render();
+}
+
+window.restart = restart;
+
+await initGameSession({ chapter: 'ch7', game: 'vocab-match' });
+render();
+</script>
+</body>
+</html>

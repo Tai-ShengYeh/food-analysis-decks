@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>光譜方法選擇決策樹 — Ch6</title>
+<style>
+  :root {
+    --bg:      #0D1B2A;
+    --card:    #1A3050;
+    --card2:   #0F2133;
+    --blue:    #00C6FF;
+    --gold:    #FFD700;
+    --green:   #2ECC71;
+    --red:     #E74C3C;
+    --purple:  #9B59B6;
+    --orange:  #E67E22;
+    --teal:    #1ABC9C;
+    --text:    #ECEEF2;
+    --muted:   #7A91B0;
+    --dim:     #2A4A6A;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── 頂部 ── */
+  header {
+    background: rgba(10,20,35,0.95);
+    border-bottom: 1px solid var(--dim);
+    padding: 14px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+  }
+  header h1 { font-size: 20px; color: var(--blue); }
+  header .tag {
+    font-size: 12px; color: var(--muted);
+    background: var(--card); padding: 4px 12px; border-radius: 20px;
+  }
+  #resetBtn {
+    background: transparent;
+    border: 1px solid var(--dim);
+    color: var(--muted);
+    padding: 6px 16px; border-radius: 8px;
+    font-size: 13px; cursor: pointer; font-family: inherit;
+    transition: all 0.2s;
+  }
+  #resetBtn:hover { border-color: var(--blue); color: var(--blue); }
+
+  /* ── 麵包屑 ── */
+  #breadcrumb {
+    padding: 12px 32px;
+    font-size: 13px;
+    color: var(--muted);
+    min-height: 40px;
+    display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  }
+  .bc-item { color: var(--muted); }
+  .bc-arrow { color: var(--dim); }
+  .bc-current { color: var(--gold); }
+
+  /* ── 主區域 ── */
+  main {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 32px 48px;
+  }
+
+  /* ── 問題節點 ── */
+  .node { width: 100%; max-width: 820px; animation: fadeIn 0.35s ease; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .step-label {
+    font-size: 12px; color: var(--blue); font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .question-card {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 32px 36px;
+    margin-bottom: 24px;
+    border-top: 4px solid var(--blue);
+  }
+  .question-card h2 {
+    font-size: clamp(20px, 3vw, 28px);
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.4;
+    margin-bottom: 8px;
+  }
+  .question-card p {
+    font-size: 14px; color: var(--muted); line-height: 1.6;
+  }
+
+  /* ── 選項按鈕 ── */
+  .choices { display: flex; flex-direction: column; gap: 12px; }
+  .choice-btn {
+    background: var(--card2);
+    border: 2px solid var(--dim);
+    border-radius: 14px;
+    padding: 18px 24px;
+    cursor: pointer;
+    font-family: inherit;
+    color: var(--text);
+    text-align: left;
+    transition: all 0.2s;
+    display: flex; align-items: flex-start; gap: 16px;
+  }
+  .choice-btn:hover {
+    border-color: var(--blue);
+    background: #162840;
+    transform: translateX(4px);
+  }
+  .choice-icon {
+    font-size: 28px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .choice-text h3 { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+  .choice-text p  { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+  /* ── 結果卡 ── */
+  .result-card {
+    border-radius: 20px;
+    padding: 36px;
+    animation: fadeIn 0.4s ease;
+  }
+  .result-badge {
+    display: inline-block;
+    padding: 4px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+    color: #0D1B2A;
+  }
+  .result-card h2 {
+    font-size: clamp(24px, 4vw, 36px);
+    font-weight: 700;
+    margin-bottom: 8px;
+    line-height: 1.2;
+  }
+  .result-card .en {
+    font-size: 16px;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  .result-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 560px) { .result-grid { grid-template-columns: 1fr; } }
+  .result-item {
+    background: rgba(0,0,0,0.25);
+    border-radius: 12px;
+    padding: 14px 16px;
+  }
+  .result-item .ri-label {
+    font-size: 11px; color: var(--muted);
+    font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; margin-bottom: 6px;
+  }
+  .result-item .ri-val { font-size: 15px; color: var(--text); line-height: 1.4; }
+
+  .food-case {
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    border-left: 4px solid;
+  }
+  .food-case h4 { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+  .food-case p  { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+  .result-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--blue);
+    color: #0D1B2A;
+    border: none;
+    padding: 13px 28px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+  .btn-primary:hover { opacity: 0.85; transform: translateY(-1px); }
+  .btn-outline {
+    background: transparent;
+    border: 2px solid var(--dim);
+    color: var(--muted);
+    padding: 13px 28px;
+    border-radius: 10px;
+    font-size: 15px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+  .btn-outline:hover { border-color: var(--blue); color: var(--blue); }
+
+  /* ── 底部進度 ── */
+  footer {
+    padding: 12px 32px;
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    border-top: 1px solid var(--dim);
+  }
+  .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--dim);
+    transition: background 0.3s;
+  }
+  .dot.active { background: var(--blue); }
+  .dot.visited { background: var(--muted); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🔬 光譜方法選擇</h1>
+  <span class="tag">Ch6 食品分析決策樹</span>
+  <button id="resetBtn">重新開始</button>
+</header>
+
+<div id="breadcrumb"></div>
+
+<main>
+  <div class="node" id="nodeArea"></div>
+</main>
+
+<footer>
+  <div class="dot active" id="d0"></div>
+  <div class="dot" id="d1"></div>
+  <div class="dot" id="d2"></div>
+  <div class="dot" id="d3"></div>
+</footer>
+
+<script>
+// ─────────────────────────────────────────────────────────────────
+// 決策樹資料
+// ─────────────────────────────────────────────────────────────────
+const TREE = {
+  root: {
+    step: "步驟 1 of 3",
+    q: "你的食品分析任務是什麼？",
+    hint: "根據目的選擇最適合的光譜方法，每種方法有不同的能階與靈敏度",
+    choices: [
+      { icon: "📊", text: "定量", desc: "我知道是什麼成分，要測它的濃度（mg/mL, ppm, ppb）", next: "q_quant" },
+      { icon: "🔍", text: "鑑別 / 結構分析", desc: "我不確定成分，要辨認分子結構或確認真偽", next: "q_qual" },
+      { icon: "⚡", text: "快篩 / 非破壞性", desc: "要快速篩查，不能破壞樣品，或要透過包裝量測", next: "q_screen" },
+    ]
+  },
+
+  q_quant: {
+    step: "步驟 2 of 3",
+    q: "分析物是什麼類型？",
+    hint: "不同類型的物質有不同的最佳量測能階",
+    back: "root",
+    choices: [
+      { icon: "⚛️", text: "重金屬 / 微量元素", desc: "Pb、Cd、As、Hg、Fe、Cu 等元素（ppm/ppb 級）", next: "r_aas" },
+      { icon: "💚", text: "有螢光特性的有機物", desc: "黃麴毒素、維生素B₂、葉綠素、多環芳烴", next: "r_fluo" },
+      { icon: "🧪", text: "一般有機物（無螢光）", desc: "蛋白質、糖、農藥（衍生後）、色素", next: "r_uvvis" },
+    ]
+  },
+
+  q_qual: {
+    step: "步驟 2 of 3",
+    q: "你主要要識別什麼？",
+    hint: "結構鑑別需要更高資訊量的光譜方法",
+    back: "root",
+    choices: [
+      { icon: "🔗", text: "化學鍵 / 官能基", desc: "知道分子有什麼鍵結（-OH、C=O、N-H），快速初篩", next: "r_ir" },
+      { icon: "🧬", text: "完整分子結構 / 摻假", desc: "要確認整體分子骨架，或比對真偽（蜂蜜、橄欖油）", next: "r_nmr" },
+      { icon: "🌈", text: "表面成分（不破壞）", desc: "透過玻璃、包裝量測，或需要分子振動指紋圖", next: "r_raman" },
+    ]
+  },
+
+  q_screen: {
+    step: "步驟 2 of 3",
+    q: "快篩的主要需求是什麼？",
+    hint: "速度、靈敏度、樣品狀態三者的取捨",
+    back: "root",
+    choices: [
+      { icon: "💡", text: "初篩後再確認（兩段式）", desc: "先低成本快篩，陽性再送精密確認（農藥殘留標準流程）", next: "q_twoStep" },
+      { icon: "📦", text: "不能破壞樣品 / 透過包裝", desc: "水果、包裝食品，樣品珍貴不能破壞", next: "r_raman" },
+      { icon: "🌡", text: "現場即時偵測（食安事件）", desc: "三聚氰胺、蘇丹紅等——需要快速、現場可用", next: "r_ftir" },
+    ]
+  },
+
+  q_twoStep: {
+    step: "步驟 3 of 3",
+    q: "初篩之後，確認用什麼方法？",
+    hint: "兩段式策略：UV-Vis 快篩 → 精密確認",
+    back: "q_screen",
+    choices: [
+      { icon: "🔬", text: "確認結構（農藥、毒素）", desc: "需要鑑定確切化學結構，排除干擾物", next: "r_lcms" },
+      { icon: "⚛️", text: "確認元素（重金屬）", desc: "已快篩出異常，需要精確定量到 ppb 級", next: "r_aas" },
+    ]
+  },
+
+  // ─── 結果節點 ───
+  r_aas: {
+    type: "result",
+    color: "#E74C3C",
+    name: "AAS / ICP-OES",
+    en:   "Atomic Absorption / Emission Spectroscopy",
+    items: [
+      { label: "原理", val: "原子化後測元素特征吸收線（AAS）或發射線（ICP）" },
+      { label: "靈敏度", val: "ppb（μg/L）級 ★★★★" },
+      { label: "波長範圍", val: "元素特定：Pb 283nm、Cd 228nm、Fe 248nm" },
+      { label: "優勢", val: "元素專一性極高、不受有機基質干擾" },
+    ],
+    case: {
+      title: "🥦 蔬菜重金屬殘留篩查",
+      desc: "鎘（Cd）在葉菜類易累積，AAS 可在 ppb 級精確定量。台灣食安標準：菠菜 Cd ≤ 0.05 mg/kg，需 ICP-MS 確認。",
+      bg: "#3D1515",
+    },
+    predict: "💡 你猜：AAS 為什麼不能用來測蛋白質含量？（能階原因）"
+  },
+
+  r_uvvis: {
+    type: "result",
+    color: "#00C6FF",
+    name: "UV-Vis 分光光度法",
+    en:   "UV-Visible Spectrophotometry (Beer-Lambert)",
+    items: [
+      { label: "原理", val: "A = εbc，電子躍遷吸收 200–700 nm" },
+      { label: "靈敏度", val: "ppm（mg/L）級 ★★★" },
+      { label: "線性範圍", val: "A = 0.2–0.8（超過 0.8 必須稀釋！）" },
+      { label: "常用衍生化", val: "Bradford（蛋白質, 595nm）、DNS（還原糖, 540nm）" },
+    ],
+    case: {
+      title: "🥛 牛奶蛋白質定量 — Bradford 法",
+      desc: "牛奶蛋白與 Coomassie 染料結合 → A₅₉₅ 上升。反直覺：A 值 > 0.8 → 測量誤差增大 → 必須稀釋後重測，不是「訊號越強越準」！",
+      bg: "#102040",
+    },
+    predict: "💡 你猜：同一杯蛋白質溶液，換大一倍的比色槽（2 cm），A 值會變成多少？"
+  },
+
+  r_fluo: {
+    type: "result",
+    color: "#2ECC71",
+    name: "螢光光譜法",
+    en:   "Fluorescence Spectroscopy",
+    items: [
+      { label: "原理", val: "S₁→S₀ 螢光發射，Stokes shift（發射 > 激發波長）" },
+      { label: "靈敏度", val: "ppb–ppt 級 ★★★★★（比 UV-Vis 高 100–1000 倍）" },
+      { label: "典型激發/發射", val: "黃麴毒素 B1：激發 365nm → 發射 440nm" },
+      { label: "注意", val: "高濃度自我淬滅（Inner Filter Effect）→ 必須稀釋！" },
+    ],
+    case: {
+      title: "🥜 花生黃麴毒素 B1 偵測",
+      desc: "黃麴毒素 B1 在 365 nm UV 燈下發藍紫色螢光（440 nm）。反直覺：濃度太高時螢光反而下降（自我吸收），需稀釋到線性範圍才能定量！",
+      bg: "#0F2810",
+    },
+    predict: "💡 你猜：為什麼螢光的激發波長是 365nm，但偵測的是 440nm？（Jablonski 圖）"
+  },
+
+  r_nmr: {
+    type: "result",
+    color: "#FFD700",
+    name: "NMR 核磁共振",
+    en:   "Nuclear Magnetic Resonance Spectroscopy",
+    items: [
+      { label: "原理", val: "核自旋能階（ΔE 最小）在射頻場下共振吸收" },
+      { label: "靈敏度", val: "ppm 級（較低）★，但結構資訊最豐富" },
+      { label: "特色", val: "¹H/¹³C 圖譜是分子「指紋」，可辨認糖、胺基酸序列" },
+      { label: "食品應用", val: "蜂蜜摻假（C4 糖比例）、橄欖油真偽、酒類鑑別" },
+    ],
+    case: {
+      title: "🍯 蜂蜜摻偽鑑別 — NMR 最終仲裁",
+      desc: "玉米糖漿（C4 植物）的 ¹³C 同位素比例和蜂蜜（C3 植物）不同。¹H NMR 可同時看到葡萄糖、果糖、蔗糖的特征峰比例，5 分鐘一支管即完成。",
+      bg: "#2A2000",
+    },
+    predict: "💡 你猜：NMR 靈敏度為什麼比 UV-Vis 低得多？（Boltzmann 分佈）"
+  },
+
+  r_ir: {
+    type: "result",
+    color: "#E67E22",
+    name: "FTIR（傅立葉紅外光譜）",
+    en:   "Fourier Transform Infrared Spectroscopy",
+    items: [
+      { label: "原理", val: "振動能階吸收（2.5–25 μm），需偶極矩改變" },
+      { label: "靈敏度", val: "% 級（適合主成分分析）★★" },
+      { label: "特色", val: "掃描快速（< 1 分鐘），不需要液態樣品" },
+      { label: "食品應用", val: "三聚氰胺鑑定、脂肪酸組成、奶粉品質管控" },
+    ],
+    case: {
+      title: "🍼 奶粉三聚氰胺快速鑑定",
+      desc: "三聚氰胺在 1550 cm⁻¹、808 cm⁻¹ 有特征振動峰。FTIR ATR 法：固體直接壓片量測，3 分鐘出結果，比 HPLC 快 10 倍。2008 年事件後成為標準快篩法。",
+      bg: "#2A1500",
+    },
+    predict: "💡 你猜：為什麼 N₂ 和 O₂ 不吸收紅外線，但 CO₂ 和 H₂O 會？（偶極矩）"
+  },
+
+  r_raman: {
+    type: "result",
+    color: "#9B59B6",
+    name: "拉曼光譜",
+    en:   "Raman Spectroscopy",
+    items: [
+      { label: "原理", val: "非彈性散射（Raman shift），不需偶極矩改變" },
+      { label: "最大優勢", val: "可穿透玻璃、包裝膜量測，不破壞樣品" },
+      { label: "水干擾", val: "極小（水的 Raman 訊號弱），適合水溶液樣品" },
+      { label: "食品應用", val: "橄欖油摻假（透過瓶）、魚新鮮度、藥錠真偽" },
+    ],
+    case: {
+      title: "🫒 橄欖油透瓶鑑真",
+      desc: "手持式 Raman 掃描器直接對著橄欖油瓶量測，2 分鐘比對油酸/亞麻酸比例圖譜，不需要開瓶或前處理。可在超市現場使用。",
+      bg: "#1F0F35",
+    },
+    predict: "💡 你猜：Raman 和 FTIR 都能測振動能階，為什麼互補而非競爭？（選擇規則）"
+  },
+
+  r_ftir: {
+    type: "result",
+    color: "#1ABC9C",
+    name: "FTIR（現場快篩）",
+    en:   "FTIR / Portable Spectrometer",
+    items: [
+      { label: "場景", val: "食安事件現場、進口食品邊境查驗" },
+      { label: "優勢", val: "便攜式儀器、固液均可、圖譜庫比對 < 3 分鐘" },
+      { label: "後續確認", val: "陽性樣品送 LC-MS 或 GC-MS 確認結構" },
+      { label: "實例", val: "蘇丹紅（Sudan Red）、塑化劑（DEHP）快速篩查" },
+    ],
+    case: {
+      title: "🚨 食安事件現場篩查",
+      desc: "2011 年塑化劑事件：便攜 FTIR 在工廠現場掃描，30 分鐘完成初步篩查。DEHP 在 1730 cm⁻¹ 有特征酯基峰，與食品添加物圖譜完全不同。",
+      bg: "#0A2020",
+    },
+    predict: "💡 你猜：現場 FTIR 初篩陽性後，為什麼還要再用 LC-MS 確認？（靈敏度 vs 特異性）"
+  },
+
+  r_lcms: {
+    type: "result",
+    color: "#E74C3C",
+    name: "LC-MS / GC-MS（確認用）",
+    en:   "Liquid/Gas Chromatography–Mass Spectrometry",
+    items: [
+      { label: "原理", val: "層析分離 + 質譜定性定量（非光譜法，但常與光譜法搭配）" },
+      { label: "靈敏度", val: "ppb–ppt 級 ★★★★★" },
+      { label: "優勢", val: "最高確認力，可鑑定分子量與碎片，排除假陽性" },
+      { label: "與光譜組合", val: "UV 快篩（農藥）→ LC-MS 確認結構 = 標準兩段式流程" },
+    ],
+    case: {
+      title: "🥬 蔬菜農藥殘留標準流程",
+      desc: "UV-Vis 快篩（農藥萃取液 A₂₅₀nm 異常）→ 轉 LC-MS（確認農藥種類及殘留量）。兩段式策略：快篩省時省錢，確認保證準確。台灣食藥署標準作業程序（SOP）。",
+      bg: "#2A0A0A",
+    },
+    predict: "💡 你猜：為什麼不一開始就全用 LC-MS？（分析效率 vs 成本）"
+  },
+};
+
+// ─────────────────────────────────────────────────────────────────
+// 狀態
+// ─────────────────────────────────────────────────────────────────
+let history = ['root'];
+let currentId = 'root';
+
+function render(nodeId) {
+  const node = TREE[nodeId];
+  const area = document.getElementById('nodeArea');
+  area.innerHTML = '';
+
+  updateBreadcrumb();
+  updateDots();
+
+  if (node.type === 'result') {
+    renderResult(node, area);
+  } else {
+    renderQuestion(node, area);
+  }
+}
+
+// ── 問題節點 ──
+function renderQuestion(node, area) {
+  const div = document.createElement('div');
+  div.className = 'node';
+  div.innerHTML = `
+    <div class="step-label">${node.step}</div>
+    <div class="question-card">
+      <h2>${node.q}</h2>
+      ${node.hint ? `<p>${node.hint}</p>` : ''}
+    </div>
+    <div class="choices">
+      ${node.choices.map((c, i) => `
+        <button class="choice-btn" data-next="${c.next}">
+          <span class="choice-icon">${c.icon}</span>
+          <div class="choice-text">
+            <h3>${c.text}</h3>
+            <p>${c.desc}</p>
+          </div>
+        </button>
+      `).join('')}
+    </div>
+  `;
+  area.appendChild(div);
+
+  div.querySelectorAll('.choice-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const next = btn.dataset.next;
+      history.push(next);
+      currentId = next;
+      render(next);
+    });
+  });
+}
+
+// ── 結果節點 ──
+function renderResult(node, area) {
+  const div = document.createElement('div');
+  div.className = 'node';
+
+  div.innerHTML = `
+    <div class="result-card" style="background: linear-gradient(135deg, ${node.color}18, #1A3050); border-top: 4px solid ${node.color};">
+      <div class="result-badge" style="background: ${node.color};">推薦方法</div>
+      <h2 style="color: ${node.color};">${node.name}</h2>
+      <div class="en">${node.en}</div>
+
+      <div class="result-grid">
+        ${node.items.map(it => `
+          <div class="result-item">
+            <div class="ri-label">${it.label}</div>
+            <div class="ri-val">${it.val}</div>
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="food-case" style="background: ${node.case.bg}; border-left-color: ${node.color};">
+        <h4>食品案例 ${node.case.title}</h4>
+        <p>${node.case.desc}</p>
+      </div>
+
+      <div style="background: rgba(255,215,0,0.08); border-radius: 12px; padding: 14px 18px; margin-bottom: 24px; border-left: 3px solid #FFD700;">
+        <p style="font-size: 14px; color: #FFD700; line-height: 1.6;">${node.predict}</p>
+      </div>
+
+      <div id="submit-form" style="background:rgba(0,198,255,0.06);border-radius:12px;padding:16px 18px;margin-bottom:20px;border:1px solid rgba(0,198,255,0.25)">
+        <p style="font-size:14px;color:#00C6FF;font-weight:700;margin-bottom:10px">📝 記錄你的選擇（老師即時看到 · 計入參與紀錄）</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+          <div>
+            <label style="font-size:11px;color:#7A91B0;font-weight:700;letter-spacing:1px;display:block;margin-bottom:4px">學號 *</label>
+            <input type="text" id="student-id" placeholder="例：S11234567" maxlength="12" autocomplete="off"
+              style="width:100%;background:#0F2133;border:1px solid #2A4A6A;border-radius:8px;color:#ECEEF2;font-family:inherit;font-size:15px;padding:9px 12px;outline:none">
+          </div>
+          <div>
+            <label style="font-size:11px;color:#7A91B0;font-weight:700;letter-spacing:1px;display:block;margin-bottom:4px">姓名（選填）</label>
+            <input type="text" id="student-name" placeholder="例：王小明" maxlength="10" autocomplete="off"
+              style="width:100%;background:#0F2133;border:1px solid #2A4A6A;border-radius:8px;color:#ECEEF2;font-family:inherit;font-size:15px;padding:9px 12px;outline:none">
+          </div>
+        </div>
+        <textarea id="reason-text" placeholder="你為什麼選擇這個方法？（選填）"
+          style="width:100%;min-height:68px;background:#0F2133;border:1px solid #2A4A6A;border-radius:8px;color:#ECEEF2;font-family:inherit;font-size:14px;padding:10px;resize:vertical"></textarea>
+        <div style="display:flex;gap:10px;margin-top:10px;align-items:center">
+          <button id="submitBtn" style="padding:8px 22px;background:#00C6FF;color:#0D1B2A;border:none;border-radius:8px;cursor:pointer;font-weight:700;font-size:14px">送出 ✓</button>
+          <span id="submit-status" style="font-size:13px;color:#7A91B0"></span>
+        </div>
+      </div>
+
+      <div class="result-btns">
+        <button class="btn-primary" id="restartBtn">重新選擇</button>
+        <button class="btn-outline" id="backBtn">← 上一步</button>
+      </div>
+    </div>
+  `;
+  area.appendChild(div);
+
+  div.querySelector('#restartBtn').addEventListener('click', resetTree);
+  div.querySelector('#backBtn').addEventListener('click', goBack);
+
+  // Wire submit button (Firebase module will handle the actual send)
+  const submitBtn = div.querySelector('#submitBtn');
+  if (submitBtn) {
+    submitBtn.addEventListener('click', () => {
+      const studentId   = div.querySelector('#student-id').value.trim();
+      const studentName = div.querySelector('#student-name').value.trim();
+      const reason      = div.querySelector('#reason-text').value.trim();
+      const statusEl    = div.querySelector('#submit-status');
+      if (!studentId) {
+        statusEl.textContent = '⚠️ 請先輸入學號';
+        statusEl.style.color = '#E74C3C';
+        div.querySelector('#student-id').focus();
+        return;
+      }
+      window._dtSubmit && window._dtSubmit(node.name, reason, studentId, studentName, statusEl, submitBtn);
+    });
+  }
+}
+
+// ── 麵包屑 ──
+const LABELS = {
+  root:       "分析目的",
+  q_quant:    "定量",
+  q_qual:     "鑑別結構",
+  q_screen:   "快篩",
+  q_twoStep:  "兩段式確認",
+  r_aas:      "→ AAS",
+  r_uvvis:    "→ UV-Vis",
+  r_fluo:     "→ 螢光",
+  r_nmr:      "→ NMR",
+  r_ir:       "→ FTIR",
+  r_raman:    "→ Raman",
+  r_ftir:     "→ FTIR 現場",
+  r_lcms:     "→ LC-MS",
+};
+
+function updateBreadcrumb() {
+  const bc = document.getElementById('breadcrumb');
+  bc.innerHTML = history.map((id, i) => {
+    const label = LABELS[id] || id;
+    if (i === history.length - 1) {
+      return `<span class="bc-current">${label}</span>`;
+    }
+    return `<span class="bc-item">${label}</span><span class="bc-arrow">›</span>`;
+  }).join('');
+}
+
+function updateDots() {
+  const depth = Math.min(history.length - 1, 3);
+  [0,1,2,3].forEach(i => {
+    const d = document.getElementById('d' + i);
+    d.className = 'dot' + (i < depth ? ' visited' : '') + (i === depth ? ' active' : '');
+  });
+}
+
+// ── 返回 ──
+function goBack() {
+  if (history.length <= 1) return;
+  history.pop();
+  currentId = history[history.length - 1];
+  render(currentId);
+}
+
+// ── 重置 ──
+function resetTree() {
+  history = ['root'];
+  currentId = 'root';
+  render('root');
+}
+
+// ── 初始化 ──
+document.getElementById('resetBtn').addEventListener('click', resetTree);
+render('root');
+</script>
+
+<script type="module">
+import { initializeApp }  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getFirestore, collection, addDoc, serverTimestamp }
+  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+// ── Firebase 設定從 Hosting 保留端點取得，API Key 不寫死在原始碼 ────
+// /__/firebase/init.json 只有 Firebase Hosting 會回應；
+// 本機 file:// 或其他伺服器開啟時 db = undefined，即時功能靜默停用。
+let db;
+try {
+  const _r = await fetch('/__/firebase/init.json');
+  if (!_r.ok) throw new Error('not Firebase Hosting');
+  const FB = await _r.json();
+  db = getFirestore(initializeApp(FB));
+} catch (_e) {
+  console.warn('[Firebase] 即時功能停用（請由 Firebase Hosting 開啟）', _e.message);
+}
+
+// Session from URL param or today's date
+const params  = new URLSearchParams(location.search);
+const SESSION = params.get('session') || new Date().toISOString().slice(0,10).replace(/-/g,'');
+
+window._dtSubmit = async function(method, reason, studentId, studentName, statusEl, btn) {
+  if (btn._submitted) return;
+  if (!studentId) { if (statusEl) { statusEl.textContent = '⚠️ 請先輸入學號'; statusEl.style.color = '#E74C3C'; } return; }
+  btn._submitted = true;
+  btn.disabled = true;
+  btn.textContent = '送出中…';
+  if (statusEl) statusEl.textContent = '';
+  try {
+    await addDoc(collection(db, 'decision_tree_responses', SESSION, 'responses'), {
+      method,
+      reason:     reason      || '',
+      student_id: studentId,
+      name:       studentName || '',
+      ts: serverTimestamp()
+    });
+    btn.textContent = '✓ 已送出';
+    btn.style.background = '#2ECC71';
+    if (statusEl) { statusEl.textContent = `✓ ${studentId} 已記錄`; statusEl.style.color = '#2ECC71'; }
+  } catch(e) {
+    btn.disabled = false;
+    btn._submitted = false;
+    btn.textContent = '送出 ✓';
+    if (statusEl) { statusEl.textContent = '送出失敗，請確認網路後重試'; statusEl.style.color = '#E74C3C'; }
+    console.error(e);
+  }
+};
+</script>
+</body>
+</html>

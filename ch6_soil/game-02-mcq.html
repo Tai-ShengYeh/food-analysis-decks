@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>遊戲 2：光譜概念選擇題 · Ch6</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0e27; --bg-2:#11163a; --card:#1A3050; --card2:#122540;
+  --ink:#eef3ff; --ink-2:#b8c5e0; --muted:#7a8bb8;
+  --accent:#00d4ff; --accent-2:#ff006e; --grn:#00e08a; --red:#e74c3c; --warn:#ffb800;
+}
+body{
+  font-family:'Noto Sans TC','Microsoft JhengHei',sans-serif;
+  background:radial-gradient(ellipse at top, #11163a 0%, #0a0e27 60%);
+  color:var(--ink); min-height:100vh; padding:16px; font-size:16px;
+}
+.container{max-width:820px; margin:0 auto}
+.nav-link{display:inline-block; margin-bottom:10px; color:var(--accent); text-decoration:none; font-size:14px}
+.nav-link:hover{text-decoration:underline}
+header{
+  background:var(--card); padding:18px 20px; border-radius:12px;
+  margin-bottom:16px; border-left:4px solid var(--accent-2);
+}
+header h1{font-size:22px; margin-bottom:6px; color:var(--accent-2)}
+header .subtitle{color:var(--muted); font-size:13px}
+.progress-bar{
+  height:6px; background:var(--card2); border-radius:3px;
+  margin-bottom:16px; overflow:hidden;
+}
+.progress-bar .fill{
+  height:100%; background:linear-gradient(90deg,var(--accent),var(--accent-2));
+  width:0%; transition:width .4s ease;
+}
+.score-bar{
+  background:var(--card2); padding:10px 18px; border-radius:8px;
+  margin-bottom:16px; display:flex; justify-content:space-between;
+  font-size:14px; font-weight:bold;
+}
+.q-card{
+  background:var(--card); border-radius:12px; padding:24px;
+  margin-bottom:14px; border:1px solid rgba(255,255,255,.06);
+}
+.q-num{
+  font-family:'JetBrains Mono',monospace; font-size:12px;
+  color:var(--accent); letter-spacing:.15em; margin-bottom:8px;
+}
+.q-text{
+  font-size:17px; line-height:1.5; margin-bottom:18px;
+  font-weight:700;
+}
+.opts{display:flex; flex-direction:column; gap:10px}
+.opt{
+  background:var(--card2); border:2px solid #2A4A6E;
+  padding:14px 18px; border-radius:10px; cursor:pointer;
+  transition:all .2s; min-height:50px;
+  display:flex; align-items:center; gap:12px;
+  font-size:15px; line-height:1.4;
+}
+.opt:hover{border-color:var(--accent); background:rgba(0,212,255,.08)}
+.opt.selected{border-color:var(--accent); background:rgba(0,212,255,.15)}
+.opt.correct{
+  border-color:var(--grn); background:rgba(0,224,138,.15); color:var(--grn);
+  pointer-events:none;
+}
+.opt.wrong{
+  border-color:var(--red); background:rgba(231,76,60,.15); color:var(--red);
+  pointer-events:none;
+}
+.opt-key{
+  width:32px; height:32px; border-radius:50%;
+  background:rgba(255,255,255,.06); display:inline-flex;
+  align-items:center; justify-content:center; flex-shrink:0;
+  font-family:'JetBrains Mono',monospace; font-weight:700; font-size:14px;
+}
+.opt.correct .opt-key{background:var(--grn); color:var(--bg)}
+.opt.wrong .opt-key{background:var(--red); color:white}
+.feedback{
+  display:none; margin-top:14px; padding:12px 16px;
+  background:rgba(0,212,255,.06); border-left:3px solid var(--accent);
+  border-radius:8px; font-size:14px; line-height:1.6; color:var(--ink-2);
+}
+.feedback.show{display:block}
+.feedback strong{color:var(--accent)}
+.feedback.wrong{background:rgba(255,184,0,.06); border-left-color:var(--warn)}
+.feedback.wrong strong{color:var(--warn)}
+.btn-next{
+  width:100%; background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  color:var(--bg); border:none; padding:14px; border-radius:10px;
+  font-size:16px; font-weight:700; cursor:pointer;
+  margin-top:14px; display:none; font-family:inherit;
+}
+.btn-next.show{display:block}
+.complete{
+  background:linear-gradient(135deg,var(--grn),var(--accent));
+  color:var(--bg); padding:28px; border-radius:14px;
+  text-align:center; display:none; margin-bottom:14px;
+}
+.complete h2{font-size:24px; margin-bottom:10px}
+.complete .score{font-size:42px; font-weight:900; margin:14px 0}
+.btn{
+  background:var(--bg); color:var(--ink); border:none;
+  padding:10px 22px; border-radius:8px; font-weight:700;
+  cursor:pointer; font-family:inherit; font-size:15px;
+}
+.qr-foot{text-align:center; margin-top:24px; padding:14px; border-top:1px solid rgba(255,255,255,.06)}
+.qr-foot img{border-radius:8px; background:white; padding:6px}
+.qr-foot p{font-size:.75rem; color:var(--muted); margin-top:6px}
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="ch6_spectroscopy.html" class="nav-link">← 回投影片</a>
+  <header>
+    <h1>📝 遊戲 2：光譜概念選擇題</h1>
+    <div class="subtitle">10 題單選，答錯會顯示解析。盡量一次答對！</div>
+  </header>
+
+  <div class="progress-bar"><div class="fill" id="fill"></div></div>
+  <div class="score-bar">
+    <span>進度：<span id="cur">1</span> / <span id="total">10</span></span>
+    <span style="color:var(--grn)">答對：<span id="correct">0</span></span>
+  </div>
+
+  <div id="complete" class="complete">
+    <h2>🎉 完成全部題目！</h2>
+    <div class="score" id="finalScore">0 / 10</div>
+    <div id="finalMsg"></div>
+    <br>
+    <button class="btn" onclick="restart()">再玩一次</button>
+  </div>
+
+  <div id="quizArea"></div>
+
+  <div class="qr-foot">
+    <img id="qr-img" width="120" height="120" alt="QR">
+    <p>手機掃描即可開啟此遊戲</p>
+  </div>
+</div>
+
+<script type="module">
+import { initGameSession, logEvent } from './game_firebase.js';
+
+const QUESTIONS = [
+  {
+    q: '下列哪一個現象「最適合」用光的波動性解釋？',
+    opts: ['光電效應', '吸收光譜', '繞射與干涉', '螢光放射'],
+    correct: 2,
+    expl: '繞射、干涉是典型的波動現象；吸收、放射、光電效應則是粒子性的證據。'
+  },
+  {
+    q: '室溫下，下列哪一種光譜法的「Boltzmann 分布」造成靈敏度最低？',
+    opts: ['UV-Vis 吸收', 'Mid-IR 吸收', 'NMR', '原子吸收 AAS'],
+    correct: 2,
+    expl: 'NMR 兩能階差 ΔE 很小（射頻能量），人口幾乎相等，淨吸收訊號很弱 → 靈敏度最低。UV-Vis ΔE 大，基態人口幾乎 100%，靈敏度最高。'
+  },
+  {
+    q: '光子能量 E 與下列何者「成正比」？',
+    opts: ['波長 λ', '頻率 ν', '速度 c', '振幅 A'],
+    correct: 1,
+    expl: 'E = hν = hc/λ。E 與頻率 ν 成正比，與波長 λ 成「反」比。'
+  },
+  {
+    q: '螢光放射的波長為什麼一定 ≥ 激發光波長？',
+    opts: [
+      '螢光分子的折射率比較大',
+      '激發態先經振動弛緩損失能量，才放光',
+      '溶劑會吸收高能光子',
+      '螢光本來就比較暗'
+    ],
+    correct: 1,
+    expl: 'Stokes 位移：分子在激發態先以振動弛緩（放熱）回到 S₁ 最低點，再放光；放出的光子能量比吸收的小 → 波長較長。'
+  },
+  {
+    q: '下列哪一種能階「只有在外加磁場下才存在」？',
+    opts: ['電子能階', '振動能階', '轉動能階', '核自旋能階'],
+    correct: 3,
+    expl: '核自旋能階（NMR 的基礎）只在外加磁場下，自旋的兩種取向才會有能量差。其它能階是分子本身就有的。'
+  },
+  {
+    q: '紅外（IR）吸收光譜對應哪一類能階躍遷？',
+    opts: ['電子', '振動', '轉動', '核自旋'],
+    correct: 1,
+    expl: 'IR（2.5–25 μm）能量等級剛好對應化學鍵的「振動」基態到激發態。IR 是分子的「指紋」光譜。'
+  },
+  {
+    q: '波長 500 nm 的綠光，下列敘述何者「正確」？',
+    opts: [
+      '比 250 nm UV 光子能量大',
+      '比 1000 nm NIR 光子能量小',
+      '頻率 ν ≈ 6.0 × 10¹⁴ Hz',
+      '在水中速度大於真空'
+    ],
+    correct: 2,
+    expl: 'ν = c/λ = 3×10⁸ / 5×10⁻⁷ = 6×10¹⁴ Hz。較短波長 → 較高能量；光在介質中速度永遠 ≤ 真空。'
+  },
+  {
+    q: 'NIR（近紅外）能在食品中「同時定量蛋白、脂、水」靠的是什麼？',
+    opts: [
+      '官能基的基頻振動吸收',
+      '官能基的泛音（overtone）與組合振動吸收 + 化學計量學模型',
+      '電子躍遷與螢光',
+      '原子發射特徵線'
+    ],
+    correct: 1,
+    expl: 'NIR 對應泛音／組合振動，吸收較弱但能穿透樣品；需要 PLS、PCA 等化學計量學模型校正多分析物。'
+  },
+  {
+    q: '原子發射光譜（AES）為什麼通常需要高溫電漿（&gt;6000 K）？',
+    opts: [
+      '熱讓樣品蒸發',
+      '提高 Boltzmann 高能階人口，才有足夠激發態原子放光',
+      '增加光速',
+      '讓干擾光減少'
+    ],
+    correct: 1,
+    expl: '室溫下激發態原子幾乎為零，無法產生可量測的放射訊號。溫度越高，e⁻ᴱ/ᵏᵀ 越大，激發態原子數增加，AES 才可行。'
+  },
+  {
+    q: '下列哪一句敘述「錯誤」？',
+    opts: [
+      '波長越短的光子能量越大',
+      'UV-Vis 吸收造成分子電子躍遷',
+      '螢光放射波長一定比激發光波長短',
+      'NMR 訊號比 UV-Vis 弱很多'
+    ],
+    correct: 2,
+    expl: '螢光放射波長一定 ≥ 激發波長（Stokes 位移），不是更短。其他三句都是正確的。'
+  },
+];
+
+let cur = 0;
+let correct = 0;
+let answered = false;
+
+function render() {
+  if (cur >= QUESTIONS.length) { showComplete(); return; }
+  const q = QUESTIONS[cur];
+  document.getElementById('cur').textContent = cur + 1;
+  document.getElementById('total').textContent = QUESTIONS.length;
+  document.getElementById('correct').textContent = correct;
+  document.getElementById('fill').style.width = ((cur) / QUESTIONS.length * 100) + '%';
+
+  const keys = ['A', 'B', 'C', 'D'];
+  const optsHtml = q.opts.map((o, i) =>
+    `<div class="opt" data-i="${i}"><span class="opt-key">${keys[i]}</span><span>${o}</span></div>`
+  ).join('');
+
+  document.getElementById('quizArea').innerHTML = `
+    <div class="q-card">
+      <div class="q-num">Q ${cur + 1} / ${QUESTIONS.length}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="opts" id="opts">${optsHtml}</div>
+      <div class="feedback" id="feedback"></div>
+      <button class="btn-next" id="btn-next">下一題 →</button>
+    </div>
+  `;
+
+  answered = false;
+  document.querySelectorAll('.opt').forEach(el => {
+    el.addEventListener('click', () => onSelect(parseInt(el.dataset.i)));
+  });
+  document.getElementById('btn-next').addEventListener('click', next);
+}
+
+function onSelect(i) {
+  if (answered) return;
+  answered = true;
+  const q = QUESTIONS[cur];
+  const opts = document.querySelectorAll('.opt');
+  const isCorrect = i === q.correct;
+
+  opts[q.correct].classList.add('correct');
+  if (!isCorrect) opts[i].classList.add('wrong');
+
+  const fb = document.getElementById('feedback');
+  fb.innerHTML = isCorrect
+    ? `<strong>✅ 答對！</strong> ${q.expl}`
+    : `<strong>❌ 答錯</strong>，正確答案是 <strong>${'ABCD'[q.correct]}</strong>。${q.expl}`;
+  fb.classList.add('show');
+  if (!isCorrect) fb.classList.add('wrong');
+
+  if (isCorrect) correct++;
+  document.getElementById('correct').textContent = correct;
+
+  logEvent({
+    event_type: 'answer',
+    question_id: `Q${cur + 1}`,
+    is_correct: isCorrect,
+    attempts: 1,
+  });
+
+  document.getElementById('btn-next').classList.add('show');
+}
+
+function next() {
+  cur++;
+  render();
+}
+
+function showComplete() {
+  document.getElementById('quizArea').innerHTML = '';
+  document.getElementById('fill').style.width = '100%';
+  const cmp = document.getElementById('complete');
+  cmp.style.display = 'block';
+  document.getElementById('finalScore').textContent = `${correct} / ${QUESTIONS.length}`;
+  const pct = correct / QUESTIONS.length;
+  document.getElementById('finalMsg').textContent =
+    pct === 1 ? '🌟 滿分！你已掌握光譜學基礎！' :
+    pct >= 0.8 ? '👍 很棒！再複習一下錯題就完美了。' :
+    pct >= 0.6 ? '💪 基本概念清楚，建議再讀一次投影片。' :
+    '📚 別氣餒，回去再看一次投影片，重玩一次會更好！';
+  logEvent({ event_type: 'session_complete', final_score: correct, attempts: QUESTIONS.length });
+}
+
+function restart() {
+  cur = 0; correct = 0; answered = false;
+  document.getElementById('complete').style.display = 'none';
+  render();
+}
+window.restart = restart;
+
+await initGameSession({ chapter: 'ch6_soil_2026', game: 'mcq' });
+render();
+
+document.getElementById('qr-img').src =
+  'https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=' +
+  encodeURIComponent(window.location.href);
+</script>
+</body>
+</html>
