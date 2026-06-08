@@ -46,29 +46,58 @@ HPLC_FLOW_SVG = """
 
 # 注射器 load / inject 兩態示意
 INJECTOR_SVG = """
-<svg viewBox="0 0 560 240">
- <g font-size="12.5">
-  <text x="140" y="26" text-anchor="middle" class="lblb" font-size="14">(a) LOAD 載入</text>
-  <circle cx="140" cy="120" r="54" fill="#f6f9fd" stroke="#1f6feb" stroke-width="2.5"/>
-  <path d="M86 120 a54 54 0 0 1 108 0" fill="none" stroke="#d9822b" stroke-width="3"/>
-  <text x="140" y="96" text-anchor="middle" class="lbl">定量環</text>
-  <text x="140" y="150" text-anchor="middle" class="lbl">樣品填入環</text>
-  <path d="M140 40 v22" stroke="#1f9d6b" stroke-width="3" marker-end="url(#ari)"/>
-  <text x="140" y="200" text-anchor="middle" class="lbl">注射器灌入樣品</text>
-  <text x="140" y="218" text-anchor="middle" class="lbl">移動相直通管柱</text>
-
-  <text x="420" y="26" text-anchor="middle" class="lblb" font-size="14">(b) INJECT 注入</text>
-  <circle cx="420" cy="120" r="54" fill="#f6f9fd" stroke="#1f6feb" stroke-width="2.5"/>
-  <path d="M366 120 a54 54 0 0 1 108 0" fill="none" stroke="#1f6feb" stroke-width="3"/>
-  <text x="420" y="96" text-anchor="middle" class="lbl">閥旋轉</text>
-  <text x="420" y="150" text-anchor="middle" class="lbl">環接入流路</text>
-  <path d="M366 138 h108" stroke="#1f9d6b" stroke-width="3" marker-end="url(#ari)"/>
-  <text x="420" y="200" text-anchor="middle" class="lbl">移動相沖洗定量環</text>
-  <text x="420" y="218" text-anchor="middle" class="lbl">把樣品帶上管柱</text>
-  <defs><marker id="ari" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto">
-   <path d="M0 0 L8 4 L0 8 z" fill="#1f9d6b"/></marker></defs>
- </g>
-</svg>"""
+<svg viewBox="0 0 760 430">
+<defs><marker id="av" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path d="M0 0 L6 3.5 L0 7 z" fill="#5b6b88"/></marker></defs>
+<g font-size="12">
+<text x="215" y="106" text-anchor="middle" class="lblb" font-size="14">(a) LOAD 載入</text>
+<circle cx="215" cy="210" r="58" fill="#f6f9fd" stroke="#9fb3d1" stroke-width="2"/>
+<path d="M215.0 152.0 C 119.0 162.0, 119.0 258.0, 215.0 268.0" fill="none" stroke="#475569" stroke-width="4"/>
+<text x="115" y="206" text-anchor="middle" class="lblb" font-size="12" fill="#475569">定量環</text>
+<text x="115" y="222" text-anchor="middle" class="lbl" font-size="10.5" fill="#475569">sample loop</text>
+<path d="M265.2 181.0 Q 240.1 210.0 265.2 239.0" fill="none" stroke="#1f6feb" stroke-width="5" stroke-linecap="round"/>
+<path d="M164.8 181.0 Q 202.4 188.2 215.0 152.0" fill="none" stroke="#d9822b" stroke-width="5" stroke-linecap="round"/>
+<path d="M215.0 268.0 Q 202.4 231.8 164.8 239.0" fill="none" stroke="#d9822b" stroke-width="5" stroke-linecap="round"/>
+<circle cx="215.0" cy="152.0" r="6" fill="#fff" stroke="#48597a" stroke-width="2"/>
+<circle cx="265.2" cy="181.0" r="6" fill="#fff" stroke="#48597a" stroke-width="2"/>
+<circle cx="265.2" cy="239.0" r="6" fill="#fff" stroke="#48597a" stroke-width="2"/>
+<circle cx="215.0" cy="268.0" r="6" fill="#fff" stroke="#48597a" stroke-width="2"/>
+<circle cx="164.8" cy="239.0" r="6" fill="#fff" stroke="#48597a" stroke-width="2"/>
+<circle cx="164.8" cy="181.0" r="6" fill="#fff" stroke="#48597a" stroke-width="2"/>
+<path d="M282.5 171.0 L265.2 181.0" stroke="#1f6feb" stroke-width="2.4" marker-end="url(#av)"/>
+<text x="287.7" y="172.0" text-anchor="start" class="lblb" font-size="12" fill="#15233f">幫浦</text>
+<path d="M265.2 239.0 L282.5 249.0" stroke="#1f6feb" stroke-width="2.4" marker-end="url(#av)"/>
+<text x="287.7" y="256.0" text-anchor="start" class="lblb" font-size="12" fill="#15233f">管柱</text>
+<path d="M147.5 171.0 L164.8 181.0" stroke="#1f6feb" stroke-width="2.4" marker-end="url(#av)"/>
+<text x="142.3" y="172.0" text-anchor="end" class="lblb" font-size="12" fill="#15233f">注射針</text>
+<path d="M164.8 239.0 L147.5 249.0" stroke="#1f6feb" stroke-width="2.4" marker-end="url(#av)"/>
+<text x="142.3" y="256.0" text-anchor="end" class="lblb" font-size="12" fill="#15233f">廢液</text>
+<text x="215" y="320" text-anchor="middle" class="lbl" font-size="11.5">幫浦→管柱直通；注射針把樣品灌進定量環</text>
+<text x="560" y="106" text-anchor="middle" class="lblb" font-size="14">(b) INJECT 注入</text>
+<circle cx="560" cy="210" r="58" fill="#f6f9fd" stroke="#9fb3d1" stroke-width="2"/>
+<path d="M560.0 152.0 C 464.0 162.0, 464.0 258.0, 560.0 268.0" fill="none" stroke="#475569" stroke-width="4"/>
+<text x="460" y="206" text-anchor="middle" class="lblb" font-size="12" fill="#475569">定量環</text>
+<text x="460" y="222" text-anchor="middle" class="lbl" font-size="10.5" fill="#475569">sample loop</text>
+<path d="M610.2 181.0 Q 572.6 188.2 560.0 152.0" fill="none" stroke="#1f6feb" stroke-width="5" stroke-linecap="round"/>
+<path d="M560.0 268.0 Q 572.6 231.8 610.2 239.0" fill="none" stroke="#1f6feb" stroke-width="5" stroke-linecap="round"/>
+<path d="M509.8 181.0 Q 534.9 210.0 509.8 239.0" fill="none" stroke="#aab6cc" stroke-width="3.2" stroke-linecap="round"/>
+<circle cx="560.0" cy="152.0" r="6" fill="#fff" stroke="#48597a" stroke-width="2"/>
+<circle cx="610.2" cy="181.0" r="6" fill="#fff" stroke="#48597a" stroke-width="2"/>
+<circle cx="610.2" cy="239.0" r="6" fill="#fff" stroke="#48597a" stroke-width="2"/>
+<circle cx="560.0" cy="268.0" r="6" fill="#fff" stroke="#48597a" stroke-width="2"/>
+<circle cx="509.8" cy="239.0" r="6" fill="#fff" stroke="#48597a" stroke-width="2"/>
+<circle cx="509.8" cy="181.0" r="6" fill="#fff" stroke="#48597a" stroke-width="2"/>
+<path d="M627.5 171.0 L610.2 181.0" stroke="#1f6feb" stroke-width="2.4" marker-end="url(#av)"/>
+<text x="632.7" y="172.0" text-anchor="start" class="lblb" font-size="12" fill="#15233f">幫浦</text>
+<path d="M610.2 239.0 L627.5 249.0" stroke="#1f6feb" stroke-width="2.4" marker-end="url(#av)"/>
+<text x="632.7" y="256.0" text-anchor="start" class="lblb" font-size="12" fill="#15233f">管柱</text>
+<path d="M492.5 171.0 L509.8 181.0" stroke="#aab6cc" stroke-width="2.4" marker-end="url(#av)"/>
+<text x="487.3" y="172.0" text-anchor="end" class="lblb" font-size="12" fill="#aab6cc">注射針</text>
+<path d="M509.8 239.0 L492.5 249.0" stroke="#aab6cc" stroke-width="2.4" marker-end="url(#av)"/>
+<text x="487.3" y="256.0" text-anchor="end" class="lblb" font-size="12" fill="#aab6cc">廢液</text>
+<text x="560" y="320" text-anchor="middle" class="lbl" font-size="11.5">閥旋轉：幫浦→定量環→管柱，把樣品帶上管柱</text>
+</g>
+</svg>
+"""
 
 # 決策樹：選分離模式 / 偵測器
 DTREE_SVG = """

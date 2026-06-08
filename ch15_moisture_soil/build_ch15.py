@@ -31,27 +31,39 @@ OVEN_SVG = """
 </svg>"""
 
 KF_SVG = """
-<svg viewBox="0 0 420 300">
- <defs><linearGradient id="gkf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbeede"/><stop offset="1" stop-color="#f3d6b0"/></linearGradient></defs>
- <rect x="22" y="40" width="120" height="74" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
- <text x="82" y="70" text-anchor="middle" class="lblb">滴定管</text>
- <text x="82" y="90" text-anchor="middle" class="lbl">KF 試劑(I₂)</text>
- <path d="M82 114 v40" stroke="#1f6feb" stroke-width="3"/>
- <path d="M120 200 a72 72 0 1 0 -76 0 z" fill="url(#gkf)" stroke="#1f6feb" stroke-width="3" transform="translate(0,-6)"/>
- <ellipse cx="120" cy="206" rx="74" ry="20" fill="#f3d6b0" stroke="#1f6feb" stroke-width="2"/>
- <text x="120" y="172" text-anchor="middle" class="lblb">密閉反應槽</text>
- <text x="120" y="194" text-anchor="middle" class="lbl">樣品 + 甲醇</text>
- <circle cx="120" cy="252" r="8" fill="#d9822b"/>
- <text x="120" y="288" text-anchor="middle" class="lbl">攪拌子 · 隔絕大氣水分</text>
- <g font-size="13">
-  <rect x="276" y="60" width="126" height="56" rx="10" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
-  <text x="339" y="84" text-anchor="middle" class="lblb">電位偵測</text>
-  <text x="339" y="104" text-anchor="middle" class="lbl">過量 I₂ → 終點</text>
-  <path d="M276 88 h-66" stroke="#8493ad" stroke-width="2.5" fill="none" marker-end="url(#arkf)"/>
-  <defs><marker id="arkf" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto">
-   <path d="M0 0 L8 4 L0 8 z" fill="#8493ad"/></marker></defs>
- </g>
- <text x="210" y="28" text-anchor="middle" class="lblb" font-size="15">Karl Fischer 滴定</text>
+<svg viewBox="0 0 480 340">
+ <defs><marker id="arkf" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#1f9d6b"/></marker></defs>
+ <text x="240" y="22" text-anchor="middle" class="lblb" font-size="15">Karl Fischer 滴定</text>
+ <!-- 滴定管 burette -->
+ <rect x="170" y="44" width="26" height="92" rx="3" fill="#eaf2ff" stroke="#1f6feb" stroke-width="2.5"/>
+ <rect x="173" y="58" width="20" height="62" fill="#d9822b" opacity="0.5"/>
+ <line x1="170" y1="72" x2="178" y2="72" stroke="#1f6feb" stroke-width="1.2"/>
+ <line x1="170" y1="94" x2="178" y2="94" stroke="#1f6feb" stroke-width="1.2"/>
+ <line x1="170" y1="116" x2="178" y2="116" stroke="#1f6feb" stroke-width="1.2"/>
+ <text x="162" y="66" text-anchor="end" class="lblb">滴定管</text>
+ <text x="162" y="84" text-anchor="end" class="lbl">KF 試劑 (I₂)</text>
+ <!-- 加液管 + 滴 -->
+ <path d="M183 136 v42" stroke="#1f6feb" stroke-width="3" fill="none"/>
+ <circle cx="183" cy="170" r="3.4" fill="#d9822b"/>
+ <!-- 密閉蓋 -->
+ <rect x="120" y="178" width="126" height="12" rx="4" fill="#cfe0f6" stroke="#1f6feb" stroke-width="2"/>
+ <text x="175" y="173" text-anchor="end" class="lbl">密閉蓋 · 隔絕大氣水分</text>
+ <!-- 反應槽 beaker -->
+ <path d="M126 190 L126 292 Q126 304 138 304 L228 304 Q240 304 240 292 L240 190" fill="none" stroke="#1f6feb" stroke-width="3"/>
+ <path d="M129 216 L237 216 L237 292 Q237 301 228 301 L138 301 Q129 301 129 292 Z" fill="#f3d6b0"/>
+ <text x="172" y="244" text-anchor="middle" class="lblb">密閉反應槽</text>
+ <text x="172" y="264" text-anchor="middle" class="lbl">樣品 + 甲醇</text>
+ <!-- 電極 electrode -->
+ <rect x="212" y="180" width="9" height="86" rx="2" fill="#9fb3d1" stroke="#48597a" stroke-width="1.5"/>
+ <!-- 攪拌子 + 攪拌器 -->
+ <ellipse cx="183" cy="290" rx="17" ry="5" fill="#d9822b"/>
+ <rect x="128" y="308" width="110" height="16" rx="5" fill="#48597a"/>
+ <text x="183" y="320" text-anchor="middle" fill="#fff" font-size="11" font-weight="700" font-family="'Noto Sans TC',sans-serif">磁攪拌器</text>
+ <!-- 偵測器標籤 + 箭頭指電極 -->
+ <rect x="306" y="118" width="164" height="62" rx="10" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
+ <text x="388" y="144" text-anchor="middle" class="lblb">電位偵測電極</text>
+ <text x="388" y="164" text-anchor="middle" class="lbl">過量 I₂ → 偵測終點</text>
+ <path d="M306 156 C 268 176, 245 184, 222 196" stroke="#1f9d6b" stroke-width="2.5" fill="none" marker-end="url(#arkf)"/>
 </svg>"""
 
 DIST_SVG = """
