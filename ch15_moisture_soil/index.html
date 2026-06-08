@@ -157,27 +157,39 @@ table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--
  <rect x="120" y="240" width="80" height="16" rx="5" fill="#48597a"/>
  <text x="160" y="288" text-anchor="middle" class="lbl">強制對流烘箱 forced-draft oven</text>
 </svg></div><div><ul class="clean"><li><strong>強制對流烘箱</strong>：風扇強制循環，溫差最小(≤1°C)</li><li><strong>真空烘箱</strong>：減壓(25–100 mmHg)下低溫(60–70°C)快乾</li><li><strong>對流(常壓)烘箱</strong>：無風扇、溫差可達 10°C，精度差</li><li>失重 = 水分；需控制<span class='em'>時間與溫度</span></li></ul><div class="note" style="margin-top:14px">高糖樣品改用真空烘箱 ≤70°C，避免梅納褐變與糖水解。</div></div></div></div></section><section class="slide" data-slide="11" data-section="維持注意" data-chart="dry"><div class="slide-inner"><div class="kicker">15.2.2 溫度控制</div><h2 class="slide-title">不同烘箱的<span class='hi'>溫度差異</span></h2><div class="chartbox" style="height:52vh"><canvas id="chart_dry"></canvas></div><div class="cap">整合 Table 15.4／15.5：烘箱內最大溫差越小越精準。</div></div></section><section class="slide" data-slide="12" data-section="維持注意"><div class="slide-inner"><div class="kicker">15.2.2 時間與溫度</div><h2 class="slide-title">乾燥是一場<span class='hi'>取捨</span></h2><div class="grid2" style="margin-top:16px"><div class="card b"><div class="ic">⏱️</div><div class="ct">乾不夠</div><div class="cb">時間太短、溫度太低 → 水沒走完 → <strong>低估</strong>水分</div></div><div class="card a"><div class="ic">🔥</div><div class="ct">過頭了</div><div class="cb">時間太長、溫度太高 → 成分分解生水或揮發物流失 → 誤差</div></div></div><div class="note" style="margin-top:18px">技巧：液體(果汁/牛奶)先在<strong>蒸氣浴預乾</strong>避免噴濺；黏結樣品用<strong>砂皿法</strong>(乾砂+玻棒)分散、防結殼。乾燥到<strong>恆重</strong>(兩次秤重相差 < 0.1–0.2 mg)。</div></div></section><section class="slide" data-slide="13" data-section="維持注意" data-game="g2"><div class="slide-inner"><div class="game no-nav" data-game="g2"><div class="game-head"><span class="tag a">小遊戲 ②</span><span class="gt">烘箱乾燥即時測驗</span><span class="score" id="g2score">0 / 4</span></div><div class="game-q" id="g2q"></div><div class="opts" id="g2opts"></div><div class="fb" id="g2fb"></div><div class="btnrow"><button class="btn ghost" id="g2next" style="display:none">下一題 →</button></div></div></div></section><section class="slide" data-slide="14" data-section="維持注意"><div class="slide-inner"><div class="kicker">15.2.4 Karl Fischer</div><h2 class="slide-title">KF 滴定：微量水專家</h2><div class="svgwrap" style="margin-top:10px">
-<svg viewBox="0 0 420 300">
- <defs><linearGradient id="gkf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbeede"/><stop offset="1" stop-color="#f3d6b0"/></linearGradient></defs>
- <rect x="22" y="40" width="120" height="74" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
- <text x="82" y="70" text-anchor="middle" class="lblb">滴定管</text>
- <text x="82" y="90" text-anchor="middle" class="lbl">KF 試劑(I₂)</text>
- <path d="M82 114 v40" stroke="#1f6feb" stroke-width="3"/>
- <path d="M120 200 a72 72 0 1 0 -76 0 z" fill="url(#gkf)" stroke="#1f6feb" stroke-width="3" transform="translate(0,-6)"/>
- <ellipse cx="120" cy="206" rx="74" ry="20" fill="#f3d6b0" stroke="#1f6feb" stroke-width="2"/>
- <text x="120" y="172" text-anchor="middle" class="lblb">密閉反應槽</text>
- <text x="120" y="194" text-anchor="middle" class="lbl">樣品 + 甲醇</text>
- <circle cx="120" cy="252" r="8" fill="#d9822b"/>
- <text x="120" y="288" text-anchor="middle" class="lbl">攪拌子 · 隔絕大氣水分</text>
- <g font-size="13">
-  <rect x="276" y="60" width="126" height="56" rx="10" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
-  <text x="339" y="84" text-anchor="middle" class="lblb">電位偵測</text>
-  <text x="339" y="104" text-anchor="middle" class="lbl">過量 I₂ → 終點</text>
-  <path d="M276 88 h-66" stroke="#8493ad" stroke-width="2.5" fill="none" marker-end="url(#arkf)"/>
-  <defs><marker id="arkf" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto">
-   <path d="M0 0 L8 4 L0 8 z" fill="#8493ad"/></marker></defs>
- </g>
- <text x="210" y="28" text-anchor="middle" class="lblb" font-size="15">Karl Fischer 滴定</text>
+<svg viewBox="0 0 480 340">
+ <defs><marker id="arkf" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#1f9d6b"/></marker></defs>
+ <text x="240" y="22" text-anchor="middle" class="lblb" font-size="15">Karl Fischer 滴定</text>
+ <!-- 滴定管 burette -->
+ <rect x="170" y="44" width="26" height="92" rx="3" fill="#eaf2ff" stroke="#1f6feb" stroke-width="2.5"/>
+ <rect x="173" y="58" width="20" height="62" fill="#d9822b" opacity="0.5"/>
+ <line x1="170" y1="72" x2="178" y2="72" stroke="#1f6feb" stroke-width="1.2"/>
+ <line x1="170" y1="94" x2="178" y2="94" stroke="#1f6feb" stroke-width="1.2"/>
+ <line x1="170" y1="116" x2="178" y2="116" stroke="#1f6feb" stroke-width="1.2"/>
+ <text x="162" y="66" text-anchor="end" class="lblb">滴定管</text>
+ <text x="162" y="84" text-anchor="end" class="lbl">KF 試劑 (I₂)</text>
+ <!-- 加液管 + 滴 -->
+ <path d="M183 136 v42" stroke="#1f6feb" stroke-width="3" fill="none"/>
+ <circle cx="183" cy="170" r="3.4" fill="#d9822b"/>
+ <!-- 密閉蓋 -->
+ <rect x="120" y="178" width="126" height="12" rx="4" fill="#cfe0f6" stroke="#1f6feb" stroke-width="2"/>
+ <text x="175" y="173" text-anchor="end" class="lbl">密閉蓋 · 隔絕大氣水分</text>
+ <!-- 反應槽 beaker -->
+ <path d="M126 190 L126 292 Q126 304 138 304 L228 304 Q240 304 240 292 L240 190" fill="none" stroke="#1f6feb" stroke-width="3"/>
+ <path d="M129 216 L237 216 L237 292 Q237 301 228 301 L138 301 Q129 301 129 292 Z" fill="#f3d6b0"/>
+ <text x="172" y="244" text-anchor="middle" class="lblb">密閉反應槽</text>
+ <text x="172" y="264" text-anchor="middle" class="lbl">樣品 + 甲醇</text>
+ <!-- 電極 electrode -->
+ <rect x="212" y="180" width="9" height="86" rx="2" fill="#9fb3d1" stroke="#48597a" stroke-width="1.5"/>
+ <!-- 攪拌子 + 攪拌器 -->
+ <ellipse cx="183" cy="290" rx="17" ry="5" fill="#d9822b"/>
+ <rect x="128" y="308" width="110" height="16" rx="5" fill="#48597a"/>
+ <text x="183" y="320" text-anchor="middle" fill="#fff" font-size="11" font-weight="700" font-family="'Noto Sans TC',sans-serif">磁攪拌器</text>
+ <!-- 偵測器標籤 + 箭頭指電極 -->
+ <rect x="306" y="118" width="164" height="62" rx="10" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
+ <text x="388" y="144" text-anchor="middle" class="lblb">電位偵測電極</text>
+ <text x="388" y="164" text-anchor="middle" class="lbl">過量 I₂ → 偵測終點</text>
+ <path d="M306 156 C 268 176, 245 184, 222 196" stroke="#1f9d6b" stroke-width="2.5" fill="none" marker-end="url(#arkf)"/>
 </svg></div><div class="note" style="margin-top:16px">每 1 mol 水耗 1 mol I₂：水把 SO₂ 還原碘 → 過量碘到達終點。<strong>不加熱、快速、最準</strong>，是低水分高糖/高蛋白食品的首選。</div></div></section><section class="slide" data-slide="15" data-section="維持注意"><div class="slide-inner"><div class="kicker">15.2.3 蒸餾法</div><h2 class="slide-title">甲苯共沸：直接量水</h2><div class="svgwrap" style="margin-top:10px">
 <svg viewBox="0 0 420 300">
  <defs><linearGradient id="gd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbeede"/><stop offset="1" stop-color="#f3d6b0"/></linearGradient></defs>
