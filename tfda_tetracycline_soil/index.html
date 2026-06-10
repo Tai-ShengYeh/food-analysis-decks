@@ -1,0 +1,378 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>食品中四環素殘留檢驗 LC-MS/MS · MOHWV0036.06</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script><style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{font-size:18px}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;background:var(--bg);
+  color:var(--ink);overflow:hidden;height:100vh;width:100vw}
+:root{
+  --bg:#eef2f8;--surface:#ffffff;--surface-2:#f6f9fd;
+  --ink:#15233f;--ink-2:#48597a;--ink-3:#8493ad;--line:#dde5f0;
+  --accent:#1f6feb;--accent-soft:#e7f0fe;
+  --accent-2:#d9822b;--accent-2-soft:#fbeede;
+  --ok:#1f9d6b;--ok-soft:#e3f6ee;--bad:#d94f4f;--bad-soft:#fbe7e7;--warn:#d9a32b;
+  --t2:clamp(1.4rem,3vw,2.3rem);
+  --shadow:0 10px 30px rgba(20,40,80,.10);--shadow-sm:0 3px 12px rgba(20,40,80,.08)}
+#progress{position:fixed;top:0;left:0;height:4px;width:0;z-index:50;
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .5s ease}
+#section-tag{position:fixed;top:16px;left:24px;z-index:40;font-size:.78rem;letter-spacing:.18em;
+  color:var(--accent);font-weight:700;font-family:"JetBrains Mono",monospace}
+#pageInfo{position:fixed;right:22px;bottom:16px;z-index:40;font-size:.82rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+#hint{position:fixed;left:24px;bottom:16px;z-index:40;font-size:.72rem;color:var(--ink-3)}
+#brand{position:fixed;right:22px;top:14px;z-index:40;font-size:.72rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:64px 84px;opacity:0;pointer-events:none;
+  transition:opacity .55s ease,transform .55s ease;transform:translateY(14px)}
+.slide.active{opacity:1;pointer-events:auto;transform:translateY(0)}
+.slide-inner{width:100%;max-width:1280px}
+.kicker{font-family:"JetBrains Mono",monospace;font-size:.8rem;letter-spacing:.16em;color:var(--accent);
+  font-weight:700;text-transform:uppercase;margin-bottom:10px}
+.slide-title{font-size:var(--t2);font-weight:900;line-height:1.18;color:var(--ink);letter-spacing:-.01em}
+.slide-title .hi{color:var(--accent-2)}
+.subtitle{font-size:clamp(.95rem,1.5vw,1.2rem);color:var(--ink-2);margin-top:12px;line-height:1.6}
+p,li{font-size:clamp(.92rem,1.4vw,1.12rem);line-height:1.68;color:var(--ink-2)}
+.lead{font-size:clamp(1.05rem,1.8vw,1.35rem);color:var(--ink);line-height:1.6}
+strong,b{color:var(--ink);font-weight:800}.em{color:var(--accent-2);font-weight:800}
+.divider{height:3px;width:64px;background:var(--accent-2);border-radius:2px;margin:18px 0}
+ul.clean{list-style:none}ul.clean li{position:relative;padding-left:26px;margin:10px 0}
+ul.clean li:before{content:"";position:absolute;left:4px;top:.62em;width:8px;height:8px;border-radius:2px;
+  background:var(--accent);transform:rotate(45deg)}
+.mono{font-family:"JetBrains Mono",monospace}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.grid2-1{display:grid;grid-template-columns:1.15fr .85fr;gap:34px;align-items:center}
+.flow6{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow-sm)}
+.card .ic{font-size:1.6rem;margin-bottom:8px}
+.card .ct{font-weight:800;color:var(--ink);font-size:clamp(1rem,1.5vw,1.2rem);margin-bottom:6px}
+.card .cb{font-size:clamp(.85rem,1.25vw,1rem);color:var(--ink-2);line-height:1.55}
+.card.b{border-top:4px solid var(--accent)}.card.a{border-top:4px solid var(--accent-2)}
+.card.g{border-top:4px solid var(--ok)}
+.tag{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:.7rem;padding:3px 9px;border-radius:999px;
+  background:var(--accent-soft);color:var(--accent);font-weight:700}
+.tag.a{background:var(--accent-2-soft);color:var(--accent-2)}
+.pill{display:inline-block;padding:5px 12px;border-radius:999px;background:var(--surface);border:1px solid var(--line);
+  font-size:.82rem;color:var(--ink-2);margin:3px 4px}
+.note{background:var(--accent-2-soft);border-left:4px solid var(--accent-2);border-radius:8px;padding:14px 18px;
+  color:var(--ink);font-size:clamp(.9rem,1.3vw,1.05rem);line-height:1.6}
+.eq{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 22px;
+  font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,1.7vw,1.4rem);color:var(--ink);text-align:center;box-shadow:var(--shadow-sm)}
+.eq .frac{display:inline-flex;flex-direction:column;text-align:center;vertical-align:middle;margin:0 6px}
+.eq .frac b{border-bottom:2px solid var(--ink);padding-bottom:3px}
+table.cmp{width:100%;border-collapse:collapse;font-size:clamp(.82rem,1.2vw,1.02rem)}
+table.cmp th,table.cmp td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line)}
+table.cmp thead th{color:var(--accent);font-weight:800;border-bottom:2px solid var(--accent);cursor:pointer;
+  user-select:none;white-space:nowrap}
+table.cmp thead th .ar{opacity:.4;font-size:.8em}
+table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--ink);font-weight:700}
+.cover{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 100px;
+  background:radial-gradient(1200px 600px at 80% 20%,var(--accent-2-soft),transparent 60%),
+  radial-gradient(900px 500px at 10% 90%,var(--accent-soft),transparent 55%),linear-gradient(135deg,#ffffff,#eef2f8)}
+.cover h1{font-size:clamp(2.4rem,6vw,4.6rem);font-weight:900;line-height:1.05;letter-spacing:-.02em;color:var(--ink)}
+.cover .en{font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,2vw,1.5rem);color:var(--accent);letter-spacing:.1em;margin-top:6px}
+.cover .meta{margin-top:26px;color:var(--ink-2);font-size:clamp(.9rem,1.4vw,1.1rem)}
+.hook{font-size:clamp(2rem,5vw,3.6rem);font-weight:900;color:var(--ink);line-height:1.2;letter-spacing:-.01em}
+.hook .hi{color:var(--accent)}
+.svgwrap{display:flex;align-items:center;justify-content:center}
+.svgwrap svg{max-width:100%;max-height:62vh;height:auto}
+.lbl{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink-2)}
+.lblb{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink);font-weight:700}
+.game{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 24px;box-shadow:var(--shadow)}
+.game-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.game-head .gt{font-weight:900;font-size:clamp(1.05rem,1.7vw,1.35rem);color:var(--ink)}
+.game-head .score{margin-left:auto;font-family:"JetBrains Mono",monospace;font-weight:700;color:var(--accent);
+  background:var(--accent-soft);padding:5px 13px;border-radius:999px;font-size:.9rem}
+.game-q{font-size:clamp(.95rem,1.5vw,1.18rem);color:var(--ink);font-weight:700;margin:6px 0 14px;line-height:1.5}
+.buckets{display:grid;gap:16px;margin-top:14px}
+.bucket{min-height:120px;border:2px dashed var(--line);border-radius:14px;padding:12px;background:var(--surface-2);transition:.2s}
+.bucket .bh{font-weight:800;color:var(--ink);text-align:center;margin-bottom:8px;font-size:.95rem}
+.pool{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;min-height:54px}
+.chip{padding:9px 15px;border-radius:10px;background:var(--surface);border:1px solid var(--line);font-weight:700;
+  color:var(--ink);cursor:pointer;box-shadow:var(--shadow-sm);font-size:.92rem;transition:.15s}
+.chip:hover{border-color:var(--accent);transform:translateY(-1px)}
+.chip.sel{background:var(--accent);color:#fff;border-color:var(--accent)}
+.chip.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.chip.no{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+.opt{padding:14px 18px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);cursor:pointer;
+  font-weight:700;color:var(--ink);font-size:clamp(.88rem,1.3vw,1.05rem);transition:.15s}
+.opt:hover{border-color:var(--accent);background:var(--accent-soft)}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.opt.no{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}.opt.dim{opacity:.5}
+.fb{margin-top:14px;padding:12px 16px;border-radius:10px;font-weight:700;display:none;
+  font-size:clamp(.85rem,1.3vw,1.02rem);line-height:1.5}
+.fb.show{display:block}.fb.good{background:var(--ok-soft);color:var(--ok)}
+.fb.bad{background:var(--bad-soft);color:var(--bad)}.fb.info{background:var(--accent-soft);color:var(--accent)}
+.btn{padding:10px 20px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-weight:800;cursor:pointer;
+  font-size:.92rem;font-family:inherit;box-shadow:var(--shadow-sm)}
+.btn:hover{filter:brightness(1.06)}.btn.ghost{background:var(--surface);color:var(--accent);border:1.5px solid var(--accent)}
+.btnrow{display:flex;gap:12px;margin-top:16px;align-items:center}
+.sortlist{display:flex;flex-direction:column;gap:6px;margin-top:6px;max-height:44vh;overflow-y:auto;padding-right:4px}
+.sortrow{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:7px 14px;box-shadow:var(--shadow-sm)}
+.sortrow .idx{font-family:"JetBrains Mono",monospace;font-weight:800;color:var(--accent);width:24px}
+.sortrow .txt{flex:1;font-weight:700;color:var(--ink);font-size:clamp(.85rem,1.25vw,1.02rem)}
+.sortrow .ud{display:flex;flex-direction:column;gap:3px}
+.sortrow .ud button{border:none;background:var(--accent-soft);color:var(--accent);border-radius:6px;width:30px;height:20px;
+  cursor:pointer;font-weight:900;line-height:1}
+.sortrow.ok{border-color:var(--ok);background:var(--ok-soft)}.sortrow.no{border-color:var(--bad)}
+.numin{font-family:"JetBrains Mono",monospace;font-size:1.2rem;font-weight:800;padding:10px 14px;border:1.5px solid var(--line);
+  border-radius:10px;width:140px;color:var(--ink);text-align:center}
+.numin:focus{outline:none;border-color:var(--accent)}
+.checklist{list-style:none}
+.checklist li{display:flex;align-items:center;gap:12px;padding:11px 14px;border:1px solid var(--line);border-radius:10px;
+  margin:8px 0;background:var(--surface);cursor:pointer;font-weight:700;color:var(--ink-2);font-size:clamp(.9rem,1.35vw,1.08rem);transition:.15s}
+.checklist li .bx{width:24px;height:24px;border-radius:6px;border:2px solid var(--accent);display:flex;align-items:center;
+  justify-content:center;color:#fff;font-weight:900;flex:0 0 auto}
+.checklist li.done{background:var(--ok-soft);border-color:var(--ok);color:var(--ink)}
+.checklist li.done .bx{background:var(--ok);border-color:var(--ok)}
+.chartbox{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow-sm);
+  height:60vh;max-height:520px;position:relative}
+.cap{font-size:.82rem;color:var(--ink-3);text-align:center;margin-top:8px}
+</style></head><body><div id="progress"></div><div id="section-tag"></div><div id="brand">四環素 · MS/MS</div><div id="pageInfo"></div><div id="hint">← → / 空白鍵切頁　·　F 全螢幕　·　點兩側翻頁</div><section class="slide" data-slide="1" data-section="引起動機" data-cover="1"><div class="slide-inner"><div class="cover"><div class="kicker">食藥署公告檢驗方法 · MOHWV0036.06</div><h1>食品中<span style='color:var(--accent-2)'>四環素</span>殘留檢驗</h1><div class="en">Tetracyclines in Foods</div><div class="meta">食品安全檢測　·　3 小時課程　·　含 6 個互動小遊戲<br>動物用藥殘留 · LC-MS/MS · McIlvaine-EDTA · SPE · 7 品項</div><div style="margin-top:24px"><span class="pill">畜禽水產/蛋/奶/蜜</span><span class="pill">LC-MS/MS</span><span class="pill">EDTA 螯合</span><span class="pill">SPE 淨化</span><span class="pill">抗藥性風險</span></div></div></div></section><section class="slide" data-slide="2" data-section="引起動機"><div class="slide-inner"><div style="text-align:center">
+  <div class="kicker" style="justify-content:center">先想一想</div>
+  <div class="hook">你吃的雞肉、雞蛋、蜂蜜裡，<br>會不會殘留<span class="hi">抗生素</span>？</div>
+  <p class="subtitle" style="max-width:850px;margin:22px auto 0">畜禽水產若用了<strong>四環黴素類抗生素</strong>又沒遵守停藥期就上市，藥物會殘留。<br>
+  吃進殘留抗生素恐引發過敏、並助長<strong>抗藥性細菌</strong>。食藥署 <strong>MOHWV0036.06</strong> 用 LC-MS/MS 一次驗 7 種。</p>
+  <div style="margin-top:24px"><span class="pill">停藥期</span><span class="pill">最大殘留限量 MRL</span>
+  <span class="pill">抗藥性 AMR</span><span class="pill">過敏</span></div></div></div></section><section class="slide" data-slide="3" data-section="引起動機"><div class="slide-inner"><div class="kicker">背景</div><h2 class="slide-title">四環黴素類抗生素為什麼要<span class='hi'>管</span></h2><div class="grid2" style="margin-top:20px"><div class="card b"><div class="ic">💊</div><div class="ct">廣效抗生素</div><div class="cb">四環素、土黴素、金黴素…用於畜禽水產治療與防病</div></div><div class="card a"><div class="ic">⏳</div><div class="ct">停藥期</div><div class="cb">用藥後須等藥物代謝到安全值才能上市；違規即超標</div></div><div class="card b"><div class="ic">🦠</div><div class="ct">抗藥性 AMR</div><div class="cb">殘留抗生素會篩選出抗藥性細菌，威脅公共衛生</div></div><div class="card g"><div class="ic">🍯</div><div class="ct">涵蓋食品廣</div><div class="cb">肌肉、內臟、脂肪、蛋類、乳汁、蜂蜜都要監測</div></div></div></div></section><section class="slide" data-slide="4" data-section="引起動機"><div class="slide-inner"><div class="kicker">7 品項</div><h2 class="slide-title">這次方法涵蓋的<span class='hi'>四環黴素類</span></h2><div class="grid2" style="margin-top:16px"><div class="card b"><div class="ic">🧬</div><div class="ct">四種母體藥物</div><div class="cb">四環黴素(TC)、羥四環黴素/<strong>土黴素</strong>(OTC)、氯四環黴素/<strong>金黴素</strong>(CTC)、脫氧羥四環黴素/<strong>多西環素</strong>(DC)</div></div><div class="card a"><div class="ic">🔄</div><div class="ct">三種差向異構物</div><div class="cb">4-epimer-TC、4-epimer-OTC、4-epimer-CTC——母體在酸性下會差向異構化的產物，也須監測</div></div></div><p class="subtitle" style="margin-top:14px">共 <strong>7 品項</strong>：4 個母體 + 3 個差向異構物(epimer)。</p></div></section><section class="slide" data-slide="5" data-section="引起動機" data-game="g1"><div class="slide-inner"><div class="game no-nav" data-game="g1"><div class="game-head"><span class="tag a">小遊戲 ①</span><span class="gt">母體藥物 vs 差向異構物</span><span class="score" id="g1score">0 / 7</span></div><div class="game-q">把 7 個分析物分到「母體抗生素」或「差向異構物(4-epimer)」。</div><div class="pool" id="g1pool"></div><div class="buckets" id="g1buckets"></div><div class="fb" id="g1fb"></div><div class="btnrow"><button class="btn" id="g1check">檢查答案</button><button class="btn ghost" id="g1reset">重來</button></div></div></div></section><section class="slide" data-slide="6" data-section="維持注意"><div class="slide-inner"><div class="kicker">方法總覽</div><h2 class="slide-title">四環素殘留檢驗的<span class='hi'>流程</span></h2><div class="svgwrap" style="margin-top:8px">
+<svg viewBox="0 0 1000 180">
+ <defs><marker id="fc" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 Z" fill="#48597a"/></marker></defs>
+ <text x="500" y="30" text-anchor="middle" class="lblb" font-size="15">四環素殘留檢驗流程</text>
+ <g font-size="12.5">
+  <rect x="10" y="70" width="170" height="58" rx="10" fill="#fbeede" stroke="#d9822b" stroke-width="2.2"/>
+  <text x="95" y="94" text-anchor="middle" class="lblb">萃取</text><text x="95" y="113" text-anchor="middle" class="lbl">McIlvaine+EDTA</text>
+  <rect x="222" y="70" width="170" height="58" rx="10" fill="#fbe7e7" stroke="#d94f4f" stroke-width="2.2"/>
+  <text x="307" y="94" text-anchor="middle" class="lblb">沉澱蛋白</text><text x="307" y="113" text-anchor="middle" class="lbl">三氯醋酸·離心</text>
+  <rect x="434" y="70" width="170" height="58" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2.2"/>
+  <text x="519" y="94" text-anchor="middle" class="lblb">SPE 淨化</text><text x="519" y="113" text-anchor="middle" class="lbl">Oasis HLB</text>
+  <rect x="646" y="70" width="180" height="58" rx="10" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2.2"/>
+  <text x="736" y="94" text-anchor="middle" class="lblb">LC-MS/MS</text><text x="736" y="113" text-anchor="middle" class="lbl">CSH C18·ESI⁺·MRM</text>
+  <rect x="868" y="74" width="124" height="50" rx="9" fill="#15233f"/>
+  <text x="930" y="98" text-anchor="middle" fill="#fff" font-weight="800" font-size="12">鑑別定量</text>
+  <text x="930" y="115" text-anchor="middle" fill="#cfe0f6" font-size="10">離子對+RT</text>
+ </g>
+ <g stroke="#48597a" stroke-width="2.4" marker-end="url(#fc)">
+  <line x1="180" y1="99" x2="218" y2="99"/><line x1="392" y1="99" x2="430" y2="99"/>
+  <line x1="604" y1="99" x2="642" y2="99"/><line x1="826" y1="99" x2="864" y2="99"/></g>
+</svg></div><p class="subtitle" style="text-align:center;margin-top:10px">萃取(McIlvaine+EDTA) → 三氯醋酸沉澱蛋白 → 固相萃取(SPE)淨化 → LC-MS/MS 以 MRM 鑑別定量。</p></div></section><section class="slide" data-slide="7" data-section="維持注意"><div class="slide-inner"><div class="kicker">關鍵難題</div><h2 class="slide-title">四環素為何<span class='hi'>難萃取</span></h2><div class="svgwrap" style="margin-top:6px">
+<svg viewBox="0 0 900 210">
+ <defs><marker id="ta" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 Z" fill="#48597a"/></marker></defs>
+ <text x="450" y="24" text-anchor="middle" class="lblb" font-size="15">四環素會螯合金屬、黏住蛋白 → 加 EDTA 把它「釋放」出來</text>
+ <!-- left: tetracycline bound to metal -->
+ <g transform="translate(60,70)">
+  <rect x="0" y="20" width="120" height="50" rx="12" fill="#fbeede" stroke="#d9822b" stroke-width="2.4"/>
+  <text x="60" y="42" text-anchor="middle" class="lblb" font-size="12">四環素</text>
+  <text x="60" y="60" text-anchor="middle" class="lbl">(被困住)</text>
+  <circle cx="140" cy="45" r="16" fill="#8493ad"/><text x="140" y="50" text-anchor="middle" fill="#fff" font-size="11">M²⁺</text>
+  <text x="70" y="100" text-anchor="middle" class="lbl">Ca/Mg/Fe + 蛋白</text>
+ </g>
+ <line x1="300" y1="115" x2="400" y2="115" stroke="#48597a" stroke-width="2.6" marker-end="url(#ta)"/>
+ <text x="350" y="105" text-anchor="middle" class="lbl">加 EDTA</text>
+ <!-- middle: EDTA grabs metal -->
+ <g transform="translate(420,70)">
+  <rect x="0" y="20" width="120" height="50" rx="12" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2.4"/>
+  <text x="60" y="42" text-anchor="middle" class="lblb" font-size="12">EDTA</text>
+  <text x="60" y="60" text-anchor="middle" class="lbl">螯合金屬</text>
+  <circle cx="140" cy="45" r="16" fill="#1f6feb"/><text x="140" y="50" text-anchor="middle" fill="#fff" font-size="11">M²⁺</text>
+ </g>
+ <line x1="660" y1="115" x2="740" y2="115" stroke="#48597a" stroke-width="2.6" marker-end="url(#ta)"/>
+ <!-- right: free tetracycline -->
+ <g transform="translate(760,70)">
+  <rect x="0" y="20" width="120" height="50" rx="12" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2.4"/>
+  <text x="60" y="42" text-anchor="middle" class="lblb" font-size="12">自由四環素</text>
+  <text x="60" y="60" text-anchor="middle" class="lbl">回收率↑</text>
+ </g>
+</svg></div><div class="note" style="margin-top:10px">四環素結構會<strong>螯合金屬離子(Ca、Mg、Fe)</strong>並結合蛋白質，被「困」在基質裡 → 回收率差。加入 <strong>EDTA</strong> 競爭螯合金屬，把四環素<strong>釋放出來</strong>，是本法成敗的關鍵。</div></div></section><section class="slide" data-slide="8" data-section="維持注意"><div class="slide-inner"><div class="kicker">萃取設計</div><h2 class="slide-title">McIlvaine 緩衝液 + <span class='hi'>EDTA</span></h2><div class="grid2" style="margin-top:16px"><div><ul class="clean"><li><strong>McIlvaine 緩衝液</strong>(檸檬酸 + 磷酸氫二鈉)調到 <strong>pH 4</strong>：酸性下四環素穩定、好萃取</li><li>萃取液含 <strong>EDTA-Na₂</strong>：螯合金屬、解開四環素與基質的鍵結</li><li>加<strong>三氯醋酸</strong>沉澱蛋白質，離心去除</li><li>低溫(4°C)離心、12000×g，取上清液</li></ul></div><div class="note"><strong>為什麼 pH 4？</strong><br>四環素在中性/鹼性易降解、在強酸易差向異構化；<strong>弱酸(pH 4)</strong>是穩定與萃取的甜蜜點。</div></div></div></section><section class="slide" data-slide="9" data-section="維持注意"><div class="slide-inner"><div class="kicker">淨化</div><h2 class="slide-title">固相萃取 SPE 去<span class='hi'>基質干擾</span></h2><div class="grid2" style="margin-top:16px"><div class="card b"><div class="ic">🧪</div><div class="ct">SPE Oasis HLB</div><div class="cb">萃取液過固相萃取匣，分析物吸附、雜質先洗掉</div></div><div class="card a"><div class="ic">💧</div><div class="ct">沖提與濃縮</div><div class="cb">以甲醇沖提四環素，加 DMSO 後氮氣吹乾、再復溶</div></div><div class="card g"><div class="ic">🎯</div><div class="ct">為何要淨化</div><div class="cb">食品基質會抑制/增強離子化(基質效應)，淨化後訊號更乾淨</div></div></div><p class="subtitle" style="margin-top:12px">萃取(放出來) → 沉澱蛋白(去大分子) → SPE(去小分子雜質) → 乾淨檢液上機。</p></div></section><section class="slide" data-slide="10" data-section="維持注意" data-game="g2"><div class="slide-inner"><div class="game no-nav" data-game="g2"><div class="game-head"><span class="tag a">小遊戲 ②</span><span class="gt">四環素方法即時測驗</span><span class="score" id="g2score">0 / 5</span></div><div class="game-q" id="g2q"></div><div class="opts" id="g2opts"></div><div class="fb" id="g2fb"></div><div class="btnrow"><button class="btn ghost" id="g2next" style="display:none">下一題 →</button></div></div></div></section><section class="slide" data-slide="11" data-section="維持注意"><div class="slide-inner"><div class="kicker">LC-MS/MS 偵測</div><h2 class="slide-title">CSH C18 + ESI⁺ + MRM</h2><div class="grid2" style="margin-top:16px"><div><ul class="clean"><li>管柱 ACQUITY <strong>CSH C18</strong>(1.7 µm)，管柱溫 40°C；移動相 0.1%甲酸水/乙腈梯度</li><li>游離：<strong>ESI 正離子</strong>(四環素易質子化帶正電)</li><li>偵測：<strong>MRM</strong>，每物監測母離子→子離子(如 TC 445>410、OTC 461>426)</li><li>以<strong>基質匹配檢量線</strong>定量；鑑別靠滯留時間 + 離子比</li></ul></div><div class="note"><strong>為何又是 LC-MS/MS？</strong><br>殘留是 <strong>ppb 級痕量</strong>、又是多殘留混合 → 需要 MRM 的高選擇性與靈敏度。</div></div></div></section><section class="slide" data-slide="12" data-section="維持注意" data-game="g3"><div class="slide-inner"><div class="game no-nav" data-game="g3"><div class="game-head"><span class="tag a">小遊戲 ③</span><span class="gt">萃取階段 vs 淨化階段</span><span class="score" id="g3score">0 / 6</span></div><div class="game-q">把 6 個試劑/步驟分到「萃取階段」或「淨化(SPE)階段」。</div><div class="pool" id="g3pool"></div><div class="buckets" id="g3buckets"></div><div class="fb" id="g3fb"></div><div class="btnrow"><button class="btn" id="g3check">檢查答案</button><button class="btn ghost" id="g3reset">重來</button></div></div></div></section><section class="slide" data-slide="13" data-section="維持注意" data-game="g4"><div class="slide-inner"><div class="game no-nav" data-game="g4"><div class="game-head"><span class="tag a">小遊戲 ④</span><span class="gt">四環素殘留檢驗流程排序</span><span class="score" id="g4score">— / 6</span></div><div class="game-q">用 ▲▼ 把四環素殘留檢驗的 6 個步驟排成正確順序。</div><div class="sortlist" id="g4list"></div><div class="fb" id="g4fb"></div><div class="btnrow"><button class="btn" id="g4check">檢查順序</button><button class="btn ghost" id="g4reset">打亂重排</button></div></div></div></section><section class="slide" data-slide="14" data-section="維持注意" data-game="g5"><div class="slide-inner"><div class="game no-nav" data-game="g5"><div class="game-head"><span class="tag a">小遊戲 ⑤</span><span class="gt">決策挑戰：四環素判斷</span><span class="score" id="g5score">0 / 5</span></div><div class="game-q" id="g5q"></div><div class="opts" id="g5opts"></div><div class="fb" id="g5fb"></div><div class="btnrow"><button class="btn ghost" id="g5next" style="display:none">下一題 →</button></div></div></div></section><section class="slide" data-slide="15" data-section="喚起行動" data-game="cmp"><div class="slide-inner"><div class="kicker">附表</div><h2 class="slide-title">7 品項四環黴素一覽（點欄位排序）</h2><table class="cmp" id="cmpTable" style="margin-top:14px"><thead><tr><th data-k="n" data-t="s">中文名 <span class="ar">⇅</span></th><th data-k="en" data-t="s">英文名 <span class="ar">⇅</span></th><th data-k="cls" data-t="s">類別 <span class="ar">⇅</span></th><th data-k="q" data-t="s">定量離子對 <span class="ar">⇅</span></th></tr></thead><tbody></tbody></table><div class="cap">離子對整合自 MOHWV0036.06 附表(母離子>定量子離子)。</div></div></section><section class="slide" data-slide="16" data-section="喚起行動" data-chart="rt"><div class="slide-inner"><div class="kicker">層析分離</div><h2 class="slide-title">7 品項的<span class='hi'>滯留時間</span></h2><div class="chartbox" style="height:52vh"><canvas id="chart_rt"></canvas></div><div class="cap">LC-MS/MS 參考層析的滯留時間(分)。差向異構物通常比母體更早沖出，CSH C18 可逐一分開。</div></div></section><section class="slide" data-slide="17" data-section="喚起行動"><div class="slide-inner"><div class="kicker">殘留與抗藥性</div><h2 class="slide-title">為什麼<span class='hi'>非管不可</span></h2><div class="grid2" style="margin-top:16px"><div class="card b"><div class="ic">⏳</div><div class="ct">停藥期是關鍵</div><div class="cb">遵守停藥期讓藥代謝到 MRL 以下，是合法上市的前提</div></div><div class="card a"><div class="ic">🦠</div><div class="ct">抗藥性 AMR</div><div class="cb">長期暴露低劑量抗生素會篩選出超級細菌，難以治療</div></div><div class="card g"><div class="ic">🤧</div><div class="ct">過敏與菌叢</div><div class="cb">殘留可能引起過敏、擾亂腸道菌叢</div></div><div class="card b"><div class="ic">📏</div><div class="ct">MRL 與 LOQ</div><div class="cb">各食品有最大殘留限量；本法 LOQ 0.005 ppm(內臟 0.05 ppm)</div></div></div></div></section><section class="slide" data-slide="18" data-section="喚起行動" data-game="g6"><div class="slide-inner"><div class="game no-nav" data-game="g6"><div class="game-head"><span class="tag a">小遊戲 ⑥</span><span class="gt">計算闖關：殘留含量</span><span class="score" id="g6score">未作答</span></div><div class="game-q">某內臟檢體取樣 <b>M = 2 g</b>、最後定容 <b>V = 2 mL</b>；由檢量線得濃度 <b>C = 0.05 µg/mL</b>。求殘留含量(ppm)。公式：含量 = C×V/M。</div><div class="btnrow"><input class="numin" id="g6in" type="number" step="any" placeholder="?"> <span style="font-weight:800;color:var(--ink)">ppm</span><button class="btn" id="g6check">對答案</button><button class="btn ghost" id="g6hint">提示</button></div><div class="fb" id="g6fb"></div></div></div></section><section class="slide" data-slide="19" data-section="喚起行動"><div class="slide-inner"><div class="kicker">重點整理</div><h2 class="slide-title">今天的五個關鍵</h2><div class="grid2" style="margin-top:18px"><ul class="clean"><li>MOHWV0036.06：LC-MS/MS 驗畜禽水產/蛋/奶/蜜中 <strong>7 種</strong>四環黴素</li><li>四環素會<strong>螯合金屬、黏蛋白</strong> → 必加 <strong>EDTA</strong> 釋放</li><li>萃取用 <strong>McIlvaine 緩衝液 pH 4</strong> + EDTA + 三氯醋酸沉澱蛋白</li></ul><ul class="clean"><li>SPE(Oasis HLB)淨化 → <strong>CSH C18 / ESI⁺ / MRM</strong></li><li>含量 = C×V/M；LOQ 0.005 ppm(內臟 0.05)；含 3 個差向異構物</li></ul></div></div></section><section class="slide" data-slide="20" data-section="喚起行動"><div class="slide-inner"><div class="kicker">自我檢核</div><h2 class="slide-title">今天結束，你應該會…</h2><ul class="checklist no-nav" id="selfcheck" style="margin-top:18px;max-width:980px"><li data-k><span class="bx">✓</span>說明為什麼要管制食品中四環黴素殘留(停藥期、抗藥性)</li><li data-k><span class="bx">✓</span>說出 7 品項：4 個母體 + 3 個差向異構物</li><li data-k><span class="bx">✓</span>解釋四環素為何難測、EDTA 扮演什麼角色</li><li data-k><span class="bx">✓</span>說明 McIlvaine 緩衝液 pH 4 與三氯醋酸的用途</li><li data-k><span class="bx">✓</span>描述 SPE 淨化的目的(去基質干擾)</li><li data-k><span class="bx">✓</span>說出 LC-MS/MS 用 ESI⁺ 與 MRM 的原因</li><li data-k><span class="bx">✓</span>用 C×V/M 計算殘留含量並對照 MRL/LOQ</li><li data-k><span class="bx">✓</span>解釋什麼是差向異構物、為何也要監測</li></ul><p class="subtitle" style="margin-top:12px">點一下打勾——確認自己真的會了。</p></div></section><section class="slide" data-slide="21" data-section="喚起行動" data-cover="1"><div class="slide-inner"><div class="cover"><div class="kicker">延伸 · CONNECT</div><h1>從一顆雞蛋<br><span style='color:var(--accent-2)'>看懂藥物殘留</span></h1><div class="en"></div><div class="meta">🔗 方法骨幹：<strong>LC-MS/MS + MRM</strong> 同樣用於甜味劑、農藥；本法多了 EDTA 螯合的巧思<br>🔬 銜接：<strong>質譜 (Ch11)</strong>、<strong>HPLC (Ch13)</strong>、固相萃取、食品安全衛生管理<br>🧪 思考：為何四環素一定要加 EDTA？差向異構物代表什麼？停藥期沒到就上市會怎樣？</div><div style="margin-top:24px"><span class="pill">動物用藥殘留</span><span class="pill">LC-MS/MS</span><span class="pill">EDTA 螯合</span><span class="pill">SPE</span><span class="pill">抗藥性</span></div></div></div></section><script>window.CFG={"charts": {"rt": {"type": "bar", "yTitle": "滯留時間 (分)", "labels": ["4-epi-TC", "4-epi-OTC", "OTC", "TC", "4-epi-CTC", "CTC", "DC"], "datasets": [{"label": "滯留時間 (min)", "data": [4.59, 4.9, 5.83, 6.12, 6.7, 8.42, 8.88], "color": "#1f6feb"}]}}, "bucket": {"g1": {"cats": ["母體抗生素", "差向異構物 (4-epimer)"], "items": [{"t": "四環黴素 Tetracycline (TC)", "c": "母體抗生素"}, {"t": "羥四環黴素/土黴素 Oxytetracycline (OTC)", "c": "母體抗生素"}, {"t": "氯四環黴素/金黴素 Chlortetracycline (CTC)", "c": "母體抗生素"}, {"t": "脫氧羥四環黴素/多西環素 Doxycycline (DC)", "c": "母體抗生素"}, {"t": "4-epimer-tetracycline", "c": "差向異構物 (4-epimer)"}, {"t": "4-epimer-oxytetracycline", "c": "差向異構物 (4-epimer)"}, {"t": "4-epimer-chlortetracycline", "c": "差向異構物 (4-epimer)"}], "ok": "🎉 全對！TC/OTC/CTC/DC 是母體藥物；3 個 4-epimer 是它們的差向異構物。", "tip": "提示：名稱有『4-epimer』的就是差向異構物；其餘四個是母體抗生素。"}, "g3": {"cats": ["萃取階段", "淨化(SPE)階段"], "items": [{"t": "McIlvaine 緩衝液(pH 4)", "c": "萃取階段"}, {"t": "EDTA-Na₂(螯合金屬、釋放四環素)", "c": "萃取階段"}, {"t": "三氯醋酸(沉澱蛋白質)", "c": "萃取階段"}, {"t": "Oasis HLB 固相萃取匣", "c": "淨化(SPE)階段"}, {"t": "以甲醇沖提分析物", "c": "淨化(SPE)階段"}, {"t": "氮氣吹乾後以 20%甲醇復溶", "c": "淨化(SPE)階段"}], "ok": "🎉 正確！McIlvaine/EDTA/三氯醋酸屬萃取；HLB匣/沖提/復溶屬 SPE 淨化。", "tip": "提示：把藥『放出來』的(緩衝液、EDTA、沉澱蛋白)是萃取；把雜質『去掉』的(HLB、沖提、復溶)是淨化。"}}, "mcq": {"g2": [{"q": "本方法 MOHWV0036.06 採用的分析儀器是？", "o": ["氣相層析 GC", "液相層析串聯質譜 LC-MS/MS", "紫外分光光度計", "酸鹼滴定"], "a": 1, "e": "四環素極性、不揮發、屬痕量多殘留，採 LC-MS/MS、ESI⁺、MRM。"}, {"q": "萃取時加入 EDTA 的主要目的是？", "o": ["調色", "螯合金屬離子、把四環素從基質釋放出來", "當移動相", "沉澱蛋白"], "a": 1, "e": "四環素會螯合 Ca/Mg/Fe 並黏蛋白；EDTA 競爭金屬，提升回收率。"}, {"q": "萃取用 McIlvaine 緩衝液調到 pH 4 的原因是？", "o": ["殺菌", "弱酸下四環素穩定且好萃取", "增加甜味", "降低成本"], "a": 1, "e": "中性/鹼性易降解、強酸易差向異構化；pH 4 是穩定與萃取的折衷。"}, {"q": "固相萃取(SPE)在此方法的角色是？", "o": ["游離", "淨化去除基質干擾", "滴定", "加熱"], "a": 1, "e": "SPE(Oasis HLB)去除基質雜質，降低基質效應、讓訊號乾淨。"}, {"q": "本法共監測幾個品項？", "o": ["3", "5", "7", "13"], "a": 2, "e": "7 品項：四環素/土黴素/金黴素/多西環素 4 母體 + 3 個 4-epimer。"}], "g5": [{"q": "養殖戶用藥後『沒到停藥期就上市』，最直接的後果是？", "o": ["沒影響", "藥物殘留可能超過 MRL", "顏色變深", "重量變輕"], "a": 1, "e": "停藥期是讓藥代謝到 MRL 以下；未到期上市易殘留超標。"}, {"q": "為什麼四環素殘留分析特別需要 EDTA？", "o": ["增色", "四環素會螯合金屬、黏蛋白，EDTA 幫助釋放", "當內標", "當緩衝"], "a": 1, "e": "沒有 EDTA 競爭金屬，四環素被困在基質中，回收率會很差。"}, {"q": "要同時驗肌肉、內臟、蛋、蜂蜜中多種四環素，最有效率的是？", "o": ["逐一定性試劑", "LC-MS/MS 多殘留 MRM", "薄層層析", "折射計"], "a": 1, "e": "LC-MS/MS 以 MRM 一次測多基質、多品項，靈敏且專一。"}, {"q": "層析圖上比母體更早沖出的小峰，常是？", "o": ["雜訊", "差向異構物(4-epimer)", "溶劑", "內標"], "a": 1, "e": "四環素的 4-epimer 極性略不同，通常較母體早沖出，須一併監測。"}, {"q": "長期食用抗生素殘留食品，公共衛生上最受關注的風險是？", "o": ["蛀牙", "抗藥性(AMR)細菌增加", "近視", "骨折"], "a": 1, "e": "低劑量長期暴露會篩選抗藥性細菌，使感染更難治療。"}]}, "sort": {"g4": {"steps": ["檢體(肌肉/內臟/蛋/乳/蜂蜜)切細均質、精確稱重", "加 McIlvaine 緩衝液+EDTA 與三氯醋酸萃取，渦旋振盪", "低溫離心,沉澱蛋白、取上清液", "上清液過 Oasis HLB 固相萃取匣淨化", "甲醇沖提、氮氣吹乾後復溶，過濾供上機", "LC-MS/MS 以 ESI⁺ MRM 分析,比對離子對與滯留時間定量"], "shuffle": [3, 0, 5, 1, 4, 2], "ok": "🎉 順序正確！均質→McIlvaine-EDTA萃取→離心去蛋白→SPE淨化→沖提復溶→LC-MS/MS。", "tip": "提示：先萃取(放出來)、離心去蛋白，再 SPE 淨化、復溶，最後才上 LC-MS/MS。"}}, "calc": {"g6": {"answer": 0.05, "tol": 0.005, "ok": "🎉 正確！含量 = C×V/M = 0.05×2/2 = <b>0.05 ppm<\/b>(恰為內臟 LOQ)。", "bad": "再算算：含量 = C×V/M = 0.05×2/2。", "hint": "提示：0.05×2 = 0.1；0.1/2 = 0.05 ppm。"}}, "cmp": {"cols": [{"k": "n"}, {"k": "en"}, {"k": "cls"}, {"k": "q"}], "rows": [{"n": "四環黴素", "en": "Tetracycline (TC)", "cls": "母體", "q": "445>410"}, {"n": "羥四環黴素(土黴素)", "en": "Oxytetracycline (OTC)", "cls": "母體", "q": "461>426"}, {"n": "氯四環黴素(金黴素)", "en": "Chlortetracycline (CTC)", "cls": "母體", "q": "479>444"}, {"n": "脫氧羥四環黴素(多西環素)", "en": "Doxycycline (DC)", "cls": "母體", "q": "445>428"}, {"n": "4-差向四環黴素", "en": "4-Epimer-tetracycline", "cls": "差向異構物", "q": "445>410"}, {"n": "4-差向土黴素", "en": "4-Epimer-oxytetracycline", "cls": "差向異構物", "q": "461>426"}, {"n": "4-差向金黴素", "en": "4-Epimer-chlortetracycline", "cls": "差向異構物", "q": "479>462"}]}};</script><script>
+var CFG=window.CFG||{};
+var slides=[].slice.call(document.querySelectorAll('.slide'));
+var total=slides.length,cur=0;
+var prog=document.getElementById('progress'),pageInfo=document.getElementById('pageInfo'),secTag=document.getElementById('section-tag');
+function show(i){
+  cur=Math.max(0,Math.min(total-1,i));
+  slides.forEach(function(s,k){s.classList.toggle('active',k===cur)});
+  prog.style.width=((cur+1)/total*100)+'%';
+  pageInfo.textContent=(cur+1)+' / '+total;
+  secTag.textContent='— '+(slides[cur].dataset.section||'')+' —';
+  var ch=slides[cur].dataset.chart; if(ch) initChart(ch);
+  var g=slides[cur].dataset.game; if(g) initGame(g);
+}
+function next(){show(cur+1)} function prev(){show(cur-1)}
+function toggleFs(){if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()}else{document.exitFullscreen&&document.exitFullscreen()}}
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next()}
+  else if(e.key==='ArrowLeft'){prev()}
+  else if(e.key==='f'||e.key==='F'){toggleFs()}
+});
+document.addEventListener('click',function(e){
+  if(e.target.closest('.no-nav')) return;
+  if(e.target.closest('button,input,select,textarea,a,.chip,.opt,.bucket')) return;
+  var x=e.clientX/window.innerWidth;
+  if(x>0.72) next(); else if(x<0.28) prev();
+});
+
+/* ---------- charts ---------- */
+var chartDone={};
+function initChart(id){
+  if(chartDone[id]||typeof Chart==='undefined'||!CFG.charts||!CFG.charts[id]) return; chartDone[id]=1;
+  Chart.defaults.font.family="'Noto Sans TC',sans-serif"; Chart.defaults.color='#48597a';
+  var c=CFG.charts[id];
+  var el=document.getElementById('chart_'+id); if(!el) return;
+  var ds=c.datasets.map(function(d){return {label:d.label,data:d.data,
+    backgroundColor:d.color||'#1f6feb',borderColor:d.color||'#1f6feb',borderRadius:5,
+    fill:(c.type==='line'?false:true),tension:.3}});
+  new Chart(el,{type:c.type||'bar',data:{labels:c.labels,datasets:ds},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:(c.datasets.length>1),position:'top'}},
+      scales:{y:{beginAtZero:(c.zero!==false),title:{display:!!c.yTitle,text:c.yTitle||''}}}}});
+}
+
+/* ---------- games ---------- */
+var gameDone={};
+function setScore(el,v){var e=document.getElementById(el);if(e)e.textContent=v}
+function fb(el,msg,type){var f=document.getElementById(el);if(!f)return;f.className='fb show '+type;f.innerHTML=msg}
+function initGame(g){
+  if(gameDone[g])return; gameDone[g]=1;
+  if(CFG.bucket&&CFG.bucket[g]) return initBucket(g);
+  if(CFG.mcq&&CFG.mcq[g]) return initMCQ(g);
+  if(CFG.sort&&CFG.sort[g]) return initSort(g);
+  if(CFG.calc&&CFG.calc[g]) return initCalc(g);
+  if(g==='cmp') return initCmp();
+}
+
+function initBucket(g){
+  var cfg=CFG.bucket[g];
+  var data=cfg.items.map(function(x){return {t:x.t,c:x.c,at:null}});
+  var cats=cfg.cats, N=data.length;
+  var pool=document.getElementById(g+'pool'), bk=document.getElementById(g+'buckets');
+  var sel=null;
+  bk.style.gridTemplateColumns='repeat('+cats.length+',1fr)';
+  function paint(){[].slice.call(pool.children).forEach(function(c){c.classList.toggle('sel',+c.dataset.i===sel)})}
+  function render(){
+    pool.innerHTML=''; bk.innerHTML='';
+    var placed={}; cats.forEach(function(c){placed[c]=[]});
+    data.forEach(function(d,i){if(d.at)placed[d.at].push(i)});
+    data.forEach(function(d,i){ if(d.at) return;
+      var c=document.createElement('div');c.className='chip';c.textContent=d.t;c.dataset.i=i;
+      c.onclick=function(){sel=(sel===i?null:i);paint()}; pool.appendChild(c);
+    });
+    cats.forEach(function(cat){
+      var b=document.createElement('div');b.className='bucket';b.innerHTML='<div class="bh">'+cat+'</div>';
+      placed[cat].forEach(function(i){
+        var c=document.createElement('div');c.className='chip';c.textContent=data[i].t;
+        c.onclick=function(){data[i].at=null;sel=null;render()}; b.appendChild(c);
+      });
+      b.onclick=function(e){ if(e.target!==b&&!e.target.classList.contains('bh'))return;
+        if(sel!=null){data[sel].at=cat;sel=null;render()} };
+      bk.appendChild(b);
+    });
+    paint();
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; data.forEach(function(d){if(d.at===d.c)ok++});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 全對！','good');
+    else fb(g+'fb','答對 '+ok+'/'+N+'。'+(cfg.tip||'再調整看看。'),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    data.forEach(function(d){d.at=null}); sel=null; render(); setScore(g+'score','0 / '+N);
+    var f=document.getElementById(g+'fb'); if(f) f.className='fb';
+  };
+}
+
+function initMCQ(g){
+  var DATA=CFG.mcq[g], nq=DATA.length, idx=0, score=0, locked=false;
+  var qEl=document.getElementById(g+'q'), opEl=document.getElementById(g+'opts'), nextBtn=document.getElementById(g+'next');
+  function render(){
+    locked=false; var d=DATA[idx];
+    qEl.innerHTML='<span style="color:var(--accent)">Q'+(idx+1)+'.</span> '+d.q;
+    opEl.innerHTML=''; var f=document.getElementById(g+'fb'); if(f)f.className='fb'; if(nextBtn)nextBtn.style.display='none';
+    d.o.forEach(function(t,i){
+      var o=document.createElement('div');o.className='opt';o.textContent=t;
+      o.onclick=function(){
+        if(locked)return; locked=true; var ok=(i===d.a);
+        if(ok){o.classList.add('ok');score++}else{o.classList.add('no');opEl.children[d.a].classList.add('ok')}
+        [].slice.call(opEl.children).forEach(function(c,k){if(k!==i&&k!==d.a)c.classList.add('dim')});
+        setScore(g+'score',score+' / '+nq);
+        var done=(idx>=DATA.length-1);
+        var msg=(ok?'✅ 答對！':'❌ 正解：'+d.o[d.a]+'。')+'<br>'+d.e+(done?'<br><b>完成！總分 '+score+'/'+nq+'</b>':'');
+        fb(g+'fb',msg,ok?'good':'bad');
+        if(nextBtn) nextBtn.style.display=done?'none':'inline-block';
+      };
+      opEl.appendChild(o);
+    });
+  }
+  if(nextBtn) nextBtn.onclick=function(){if(idx<DATA.length-1){idx++;render()}};
+  render();
+}
+
+function initSort(g){
+  var cfg=CFG.sort[g], steps=cfg.steps, N=steps.length;
+  var order=(cfg.shuffle||steps.map(function(_,i){return i})).slice();
+  var list=document.getElementById(g+'list');
+  function render(){
+    list.innerHTML='';
+    order.forEach(function(stepIdx,pos){
+      var row=document.createElement('div');row.className='sortrow';
+      row.innerHTML='<div class="idx">'+(pos+1)+'</div><div class="txt">'+steps[stepIdx]+'</div>';
+      var ud=document.createElement('div');ud.className='ud';
+      var up=document.createElement('button');up.textContent='▲';
+      up.onclick=function(){if(pos>0){var t=order[pos-1];order[pos-1]=order[pos];order[pos]=t;render()}};
+      var dn=document.createElement('button');dn.textContent='▼';
+      dn.onclick=function(){if(pos<order.length-1){var t=order[pos+1];order[pos+1]=order[pos];order[pos]=t;render()}};
+      ud.appendChild(up);ud.appendChild(dn);row.appendChild(ud);list.appendChild(row);
+    });
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; order.forEach(function(v,i){if(v===i)ok++});
+    [].slice.call(list.children).forEach(function(r,i){r.classList.toggle('ok',order[i]===i);r.classList.toggle('no',order[i]!==i)});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 順序完全正確！','good');
+    else fb(g+'fb','對了 '+ok+'/'+N+' 個位置。'+(cfg.tip||''),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    order=(cfg.shuffle||steps.map(function(_,i){return i})).slice().reverse(); render();
+    var f=document.getElementById(g+'fb'); if(f)f.className='fb'; setScore(g+'score','— / '+N);
+  };
+}
+
+function initCalc(g){
+  var cfg=CFG.calc[g];
+  document.getElementById(g+'check').onclick=function(){
+    var v=parseFloat(document.getElementById(g+'in').value);
+    if(isNaN(v)){fb(g+'fb','請先輸入一個數字。','info');return}
+    if(Math.abs(v-cfg.answer)<=(cfg.tol||0.05)){
+      setScore(g+'score','✓ 答對'); fb(g+'fb',cfg.ok||('🎉 正確！答案是 '+cfg.answer),'good');
+    } else { setScore(g+'score','再試一次'); fb(g+'fb',cfg.bad||'再算算看。','bad'); }
+  };
+  var hb=document.getElementById(g+'hint');
+  if(hb) hb.onclick=function(){fb(g+'fb',cfg.hint||'提示：對照公式逐步代入。','info')};
+}
+
+function stars(n){return '★★★★★'.slice(0,n)+'☆☆☆☆☆'.slice(0,5-n)}
+function initCmp(){
+  if(!CFG.cmp) return;
+  var cols=CFG.cmp.cols, rows=CFG.cmp.rows.slice(), dir={};
+  var tb=document.querySelector('#cmpTable tbody');
+  function draw(){ tb.innerHTML=''; rows.forEach(function(r){
+    var tr=document.createElement('tr');
+    tr.innerHTML=cols.map(function(c,ci){
+      var v=r[c.k];
+      if(c.star) return '<td style="color:var(--accent-2)">'+stars(v)+'</td>';
+      return '<td'+(ci===0?' class="c"':'')+'>'+v+'</td>';
+    }).join(''); tb.appendChild(tr); }); }
+  draw();
+  document.querySelectorAll('#cmpTable thead th').forEach(function(th){
+    th.onclick=function(){var k=th.dataset.k,t=th.dataset.t;dir[k]=!dir[k];
+      rows.sort(function(a,b){var x=a[k],y=b[k];
+        if(t==='n')return dir[k]?x-y:y-x;
+        return dir[k]?String(x).localeCompare(String(y),'zh-Hant'):String(y).localeCompare(String(x),'zh-Hant')});
+      draw();};
+  });
+}
+show(0);
+</script>
+<script>document.addEventListener('click',function(e){var li=e.target.closest('#selfcheck li');if(li)li.classList.toggle('done')});</script>
+</body></html>

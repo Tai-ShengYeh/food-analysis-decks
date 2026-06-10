@@ -1,0 +1,406 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>質譜分析 Mass Spectrometry · Nielsen Ch11</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script><style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{font-size:18px}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;background:var(--bg);
+  color:var(--ink);overflow:hidden;height:100vh;width:100vw}
+:root{
+  --bg:#eef2f8;--surface:#ffffff;--surface-2:#f6f9fd;
+  --ink:#15233f;--ink-2:#48597a;--ink-3:#8493ad;--line:#dde5f0;
+  --accent:#1f6feb;--accent-soft:#e7f0fe;
+  --accent-2:#d9822b;--accent-2-soft:#fbeede;
+  --ok:#1f9d6b;--ok-soft:#e3f6ee;--bad:#d94f4f;--bad-soft:#fbe7e7;--warn:#d9a32b;
+  --t2:clamp(1.4rem,3vw,2.3rem);
+  --shadow:0 10px 30px rgba(20,40,80,.10);--shadow-sm:0 3px 12px rgba(20,40,80,.08)}
+#progress{position:fixed;top:0;left:0;height:4px;width:0;z-index:50;
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .5s ease}
+#section-tag{position:fixed;top:16px;left:24px;z-index:40;font-size:.78rem;letter-spacing:.18em;
+  color:var(--accent);font-weight:700;font-family:"JetBrains Mono",monospace}
+#pageInfo{position:fixed;right:22px;bottom:16px;z-index:40;font-size:.82rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+#hint{position:fixed;left:24px;bottom:16px;z-index:40;font-size:.72rem;color:var(--ink-3)}
+#brand{position:fixed;right:22px;top:14px;z-index:40;font-size:.72rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:64px 84px;opacity:0;pointer-events:none;
+  transition:opacity .55s ease,transform .55s ease;transform:translateY(14px)}
+.slide.active{opacity:1;pointer-events:auto;transform:translateY(0)}
+.slide-inner{width:100%;max-width:1280px}
+.kicker{font-family:"JetBrains Mono",monospace;font-size:.8rem;letter-spacing:.16em;color:var(--accent);
+  font-weight:700;text-transform:uppercase;margin-bottom:10px}
+.slide-title{font-size:var(--t2);font-weight:900;line-height:1.18;color:var(--ink);letter-spacing:-.01em}
+.slide-title .hi{color:var(--accent-2)}
+.subtitle{font-size:clamp(.95rem,1.5vw,1.2rem);color:var(--ink-2);margin-top:12px;line-height:1.6}
+p,li{font-size:clamp(.92rem,1.4vw,1.12rem);line-height:1.68;color:var(--ink-2)}
+.lead{font-size:clamp(1.05rem,1.8vw,1.35rem);color:var(--ink);line-height:1.6}
+strong,b{color:var(--ink);font-weight:800}.em{color:var(--accent-2);font-weight:800}
+.divider{height:3px;width:64px;background:var(--accent-2);border-radius:2px;margin:18px 0}
+ul.clean{list-style:none}ul.clean li{position:relative;padding-left:26px;margin:10px 0}
+ul.clean li:before{content:"";position:absolute;left:4px;top:.62em;width:8px;height:8px;border-radius:2px;
+  background:var(--accent);transform:rotate(45deg)}
+.mono{font-family:"JetBrains Mono",monospace}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.grid2-1{display:grid;grid-template-columns:1.15fr .85fr;gap:34px;align-items:center}
+.flow6{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow-sm)}
+.card .ic{font-size:1.6rem;margin-bottom:8px}
+.card .ct{font-weight:800;color:var(--ink);font-size:clamp(1rem,1.5vw,1.2rem);margin-bottom:6px}
+.card .cb{font-size:clamp(.85rem,1.25vw,1rem);color:var(--ink-2);line-height:1.55}
+.card.b{border-top:4px solid var(--accent)}.card.a{border-top:4px solid var(--accent-2)}
+.card.g{border-top:4px solid var(--ok)}
+.tag{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:.7rem;padding:3px 9px;border-radius:999px;
+  background:var(--accent-soft);color:var(--accent);font-weight:700}
+.tag.a{background:var(--accent-2-soft);color:var(--accent-2)}
+.pill{display:inline-block;padding:5px 12px;border-radius:999px;background:var(--surface);border:1px solid var(--line);
+  font-size:.82rem;color:var(--ink-2);margin:3px 4px}
+.note{background:var(--accent-2-soft);border-left:4px solid var(--accent-2);border-radius:8px;padding:14px 18px;
+  color:var(--ink);font-size:clamp(.9rem,1.3vw,1.05rem);line-height:1.6}
+.eq{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 22px;
+  font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,1.7vw,1.4rem);color:var(--ink);text-align:center;box-shadow:var(--shadow-sm)}
+.eq .frac{display:inline-flex;flex-direction:column;text-align:center;vertical-align:middle;margin:0 6px}
+.eq .frac b{border-bottom:2px solid var(--ink);padding-bottom:3px}
+table.cmp{width:100%;border-collapse:collapse;font-size:clamp(.82rem,1.2vw,1.02rem)}
+table.cmp th,table.cmp td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line)}
+table.cmp thead th{color:var(--accent);font-weight:800;border-bottom:2px solid var(--accent);cursor:pointer;
+  user-select:none;white-space:nowrap}
+table.cmp thead th .ar{opacity:.4;font-size:.8em}
+table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--ink);font-weight:700}
+.cover{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 100px;
+  background:radial-gradient(1200px 600px at 80% 20%,var(--accent-2-soft),transparent 60%),
+  radial-gradient(900px 500px at 10% 90%,var(--accent-soft),transparent 55%),linear-gradient(135deg,#ffffff,#eef2f8)}
+.cover h1{font-size:clamp(2.4rem,6vw,4.6rem);font-weight:900;line-height:1.05;letter-spacing:-.02em;color:var(--ink)}
+.cover .en{font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,2vw,1.5rem);color:var(--accent);letter-spacing:.1em;margin-top:6px}
+.cover .meta{margin-top:26px;color:var(--ink-2);font-size:clamp(.9rem,1.4vw,1.1rem)}
+.hook{font-size:clamp(2rem,5vw,3.6rem);font-weight:900;color:var(--ink);line-height:1.2;letter-spacing:-.01em}
+.hook .hi{color:var(--accent)}
+.svgwrap{display:flex;align-items:center;justify-content:center}
+.svgwrap svg{max-width:100%;max-height:62vh;height:auto}
+.lbl{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink-2)}
+.lblb{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink);font-weight:700}
+.game{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 24px;box-shadow:var(--shadow)}
+.game-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.game-head .gt{font-weight:900;font-size:clamp(1.05rem,1.7vw,1.35rem);color:var(--ink)}
+.game-head .score{margin-left:auto;font-family:"JetBrains Mono",monospace;font-weight:700;color:var(--accent);
+  background:var(--accent-soft);padding:5px 13px;border-radius:999px;font-size:.9rem}
+.game-q{font-size:clamp(.95rem,1.5vw,1.18rem);color:var(--ink);font-weight:700;margin:6px 0 14px;line-height:1.5}
+.buckets{display:grid;gap:16px;margin-top:14px}
+.bucket{min-height:120px;border:2px dashed var(--line);border-radius:14px;padding:12px;background:var(--surface-2);transition:.2s}
+.bucket .bh{font-weight:800;color:var(--ink);text-align:center;margin-bottom:8px;font-size:.95rem}
+.pool{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;min-height:54px}
+.chip{padding:9px 15px;border-radius:10px;background:var(--surface);border:1px solid var(--line);font-weight:700;
+  color:var(--ink);cursor:pointer;box-shadow:var(--shadow-sm);font-size:.92rem;transition:.15s}
+.chip:hover{border-color:var(--accent);transform:translateY(-1px)}
+.chip.sel{background:var(--accent);color:#fff;border-color:var(--accent)}
+.chip.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.chip.no{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+.opt{padding:14px 18px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);cursor:pointer;
+  font-weight:700;color:var(--ink);font-size:clamp(.88rem,1.3vw,1.05rem);transition:.15s}
+.opt:hover{border-color:var(--accent);background:var(--accent-soft)}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.opt.no{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}.opt.dim{opacity:.5}
+.fb{margin-top:14px;padding:12px 16px;border-radius:10px;font-weight:700;display:none;
+  font-size:clamp(.85rem,1.3vw,1.02rem);line-height:1.5}
+.fb.show{display:block}.fb.good{background:var(--ok-soft);color:var(--ok)}
+.fb.bad{background:var(--bad-soft);color:var(--bad)}.fb.info{background:var(--accent-soft);color:var(--accent)}
+.btn{padding:10px 20px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-weight:800;cursor:pointer;
+  font-size:.92rem;font-family:inherit;box-shadow:var(--shadow-sm)}
+.btn:hover{filter:brightness(1.06)}.btn.ghost{background:var(--surface);color:var(--accent);border:1.5px solid var(--accent)}
+.btnrow{display:flex;gap:12px;margin-top:16px;align-items:center}
+.sortlist{display:flex;flex-direction:column;gap:6px;margin-top:6px;max-height:44vh;overflow-y:auto;padding-right:4px}
+.sortrow{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:7px 14px;box-shadow:var(--shadow-sm)}
+.sortrow .idx{font-family:"JetBrains Mono",monospace;font-weight:800;color:var(--accent);width:24px}
+.sortrow .txt{flex:1;font-weight:700;color:var(--ink);font-size:clamp(.85rem,1.25vw,1.02rem)}
+.sortrow .ud{display:flex;flex-direction:column;gap:3px}
+.sortrow .ud button{border:none;background:var(--accent-soft);color:var(--accent);border-radius:6px;width:30px;height:20px;
+  cursor:pointer;font-weight:900;line-height:1}
+.sortrow.ok{border-color:var(--ok);background:var(--ok-soft)}.sortrow.no{border-color:var(--bad)}
+.numin{font-family:"JetBrains Mono",monospace;font-size:1.2rem;font-weight:800;padding:10px 14px;border:1.5px solid var(--line);
+  border-radius:10px;width:140px;color:var(--ink);text-align:center}
+.numin:focus{outline:none;border-color:var(--accent)}
+.checklist{list-style:none}
+.checklist li{display:flex;align-items:center;gap:12px;padding:11px 14px;border:1px solid var(--line);border-radius:10px;
+  margin:8px 0;background:var(--surface);cursor:pointer;font-weight:700;color:var(--ink-2);font-size:clamp(.9rem,1.35vw,1.08rem);transition:.15s}
+.checklist li .bx{width:24px;height:24px;border-radius:6px;border:2px solid var(--accent);display:flex;align-items:center;
+  justify-content:center;color:#fff;font-weight:900;flex:0 0 auto}
+.checklist li.done{background:var(--ok-soft);border-color:var(--ok);color:var(--ink)}
+.checklist li.done .bx{background:var(--ok);border-color:var(--ok)}
+.chartbox{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow-sm);
+  height:60vh;max-height:520px;position:relative}
+.cap{font-size:.82rem;color:var(--ink-3);text-align:center;margin-top:8px}
+</style></head><body><div id="progress"></div><div id="section-tag"></div><div id="brand">MS · CH11</div><div id="pageInfo"></div><div id="hint">← → / 空白鍵切頁　·　F 全螢幕　·　點兩側翻頁</div><section class="slide" data-slide="1" data-section="引起動機" data-cover="1"><div class="slide-inner"><div class="cover"><div class="kicker">NIELSEN'S FOOD ANALYSIS · CHAPTER 11</div><h1>質譜<span style='color:var(--accent-2)'>分析</span> MS</h1><div class="en">Mass Spectrometry</div><div class="meta">食品分析　·　3 小時課程　·　含 6 個互動小遊戲<br>游離源 · 質量分析器 · GC-MS · LC-MS · 串聯質譜 · 高解析 HRMS</div><div style="margin-top:24px"><span class="pill">m/z 質荷比</span><span class="pill">ESI/EI/MALDI</span><span class="pill">三重四極桿</span><span class="pill">ppb–ppt</span><span class="pill">三聚氰胺/農藥</span></div></div></div></section><section class="slide" data-slide="2" data-section="引起動機"><div class="slide-inner"><div style="text-align:center">
+  <div class="kicker" style="justify-content:center">先想一想</div>
+  <div class="hook">怎麼從一團複雜食品裡，<br>精準「秤」出一個分子、抓出 <span class="hi">ppb 級</span>的農藥或三聚氰胺？</div>
+  <p class="subtitle" style="max-width:840px;margin:22px auto 0">答案是<strong>質譜 (MS)</strong>。<br>
+  它先把分子變成<strong>帶電的離子</strong>，再依<strong>質荷比 m/z</strong> 把它們一一分開、秤重，<br>靈敏到單一兆分之一(ppt)、還能算出分子式。</p>
+  <div style="margin-top:24px"><span class="pill">農藥殘留篩檢</span><span class="pill">三聚氰胺/獸藥</span>
+  <span class="pill">真偽與溯源</span><span class="pill">foodomics</span></div></div></div></section><section class="slide" data-slide="3" data-section="引起動機"><div class="slide-inner"><div class="kicker">11.1 介紹</div><h2 class="slide-title">質譜能做什麼</h2><div class="grid2" style="margin-top:18px"><div class="card b"><div class="ic">⚖️</div><div class="ct">秤分子的質量</div><div class="cb">小到咖啡因(194 Da)、大到免疫球蛋白(144,000 Da)都能測</div></div><div class="card a"><div class="ic">🔗</div><div class="ct">聯用威力</div><div class="cb">與 GC、LC 聯用(GC-MS、LC-MS)→大幅降低偵測極限、提高專一性</div></div><div class="card g"><div class="ic">🧩</div><div class="ct">得到分子資訊</div><div class="cb">由碎片與精確質量推出分子量與結構/組成</div></div><div class="card b"><div class="ic">🛡️</div><div class="ct">食安守門</div><div class="cb">農藥、獸藥、黴菌毒素、三聚氰胺…官方法多用 LC-MS/MS</div></div></div></div></section><section class="slide" data-slide="4" data-section="引起動機"><div class="slide-inner"><div class="kicker">11.2.1 三大功能</div><h2 class="slide-title">質譜儀的<span class='hi'>骨架</span></h2><div class="svgwrap" style="margin-top:6px">
+<svg viewBox="0 0 1000 200">
+ <defs><marker id="mb" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 Z" fill="#48597a"/></marker></defs>
+ <g font-size="13">
+  <rect x="14" y="70" width="150" height="60" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2.2"/>
+  <text x="89" y="96" text-anchor="middle" class="lblb">樣品導入</text><text x="89" y="115" text-anchor="middle" class="lbl">GC/LC/直接</text>
+  <rect x="210" y="70" width="150" height="60" rx="10" fill="#fbeede" stroke="#d9822b" stroke-width="2.2"/>
+  <text x="285" y="96" text-anchor="middle" class="lblb">游離源</text><text x="285" y="115" text-anchor="middle" class="lbl">分子→離子</text>
+  <rect x="406" y="70" width="160" height="60" rx="10" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2.2"/>
+  <text x="486" y="96" text-anchor="middle" class="lblb">質量分析器</text><text x="486" y="115" text-anchor="middle" class="lbl">依 m/z 分離</text>
+  <rect x="612" y="70" width="150" height="60" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2.2"/>
+  <text x="687" y="96" text-anchor="middle" class="lblb">偵測器</text><text x="687" y="115" text-anchor="middle" class="lbl">計數離子</text>
+  <rect x="808" y="74" width="150" height="52" rx="9" fill="#15233f"/>
+  <text x="883" y="104" text-anchor="middle" fill="#fff" font-weight="800">資料系統</text>
+ </g>
+ <g stroke="#48597a" stroke-width="2.4" marker-end="url(#mb)">
+  <line x1="166" y1="100" x2="206" y2="100"/><line x1="362" y1="100" x2="402" y2="100"/>
+  <line x1="568" y1="100" x2="608" y2="100"/><line x1="764" y1="100" x2="804" y2="100"/></g>
+ <text x="486" y="40" text-anchor="middle" class="lblb" font-size="15">質譜儀三大功能：游離 → 依 m/z 分離 → 偵測 (Fig 11.1)</text>
+ <text x="486" y="175" text-anchor="middle" class="lbl">全程高真空(10⁻⁶–10⁻⁸ torr)，避免離子與氣體分子碰撞</text>
+</svg></div><p class="subtitle" style="text-align:center;margin-top:8px">不論氣態、液態或固態，樣品都要先變成<strong>氣相離子</strong>，才能在高真空中被電磁場依 m/z 分離。</p></div></section><section class="slide" data-slide="5" data-section="引起動機" data-chart="spectrum"><div class="slide-inner"><div class="kicker">11.3 判讀基礎</div><h2 class="slide-title">質譜圖怎麼看：<span class='hi'>基峰</span>與<span class='hi'>分子離子</span></h2><div class="grid2-1" style="margin-top:8px"><div><div class="kicker"></div><h2 class="slide-title"></h2><div class="chartbox" style="height:44vh"><canvas id="chart_spectrum"></canvas></div><div class="cap">丁烷的 EI 質譜(示意)：x 軸 m/z、y 軸相對強度。基峰 m/z 43=100%，分子離子 m/z 58。</div></div><div><ul class="clean"><li><strong>基峰(base peak)</strong>：強度最高的峰，設為 100%</li><li><strong>分子(前驅)離子 M⁺•</strong>：完整分子失去一個電子，質量＝分子量</li><li><strong>子離子(碎片)</strong>：M⁺• 進一步裂解的產物</li><li>丁烷(58)：基峰 43、另有 29、15；甲醇(32)：基峰 31</li></ul></div></div></div></section><section class="slide" data-slide="6" data-section="引起動機" data-game="g1"><div class="slide-inner"><div class="game no-nav" data-game="g1"><div class="game-head"><span class="tag a">小遊戲 ①</span><span class="gt">軟游離 vs 硬游離</span><span class="score" id="g1score">0 / 8</span></div><div class="game-q">把 8 個敘述分到「硬游離(多碎片)」或「軟游離(少碎片)」。</div><div class="pool" id="g1pool"></div><div class="buckets" id="g1buckets"></div><div class="fb" id="g1fb"></div><div class="btnrow"><button class="btn" id="g1check">檢查答案</button><button class="btn ghost" id="g1reset">重來</button></div></div></div></section><section class="slide" data-slide="7" data-section="維持注意"><div class="slide-inner"><div class="kicker">11.2.2 樣品導入</div><h2 class="slide-title">靜態 vs 動態</h2><div class="grid2" style="margin-top:18px"><div class="card b"><div class="ic">💉</div><div class="ct">靜態(static)</div><div class="cb">純物或萃取液<strong>直接注入</strong>、直接插入探針、DART 即時分析</div></div><div class="card a"><div class="ic">🔀</div><div class="ct">動態(dynamic)</div><div class="cb">混合物先用 <strong>GC 或 LC 分離</strong>，經介面去除載氣/溶劑後進質譜</div></div></div><div class="note" style="margin-top:16px">所有質譜都在高真空運作，<strong>介面(interface)</strong>的關鍵任務就是把大量 GC 載氣或 LC 溶劑移除，只讓分析物離子進入。</div></div></section><section class="slide" data-slide="8" data-section="維持注意"><div class="slide-inner"><div class="kicker">11.2.3 游離源</div><h2 class="slide-title">把分子變離子的<span class='hi'>四種</span>常見方式</h2><div class="grid2" style="margin-top:14px"><div class="card a"><div class="ic">⚡</div><div class="ct">EI 電子撞擊</div><div class="cb">70 eV 電子撞出離子；<strong>硬游離</strong>、碎片豐富，GC-MS 主力、可比對圖庫</div></div><div class="card b"><div class="ic">💧</div><div class="ct">ESI 電灑</div><div class="cb">最常用 LC-MS；<strong>軟游離</strong>、可多電荷，適合極性/大分子</div></div><div class="card g"><div class="ic">🔥</div><div class="ct">APCI/APPI</div><div class="cb">常壓化學/光游離；適合低極性、揮發性分子</div></div><div class="card b"><div class="ic">🔬</div><div class="ct">MALDI</div><div class="cb">基質輔助雷射；軟游離大生物分子(蛋白、核酸)，常配 TOF</div></div></div></div></section><section class="slide" data-slide="9" data-section="維持注意"><div class="slide-inner"><div class="kicker">11.2.3.2 ESI 細看</div><h2 class="slide-title">電灑：液滴→離子</h2><div class="svgwrap" style="margin-top:6px">
+<svg viewBox="0 0 600 220">
+ <text x="300" y="20" text-anchor="middle" class="lblb" font-size="15">電灑游離 ESI：液相分子變氣相離子(軟游離)</text>
+ <!-- capillary -->
+ <rect x="20" y="95" width="150" height="22" rx="4" fill="#cfe0f6" stroke="#1f6feb" stroke-width="2"/>
+ <text x="95" y="88" text-anchor="middle" class="lbl">LC 流出液 + 高電壓</text>
+ <!-- Taylor cone -->
+ <path d="M170 95 L210 106 L170 117 Z" fill="#d9822b" opacity=".7"/>
+ <text x="200" y="138" text-anchor="middle" class="lbl">Taylor cone</text>
+ <!-- droplets shrinking -->
+ <g fill="#1f6feb">
+  <circle cx="245" cy="106" r="12" opacity=".5"/><circle cx="300" cy="100" r="8" opacity=".55"/>
+  <circle cx="345" cy="112" r="6" opacity=".6"/><circle cx="385" cy="103" r="4" opacity=".7"/></g>
+ <text x="300" y="150" text-anchor="middle" class="lbl">帶電液滴蒸發、庫侖爆炸越變越小</text>
+ <!-- ions -->
+ <g fill="#1f9d6b" font-size="12">
+  <text x="440" y="98">＋</text><text x="465" y="112">＋</text><text x="490" y="100">＋</text></g>
+ <rect x="520" y="92" width="60" height="30" rx="5" fill="#15233f"/>
+ <text x="550" y="112" text-anchor="middle" fill="#fff" font-size="11">進質譜</text>
+ <text x="455" y="140" text-anchor="middle" class="lbl">氣相離子(可帶多電荷)</text>
+</svg></div><div class="note" style="margin-top:12px">高電壓在毛細管尖端拉出 <strong>Taylor cone</strong>，噴出帶電液滴；溶劑蒸發使液滴縮小、電荷密度升高到<strong>庫侖爆炸</strong>，最終釋出氣相離子。ESI 可帶<strong>多電荷</strong>，故能測 m/z 上限內的大蛋白。</div></div></section><section class="slide" data-slide="10" data-section="維持注意" data-game="g2"><div class="slide-inner"><div class="game no-nav" data-game="g2"><div class="game-head"><span class="tag a">小遊戲 ②</span><span class="gt">游離與判讀即時測驗</span><span class="score" id="g2score">0 / 5</span></div><div class="game-q" id="g2q"></div><div class="opts" id="g2opts"></div><div class="fb" id="g2fb"></div><div class="btnrow"><button class="btn ghost" id="g2next" style="display:none">下一題 →</button></div></div></div></section><section class="slide" data-slide="11" data-section="維持注意"><div class="slide-inner"><div class="kicker">11.2.4 質量分析器</div><h2 class="slide-title">四種「秤離子」的<span class='hi'>引擎</span></h2><div class="grid2-1" style="margin-top:8px"><div class="svgwrap">
+<svg viewBox="0 0 560 260">
+ <text x="280" y="22" text-anchor="middle" class="lblb" font-size="15">四極桿質量分析器：RF+DC 電場當「質量篩」</text>
+ <!-- 4 rods (2 shown as ellipses pairs) -->
+ <ellipse cx="200" cy="80" rx="120" ry="20" fill="#cfe0f6" stroke="#1f6feb" stroke-width="2"/>
+ <ellipse cx="200" cy="180" rx="120" ry="20" fill="#cfe0f6" stroke="#1f6feb" stroke-width="2"/>
+ <circle cx="90" cy="130" r="20" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
+ <circle cx="320" cy="130" r="20" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
+ <text x="200" y="70" text-anchor="middle" class="lbl">+ (DC+RF)</text>
+ <text x="200" y="200" text-anchor="middle" class="lbl">−</text>
+ <!-- ion path: stable sine -->
+ <path d="M70 130 q30 -28 60 0 q30 28 60 0 q30 -28 60 0 q30 28 60 0" fill="none" stroke="#1f9d6b" stroke-width="3"/>
+ <circle cx="70" cy="130" r="6" fill="#1f9d6b"/>
+ <text x="40" y="135" text-anchor="end" class="lbl">離子</text>
+ <line x1="350" y1="130" x2="420" y2="130" stroke="#1f9d6b" stroke-width="3" marker-end="url(#qm)"/>
+ <defs><marker id="qm" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 Z" fill="#1f9d6b"/></marker></defs>
+ <text x="430" y="125" class="lblb">穩定路徑</text><text x="430" y="143" class="lbl">→ 偵測器</text>
+ <!-- unstable -->
+ <path d="M150 230 q20 -18 0 -36" fill="none" stroke="#d94f4f" stroke-width="2" stroke-dasharray="3 3"/>
+ <text x="200" y="244" text-anchor="middle" class="lbl">不穩定離子撞上電極被抽走</text>
+</svg></div><div><ul class="clean"><li><strong>四極桿(Q)</strong>：RF+DC 當質量篩，便宜堅固、定量主力</li><li><strong>離子阱(IT)</strong>：先困住離子，可做多階 <strong>MSⁿ</strong></li><li><strong>飛行時間(TOF)</strong>：依飛行時間分離，掃描快、質量範圍大</li><li><strong>傅立葉(Orbitrap/FT-ICR)</strong>：測離子振盪頻率，<strong>超高解析</strong></li></ul></div></div></div></section><section class="slide" data-slide="12" data-section="維持注意" data-game="g3"><div class="slide-inner"><div class="game no-nav" data-game="g3"><div class="game-head"><span class="tag a">小遊戲 ③</span><span class="gt">GC-MS vs LC-MS：誰適合？</span><span class="score" id="g3score">0 / 6</span></div><div class="game-q">把 6 個情境分到「適合 GC-MS」或「適合 LC-MS」。</div><div class="pool" id="g3pool"></div><div class="buckets" id="g3buckets"></div><div class="fb" id="g3fb"></div><div class="btnrow"><button class="btn" id="g3check">檢查答案</button><button class="btn ghost" id="g3reset">重來</button></div></div></div></section><section class="slide" data-slide="13" data-section="維持注意"><div class="slide-inner"><div class="kicker">11.6 串聯質譜 MS/MS</div><h2 class="slide-title">三重四極桿：痕量定量的<span class='hi'>主力</span></h2><div class="svgwrap" style="margin-top:6px">
+<svg viewBox="0 0 980 230">
+ <defs><marker id="tm" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 Z" fill="#1f9d6b"/></marker></defs>
+ <text x="490" y="22" text-anchor="middle" class="lblb" font-size="15">三重四極桿 MS/MS：選母離子 → 碰撞碎裂 → 選子離子 (Fig 11.14)</text>
+ <line x1="40" y1="120" x2="930" y2="120" stroke="#1f9d6b" stroke-width="3" marker-end="url(#tm)"/>
+ <rect x="70" y="92" width="150" height="56" rx="9" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2.2"/>
+ <text x="145" y="116" text-anchor="middle" class="lblb">Q1</text><text x="145" y="135" text-anchor="middle" class="lbl">選母離子</text>
+ <rect x="300" y="92" width="180" height="56" rx="9" fill="#fbeede" stroke="#d9822b" stroke-width="2.2"/>
+ <text x="390" y="116" text-anchor="middle" class="lblb">Q2 碰撞室</text><text x="390" y="135" text-anchor="middle" class="lbl">CID 與 Ar/N₂ 碰撞碎裂</text>
+ <rect x="560" y="92" width="150" height="56" rx="9" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2.2"/>
+ <text x="635" y="116" text-anchor="middle" class="lblb">Q3</text><text x="635" y="135" text-anchor="middle" class="lbl">選子離子</text>
+ <rect x="800" y="96" width="120" height="48" rx="8" fill="#15233f"/>
+ <text x="860" y="125" text-anchor="middle" fill="#fff" font-weight="800">偵測器</text>
+ <text x="145" y="76" text-anchor="middle" class="lbl">precursor</text>
+ <text x="635" y="76" text-anchor="middle" class="lbl">product</text>
+ <text x="490" y="200" text-anchor="middle" class="lbl">SRM/MRM：只看特定「離子對」→ 雜訊大降、靈敏度↑100–1000 倍，痕量定量首選</text>
+</svg></div><div class="note" style="margin-top:10px"><strong>SRM/MRM</strong>(選擇/多重反應偵測)：Q1 選母離子、Q2 碰撞碎裂(CID)、Q3 選子離子，只盯特定「離子對」→ 雜訊大降、靈敏度提升 <strong>100–1000 倍</strong>。這就是農藥、獸藥、甜味劑官方法都用它的原因。</div></div></section><section class="slide" data-slide="14" data-section="維持注意" data-game="g4"><div class="slide-inner"><div class="game no-nav" data-game="g4"><div class="game-head"><span class="tag a">小遊戲 ④</span><span class="gt">三重四極桿 MRM 流程排序</span><span class="score" id="g4score">— / 6</span></div><div class="game-q">用 ▲▼ 把 LC-MS/MS 做 MRM 定量的 6 個步驟排成正確順序。</div><div class="sortlist" id="g4list"></div><div class="fb" id="g4fb"></div><div class="btnrow"><button class="btn" id="g4check">檢查順序</button><button class="btn ghost" id="g4reset">打亂重排</button></div></div></div></section><section class="slide" data-slide="15" data-section="維持注意"><div class="slide-inner"><div class="kicker">11.7 高解析質譜 HRMS</div><h2 class="slide-title">用<span class='hi'>準確質量</span>算出分子式</h2><div class="grid2" style="margin-top:18px"><ul class="clean"><li>解析度以 <strong>FWHM</strong>(半高寬)定義；四極桿~500、Orbitrap~30,000、FT-ICR~3,000,000</li><li><strong>準確質量</strong>＋同位素細結構 → 推出<strong>元素組成</strong></li><li>質量誤差 <strong>&lt; 5 ppm</strong> 即可可靠定出分子式</li></ul><div class="note">咖啡因 C₈H₁₀N₄O₂ 的三種質量：<br><strong>標稱 194</strong>(整數和)、<strong>單一同位素 194.0804</strong>(最豐同位素精確和)、<strong>平均 194.1906</strong>(考慮同位素豐度)。<br>質量量得越準，越能唯一決定分子式。</div></div></div></section><section class="slide" data-slide="16" data-section="維持注意" data-chart="resolution"><div class="slide-inner"><div class="kicker">11.7 解析度</div><h2 class="slide-title">各質量分析器的<span class='hi'>解析度</span></h2><div class="chartbox"><canvas id="chart_resolution"></canvas></div><div class="cap">解析度取以 10 為底對數：四極桿~500 到 FT-ICR~3,000,000，跨 4 個數量級——解析度越高，越能分辨質量相近的離子。</div></div></section><section class="slide" data-slide="17" data-section="維持注意" data-game="g5"><div class="slide-inner"><div class="game no-nav" data-game="g5"><div class="game-head"><span class="tag a">小遊戲 ⑤</span><span class="gt">決策挑戰：選對質譜技術</span><span class="score" id="g5score">0 / 5</span></div><div class="game-q" id="g5q"></div><div class="opts" id="g5opts"></div><div class="fb" id="g5fb"></div><div class="btnrow"><button class="btn ghost" id="g5next" style="display:none">下一題 →</button></div></div></div></section><section class="slide" data-slide="18" data-section="喚起行動" data-game="cmp"><div class="slide-inner"><div class="kicker">11.2.4 / 11.7 比較</div><h2 class="slide-title">一張表選質量分析器（點欄位排序）</h2><table class="cmp" id="cmpTable" style="margin-top:14px"><thead><tr><th data-k="m" data-t="s">分析器 <span class="ar">⇅</span></th><th data-k="res" data-t="n">解析度 <span class="ar">⇅</span></th><th data-k="acc" data-t="s">質量準確度 <span class="ar">⇅</span></th><th data-k="cost" data-t="n">成本 <span class="ar">⇅</span></th><th data-k="app" data-t="s">代表用途 <span class="ar">⇅</span></th></tr></thead><tbody></tbody></table><div class="cap">解析度／成本 ★ 越多越高。整合自 Table 11.1 與 11.7。</div></div></section><section class="slide" data-slide="19" data-section="喚起行動"><div class="slide-inner"><div class="kicker">11.8 應用</div><h2 class="slide-title">質譜在食品的<span class='hi'>實戰</span></h2><div class="grid2" style="margin-top:16px"><div class="card b"><div class="ic">☕</div><div class="ct">咖啡因/可可鹼</div><div class="cb">逆相 LC-MS/MS，以 SIM/MRM 分離定量(同質量異構物也能分)</div></div><div class="card a"><div class="ic">🥛</div><div class="ct">三聚氰胺(2008)</div><div class="cb">極性、不揮發→須 LC-MS/MS；母離子 127.1 → 子離子 85.1</div></div><div class="card g"><div class="ic">🍵</div><div class="ct">綠茶兒茶素</div><div class="cb">ESI-MS 全掃描＋MS/MS，鑑定 epicatechin 等多酚</div></div><div class="card b"><div class="ic">🦠</div><div class="ct">MALDI-TOF 微生物</div><div class="cb">以蛋白質指紋 24 小時內快速鑑定細菌、酵母菌</div></div></div></div></section><section class="slide" data-slide="20" data-section="喚起行動"><div class="slide-inner"><div class="kicker">11.8 焦點案例</div><h2 class="slide-title">三聚氰胺：質譜如何<span class='hi'>破案</span></h2><div class="grid2" style="margin-top:16px"><div><ul class="clean"><li>三聚氰胺含氮量高(67%)，被非法加入乳品/麵筋<strong>假造蛋白質</strong>(Ch18 凱氏法只測氮)</li><li>分子極性、不揮發 → GC 不行，<strong>LC-MS/MS</strong> 成首選</li><li>ESI⁺ 產生 <strong>m/z 127.1</strong> 母離子 → CID → <strong>m/z 85.1</strong> 子離子</li><li>同時監測多組離子對 → 高專一性、低偽陽性</li></ul></div><div class="note"><strong>啟示：</strong>單測「總氮」會被鑽漏洞；<br>質譜直接看<strong>分子身分(m/z)</strong>，才能識破摻假。這正是後面食藥署各項 LC-MS/MS 公告法的基礎。</div></div></div></section><section class="slide" data-slide="21" data-section="喚起行動" data-game="g6"><div class="slide-inner"><div class="game no-nav" data-game="g6"><div class="game-head"><span class="tag a">小遊戲 ⑥</span><span class="gt">計算闖關：質量準確度(ppm)</span><span class="score" id="g6score">未作答</span></div><div class="game-q">高解析質譜測得咖啡因分子離子為 <b>194.0811</b>，理論單一同位素質量為 <b>194.0804</b>。求質量準確度。公式：(測得−理論)/理論 × 10⁶。</div><div class="btnrow"><input class="numin" id="g6in" type="number" step="any" placeholder="?"> <span style="font-weight:800;color:var(--ink)">ppm</span><button class="btn" id="g6check">對答案</button><button class="btn ghost" id="g6hint">提示</button></div><div class="fb" id="g6fb"></div></div></div></section><section class="slide" data-slide="22" data-section="喚起行動"><div class="slide-inner"><div class="kicker">重點整理</div><h2 class="slide-title">今天的五個關鍵</h2><div class="grid2" style="margin-top:18px"><ul class="clean"><li>MS＝<strong>游離 → 依 m/z 分離 → 偵測</strong>；全程高真空</li><li>游離：<strong>EI 硬</strong>(GC-MS、碎片多)、<strong>ESI 軟</strong>(LC-MS、多電荷)</li><li>分析器：四極桿/離子阱/TOF/Orbitrap，解析度差距大</li></ul><ul class="clean"><li><strong>三重四極桿 MRM</strong>：痕量定量主力(靈敏度×100–1000)</li><li><strong>HRMS</strong> 準確質量(&lt;5 ppm)→ 定分子式；應用遍及農藥、獸藥、摻假</li></ul></div></div></section><section class="slide" data-slide="23" data-section="喚起行動"><div class="slide-inner"><div class="kicker">自我檢核</div><h2 class="slide-title">今天結束，你應該會…</h2><ul class="checklist no-nav" id="selfcheck" style="margin-top:18px;max-width:980px"><li data-k><span class="bx">✓</span>說出質譜的三大功能與五大組件</li><li data-k><span class="bx">✓</span>區分靜態與動態樣品導入、GC-MS 與 LC-MS 的適用對象</li><li data-k><span class="bx">✓</span>比較 EI 與 ESI(硬/軟游離)及其代表應用</li><li data-k><span class="bx">✓</span>說明四極桿、離子阱、TOF、Orbitrap 的差異</li><li data-k><span class="bx">✓</span>畫出三重四極桿 MRM 的流程並說明為何靈敏</li><li data-k><span class="bx">✓</span>解讀質譜圖的基峰、分子離子與子離子</li><li data-k><span class="bx">✓</span>用準確質量算出質量準確度(ppm)並說明其用途</li><li data-k><span class="bx">✓</span>舉出至少兩個質譜在食品安全的應用案例</li></ul><p class="subtitle" style="margin-top:12px">點一下打勾——確認自己真的會了。</p></div></section><section class="slide" data-slide="24" data-section="喚起行動" data-cover="1"><div class="slide-inner"><div class="cover"><div class="kicker">下一步 · NEXT</div><h1>把質譜<br><span style='color:var(--accent-2)'>用起來</span></h1><div class="en"></div><div class="meta">📌 課後練習：Study Questions(乙醇 EI 質譜、標稱 vs 單一同位素質量、CAD vs CID)<br>🔜 銜接：<strong>HPLC (Ch13)</strong>、<strong>GC (Ch14)</strong>、<strong>蛋白質/凱氏法 (Ch18)</strong>、食藥署 LC-MS/MS 公告法<br>🧪 思考：你的分析物揮發嗎？極性如何？要定量還是鑑定結構？該選 GC-MS、LC-MS/MS 還是 HRMS？</div><div style="margin-top:24px"><span class="pill">m/z</span><span class="pill">EI/ESI</span><span class="pill">MRM 定量</span><span class="pill">HRMS</span><span class="pill">食安應用</span></div></div></div></section><script>window.CFG={"charts": {"spectrum": {"type": "bar", "yTitle": "相對強度 (%)", "zero": true, "labels": ["15", "29", "43", "57", "58"], "datasets": [{"label": "丁烷 EI 質譜", "data": [10, 32, 100, 5, 30], "color": "#d9822b"}]}, "resolution": {"type": "bar", "yTitle": "解析度 log₁₀(R)", "labels": ["四極桿", "離子阱", "TOF", "Orbitrap", "FT-ICR"], "datasets": [{"label": "log₁₀(解析度)", "data": [2.7, 3.0, 4.5, 5.5, 6.5], "color": "#1f6feb"}]}}, "bucket": {"g1": {"cats": ["硬游離(多碎片)", "軟游離(少碎片)"], "items": [{"t": "EI 電子撞擊(70 eV)", "c": "硬游離(多碎片)"}, {"t": "打出豐富碎片、可比對質譜圖庫", "c": "硬游離(多碎片)"}, {"t": "GC-MS 揮發性分子常用", "c": "硬游離(多碎片)"}, {"t": "分子離子常因裂解而不明顯", "c": "硬游離(多碎片)"}, {"t": "ESI 電灑游離", "c": "軟游離(少碎片)"}, {"t": "MALDI 雷射游離大分子", "c": "軟游離(少碎片)"}, {"t": "主要產生 (M+H)⁺、碎片少", "c": "軟游離(少碎片)"}, {"t": "LC-MS 分析極性/熱不穩定分子", "c": "軟游離(少碎片)"}], "ok": "🎉 全對！硬游離(EI)碎片多可比對圖庫；軟游離(ESI/MALDI/CI)保留分子離子。", "tip": "提示：碎片多、能比對圖庫→硬(EI)；保留完整分子離子、碎片少→軟(ESI/MALDI)。"}, "g3": {"cats": ["適合 GC-MS", "適合 LC-MS"], "items": [{"t": "揮發、熱穩定的小分子(精油、脂肪酸甲酯)", "c": "適合 GC-MS"}, {"t": "常用 EI 硬游離、比對質譜圖庫", "c": "適合 GC-MS"}, {"t": "需先衍生化才夠揮發(如 FAME)", "c": "適合 GC-MS"}, {"t": "極性、不揮發或熱不穩定(三聚氰胺、農藥、抗生素)", "c": "適合 LC-MS"}, {"t": "常用 ESI/APCI 軟游離", "c": "適合 LC-MS"}, {"t": "大分子量、多電荷的蛋白質", "c": "適合 LC-MS"}], "ok": "🎉 正確！揮發/熱穩定→GC-MS；極性/不揮發/大分子→LC-MS。", "tip": "提示：能變成氣相又耐熱→GC-MS；極性、怕熱、不揮發、大分子→LC-MS。"}}, "mcq": {"g2": [{"q": "質譜依什麼把離子分開？", "o": ["沸點", "質荷比 m/z", "極性", "顏色"], "a": 1, "e": "質量分析器依離子的質荷比(m/z)分離；多數離子帶 +1，m/z≈質量。"}, {"q": "質譜圖中強度設為 100% 的峰稱為？", "o": ["分子離子", "基峰(base peak)", "同位素峰", "雜訊"], "a": 1, "e": "基峰是強度最高的峰，設為 100%，其餘峰相對於它。"}, {"q": "代表完整分子、質量最大的離子稱為？", "o": ["子離子", "基峰", "分子(前驅)離子 M⁺•", "加合物"], "a": 2, "e": "分子(前驅)離子由完整分子失去一個電子形成，質量等於分子量。"}, {"q": "最常用於 LC-MS、可產生多電荷的軟游離法是？", "o": ["EI", "ESI 電灑", "FAB", "場游離"], "a": 1, "e": "ESI 是最普遍的 LC-MS 軟游離法，可帶多電荷，能測大蛋白。"}, {"q": "EI 的電子能量通常設定在？", "o": ["7 eV", "70 eV", "700 eV", "7 keV"], "a": 1, "e": "EI 標準用 70 eV，使不同儀器得到的質譜相近、便於比對圖庫。"}], "g5": [{"q": "要鑑定未知物、需要超高解析的準確質量，選？", "o": ["四極桿", "Orbitrap/FT-ICR(HRMS)", "單一四極桿", "離子阱"], "a": 1, "e": "高解析(Orbitrap/FT-ICR)提供準確質量與同位素細結構，利於定分子式。"}, {"q": "要定量食品中 ppb 級農藥殘留(高選擇、高靈敏)，選？", "o": ["單一四極桿全掃描", "三重四極桿 MRM", "TOF 全掃描", "紅外光譜"], "a": 1, "e": "三重四極桿 SRM/MRM 雜訊低、靈敏度高，是痕量定量首選。"}, {"q": "要分析揮發性精油成分並比對質譜圖庫，選？", "o": ["LC-MS ESI", "GC-MS(EI)", "MALDI-TOF", "ICP-MS"], "a": 1, "e": "揮發、熱穩定分子用 GC-MS(EI)，碎片可比對標準質譜圖庫。"}, {"q": "要在 24 小時內快速鑑定細菌種類，選？", "o": ["GC-MS", "MALDI-TOF", "凱氏定氮", "UV-Vis"], "a": 1, "e": "MALDI-TOF 以微生物蛋白質指紋比對資料庫，快速鑑定菌種。"}, {"q": "三聚氰胺(極性、不揮發)殘留分析，最適合？", "o": ["GC-MS", "LC-MS/MS", "火焰光度計", "折射計"], "a": 1, "e": "三聚氰胺不揮發、極性，須 LC-MS/MS；MRM 127.1→85.1 高專一。"}]}, "sort": {"g4": {"steps": ["樣品經 LC 分離後進入 ESI，分子被游離成離子", "Q1：選出特定『母離子(precursor)』，擋掉其他離子", "Q2 碰撞室：與 Ar/N₂ 碰撞(CID)使母離子碎裂", "Q3：從碎片中選出特定『子離子(product)』", "偵測器記錄該『母→子離子對』的訊號", "多重反應偵測(MRM)：同時監測多組離子對進行定量"], "shuffle": [2, 0, 4, 1, 5, 3], "ok": "🎉 順序正確！LC分離→游離→Q1選母→Q2碰撞→Q3選子→偵測/MRM。", "tip": "提示：先選母離子(Q1)，才碰撞碎裂(Q2)，再選子離子(Q3)；離子對訊號最後被偵測。"}}, "calc": {"g6": {"answer": 3.6, "tol": 0.6, "ok": "🎉 正確！(194.0811−194.0804)/194.0804 × 10⁶ = 0.0007/194.08 × 10⁶ ≈ <b>3.6 ppm<\/b>(＜5 ppm，可定分子式)。", "bad": "再算算：誤差 = 測得−理論 = 0.0007，再除以理論值乘以 10⁶。", "hint": "提示：ppm = (194.0811−194.0804)/194.0804 × 10⁶ = 0.0007/194.0804 × 10⁶ ≈ 3.6。"}}, "cmp": {"cols": [{"k": "m"}, {"k": "res", "t": "n", "star": true}, {"k": "acc"}, {"k": "cost", "t": "n", "star": true}, {"k": "app"}], "rows": [{"m": "四極桿 Q", "res": 2, "acc": "單位質量", "cost": 2, "app": "例行定量·SIM"}, {"m": "離子阱 IT", "res": 2, "acc": "單位質量", "cost": 2, "app": "多階 MSⁿ·結構解析"}, {"m": "飛行時間 TOF", "res": 4, "acc": "高", "cost": 3, "app": "大分子·全掃描篩檢"}, {"m": "Orbitrap", "res": 5, "acc": "極高(<5 ppm)", "cost": 4, "app": "未知物鑑定·農藥篩檢"}, {"m": "FT-ICR", "res": 5, "acc": "最高", "cost": 5, "app": "同位素細結構"}]}};</script><script>
+var CFG=window.CFG||{};
+var slides=[].slice.call(document.querySelectorAll('.slide'));
+var total=slides.length,cur=0;
+var prog=document.getElementById('progress'),pageInfo=document.getElementById('pageInfo'),secTag=document.getElementById('section-tag');
+function show(i){
+  cur=Math.max(0,Math.min(total-1,i));
+  slides.forEach(function(s,k){s.classList.toggle('active',k===cur)});
+  prog.style.width=((cur+1)/total*100)+'%';
+  pageInfo.textContent=(cur+1)+' / '+total;
+  secTag.textContent='— '+(slides[cur].dataset.section||'')+' —';
+  var ch=slides[cur].dataset.chart; if(ch) initChart(ch);
+  var g=slides[cur].dataset.game; if(g) initGame(g);
+}
+function next(){show(cur+1)} function prev(){show(cur-1)}
+function toggleFs(){if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()}else{document.exitFullscreen&&document.exitFullscreen()}}
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next()}
+  else if(e.key==='ArrowLeft'){prev()}
+  else if(e.key==='f'||e.key==='F'){toggleFs()}
+});
+document.addEventListener('click',function(e){
+  if(e.target.closest('.no-nav')) return;
+  if(e.target.closest('button,input,select,textarea,a,.chip,.opt,.bucket')) return;
+  var x=e.clientX/window.innerWidth;
+  if(x>0.72) next(); else if(x<0.28) prev();
+});
+
+/* ---------- charts ---------- */
+var chartDone={};
+function initChart(id){
+  if(chartDone[id]||typeof Chart==='undefined'||!CFG.charts||!CFG.charts[id]) return; chartDone[id]=1;
+  Chart.defaults.font.family="'Noto Sans TC',sans-serif"; Chart.defaults.color='#48597a';
+  var c=CFG.charts[id];
+  var el=document.getElementById('chart_'+id); if(!el) return;
+  var ds=c.datasets.map(function(d){return {label:d.label,data:d.data,
+    backgroundColor:d.color||'#1f6feb',borderColor:d.color||'#1f6feb',borderRadius:5,
+    fill:(c.type==='line'?false:true),tension:.3}});
+  new Chart(el,{type:c.type||'bar',data:{labels:c.labels,datasets:ds},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:(c.datasets.length>1),position:'top'}},
+      scales:{y:{beginAtZero:(c.zero!==false),title:{display:!!c.yTitle,text:c.yTitle||''}}}}});
+}
+
+/* ---------- games ---------- */
+var gameDone={};
+function setScore(el,v){var e=document.getElementById(el);if(e)e.textContent=v}
+function fb(el,msg,type){var f=document.getElementById(el);if(!f)return;f.className='fb show '+type;f.innerHTML=msg}
+function initGame(g){
+  if(gameDone[g])return; gameDone[g]=1;
+  if(CFG.bucket&&CFG.bucket[g]) return initBucket(g);
+  if(CFG.mcq&&CFG.mcq[g]) return initMCQ(g);
+  if(CFG.sort&&CFG.sort[g]) return initSort(g);
+  if(CFG.calc&&CFG.calc[g]) return initCalc(g);
+  if(g==='cmp') return initCmp();
+}
+
+function initBucket(g){
+  var cfg=CFG.bucket[g];
+  var data=cfg.items.map(function(x){return {t:x.t,c:x.c,at:null}});
+  var cats=cfg.cats, N=data.length;
+  var pool=document.getElementById(g+'pool'), bk=document.getElementById(g+'buckets');
+  var sel=null;
+  bk.style.gridTemplateColumns='repeat('+cats.length+',1fr)';
+  function paint(){[].slice.call(pool.children).forEach(function(c){c.classList.toggle('sel',+c.dataset.i===sel)})}
+  function render(){
+    pool.innerHTML=''; bk.innerHTML='';
+    var placed={}; cats.forEach(function(c){placed[c]=[]});
+    data.forEach(function(d,i){if(d.at)placed[d.at].push(i)});
+    data.forEach(function(d,i){ if(d.at) return;
+      var c=document.createElement('div');c.className='chip';c.textContent=d.t;c.dataset.i=i;
+      c.onclick=function(){sel=(sel===i?null:i);paint()}; pool.appendChild(c);
+    });
+    cats.forEach(function(cat){
+      var b=document.createElement('div');b.className='bucket';b.innerHTML='<div class="bh">'+cat+'</div>';
+      placed[cat].forEach(function(i){
+        var c=document.createElement('div');c.className='chip';c.textContent=data[i].t;
+        c.onclick=function(){data[i].at=null;sel=null;render()}; b.appendChild(c);
+      });
+      b.onclick=function(e){ if(e.target!==b&&!e.target.classList.contains('bh'))return;
+        if(sel!=null){data[sel].at=cat;sel=null;render()} };
+      bk.appendChild(b);
+    });
+    paint();
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; data.forEach(function(d){if(d.at===d.c)ok++});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 全對！','good');
+    else fb(g+'fb','答對 '+ok+'/'+N+'。'+(cfg.tip||'再調整看看。'),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    data.forEach(function(d){d.at=null}); sel=null; render(); setScore(g+'score','0 / '+N);
+    var f=document.getElementById(g+'fb'); if(f) f.className='fb';
+  };
+}
+
+function initMCQ(g){
+  var DATA=CFG.mcq[g], nq=DATA.length, idx=0, score=0, locked=false;
+  var qEl=document.getElementById(g+'q'), opEl=document.getElementById(g+'opts'), nextBtn=document.getElementById(g+'next');
+  function render(){
+    locked=false; var d=DATA[idx];
+    qEl.innerHTML='<span style="color:var(--accent)">Q'+(idx+1)+'.</span> '+d.q;
+    opEl.innerHTML=''; var f=document.getElementById(g+'fb'); if(f)f.className='fb'; if(nextBtn)nextBtn.style.display='none';
+    d.o.forEach(function(t,i){
+      var o=document.createElement('div');o.className='opt';o.textContent=t;
+      o.onclick=function(){
+        if(locked)return; locked=true; var ok=(i===d.a);
+        if(ok){o.classList.add('ok');score++}else{o.classList.add('no');opEl.children[d.a].classList.add('ok')}
+        [].slice.call(opEl.children).forEach(function(c,k){if(k!==i&&k!==d.a)c.classList.add('dim')});
+        setScore(g+'score',score+' / '+nq);
+        var done=(idx>=DATA.length-1);
+        var msg=(ok?'✅ 答對！':'❌ 正解：'+d.o[d.a]+'。')+'<br>'+d.e+(done?'<br><b>完成！總分 '+score+'/'+nq+'</b>':'');
+        fb(g+'fb',msg,ok?'good':'bad');
+        if(nextBtn) nextBtn.style.display=done?'none':'inline-block';
+      };
+      opEl.appendChild(o);
+    });
+  }
+  if(nextBtn) nextBtn.onclick=function(){if(idx<DATA.length-1){idx++;render()}};
+  render();
+}
+
+function initSort(g){
+  var cfg=CFG.sort[g], steps=cfg.steps, N=steps.length;
+  var order=(cfg.shuffle||steps.map(function(_,i){return i})).slice();
+  var list=document.getElementById(g+'list');
+  function render(){
+    list.innerHTML='';
+    order.forEach(function(stepIdx,pos){
+      var row=document.createElement('div');row.className='sortrow';
+      row.innerHTML='<div class="idx">'+(pos+1)+'</div><div class="txt">'+steps[stepIdx]+'</div>';
+      var ud=document.createElement('div');ud.className='ud';
+      var up=document.createElement('button');up.textContent='▲';
+      up.onclick=function(){if(pos>0){var t=order[pos-1];order[pos-1]=order[pos];order[pos]=t;render()}};
+      var dn=document.createElement('button');dn.textContent='▼';
+      dn.onclick=function(){if(pos<order.length-1){var t=order[pos+1];order[pos+1]=order[pos];order[pos]=t;render()}};
+      ud.appendChild(up);ud.appendChild(dn);row.appendChild(ud);list.appendChild(row);
+    });
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; order.forEach(function(v,i){if(v===i)ok++});
+    [].slice.call(list.children).forEach(function(r,i){r.classList.toggle('ok',order[i]===i);r.classList.toggle('no',order[i]!==i)});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 順序完全正確！','good');
+    else fb(g+'fb','對了 '+ok+'/'+N+' 個位置。'+(cfg.tip||''),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    order=(cfg.shuffle||steps.map(function(_,i){return i})).slice().reverse(); render();
+    var f=document.getElementById(g+'fb'); if(f)f.className='fb'; setScore(g+'score','— / '+N);
+  };
+}
+
+function initCalc(g){
+  var cfg=CFG.calc[g];
+  document.getElementById(g+'check').onclick=function(){
+    var v=parseFloat(document.getElementById(g+'in').value);
+    if(isNaN(v)){fb(g+'fb','請先輸入一個數字。','info');return}
+    if(Math.abs(v-cfg.answer)<=(cfg.tol||0.05)){
+      setScore(g+'score','✓ 答對'); fb(g+'fb',cfg.ok||('🎉 正確！答案是 '+cfg.answer),'good');
+    } else { setScore(g+'score','再試一次'); fb(g+'fb',cfg.bad||'再算算看。','bad'); }
+  };
+  var hb=document.getElementById(g+'hint');
+  if(hb) hb.onclick=function(){fb(g+'fb',cfg.hint||'提示：對照公式逐步代入。','info')};
+}
+
+function stars(n){return '★★★★★'.slice(0,n)+'☆☆☆☆☆'.slice(0,5-n)}
+function initCmp(){
+  if(!CFG.cmp) return;
+  var cols=CFG.cmp.cols, rows=CFG.cmp.rows.slice(), dir={};
+  var tb=document.querySelector('#cmpTable tbody');
+  function draw(){ tb.innerHTML=''; rows.forEach(function(r){
+    var tr=document.createElement('tr');
+    tr.innerHTML=cols.map(function(c,ci){
+      var v=r[c.k];
+      if(c.star) return '<td style="color:var(--accent-2)">'+stars(v)+'</td>';
+      return '<td'+(ci===0?' class="c"':'')+'>'+v+'</td>';
+    }).join(''); tb.appendChild(tr); }); }
+  draw();
+  document.querySelectorAll('#cmpTable thead th').forEach(function(th){
+    th.onclick=function(){var k=th.dataset.k,t=th.dataset.t;dir[k]=!dir[k];
+      rows.sort(function(a,b){var x=a[k],y=b[k];
+        if(t==='n')return dir[k]?x-y:y-x;
+        return dir[k]?String(x).localeCompare(String(y),'zh-Hant'):String(y).localeCompare(String(x),'zh-Hant')});
+      draw();};
+  });
+}
+show(0);
+</script>
+<script>document.addEventListener('click',function(e){var li=e.target.closest('#selfcheck li');if(li)li.classList.toggle('done')});</script>
+</body></html>

@@ -1,0 +1,369 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>食品中硼酸檢驗 薑黃素分光光度法 · TFDAA0086</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script><style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{font-size:18px}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;background:var(--bg);
+  color:var(--ink);overflow:hidden;height:100vh;width:100vw}
+:root{
+  --bg:#eef2f8;--surface:#ffffff;--surface-2:#f6f9fd;
+  --ink:#15233f;--ink-2:#48597a;--ink-3:#8493ad;--line:#dde5f0;
+  --accent:#1f6feb;--accent-soft:#e7f0fe;
+  --accent-2:#d9822b;--accent-2-soft:#fbeede;
+  --ok:#1f9d6b;--ok-soft:#e3f6ee;--bad:#d94f4f;--bad-soft:#fbe7e7;--warn:#d9a32b;
+  --t2:clamp(1.4rem,3vw,2.3rem);
+  --shadow:0 10px 30px rgba(20,40,80,.10);--shadow-sm:0 3px 12px rgba(20,40,80,.08)}
+#progress{position:fixed;top:0;left:0;height:4px;width:0;z-index:50;
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .5s ease}
+#section-tag{position:fixed;top:16px;left:24px;z-index:40;font-size:.78rem;letter-spacing:.18em;
+  color:var(--accent);font-weight:700;font-family:"JetBrains Mono",monospace}
+#pageInfo{position:fixed;right:22px;bottom:16px;z-index:40;font-size:.82rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+#hint{position:fixed;left:24px;bottom:16px;z-index:40;font-size:.72rem;color:var(--ink-3)}
+#brand{position:fixed;right:22px;top:14px;z-index:40;font-size:.72rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:64px 84px;opacity:0;pointer-events:none;
+  transition:opacity .55s ease,transform .55s ease;transform:translateY(14px)}
+.slide.active{opacity:1;pointer-events:auto;transform:translateY(0)}
+.slide-inner{width:100%;max-width:1280px}
+.kicker{font-family:"JetBrains Mono",monospace;font-size:.8rem;letter-spacing:.16em;color:var(--accent);
+  font-weight:700;text-transform:uppercase;margin-bottom:10px}
+.slide-title{font-size:var(--t2);font-weight:900;line-height:1.18;color:var(--ink);letter-spacing:-.01em}
+.slide-title .hi{color:var(--accent-2)}
+.subtitle{font-size:clamp(.95rem,1.5vw,1.2rem);color:var(--ink-2);margin-top:12px;line-height:1.6}
+p,li{font-size:clamp(.92rem,1.4vw,1.12rem);line-height:1.68;color:var(--ink-2)}
+.lead{font-size:clamp(1.05rem,1.8vw,1.35rem);color:var(--ink);line-height:1.6}
+strong,b{color:var(--ink);font-weight:800}.em{color:var(--accent-2);font-weight:800}
+.divider{height:3px;width:64px;background:var(--accent-2);border-radius:2px;margin:18px 0}
+ul.clean{list-style:none}ul.clean li{position:relative;padding-left:26px;margin:10px 0}
+ul.clean li:before{content:"";position:absolute;left:4px;top:.62em;width:8px;height:8px;border-radius:2px;
+  background:var(--accent);transform:rotate(45deg)}
+.mono{font-family:"JetBrains Mono",monospace}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.grid2-1{display:grid;grid-template-columns:1.15fr .85fr;gap:34px;align-items:center}
+.flow6{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow-sm)}
+.card .ic{font-size:1.6rem;margin-bottom:8px}
+.card .ct{font-weight:800;color:var(--ink);font-size:clamp(1rem,1.5vw,1.2rem);margin-bottom:6px}
+.card .cb{font-size:clamp(.85rem,1.25vw,1rem);color:var(--ink-2);line-height:1.55}
+.card.b{border-top:4px solid var(--accent)}.card.a{border-top:4px solid var(--accent-2)}
+.card.g{border-top:4px solid var(--ok)}
+.tag{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:.7rem;padding:3px 9px;border-radius:999px;
+  background:var(--accent-soft);color:var(--accent);font-weight:700}
+.tag.a{background:var(--accent-2-soft);color:var(--accent-2)}
+.pill{display:inline-block;padding:5px 12px;border-radius:999px;background:var(--surface);border:1px solid var(--line);
+  font-size:.82rem;color:var(--ink-2);margin:3px 4px}
+.note{background:var(--accent-2-soft);border-left:4px solid var(--accent-2);border-radius:8px;padding:14px 18px;
+  color:var(--ink);font-size:clamp(.9rem,1.3vw,1.05rem);line-height:1.6}
+.eq{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 22px;
+  font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,1.7vw,1.4rem);color:var(--ink);text-align:center;box-shadow:var(--shadow-sm)}
+.eq .frac{display:inline-flex;flex-direction:column;text-align:center;vertical-align:middle;margin:0 6px}
+.eq .frac b{border-bottom:2px solid var(--ink);padding-bottom:3px}
+table.cmp{width:100%;border-collapse:collapse;font-size:clamp(.82rem,1.2vw,1.02rem)}
+table.cmp th,table.cmp td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line)}
+table.cmp thead th{color:var(--accent);font-weight:800;border-bottom:2px solid var(--accent);cursor:pointer;
+  user-select:none;white-space:nowrap}
+table.cmp thead th .ar{opacity:.4;font-size:.8em}
+table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--ink);font-weight:700}
+.cover{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 100px;
+  background:radial-gradient(1200px 600px at 80% 20%,var(--accent-2-soft),transparent 60%),
+  radial-gradient(900px 500px at 10% 90%,var(--accent-soft),transparent 55%),linear-gradient(135deg,#ffffff,#eef2f8)}
+.cover h1{font-size:clamp(2.4rem,6vw,4.6rem);font-weight:900;line-height:1.05;letter-spacing:-.02em;color:var(--ink)}
+.cover .en{font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,2vw,1.5rem);color:var(--accent);letter-spacing:.1em;margin-top:6px}
+.cover .meta{margin-top:26px;color:var(--ink-2);font-size:clamp(.9rem,1.4vw,1.1rem)}
+.hook{font-size:clamp(2rem,5vw,3.6rem);font-weight:900;color:var(--ink);line-height:1.2;letter-spacing:-.01em}
+.hook .hi{color:var(--accent)}
+.svgwrap{display:flex;align-items:center;justify-content:center}
+.svgwrap svg{max-width:100%;max-height:62vh;height:auto}
+.lbl{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink-2)}
+.lblb{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink);font-weight:700}
+.game{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 24px;box-shadow:var(--shadow)}
+.game-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.game-head .gt{font-weight:900;font-size:clamp(1.05rem,1.7vw,1.35rem);color:var(--ink)}
+.game-head .score{margin-left:auto;font-family:"JetBrains Mono",monospace;font-weight:700;color:var(--accent);
+  background:var(--accent-soft);padding:5px 13px;border-radius:999px;font-size:.9rem}
+.game-q{font-size:clamp(.95rem,1.5vw,1.18rem);color:var(--ink);font-weight:700;margin:6px 0 14px;line-height:1.5}
+.buckets{display:grid;gap:16px;margin-top:14px}
+.bucket{min-height:120px;border:2px dashed var(--line);border-radius:14px;padding:12px;background:var(--surface-2);transition:.2s}
+.bucket .bh{font-weight:800;color:var(--ink);text-align:center;margin-bottom:8px;font-size:.95rem}
+.pool{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;min-height:54px}
+.chip{padding:9px 15px;border-radius:10px;background:var(--surface);border:1px solid var(--line);font-weight:700;
+  color:var(--ink);cursor:pointer;box-shadow:var(--shadow-sm);font-size:.92rem;transition:.15s}
+.chip:hover{border-color:var(--accent);transform:translateY(-1px)}
+.chip.sel{background:var(--accent);color:#fff;border-color:var(--accent)}
+.chip.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.chip.no{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+.opt{padding:14px 18px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);cursor:pointer;
+  font-weight:700;color:var(--ink);font-size:clamp(.88rem,1.3vw,1.05rem);transition:.15s}
+.opt:hover{border-color:var(--accent);background:var(--accent-soft)}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.opt.no{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}.opt.dim{opacity:.5}
+.fb{margin-top:14px;padding:12px 16px;border-radius:10px;font-weight:700;display:none;
+  font-size:clamp(.85rem,1.3vw,1.02rem);line-height:1.5}
+.fb.show{display:block}.fb.good{background:var(--ok-soft);color:var(--ok)}
+.fb.bad{background:var(--bad-soft);color:var(--bad)}.fb.info{background:var(--accent-soft);color:var(--accent)}
+.btn{padding:10px 20px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-weight:800;cursor:pointer;
+  font-size:.92rem;font-family:inherit;box-shadow:var(--shadow-sm)}
+.btn:hover{filter:brightness(1.06)}.btn.ghost{background:var(--surface);color:var(--accent);border:1.5px solid var(--accent)}
+.btnrow{display:flex;gap:12px;margin-top:16px;align-items:center}
+.sortlist{display:flex;flex-direction:column;gap:6px;margin-top:6px;max-height:44vh;overflow-y:auto;padding-right:4px}
+.sortrow{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:7px 14px;box-shadow:var(--shadow-sm)}
+.sortrow .idx{font-family:"JetBrains Mono",monospace;font-weight:800;color:var(--accent);width:24px}
+.sortrow .txt{flex:1;font-weight:700;color:var(--ink);font-size:clamp(.85rem,1.25vw,1.02rem)}
+.sortrow .ud{display:flex;flex-direction:column;gap:3px}
+.sortrow .ud button{border:none;background:var(--accent-soft);color:var(--accent);border-radius:6px;width:30px;height:20px;
+  cursor:pointer;font-weight:900;line-height:1}
+.sortrow.ok{border-color:var(--ok);background:var(--ok-soft)}.sortrow.no{border-color:var(--bad)}
+.numin{font-family:"JetBrains Mono",monospace;font-size:1.2rem;font-weight:800;padding:10px 14px;border:1.5px solid var(--line);
+  border-radius:10px;width:140px;color:var(--ink);text-align:center}
+.numin:focus{outline:none;border-color:var(--accent)}
+.checklist{list-style:none}
+.checklist li{display:flex;align-items:center;gap:12px;padding:11px 14px;border:1px solid var(--line);border-radius:10px;
+  margin:8px 0;background:var(--surface);cursor:pointer;font-weight:700;color:var(--ink-2);font-size:clamp(.9rem,1.35vw,1.08rem);transition:.15s}
+.checklist li .bx{width:24px;height:24px;border-radius:6px;border:2px solid var(--accent);display:flex;align-items:center;
+  justify-content:center;color:#fff;font-weight:900;flex:0 0 auto}
+.checklist li.done{background:var(--ok-soft);border-color:var(--ok);color:var(--ink)}
+.checklist li.done .bx{background:var(--ok);border-color:var(--ok)}
+.chartbox{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow-sm);
+  height:60vh;max-height:520px;position:relative}
+.cap{font-size:.82rem;color:var(--ink-3);text-align:center;margin-top:8px}
+</style></head><body><div id="progress"></div><div id="section-tag"></div><div id="brand">硼酸 · 分光光度</div><div id="pageInfo"></div><div id="hint">← → / 空白鍵切頁　·　F 全螢幕　·　點兩側翻頁</div><section class="slide" data-slide="1" data-section="引起動機" data-cover="1"><div class="slide-inner"><div class="cover"><div class="kicker">食藥署建議檢驗方法 · TFDAA0086</div><h1>食品中<span style='color:var(--accent-2)'>硼酸</span>檢驗</h1><div class="en">Boric Acid in Foods</div><div class="meta">食品安全檢測　·　3 小時課程　·　含 6 個互動小遊戲<br>硼砂(禁用) · 薑黃素呈色 · 玫瑰紅 rosocyanine · 550 nm 分光光度</div><div style="margin-top:24px"><span class="pill">違法添加硼砂</span><span class="pill">薑黃素呈色</span><span class="pill">玫瑰紅 550nm</span><span class="pill">免灰化定量</span><span class="pill">累積性中毒</span></div></div></div></section><section class="slide" data-slide="2" data-section="引起動機"><div class="slide-inner"><div style="text-align:center">
+  <div class="kicker" style="justify-content:center">先想一想</div>
+  <div class="hook">為什麼有些<span class="hi">油麵、年糕、魚丸</span><br>特別 Q 彈、又特別耐放？</div>
+  <p class="subtitle" style="max-width:840px;margin:22px auto 0">可能違法加了<strong>硼砂(硼酸鈉)</strong>——增加脆度、Q 彈與保存性。<br>
+  但硼酸/硼砂在台灣是<strong>禁用的非法添加物</strong>，會在體內累積中毒。食藥署 <strong>TFDAA0086</strong> 教你怎麼驗。</p>
+  <div style="margin-top:24px"><span class="pill">增加Q彈脆度</span><span class="pill">非法添加</span>
+  <span class="pill">累積中毒</span><span class="pill">薑黃素呈色</span></div></div></div></section><section class="slide" data-slide="3" data-section="引起動機"><div class="slide-inner"><div class="kicker">背景</div><h2 class="slide-title">硼砂為什麼<span class='hi'>危險</span></h2><div class="grid2" style="margin-top:20px"><div class="card b"><div class="ic">🍜</div><div class="ct">為何被加</div><div class="cb">增加 Q 彈、脆度與彈性，延長保存——口感與賣相變好</div></div><div class="card a"><div class="ic">🚫</div><div class="ct">台灣禁用</div><div class="cb">硼酸及硼砂屬<strong>非法食品添加物</strong>，不得用於食品</div></div><div class="card b"><div class="ic">☠️</div><div class="ct">累積中毒</div><div class="cb">在體內不易代謝、會累積；急性會噁心嘔吐腹瀉，高劑量影響生殖甚至致死</div></div><div class="card g"><div class="ic">🍙</div><div class="ct">常見食品</div><div class="cb">油麵、年糕、紅龜粿、粽子、魚丸、蝦等講求口感的製品</div></div></div></div></section><section class="slide" data-slide="4" data-section="引起動機"><div class="slide-inner"><div class="kicker">呈色原理</div><h2 class="slide-title">薑黃素遇硼酸<span class='hi'>變玫瑰紅</span></h2><div class="svgwrap" style="margin-top:6px">
+<svg viewBox="0 0 940 200">
+ <defs><marker id="ba" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 Z" fill="#48597a"/></marker></defs>
+ <text x="470" y="26" text-anchor="middle" class="lblb" font-size="15">薑黃素呈色：硼酸 → 玫瑰紅(定量)，加氨 → 變綠(確認)</text>
+ <circle cx="90" cy="110" r="40" fill="#fff" stroke="#d9822b" stroke-width="2.4"/>
+ <text x="90" y="106" text-anchor="middle" class="lblb" font-size="12">薑黃素</text><text x="90" y="124" text-anchor="middle" class="lbl">curcumin(黃)</text>
+ <text x="240" y="92" text-anchor="middle" class="lbl">+ 硼酸(酸性)</text>
+ <line x1="134" y1="110" x2="300" y2="110" stroke="#48597a" stroke-width="2.4" marker-end="url(#ba)"/>
+ <circle cx="350" cy="110" r="44" fill="#e23b5a" opacity=".85"/>
+ <text x="350" y="106" text-anchor="middle" fill="#fff" font-weight="800" font-size="12">玫瑰紅</text>
+ <text x="350" y="124" text-anchor="middle" fill="#fff" font-size="11">rosocyanine</text>
+ <text x="350" y="172" text-anchor="middle" class="lbl">550 nm 吸收 → 定量</text>
+ <text x="520" y="92" text-anchor="middle" class="lbl">+ 氨水(鹼)</text>
+ <line x1="396" y1="110" x2="560" y2="110" stroke="#48597a" stroke-width="2.4" marker-end="url(#ba)"/>
+ <circle cx="610" cy="110" r="44" fill="#1f6b4a" opacity=".85"/>
+ <text x="610" y="106" text-anchor="middle" fill="#fff" font-weight="800" font-size="12">墨綠/藍</text>
+ <text x="610" y="124" text-anchor="middle" fill="#fff" font-size="11">變色確認</text>
+ <text x="610" y="172" text-anchor="middle" class="lbl">紅→綠 → 確認是硼</text>
+ <text x="800" y="100" text-anchor="middle" class="lbl">紅越深</text>
+ <text x="800" y="120" text-anchor="middle" class="lblb" fill="#e23b5a">硼酸越多</text>
+</svg></div><div class="note" style="margin-top:10px">硼酸在酸性下與<strong>薑黃素(curcumin)</strong>結合，生成紅色的 <strong>rosocyanine</strong>(玫瑰紅)，在 <strong>550 nm</strong> 有最大吸收→可定量；紅斑再<strong>加氨變墨綠</strong>，可確認確實是硼。</div></div></section><section class="slide" data-slide="5" data-section="引起動機" data-game="g1"><div class="slide-inner"><div class="game no-nav" data-game="g1"><div class="game-head"><span class="tag a">小遊戲 ①</span><span class="gt">薑黃試紙(舊) vs 分光光度(新)</span><span class="score" id="g1score">0 / 8</span></div><div class="game-q">把 8 個特徵分到「舊法：薑黃試紙(定性)」或「新法 TFDAA0086：分光光度(定量)」。</div><div class="pool" id="g1pool"></div><div class="buckets" id="g1buckets"></div><div class="fb" id="g1fb"></div><div class="btnrow"><button class="btn" id="g1check">檢查答案</button><button class="btn ghost" id="g1reset">重來</button></div></div></div></section><section class="slide" data-slide="6" data-section="維持注意"><div class="slide-inner"><div class="kicker">為什麼要改良</div><h2 class="slide-title">舊薑黃試紙法的<span class='hi'>痛點</span></h2><div class="grid2" style="margin-top:16px"><div><ul class="clean"><li>舊公告法(MOHWA0014)屬<strong>定性鑑別</strong>，只能說『有/沒有』</li><li>樣品要先<strong>灰化</strong>，前處理<strong>耗時</strong></li><li>看<strong>試紙顏色</strong>判讀，容易受<strong>主觀</strong>影響</li><li>紅色食品(紅麴米、紫米、湯圓)的天然色素會干擾判讀</li></ul></div><div class="note"><strong>新法 TFDAA0086 的解方：</strong><br>免灰化、直接萃取衍生呈色，用<strong>分光光度計讀數值</strong>客觀定量；以正己烷/乙酸乙酯取代有毒的氯仿，紅色食品也不干擾。</div></div></div></section><section class="slide" data-slide="7" data-section="維持注意"><div class="slide-inner"><div class="kicker">新法流程</div><h2 class="slide-title">萃取 → 呈色 → 550 nm</h2><div class="svgwrap" style="margin-top:6px">
+<svg viewBox="0 0 1000 180">
+ <defs><marker id="fb" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 Z" fill="#48597a"/></marker></defs>
+ <text x="500" y="30" text-anchor="middle" class="lblb" font-size="15">新法 TFDAA0086：免灰化、可客觀定量</text>
+ <g font-size="13">
+  <rect x="14" y="70" width="175" height="58" rx="10" fill="#fbeede" stroke="#d9822b" stroke-width="2.2"/>
+  <text x="101" y="95" text-anchor="middle" class="lblb">檢體萃取</text><text x="101" y="114" text-anchor="middle" class="lbl">己烷/乙酸乙酯</text>
+  <rect x="237" y="70" width="175" height="58" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2.2"/>
+  <text x="324" y="95" text-anchor="middle" class="lblb">加薑黃素試劑</text><text x="324" y="114" text-anchor="middle" class="lbl">酸性下衍生</text>
+  <rect x="460" y="70" width="175" height="58" rx="10" fill="#fbe7e7" stroke="#e23b5a" stroke-width="2.2"/>
+  <text x="547" y="95" text-anchor="middle" class="lblb">呈玫瑰紅</text><text x="547" y="114" text-anchor="middle" class="lbl">rosocyanine</text>
+  <rect x="683" y="70" width="175" height="58" rx="10" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2.2"/>
+  <text x="770" y="95" text-anchor="middle" class="lblb">550 nm 測吸光</text><text x="770" y="114" text-anchor="middle" class="lbl">分光光度計</text>
+  <rect x="900" y="74" width="96" height="50" rx="9" fill="#15233f"/>
+  <text x="948" y="103" text-anchor="middle" fill="#fff" font-weight="800" font-size="12">定量</text>
+ </g>
+ <g stroke="#48597a" stroke-width="2.4" marker-end="url(#fb)">
+  <line x1="189" y1="99" x2="233" y2="99"/><line x1="412" y1="99" x2="456" y2="99"/>
+  <line x1="635" y1="99" x2="679" y2="99"/><line x1="858" y1="99" x2="896" y2="99"/></g>
+</svg></div><div style="margin-top:8px"><span class="pill">萃取溶劑：n-己烷/乙酸乙酯(1:1)</span><span class="pill">薑黃素 + EHD 衍生</span><span class="pill">玫瑰紅 rosocyanine</span><span class="pill">550 nm 讀吸光度</span><span class="pill">LOQ 300 mg/kg</span></div></div></section><section class="slide" data-slide="8" data-section="維持注意"><div class="slide-inner"><div class="kicker">試劑與儀器</div><h2 class="slide-title">呈色與定量的<span class='hi'>關鍵角色</span></h2><div class="grid3" style="margin-top:16px"><div class="card a"><div class="ic">🌕</div><div class="ct">薑黃素 curcumin</div><div class="cb">與硼酸結合呈玫瑰紅(rosocyanine)的顯色劑</div></div><div class="card b"><div class="ic">🧴</div><div class="ct">EHD / 己烷-乙酸乙酯</div><div class="cb">2-乙基-1,3-己二醇與萃取溶劑；取代有毒氯仿</div></div><div class="card g"><div class="ic">📟</div><div class="ct">分光光度計</div><div class="cb">在 550 nm 讀吸光度，依檢量線定量</div></div></div><p class="subtitle" style="margin-top:12px">另用亞鐵氰化鉀、醋酸鋅澄清/除蛋白；呈色後在 550 nm 量測。</p></div></section><section class="slide" data-slide="9" data-section="維持注意" data-game="g2"><div class="slide-inner"><div class="game no-nav" data-game="g2"><div class="game-head"><span class="tag a">小遊戲 ②</span><span class="gt">硼酸方法即時測驗</span><span class="score" id="g2score">0 / 5</span></div><div class="game-q" id="g2q"></div><div class="opts" id="g2opts"></div><div class="fb" id="g2fb"></div><div class="btnrow"><button class="btn ghost" id="g2next" style="display:none">下一題 →</button></div></div></div></section><section class="slide" data-slide="10" data-section="維持注意"><div class="slide-inner"><div class="kicker">定性 vs 定量</div><h2 class="slide-title">兩種思路<span class='hi'>互補</span></h2><div class="grid2" style="margin-top:16px"><div class="card a"><div class="ic">🟥→🟩</div><div class="ct">薑黃試紙(定性)</div><div class="cb">試紙呈紅棕色 → 加氨變墨綠即確認有硼；現場、快速、但主觀、不能給數值</div></div><div class="card b"><div class="ic">📈</div><div class="ct">分光光度(定量)</div><div class="cb">薑黃素衍生呈玫瑰紅，550 nm 讀吸光度，對照<strong>檢量線</strong>得濃度→客觀數值</div></div></div><div class="note" style="margin-top:14px"><strong>互補：</strong>試紙適合現場初步鑑別；分光光度法(TFDAA0086)給可追溯的<strong>定量結果</strong>。</div></div></section><section class="slide" data-slide="11" data-section="維持注意" data-game="g3"><div class="slide-inner"><div class="game no-nav" data-game="g3"><div class="game-head"><span class="tag a">小遊戲 ③</span><span class="gt">為何添加 vs 健康危害</span><span class="score" id="g3score">0 / 6</span></div><div class="game-q">把 6 個敘述分到「為何被違法添加」或「對健康的危害」。</div><div class="pool" id="g3pool"></div><div class="buckets" id="g3buckets"></div><div class="fb" id="g3fb"></div><div class="btnrow"><button class="btn" id="g3check">檢查答案</button><button class="btn ghost" id="g3reset">重來</button></div></div></div></section><section class="slide" data-slide="12" data-section="維持注意" data-game="g4"><div class="slide-inner"><div class="game no-nav" data-game="g4"><div class="game-head"><span class="tag a">小遊戲 ④</span><span class="gt">硼酸分光光度法流程排序</span><span class="score" id="g4score">— / 6</span></div><div class="game-q">用 ▲▼ 把 TFDAA0086 分光光度法的 6 個步驟排成正確順序。</div><div class="sortlist" id="g4list"></div><div class="fb" id="g4fb"></div><div class="btnrow"><button class="btn" id="g4check">檢查順序</button><button class="btn ghost" id="g4reset">打亂重排</button></div></div></div></section><section class="slide" data-slide="13" data-section="維持注意" data-game="g5"><div class="slide-inner"><div class="game no-nav" data-game="g5"><div class="game-head"><span class="tag a">小遊戲 ⑤</span><span class="gt">決策挑戰：硼酸判斷</span><span class="score" id="g5score">0 / 5</span></div><div class="game-q" id="g5q"></div><div class="opts" id="g5opts"></div><div class="fb" id="g5fb"></div><div class="btnrow"><button class="btn ghost" id="g5next" style="display:none">下一題 →</button></div></div></div></section><section class="slide" data-slide="14" data-section="喚起行動" data-game="cmp"><div class="slide-inner"><div class="kicker">方法比較</div><h2 class="slide-title">硼酸的幾種檢驗法（點欄位排序）</h2><table class="cmp" id="cmpTable" style="margin-top:14px"><thead><tr><th data-k="m" data-t="s">方法 <span class="ar">⇅</span></th><th data-k="quant" data-t="n">定量能力 <span class="ar">⇅</span></th><th data-k="eq" data-t="s">設備 <span class="ar">⇅</span></th><th data-k="use" data-t="s">特點 <span class="ar">⇅</span></th></tr></thead><tbody></tbody></table><div class="cap">★ 越多越能定量。TFDAA0086 為薑黃素分光光度法。</div></div></section><section class="slide" data-slide="15" data-section="喚起行動" data-chart="calib"><div class="slide-inner"><div class="kicker">定量基礎</div><h2 class="slide-title">薑黃素法的<span class='hi'>檢量線</span></h2><div class="chartbox" style="height:50vh"><canvas id="chart_calib"></canvas></div><div class="cap">硼酸濃度(µg/mL) 對 550 nm 吸光度，呈良好線性(示意，y≈0.095x，r≈0.99995)，符合比爾定律。</div></div></section><section class="slide" data-slide="16" data-section="喚起行動"><div class="slide-inner"><div class="kicker">健康與法規</div><h2 class="slide-title">為什麼<span class='hi'>絕不能</span>加</h2><div class="grid2" style="margin-top:16px"><div class="card b"><div class="ic">🧬</div><div class="ct">會累積</div><div class="cb">硼在體內排除慢、會累積，反覆攝取風險升高</div></div><div class="card a"><div class="ic">🤢</div><div class="ct">急性中毒</div><div class="cb">噁心、嘔吐、腹瀉、紅斑；嚴重影響肝腎與生殖</div></div><div class="card g"><div class="ic">⚖️</div><div class="ct">法規</div><div class="cb">硼酸/硼砂為<strong>非法添加物</strong>，食品中<strong>不得檢出</strong>(非『限量』)</div></div><div class="card b"><div class="ic">🍢</div><div class="ct">稽查重點</div><div class="cb">Q 彈魚丸、脆貢丸、油麵、年糕、粽子等是抽驗常見對象</div></div></div></div></section><section class="slide" data-slide="17" data-section="喚起行動" data-game="g6"><div class="slide-inner"><div class="game no-nav" data-game="g6"><div class="game-head"><span class="tag a">小遊戲 ⑥</span><span class="gt">計算闖關：由吸光度求濃度</span><span class="score" id="g6score">未作答</span></div><div class="game-q">薑黃素法檢量線為 <b>Abs = 0.095 × C</b>(C 單位 µg/mL)。某檢體呈色液測得 <b>Abs = 0.570</b>。求硼酸濃度 C。</div><div class="btnrow"><input class="numin" id="g6in" type="number" step="any" placeholder="?"> <span style="font-weight:800;color:var(--ink)">µg/mL</span><button class="btn" id="g6check">對答案</button><button class="btn ghost" id="g6hint">提示</button></div><div class="fb" id="g6fb"></div></div></div></section><section class="slide" data-slide="18" data-section="喚起行動"><div class="slide-inner"><div class="kicker">重點整理</div><h2 class="slide-title">今天的五個關鍵</h2><div class="grid2" style="margin-top:18px"><ul class="clean"><li>硼酸/硼砂是<strong>非法添加物</strong>，加在 Q 彈/脆度食品，會累積中毒</li><li>呈色原理：硼酸 + <strong>薑黃素</strong>(酸性)→ 玫瑰紅 rosocyanine</li><li>定量：<strong>550 nm</strong> 分光光度，對照檢量線(比爾定律)</li></ul><ul class="clean"><li>定性確認：紅斑<strong>加氨變墨綠</strong>(紅→綠)</li><li>TFDAA0086 比舊薑黃試紙法<strong>免灰化、可定量、紅色食品不干擾</strong></li></ul></div></div></section><section class="slide" data-slide="19" data-section="喚起行動"><div class="slide-inner"><div class="kicker">自我檢核</div><h2 class="slide-title">今天結束，你應該會…</h2><ul class="checklist no-nav" id="selfcheck" style="margin-top:18px;max-width:980px"><li data-k><span class="bx">✓</span>說明硼砂為何被違法添加、有哪些健康危害</li><li data-k><span class="bx">✓</span>寫出硼酸與薑黃素呈色(玫瑰紅 rosocyanine)的原理</li><li data-k><span class="bx">✓</span>說明為何在 550 nm 測定吸光度</li><li data-k><span class="bx">✓</span>比較舊薑黃試紙法與新分光光度法(TFDAA0086)的差異</li><li data-k><span class="bx">✓</span>解釋『加氨變墨綠』作為確認反應的意義</li><li data-k><span class="bx">✓</span>由檢量線吸光度推算硼酸濃度(比爾定律)</li><li data-k><span class="bx">✓</span>說明新法為何用己烷/乙酸乙酯取代氯仿</li><li data-k><span class="bx">✓</span>指出硼酸在食品中是『不得檢出』而非『限量』</li></ul><p class="subtitle" style="margin-top:12px">點一下打勾——確認自己真的會了。</p></div></section><section class="slide" data-slide="20" data-section="喚起行動" data-cover="1"><div class="slide-inner"><div class="cover"><div class="kicker">延伸 · CONNECT</div><h1>從一顆魚丸<br><span style='color:var(--accent-2)'>看懂硼砂</span></h1><div class="en"></div><div class="meta">🔗 對照：本法是<strong>呈色/分光光度</strong>路線，與滴定(SO₂)、LC-MS/MS(甜味劑/四環素)互補<br>🔬 銜接：<strong>紫外可見光譜 (Ch7)</strong>、比爾定律、食品添加物管理<br>🧪 思考：紅色食品為何會干擾舊法？分光光度法如何避免？『不得檢出』與『限量』有何不同？</div><div style="margin-top:24px"><span class="pill">硼砂(禁用)</span><span class="pill">薑黃素</span><span class="pill">玫瑰紅 550nm</span><span class="pill">分光光度</span><span class="pill">食安檢測</span></div></div></div></section><script>window.CFG={"charts": {"calib": {"type": "line", "yTitle": "吸光度 Abs (550 nm)", "labels": ["3", "5", "7", "9", "10"], "datasets": [{"label": "Abs = 0.095 × C", "data": [0.285, 0.475, 0.665, 0.855, 0.95], "color": "#e23b5a"}]}}, "bucket": {"g1": {"cats": ["舊法：薑黃試紙(定性)", "新法 TFDAA0086：分光光度(定量)"], "items": [{"t": "屬定性鑑別(只能說有/沒有)", "c": "舊法：薑黃試紙(定性)"}, {"t": "樣品需先灰化、較耗時", "c": "舊法：薑黃試紙(定性)"}, {"t": "以試紙顏色判讀(紅棕→加氨變墨綠)", "c": "舊法：薑黃試紙(定性)"}, {"t": "結果易受主觀判讀影響", "c": "舊法：薑黃試紙(定性)"}, {"t": "可定量(讀吸光度給數值)", "c": "新法 TFDAA0086：分光光度(定量)"}, {"t": "免灰化、直接萃取衍生呈色", "c": "新法 TFDAA0086：分光光度(定量)"}, {"t": "以 550 nm 分光光度測定", "c": "新法 TFDAA0086：分光光度(定量)"}, {"t": "用 n-己烷/乙酸乙酯取代有毒氯仿", "c": "新法 TFDAA0086：分光光度(定量)"}], "ok": "🎉 全對！舊法定性、需灰化、主觀；新法免灰化、550 nm 客觀定量。", "tip": "提示：跟『試紙、灰化、定性、主觀』有關→舊法；跟『吸光度、550nm、定量、客觀』有關→新法。"}, "g3": {"cats": ["為何被違法添加", "對健康的危害"], "items": [{"t": "讓油麵、年糕更 Q 彈有嚼勁", "c": "為何被違法添加"}, {"t": "讓魚丸、貢丸更脆、外觀更好", "c": "為何被違法添加"}, {"t": "延長保存、防止腐敗", "c": "為何被違法添加"}, {"t": "在體內不易代謝、會累積", "c": "對健康的危害"}, {"t": "急性中毒會噁心、嘔吐、腹瀉", "c": "對健康的危害"}, {"t": "高劑量影響生殖、甚至致死", "c": "對健康的危害"}], "ok": "🎉 正確！口感/保存→被加的理由；累積/中毒/生殖毒性→危害。", "tip": "提示：跟『口感、賣相、保存』有關→添加理由；跟『中毒、累積、器官』有關→危害。"}}, "mcq": {"g2": [{"q": "TFDAA0086 用什麼顯色劑與硼酸呈色？", "o": ["茚三酮", "薑黃素(curcumin)", "酚酞", "碘", "茴香醛"], "a": 1, "e": "硼酸在酸性下與薑黃素結合成玫瑰紅(rosocyanine)。"}, {"q": "呈色後在哪個波長測定吸光度？", "o": ["280 nm", "410 nm", "550 nm", "700 nm"], "a": 2, "e": "rosocyanine 在 550 nm 有最大吸收，故於 550 nm 定量。"}, {"q": "紅棕色斑『加氨變墨綠』的用途是？", "o": ["增加靈敏度", "確認確實是硼(定性確認)", "稀釋", "加快反應"], "a": 1, "e": "加氨(鹼)使紅色轉墨綠，是確認反應、排除其他紅色干擾。"}, {"q": "新法相較舊薑黃試紙法的主要優點是？", "o": ["更便宜", "免灰化、可客觀定量、紅色食品不干擾", "不需試劑", "可現場目視"], "a": 1, "e": "新法免灰化、用分光光度客觀定量，並改善紅色食品干擾。"}, {"q": "硼酸/硼砂在台灣食品的法規定位是？", "o": ["合法添加物", "限量使用", "非法添加物(不得檢出)", "僅限外銷"], "a": 2, "e": "硼酸與硼砂為非法食品添加物，食品中不得檢出。"}], "g5": [{"q": "想對 Q 彈魚丸做現場快速初步鑑別，較適合？", "o": ["ICP-MS", "薑黃試紙法", "離子層析", "凱氏定氮"], "a": 1, "e": "薑黃試紙法可現場快速定性鑑別；確認與定量再送分光光度法。"}, {"q": "檢驗紅麴米製品的硼酸，為何優先選新法？", "o": ["比較便宜", "紅色色素會干擾舊法的目視判讀", "紅麴不含硼", "新法不需儀器"], "a": 1, "e": "紅色食品天然色素干擾舊法目視；新法經萃取衍生、550nm 定量較不受干擾。"}, {"q": "TFDAA0086 以什麼取代有毒的氯仿作萃取/衍生溶劑？", "o": ["苯", "n-己烷/乙酸乙酯", "汽油", "濃硫酸"], "a": 1, "e": "以 n-己烷/乙酸乙酯(1:1)取代氯仿，較安全且回收率良好。"}, {"q": "要測『總硼元素』而非僅硼酸鹽，最適合？", "o": ["薑黃試紙", "薑黃素分光光度", "ICP-MS", "酸鹼滴定"], "a": 2, "e": "ICP-MS 可超痕量測定總硼元素含量。"}, {"q": "分光光度定量為何要做檢量線？", "o": ["美觀", "由吸光度依比爾定律換算濃度", "當空白", "增加顏色"], "a": 1, "e": "檢量線建立吸光度與濃度的線性關係(比爾定律)，據以定量。"}]}, "sort": {"g4": {"steps": ["取檢體，以 n-己烷/乙酸乙酯萃取硼酸", "加入薑黃素試劑，在酸性下衍生呈色", "生成玫瑰紅色 rosocyanine", "以分光光度計在 550 nm 測定吸光度", "對照檢量線(Abs vs 濃度)換算硼酸濃度", "以含量公式換算成檢體中硼酸含量(mg/kg)"], "shuffle": [2, 0, 4, 1, 5, 3], "ok": "🎉 順序正確！萃取→加薑黃素衍生→呈玫瑰紅→550nm測吸光→對檢量線→算含量。", "tip": "提示：先萃取再加顯色劑呈色，呈色後才量吸光度、再對檢量線定量。"}}, "calc": {"g6": {"answer": 6.0, "tol": 0.2, "ok": "🎉 正確！C = Abs/0.095 = 0.570/0.095 = <b>6.0 µg/mL<\/b>。", "bad": "再算算：由 Abs = 0.095×C，反解 C = Abs/0.095。", "hint": "提示：C = 0.570 / 0.095 = 6.0 µg/mL。"}}, "cmp": {"cols": [{"k": "m"}, {"k": "quant", "t": "n", "star": true}, {"k": "eq"}, {"k": "use"}], "rows": [{"m": "薑黃試紙法(舊·定性)", "quant": 1, "eq": "薑黃試紙", "use": "現場定性·需灰化·主觀"}, {"m": "薑黃素分光光度(TFDAA0086)", "quant": 4, "eq": "分光光度計", "use": "免灰化·客觀定量·LOQ 300mg/kg"}, {"m": "ICP-MS", "quant": 5, "eq": "ICP-MS", "use": "超痕量·測總硼元素"}, {"m": "離子層析 IC", "quant": 4, "eq": "離子層析儀", "use": "測硼酸鹽陰離子"}]}};</script><script>
+var CFG=window.CFG||{};
+var slides=[].slice.call(document.querySelectorAll('.slide'));
+var total=slides.length,cur=0;
+var prog=document.getElementById('progress'),pageInfo=document.getElementById('pageInfo'),secTag=document.getElementById('section-tag');
+function show(i){
+  cur=Math.max(0,Math.min(total-1,i));
+  slides.forEach(function(s,k){s.classList.toggle('active',k===cur)});
+  prog.style.width=((cur+1)/total*100)+'%';
+  pageInfo.textContent=(cur+1)+' / '+total;
+  secTag.textContent='— '+(slides[cur].dataset.section||'')+' —';
+  var ch=slides[cur].dataset.chart; if(ch) initChart(ch);
+  var g=slides[cur].dataset.game; if(g) initGame(g);
+}
+function next(){show(cur+1)} function prev(){show(cur-1)}
+function toggleFs(){if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()}else{document.exitFullscreen&&document.exitFullscreen()}}
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next()}
+  else if(e.key==='ArrowLeft'){prev()}
+  else if(e.key==='f'||e.key==='F'){toggleFs()}
+});
+document.addEventListener('click',function(e){
+  if(e.target.closest('.no-nav')) return;
+  if(e.target.closest('button,input,select,textarea,a,.chip,.opt,.bucket')) return;
+  var x=e.clientX/window.innerWidth;
+  if(x>0.72) next(); else if(x<0.28) prev();
+});
+
+/* ---------- charts ---------- */
+var chartDone={};
+function initChart(id){
+  if(chartDone[id]||typeof Chart==='undefined'||!CFG.charts||!CFG.charts[id]) return; chartDone[id]=1;
+  Chart.defaults.font.family="'Noto Sans TC',sans-serif"; Chart.defaults.color='#48597a';
+  var c=CFG.charts[id];
+  var el=document.getElementById('chart_'+id); if(!el) return;
+  var ds=c.datasets.map(function(d){return {label:d.label,data:d.data,
+    backgroundColor:d.color||'#1f6feb',borderColor:d.color||'#1f6feb',borderRadius:5,
+    fill:(c.type==='line'?false:true),tension:.3}});
+  new Chart(el,{type:c.type||'bar',data:{labels:c.labels,datasets:ds},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:(c.datasets.length>1),position:'top'}},
+      scales:{y:{beginAtZero:(c.zero!==false),title:{display:!!c.yTitle,text:c.yTitle||''}}}}});
+}
+
+/* ---------- games ---------- */
+var gameDone={};
+function setScore(el,v){var e=document.getElementById(el);if(e)e.textContent=v}
+function fb(el,msg,type){var f=document.getElementById(el);if(!f)return;f.className='fb show '+type;f.innerHTML=msg}
+function initGame(g){
+  if(gameDone[g])return; gameDone[g]=1;
+  if(CFG.bucket&&CFG.bucket[g]) return initBucket(g);
+  if(CFG.mcq&&CFG.mcq[g]) return initMCQ(g);
+  if(CFG.sort&&CFG.sort[g]) return initSort(g);
+  if(CFG.calc&&CFG.calc[g]) return initCalc(g);
+  if(g==='cmp') return initCmp();
+}
+
+function initBucket(g){
+  var cfg=CFG.bucket[g];
+  var data=cfg.items.map(function(x){return {t:x.t,c:x.c,at:null}});
+  var cats=cfg.cats, N=data.length;
+  var pool=document.getElementById(g+'pool'), bk=document.getElementById(g+'buckets');
+  var sel=null;
+  bk.style.gridTemplateColumns='repeat('+cats.length+',1fr)';
+  function paint(){[].slice.call(pool.children).forEach(function(c){c.classList.toggle('sel',+c.dataset.i===sel)})}
+  function render(){
+    pool.innerHTML=''; bk.innerHTML='';
+    var placed={}; cats.forEach(function(c){placed[c]=[]});
+    data.forEach(function(d,i){if(d.at)placed[d.at].push(i)});
+    data.forEach(function(d,i){ if(d.at) return;
+      var c=document.createElement('div');c.className='chip';c.textContent=d.t;c.dataset.i=i;
+      c.onclick=function(){sel=(sel===i?null:i);paint()}; pool.appendChild(c);
+    });
+    cats.forEach(function(cat){
+      var b=document.createElement('div');b.className='bucket';b.innerHTML='<div class="bh">'+cat+'</div>';
+      placed[cat].forEach(function(i){
+        var c=document.createElement('div');c.className='chip';c.textContent=data[i].t;
+        c.onclick=function(){data[i].at=null;sel=null;render()}; b.appendChild(c);
+      });
+      b.onclick=function(e){ if(e.target!==b&&!e.target.classList.contains('bh'))return;
+        if(sel!=null){data[sel].at=cat;sel=null;render()} };
+      bk.appendChild(b);
+    });
+    paint();
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; data.forEach(function(d){if(d.at===d.c)ok++});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 全對！','good');
+    else fb(g+'fb','答對 '+ok+'/'+N+'。'+(cfg.tip||'再調整看看。'),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    data.forEach(function(d){d.at=null}); sel=null; render(); setScore(g+'score','0 / '+N);
+    var f=document.getElementById(g+'fb'); if(f) f.className='fb';
+  };
+}
+
+function initMCQ(g){
+  var DATA=CFG.mcq[g], nq=DATA.length, idx=0, score=0, locked=false;
+  var qEl=document.getElementById(g+'q'), opEl=document.getElementById(g+'opts'), nextBtn=document.getElementById(g+'next');
+  function render(){
+    locked=false; var d=DATA[idx];
+    qEl.innerHTML='<span style="color:var(--accent)">Q'+(idx+1)+'.</span> '+d.q;
+    opEl.innerHTML=''; var f=document.getElementById(g+'fb'); if(f)f.className='fb'; if(nextBtn)nextBtn.style.display='none';
+    d.o.forEach(function(t,i){
+      var o=document.createElement('div');o.className='opt';o.textContent=t;
+      o.onclick=function(){
+        if(locked)return; locked=true; var ok=(i===d.a);
+        if(ok){o.classList.add('ok');score++}else{o.classList.add('no');opEl.children[d.a].classList.add('ok')}
+        [].slice.call(opEl.children).forEach(function(c,k){if(k!==i&&k!==d.a)c.classList.add('dim')});
+        setScore(g+'score',score+' / '+nq);
+        var done=(idx>=DATA.length-1);
+        var msg=(ok?'✅ 答對！':'❌ 正解：'+d.o[d.a]+'。')+'<br>'+d.e+(done?'<br><b>完成！總分 '+score+'/'+nq+'</b>':'');
+        fb(g+'fb',msg,ok?'good':'bad');
+        if(nextBtn) nextBtn.style.display=done?'none':'inline-block';
+      };
+      opEl.appendChild(o);
+    });
+  }
+  if(nextBtn) nextBtn.onclick=function(){if(idx<DATA.length-1){idx++;render()}};
+  render();
+}
+
+function initSort(g){
+  var cfg=CFG.sort[g], steps=cfg.steps, N=steps.length;
+  var order=(cfg.shuffle||steps.map(function(_,i){return i})).slice();
+  var list=document.getElementById(g+'list');
+  function render(){
+    list.innerHTML='';
+    order.forEach(function(stepIdx,pos){
+      var row=document.createElement('div');row.className='sortrow';
+      row.innerHTML='<div class="idx">'+(pos+1)+'</div><div class="txt">'+steps[stepIdx]+'</div>';
+      var ud=document.createElement('div');ud.className='ud';
+      var up=document.createElement('button');up.textContent='▲';
+      up.onclick=function(){if(pos>0){var t=order[pos-1];order[pos-1]=order[pos];order[pos]=t;render()}};
+      var dn=document.createElement('button');dn.textContent='▼';
+      dn.onclick=function(){if(pos<order.length-1){var t=order[pos+1];order[pos+1]=order[pos];order[pos]=t;render()}};
+      ud.appendChild(up);ud.appendChild(dn);row.appendChild(ud);list.appendChild(row);
+    });
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; order.forEach(function(v,i){if(v===i)ok++});
+    [].slice.call(list.children).forEach(function(r,i){r.classList.toggle('ok',order[i]===i);r.classList.toggle('no',order[i]!==i)});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 順序完全正確！','good');
+    else fb(g+'fb','對了 '+ok+'/'+N+' 個位置。'+(cfg.tip||''),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    order=(cfg.shuffle||steps.map(function(_,i){return i})).slice().reverse(); render();
+    var f=document.getElementById(g+'fb'); if(f)f.className='fb'; setScore(g+'score','— / '+N);
+  };
+}
+
+function initCalc(g){
+  var cfg=CFG.calc[g];
+  document.getElementById(g+'check').onclick=function(){
+    var v=parseFloat(document.getElementById(g+'in').value);
+    if(isNaN(v)){fb(g+'fb','請先輸入一個數字。','info');return}
+    if(Math.abs(v-cfg.answer)<=(cfg.tol||0.05)){
+      setScore(g+'score','✓ 答對'); fb(g+'fb',cfg.ok||('🎉 正確！答案是 '+cfg.answer),'good');
+    } else { setScore(g+'score','再試一次'); fb(g+'fb',cfg.bad||'再算算看。','bad'); }
+  };
+  var hb=document.getElementById(g+'hint');
+  if(hb) hb.onclick=function(){fb(g+'fb',cfg.hint||'提示：對照公式逐步代入。','info')};
+}
+
+function stars(n){return '★★★★★'.slice(0,n)+'☆☆☆☆☆'.slice(0,5-n)}
+function initCmp(){
+  if(!CFG.cmp) return;
+  var cols=CFG.cmp.cols, rows=CFG.cmp.rows.slice(), dir={};
+  var tb=document.querySelector('#cmpTable tbody');
+  function draw(){ tb.innerHTML=''; rows.forEach(function(r){
+    var tr=document.createElement('tr');
+    tr.innerHTML=cols.map(function(c,ci){
+      var v=r[c.k];
+      if(c.star) return '<td style="color:var(--accent-2)">'+stars(v)+'</td>';
+      return '<td'+(ci===0?' class="c"':'')+'>'+v+'</td>';
+    }).join(''); tb.appendChild(tr); }); }
+  draw();
+  document.querySelectorAll('#cmpTable thead th').forEach(function(th){
+    th.onclick=function(){var k=th.dataset.k,t=th.dataset.t;dir[k]=!dir[k];
+      rows.sort(function(a,b){var x=a[k],y=b[k];
+        if(t==='n')return dir[k]?x-y:y-x;
+        return dir[k]?String(x).localeCompare(String(y),'zh-Hant'):String(y).localeCompare(String(x),'zh-Hant')});
+      draw();};
+  });
+}
+show(0);
+</script>
+<script>document.addEventListener('click',function(e){var li=e.target.closest('#selfcheck li');if(li)li.classList.toggle('done')});</script>
+</body></html>
