@@ -1,0 +1,418 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>維他命分析 Vitamin Analysis · Nielsen Ch20 + TFDA</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script><style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{font-size:18px}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;background:var(--bg);
+  color:var(--ink);overflow:hidden;height:100vh;width:100vw}
+:root{
+  --bg:#eef2f8;--surface:#ffffff;--surface-2:#f6f9fd;
+  --ink:#15233f;--ink-2:#48597a;--ink-3:#8493ad;--line:#dde5f0;
+  --accent:#1f6feb;--accent-soft:#e7f0fe;
+  --accent-2:#d9822b;--accent-2-soft:#fbeede;
+  --ok:#1f9d6b;--ok-soft:#e3f6ee;--bad:#d94f4f;--bad-soft:#fbe7e7;--warn:#d9a32b;
+  --t2:clamp(1.4rem,3vw,2.3rem);
+  --shadow:0 10px 30px rgba(20,40,80,.10);--shadow-sm:0 3px 12px rgba(20,40,80,.08)}
+#progress{position:fixed;top:0;left:0;height:4px;width:0;z-index:50;
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .5s ease}
+#section-tag{position:fixed;top:16px;left:24px;z-index:40;font-size:.78rem;letter-spacing:.18em;
+  color:var(--accent);font-weight:700;font-family:"JetBrains Mono",monospace}
+#pageInfo{position:fixed;right:22px;bottom:16px;z-index:40;font-size:.82rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+#hint{position:fixed;left:24px;bottom:16px;z-index:40;font-size:.72rem;color:var(--ink-3)}
+#brand{position:fixed;right:22px;top:14px;z-index:40;font-size:.72rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:64px 84px;opacity:0;pointer-events:none;
+  transition:opacity .55s ease,transform .55s ease;transform:translateY(14px)}
+.slide.active{opacity:1;pointer-events:auto;transform:translateY(0)}
+.slide-inner{width:100%;max-width:1280px}
+.kicker{font-family:"JetBrains Mono",monospace;font-size:.8rem;letter-spacing:.16em;color:var(--accent);
+  font-weight:700;text-transform:uppercase;margin-bottom:10px}
+.slide-title{font-size:var(--t2);font-weight:900;line-height:1.18;color:var(--ink);letter-spacing:-.01em}
+.slide-title .hi{color:var(--accent-2)}
+.subtitle{font-size:clamp(.95rem,1.5vw,1.2rem);color:var(--ink-2);margin-top:12px;line-height:1.6}
+p,li{font-size:clamp(.92rem,1.4vw,1.12rem);line-height:1.68;color:var(--ink-2)}
+.lead{font-size:clamp(1.05rem,1.8vw,1.35rem);color:var(--ink);line-height:1.6}
+strong,b{color:var(--ink);font-weight:800}.em{color:var(--accent-2);font-weight:800}
+.divider{height:3px;width:64px;background:var(--accent-2);border-radius:2px;margin:18px 0}
+ul.clean{list-style:none}ul.clean li{position:relative;padding-left:26px;margin:10px 0}
+ul.clean li:before{content:"";position:absolute;left:4px;top:.62em;width:8px;height:8px;border-radius:2px;
+  background:var(--accent);transform:rotate(45deg)}
+.mono{font-family:"JetBrains Mono",monospace}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.grid2-1{display:grid;grid-template-columns:1.15fr .85fr;gap:34px;align-items:center}
+.flow6{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow-sm)}
+.card .ic{font-size:1.6rem;margin-bottom:8px}
+.card .ct{font-weight:800;color:var(--ink);font-size:clamp(1rem,1.5vw,1.2rem);margin-bottom:6px}
+.card .cb{font-size:clamp(.85rem,1.25vw,1rem);color:var(--ink-2);line-height:1.55}
+.card.b{border-top:4px solid var(--accent)}.card.a{border-top:4px solid var(--accent-2)}
+.card.g{border-top:4px solid var(--ok)}
+.tag{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:.7rem;padding:3px 9px;border-radius:999px;
+  background:var(--accent-soft);color:var(--accent);font-weight:700}
+.tag.a{background:var(--accent-2-soft);color:var(--accent-2)}
+.pill{display:inline-block;padding:5px 12px;border-radius:999px;background:var(--surface);border:1px solid var(--line);
+  font-size:.82rem;color:var(--ink-2);margin:3px 4px}
+.note{background:var(--accent-2-soft);border-left:4px solid var(--accent-2);border-radius:8px;padding:14px 18px;
+  color:var(--ink);font-size:clamp(.9rem,1.3vw,1.05rem);line-height:1.6}
+.eq{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 22px;
+  font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,1.7vw,1.4rem);color:var(--ink);text-align:center;box-shadow:var(--shadow-sm)}
+.eq .frac{display:inline-flex;flex-direction:column;text-align:center;vertical-align:middle;margin:0 6px}
+.eq .frac b{border-bottom:2px solid var(--ink);padding-bottom:3px}
+table.cmp{width:100%;border-collapse:collapse;font-size:clamp(.82rem,1.2vw,1.02rem)}
+table.cmp th,table.cmp td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line)}
+table.cmp thead th{color:var(--accent);font-weight:800;border-bottom:2px solid var(--accent);cursor:pointer;
+  user-select:none;white-space:nowrap}
+table.cmp thead th .ar{opacity:.4;font-size:.8em}
+table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--ink);font-weight:700}
+.cover{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 100px;
+  background:radial-gradient(1200px 600px at 80% 20%,var(--accent-2-soft),transparent 60%),
+  radial-gradient(900px 500px at 10% 90%,var(--accent-soft),transparent 55%),linear-gradient(135deg,#ffffff,#eef2f8)}
+.cover h1{font-size:clamp(2.4rem,6vw,4.6rem);font-weight:900;line-height:1.05;letter-spacing:-.02em;color:var(--ink)}
+.cover .en{font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,2vw,1.5rem);color:var(--accent);letter-spacing:.1em;margin-top:6px}
+.cover .meta{margin-top:26px;color:var(--ink-2);font-size:clamp(.9rem,1.4vw,1.1rem)}
+.hook{font-size:clamp(2rem,5vw,3.6rem);font-weight:900;color:var(--ink);line-height:1.2;letter-spacing:-.01em}
+.hook .hi{color:var(--accent)}
+.svgwrap{display:flex;align-items:center;justify-content:center}
+.svgwrap svg{max-width:100%;max-height:62vh;height:auto}
+.lbl{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink-2)}
+.lblb{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink);font-weight:700}
+.game{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 24px;box-shadow:var(--shadow)}
+.game-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.game-head .gt{font-weight:900;font-size:clamp(1.05rem,1.7vw,1.35rem);color:var(--ink)}
+.game-head .score{margin-left:auto;font-family:"JetBrains Mono",monospace;font-weight:700;color:var(--accent);
+  background:var(--accent-soft);padding:5px 13px;border-radius:999px;font-size:.9rem}
+.game-q{font-size:clamp(.95rem,1.5vw,1.18rem);color:var(--ink);font-weight:700;margin:6px 0 14px;line-height:1.5}
+.buckets{display:grid;gap:16px;margin-top:14px}
+.bucket{min-height:120px;border:2px dashed var(--line);border-radius:14px;padding:12px;background:var(--surface-2);transition:.2s}
+.bucket .bh{font-weight:800;color:var(--ink);text-align:center;margin-bottom:8px;font-size:.95rem}
+.pool{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;min-height:54px}
+.chip{padding:9px 15px;border-radius:10px;background:var(--surface);border:1px solid var(--line);font-weight:700;
+  color:var(--ink);cursor:pointer;box-shadow:var(--shadow-sm);font-size:.92rem;transition:.15s}
+.chip:hover{border-color:var(--accent);transform:translateY(-1px)}
+.chip.sel{background:var(--accent);color:#fff;border-color:var(--accent)}
+.chip.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.chip.no{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+.opt{padding:14px 18px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);cursor:pointer;
+  font-weight:700;color:var(--ink);font-size:clamp(.88rem,1.3vw,1.05rem);transition:.15s}
+.opt:hover{border-color:var(--accent);background:var(--accent-soft)}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.opt.no{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}.opt.dim{opacity:.5}
+.fb{margin-top:14px;padding:12px 16px;border-radius:10px;font-weight:700;display:none;
+  font-size:clamp(.85rem,1.3vw,1.02rem);line-height:1.5}
+.fb.show{display:block}.fb.good{background:var(--ok-soft);color:var(--ok)}
+.fb.bad{background:var(--bad-soft);color:var(--bad)}.fb.info{background:var(--accent-soft);color:var(--accent)}
+.btn{padding:10px 20px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-weight:800;cursor:pointer;
+  font-size:.92rem;font-family:inherit;box-shadow:var(--shadow-sm)}
+.btn:hover{filter:brightness(1.06)}.btn.ghost{background:var(--surface);color:var(--accent);border:1.5px solid var(--accent)}
+.btnrow{display:flex;gap:12px;margin-top:16px;align-items:center}
+.sortlist{display:flex;flex-direction:column;gap:6px;margin-top:6px;max-height:44vh;overflow-y:auto;padding-right:4px}
+.sortrow{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:7px 14px;box-shadow:var(--shadow-sm)}
+.sortrow .idx{font-family:"JetBrains Mono",monospace;font-weight:800;color:var(--accent);width:24px}
+.sortrow .txt{flex:1;font-weight:700;color:var(--ink);font-size:clamp(.85rem,1.25vw,1.02rem)}
+.sortrow .ud{display:flex;flex-direction:column;gap:3px}
+.sortrow .ud button{border:none;background:var(--accent-soft);color:var(--accent);border-radius:6px;width:30px;height:20px;
+  cursor:pointer;font-weight:900;line-height:1}
+.sortrow.ok{border-color:var(--ok);background:var(--ok-soft)}.sortrow.no{border-color:var(--bad)}
+.numin{font-family:"JetBrains Mono",monospace;font-size:1.2rem;font-weight:800;padding:10px 14px;border:1.5px solid var(--line);
+  border-radius:10px;width:140px;color:var(--ink);text-align:center}
+.numin:focus{outline:none;border-color:var(--accent)}
+.checklist{list-style:none}
+.checklist li{display:flex;align-items:center;gap:12px;padding:11px 14px;border:1px solid var(--line);border-radius:10px;
+  margin:8px 0;background:var(--surface);cursor:pointer;font-weight:700;color:var(--ink-2);font-size:clamp(.9rem,1.35vw,1.08rem);transition:.15s}
+.checklist li .bx{width:24px;height:24px;border-radius:6px;border:2px solid var(--accent);display:flex;align-items:center;
+  justify-content:center;color:#fff;font-weight:900;flex:0 0 auto}
+.checklist li.done{background:var(--ok-soft);border-color:var(--ok);color:var(--ink)}
+.checklist li.done .bx{background:var(--ok);border-color:var(--ok)}
+.chartbox{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow-sm);
+  height:60vh;max-height:520px;position:relative}
+.cap{font-size:.82rem;color:var(--ink-3);text-align:center;margin-top:8px}
+</style></head><body><div id="progress"></div><div id="section-tag"></div><div id="brand">VITAMIN · CH20</div><div id="pageInfo"></div><div id="hint">← → / 空白鍵切頁　·　F 全螢幕　·　點兩側翻頁</div><section class="slide" data-slide="1" data-section="引起動機" data-cover="1"><div class="slide-inner"><div class="cover"><div class="kicker">NIELSEN'S FOOD ANALYSIS · CHAPTER 20</div><h1>維他命<span style='color:var(--accent-2)'>分析</span></h1><div class="en">Vitamin Analysis</div><div class="meta">食品分析　·　3 小時課程　·　含 6 個互動小遊戲<br>13 種維生素 · 脂溶 vs 水溶 · HPLC · 食藥署官方法 TFDAA0025／0012</div><div style="margin-top:24px"><span class="pill">4 脂溶 + 9 水溶</span><span class="pill">IU / %DV</span><span class="pill">皂化 · 三酶法</span><span class="pill">HPLC-PDA</span><span class="pill">營養標示查核</span></div></div></div></section><section class="slide" data-slide="2" data-section="引起動機"><div class="slide-inner"><div style="text-align:center">
+  <div class="kicker" style="justify-content:center">先想一想</div>
+  <div class="hook">這顆綜合維他命錠標示<br><span class="hi">維生素C 500 mg、維生素D 800 IU</span>——是真的足量嗎？</div>
+  <p class="subtitle" style="max-width:850px;margin:22px auto 0">維生素加太少達不到標示、加太多(脂溶性)可能中毒；<strong>營養標示要準</strong>。<br>
+  維生素種類多、又怕光怕氧怕熱——怎麼把它們一一<strong>準確定量</strong>？這一章告訴你。</p>
+  <div style="margin-top:24px"><span class="pill">營養標示查核</span><span class="pill">強化食品</span>
+  <span class="pill">膳食評估</span><span class="pill">保健食品品管</span></div></div></div></section><section class="slide" data-slide="3" data-section="引起動機"><div class="slide-inner"><div class="kicker">20.1 定義</div><h2 class="slide-title">13 種維生素，分<span class='hi'>兩大家族</span></h2><div class="svgwrap" style="margin-top:6px">
+<svg viewBox="0 0 960 320">
+ <text x="480" y="22" text-anchor="middle" class="lblb" font-size="15">13 種維生素：4 種脂溶性 ＋ 9 種水溶性</text>
+ <!-- fat-soluble panel -->
+ <rect x="20" y="44" width="280" height="250" rx="14" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
+ <text x="160" y="70" text-anchor="middle" class="lblb" fill="#d9822b" font-size="15">脂溶性 (4)</text>
+ <text x="160" y="88" text-anchor="middle" class="lbl">溶於油脂 · 會儲存 · 過量易中毒</text>
+ <g font-size="14" font-weight="800">
+  <rect x="44" y="104" width="100" height="40" rx="8" fill="#fff" stroke="#d9822b"/><text x="94" y="129" text-anchor="middle" fill="#15233f">A 視黃醇</text>
+  <rect x="176" y="104" width="100" height="40" rx="8" fill="#fff" stroke="#d9822b"/><text x="226" y="129" text-anchor="middle" fill="#15233f">D 鈣化醇</text>
+  <rect x="44" y="158" width="100" height="40" rx="8" fill="#fff" stroke="#d9822b"/><text x="94" y="183" text-anchor="middle" fill="#15233f">E 生育醇</text>
+  <rect x="176" y="158" width="100" height="40" rx="8" fill="#fff" stroke="#d9822b"/><text x="226" y="183" text-anchor="middle" fill="#15233f">K 葉醌</text>
+ </g>
+ <text x="160" y="232" text-anchor="middle" class="lbl">缺乏：D→佝僂、K→凝血障礙</text>
+ <text x="160" y="252" text-anchor="middle" class="lbl">分析：先皂化去油脂，再 HPLC</text>
+ <!-- water-soluble panel -->
+ <rect x="320" y="44" width="620" height="250" rx="14" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
+ <text x="630" y="70" text-anchor="middle" class="lblb" fill="#1f6feb" font-size="15">水溶性 (9)：B 群 ×8 ＋ C</text>
+ <text x="630" y="88" text-anchor="middle" class="lbl">溶於水 · 不易儲存 · 過量隨尿排出</text>
+ <g font-size="13" font-weight="800">
+  <rect x="344" y="104" width="92" height="38" rx="8" fill="#fff" stroke="#1f6feb"/><text x="390" y="128" text-anchor="middle" fill="#15233f">B₁ 硫胺</text>
+  <rect x="448" y="104" width="92" height="38" rx="8" fill="#fff" stroke="#1f6feb"/><text x="494" y="128" text-anchor="middle" fill="#15233f">B₂ 核黃素</text>
+  <rect x="552" y="104" width="92" height="38" rx="8" fill="#fff" stroke="#1f6feb"/><text x="598" y="128" text-anchor="middle" fill="#15233f">B₃ 菸鹼酸</text>
+  <rect x="656" y="104" width="92" height="38" rx="8" fill="#fff" stroke="#1f6feb"/><text x="702" y="128" text-anchor="middle" fill="#15233f">B₅ 泛酸</text>
+  <rect x="760" y="104" width="92" height="38" rx="8" fill="#fff" stroke="#1f6feb"/><text x="806" y="128" text-anchor="middle" fill="#15233f">B₆ 吡哆醇</text>
+  <rect x="344" y="150" width="92" height="38" rx="8" fill="#fff" stroke="#1f6feb"/><text x="390" y="174" text-anchor="middle" fill="#15233f">B₇ 生物素</text>
+  <rect x="448" y="150" width="92" height="38" rx="8" fill="#fff" stroke="#1f6feb"/><text x="494" y="174" text-anchor="middle" fill="#15233f">B₉ 葉酸</text>
+  <rect x="552" y="150" width="92" height="38" rx="8" fill="#fff" stroke="#1f6feb"/><text x="598" y="174" text-anchor="middle" fill="#15233f">B₁₂ 鈷胺</text>
+  <rect x="656" y="150" width="196" height="38" rx="8" fill="#fff" stroke="#1f6feb"/><text x="754" y="174" text-anchor="middle" fill="#15233f">C 抗壞血酸</text>
+ </g>
+ <text x="630" y="218" text-anchor="middle" class="lbl">缺乏：C→壞血病、B₁→腳氣病、B₃→糙皮病、B₁₂→惡性貧血</text>
+ <text x="630" y="242" text-anchor="middle" class="lbl">分析：易氧化怕熱怕光 → 加抗氧化劑、避光；HPLC／微生物檢定</text>
+</svg></div><p class="subtitle" style="text-align:center;margin-top:8px">維生素是微量就能維持代謝的有機物，人體多半不能自行合成，須從食物攝取。</p></div></section><section class="slide" data-slide="4" data-section="引起動機"><div class="slide-inner"><div class="kicker">關鍵差異</div><h2 class="slide-title">脂溶 vs 水溶：<span class='hi'>性質決定方法</span></h2><div class="grid2" style="margin-top:18px"><div class="card a"><div class="ic">🧈</div><div class="ct">脂溶性 A·D·E·K</div><div class="cb">溶於油脂、會在體內<strong>儲存</strong>(過量易中毒)；分析時先<strong>皂化</strong>去油脂、<strong>全程避光</strong>、加抗氧化劑</div></div><div class="card b"><div class="ic">💧</div><div class="ct">水溶性 B 群·C</div><div class="cb">溶於水、不易儲存(過量隨尿排出)；<strong>易氧化、怕熱怕光</strong>，分析要加抗氧化劑、低 pH 保護</div></div></div><div class="note" style="margin-top:14px">同樣是「維生素」，溶解性不同 → <strong>萃取、保存、偵測波長、甚至毒性</strong>都不一樣。</div></div></section><section class="slide" data-slide="5" data-section="引起動機"><div class="slide-inner"><div class="kicker">20.1.3 單位</div><h2 class="slide-title">mg、IU、%DV 別<span class='hi'>搞混</span></h2><div class="grid3" style="margin-top:18px"><div class="card b"><div class="ic">⚖️</div><div class="ct">mg / µg</div><div class="cb">直接的<strong>質量</strong>單位，最直觀</div></div><div class="card a"><div class="ic">💪</div><div class="ct">IU 國際單位</div><div class="cb">量的是<strong>生物活性(效力)</strong>，不是質量；每種維生素換算率不同</div></div><div class="card g"><div class="ic">🏷️</div><div class="ct">%DV 每日值</div><div class="cb">佔每日建議攝取量的百分比，用於營養標示</div></div></div><p class="subtitle" style="margin-top:14px">標示與品管常要在不同基準間換算——例如維生素 D「800 IU」要對應到質量才能用 HPLC 查核。</p></div></section><section class="slide" data-slide="6" data-section="引起動機" data-game="g1"><div class="slide-inner"><div class="game no-nav" data-game="g1"><div class="game-head"><span class="tag a">小遊戲 ①</span><span class="gt">脂溶性 vs 水溶性維生素</span><span class="score" id="g1score">0 / 8</span></div><div class="game-q">把 8 種維生素分到「脂溶性」或「水溶性」。</div><div class="pool" id="g1pool"></div><div class="buckets" id="g1buckets"></div><div class="fb" id="g1fb"></div><div class="btnrow"><button class="btn" id="g1check">檢查答案</button><button class="btn ghost" id="g1reset">重來</button></div></div></div></section><section class="slide" data-slide="7" data-section="維持注意"><div class="slide-inner"><div class="kicker">20.1.4 萃取</div><h2 class="slide-title">每種維生素的萃取法<span class='hi'>都不同</span></h2><div class="grid2" style="margin-top:16px"><div><ul class="clean"><li><strong>脂溶 A·D·E</strong>：有機溶劑萃取 + <strong>皂化(saponification)</strong>——KOH 把三酸甘油酯水解成皂去除，維生素留下；加抗氧化劑防氧化</li><li><strong>維生素C</strong>：<strong>偏磷酸/醋酸冷萃</strong>，低 pH + 螯合劑防氧化</li><li><strong>B₁、B₂</strong>：酸中煮沸/高壓滅菌 + <strong>酶處理</strong></li><li><strong>葉酸</strong>：<strong>三酶法</strong>(α-澱粉酶、蛋白酶、γ-麩胺醯水解酶)</li></ul></div><div class="note"><strong>為什麼這麼講究？</strong><br>維生素對<strong>光、氧、pH、熱</strong>都敏感；萃取要『放得出來又不破壞』，所以每種維生素有專屬配方。</div></div></div></section><section class="slide" data-slide="8" data-section="維持注意"><div class="slide-inner"><div class="kicker">20.1.5 三大方法類</div><h2 class="slide-title">從生物到化學，<span class='hi'>各有取捨</span></h2><div class="svgwrap" style="margin-top:6px">
+<svg viewBox="0 0 920 280">
+ <text x="460" y="24" text-anchor="middle" class="lblb" font-size="15">三大類維生素分析法：準確度 ↑ 與 操作簡便 ↑ 互為反向</text>
+ <g font-size="13.5">
+  <rect x="120" y="56" width="680" height="50" rx="10" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
+  <text x="150" y="86" class="lblb">生物檢定 Bioassay</text>
+  <text x="640" y="86" text-anchor="end" class="lbl">人/動物餵食(大鼠骨鈣化)；僅 D、B₁₂</text>
+  <rect x="120" y="116" width="680" height="50" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
+  <text x="150" y="146" class="lblb">微生物檢定 Microbiological</text>
+  <text x="640" y="146" text-anchor="end" class="lbl">乳酸菌生長量；僅水溶性、專一靈敏但費時</text>
+  <rect x="120" y="176" width="680" height="50" rx="10" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
+  <text x="150" y="206" class="lblb">化學法 Chemical (HPLC 主流)</text>
+  <text x="640" y="206" text-anchor="end" class="lbl">快速準確精密；脂溶+水溶；可配 MS 測 vitamers</text>
+ </g>
+ <defs><marker id="vu" markerWidth="10" markerHeight="10" refX="4" refY="8" orient="auto"><path d="M4 0 L8 8 L0 8 Z" fill="#15233f"/></marker>
+  <marker id="vd" markerWidth="10" markerHeight="10" refX="4" refY="2" orient="auto"><path d="M4 10 L8 2 L0 2 Z" fill="#8493ad"/></marker></defs>
+ <line x1="40" y1="226" x2="40" y2="56" stroke="#15233f" stroke-width="2.4" marker-end="url(#vu)"/>
+ <text x="22" y="150" text-anchor="middle" class="lblb" transform="rotate(-90 22 150)">準確度／精密度 ↑</text>
+ <line x1="880" y1="56" x2="880" y2="226" stroke="#8493ad" stroke-width="2.4" marker-end="url(#vd)"/>
+ <text x="900" y="150" text-anchor="middle" class="lbl" transform="rotate(90 900 150)">操作簡便 ↑</text>
+</svg></div><p class="subtitle" style="text-align:center;margin-top:8px">越往化學法：越準確精密、但儀器與技術門檻越高；越往生物法：越接近生理活性、但慢又粗略。</p></div></section><section class="slide" data-slide="9" data-section="維持注意" data-game="g2"><div class="slide-inner"><div class="game no-nav" data-game="g2"><div class="game-head"><span class="tag a">小遊戲 ②</span><span class="gt">維生素分析原理測驗</span><span class="score" id="g2score">0 / 5</span></div><div class="game-q" id="g2q"></div><div class="opts" id="g2opts"></div><div class="fb" id="g2fb"></div><div class="btnrow"><button class="btn ghost" id="g2next" style="display:none">下一題 →</button></div></div></div></section><section class="slide" data-slide="10" data-section="維持注意"><div class="slide-inner"><div class="kicker">20.4 化學法主流</div><h2 class="slide-title">為什麼<span class='hi'>HPLC</span> 成為首選</h2><div class="svgwrap" style="margin-top:4px">
+<svg viewBox="0 0 980 200">
+ <defs><marker id="ha" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 Z" fill="#48597a"/></marker></defs>
+ <text x="490" y="28" text-anchor="middle" class="lblb" font-size="15">官方法骨幹：萃取 → C18 反相分離 → PDA 多波長偵測 → 比對定量</text>
+ <g font-size="13">
+  <rect x="14" y="74" width="170" height="56" rx="10" fill="#fbeede" stroke="#d9822b" stroke-width="2.2"/>
+  <text x="99" y="98" text-anchor="middle" class="lblb">檢體萃取</text><text x="99" y="117" text-anchor="middle" class="lbl">避光·抗氧化</text>
+  <rect x="232" y="74" width="180" height="56" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2.2"/>
+  <text x="322" y="98" text-anchor="middle" class="lblb">HPLC · C18 管柱</text><text x="322" y="117" text-anchor="middle" class="lbl">梯度分離各維生素</text>
+  <rect x="460" y="74" width="200" height="56" rx="10" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2.2"/>
+  <text x="560" y="98" text-anchor="middle" class="lblb">PDA 光二極體陣列</text><text x="560" y="117" text-anchor="middle" class="lbl">同時多波長偵測</text>
+  <rect x="708" y="78" width="258" height="48" rx="9" fill="#15233f"/>
+  <text x="837" y="100" text-anchor="middle" fill="#fff" font-weight="800">滯留時間+吸收圖譜→定量</text>
+  <text x="837" y="117" text-anchor="middle" fill="#cfe0f6" font-size="11">含量 = C×V/(M×1000)</text>
+ </g>
+ <g stroke="#48597a" stroke-width="2.4" marker-end="url(#ha)">
+  <line x1="184" y1="102" x2="228" y2="102"/><line x1="412" y1="102" x2="456" y2="102"/><line x1="660" y1="102" x2="704" y2="102"/></g>
+ <text x="490" y="170" text-anchor="middle" class="lbl">脂溶(TFDAA0025)：D 264／E 280／A 325 nm　·　水溶(TFDAA0012)：泛酸210／C·B₁ 240／B₂·菸鹼260／葉酸280／B₆ 290 nm</text>
+</svg></div><div class="note" style="margin-top:8px"><strong>HPLC/UHPLC</strong>相對簡單、準確、精密，可同時分析多種維生素；接上<strong>質譜(LC-MS/MS)</strong>還能分辨同一維生素的不同形式(<strong>vitamers</strong>)、提高靈敏與專一。但層析是『分離』不是『鑑定』，須先確認峰的身分與純度。</div></div></section><section class="slide" data-slide="11" data-section="維持注意"><div class="slide-inner"><div class="kicker">20.4.2 維生素C經典法</div><h2 class="slide-title">DCIP 滴定：<span class='hi'>顏色</span>告訴你終點</h2><div class="svgwrap" style="margin-top:6px">
+<svg viewBox="0 0 940 200">
+ <defs><marker id="da" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 Z" fill="#48597a"/></marker></defs>
+ <text x="470" y="24" text-anchor="middle" class="lblb" font-size="15">維生素 C 的 DCIP 滴定：抗壞血酸把藍/紅色 DCIP 還原成無色，終點轉玫瑰紅</text>
+ <circle cx="100" cy="112" r="40" fill="#fff" stroke="#1f6feb" stroke-width="2.4"/>
+ <text x="100" y="108" text-anchor="middle" class="lblb" font-size="12">抗壞血酸</text><text x="100" y="126" text-anchor="middle" class="lbl">(維生素C)</text>
+ <text x="250" y="92" text-anchor="middle" class="lbl">滴入 DCIP 染料</text>
+ <line x1="144" y1="112" x2="300" y2="112" stroke="#48597a" stroke-width="2.4" marker-end="url(#da)"/>
+ <circle cx="350" cy="112" r="42" fill="#f6f9fd" stroke="#8493ad" stroke-width="2.4"/>
+ <text x="350" y="108" text-anchor="middle" class="lblb" font-size="12">仍無色</text><text x="350" y="126" text-anchor="middle" class="lbl">DCIP 被還原</text>
+ <text x="350" y="170" text-anchor="middle" class="lbl">還有 C → 染料持續褪色</text>
+ <text x="540" y="92" text-anchor="middle" class="lbl">C 耗盡，再一滴</text>
+ <line x1="396" y1="112" x2="552" y2="112" stroke="#48597a" stroke-width="2.4" marker-end="url(#da)"/>
+ <circle cx="602" cy="112" r="42" fill="#e8417a" opacity=".85"/>
+ <text x="602" y="108" text-anchor="middle" fill="#fff" font-weight="800" font-size="12">玫瑰紅</text><text x="602" y="126" text-anchor="middle" fill="#fff" font-size="11">終點!</text>
+ <text x="602" y="170" text-anchor="middle" class="lbl">過量 DCIP 在酸性呈玫瑰紅</text>
+ <text x="800" y="100" text-anchor="middle" class="lbl">滴定量越多</text>
+ <text x="800" y="120" text-anchor="middle" class="lblb" fill="#1f6feb">維生素C越多</text>
+</svg></div><div class="note" style="margin-top:8px">抗壞血酸把氧化還原指示染料 <strong>2,6-二氯靛酚(DCIP)</strong> 還原成無色；當維生素C耗盡，過量 DCIP 在酸性下呈<strong>玫瑰紅</strong>為終點。深色樣品看不出顏色時，改用分光光度計於 <strong>545 nm</strong> 判讀。</div></div></section><section class="slide" data-slide="12" data-section="維持注意" data-game="g3"><div class="slide-inner"><div class="game no-nav" data-game="g3"><div class="game-head"><span class="tag a">小遊戲 ③</span><span class="gt">三大方法類配特徵</span><span class="score" id="g3score">0 / 6</span></div><div class="game-q">把 6 個敘述分到「生物檢定」「微生物檢定」或「化學法 HPLC」。</div><div class="pool" id="g3pool"></div><div class="buckets" id="g3buckets"></div><div class="fb" id="g3fb"></div><div class="btnrow"><button class="btn" id="g3check">檢查答案</button><button class="btn ghost" id="g3reset">重來</button></div></div></div></section><section class="slide" data-slide="13" data-section="維持注意"><div class="slide-inner"><div class="kicker">官方法實戰 ①</div><h2 class="slide-title">脂溶性維生素 · <span class='hi'>TFDAA0025</span></h2><div class="grid2" style="margin-top:14px"><div><ul class="clean"><li>適用<strong>膠囊/錠狀</strong>食品中 <strong>7 品項</strong>：A、A 醋酸酯、A 棕櫚酸酯、D₂、D₃、E、E 醋酸酯</li><li><strong>HPLC + 光二極體陣列(PDA)</strong>、C18 反相管柱、甲醇/水梯度</li><li>三段定量波長：<strong>D 264 / E 280 / A 325 nm</strong></li><li>加 <strong>BHT 抗氧化</strong>、<strong>全程避光</strong>；DMSO + 正己烷萃取</li></ul></div><div class="note"><strong>為何避光加 BHT？</strong><br>A、D、E 對光與氧極敏感，會降解失準；BHT 與避光是脂溶維生素分析的鐵律。</div></div></div></section><section class="slide" data-slide="14" data-section="維持注意"><div class="slide-inner"><div class="kicker">官方法實戰 ②</div><h2 class="slide-title">水溶性維生素 · <span class='hi'>TFDAA0012</span></h2><div class="grid2" style="margin-top:14px"><div><ul class="clean"><li>適用膠囊/錠狀食品中 <strong>9 品項</strong>：B₁、B₂、菸鹼酸、菸鹼醯胺、泛酸、B₆、葉酸、L-5-甲基四氫葉酸鈣、C</li><li><strong>HPLC-PDA</strong>、C18 管柱、磷酸鉀緩衝/乙腈梯度</li><li>多段波長：泛酸 210／C·B₁ 240／B₂·菸鹼 260／葉酸 280／B₆ 290 nm</li><li>加 <strong>L-半胱胺酸</strong>抗氧化(保護維生素C)；維生素C 標準液臨用配製</li></ul></div><div class="note"><strong>關鍵：</strong>維生素C最容易消失，所以水溶法用 <strong>L-半胱胺酸</strong>當還原保護劑、標準液現配現用。</div></div></div></section><section class="slide" data-slide="15" data-section="維持注意" data-game="g4"><div class="slide-inner"><div class="game no-nav" data-game="g4"><div class="game-head"><span class="tag a">小遊戲 ④</span><span class="gt">脂溶維生素 HPLC 檢驗流程排序</span><span class="score" id="g4score">— / 6</span></div><div class="game-q">用 ▲▼ 把脂溶性維生素(TFDAA0025)的 6 個檢驗步驟排成正確順序。</div><div class="sortlist" id="g4list"></div><div class="fb" id="g4fb"></div><div class="btnrow"><button class="btn" id="g4check">檢查順序</button><button class="btn ghost" id="g4reset">打亂重排</button></div></div></div></section><section class="slide" data-slide="16" data-section="維持注意" data-chart="wavelength"><div class="slide-inner"><div class="kicker">偵測設計</div><h2 class="slide-title">為什麼要用<span class='hi'>PDA 多波長</span></h2><div class="chartbox" style="height:50vh"><canvas id="chart_wavelength"></canvas></div><div class="cap">各維生素的定量波長不同(nm)，光二極體陣列(PDA)可一次同時偵測多個波長。整合自 TFDAA0025／0012。</div></div></section><section class="slide" data-slide="17" data-section="維持注意" data-game="g5"><div class="slide-inner"><div class="game no-nav" data-game="g5"><div class="game-head"><span class="tag a">小遊戲 ⑤</span><span class="gt">決策挑戰：選對維生素分析法</span><span class="score" id="g5score">0 / 5</span></div><div class="game-q" id="g5q"></div><div class="opts" id="g5opts"></div><div class="fb" id="g5fb"></div><div class="btnrow"><button class="btn ghost" id="g5next" style="display:none">下一題 →</button></div></div></div></section><section class="slide" data-slide="18" data-section="喚起行動" data-game="cmp"><div class="slide-inner"><div class="kicker">20.5 方法比較</div><h2 class="slide-title">四種分析路線一覽（點欄位排序）</h2><table class="cmp" id="cmpTable" style="margin-top:14px"><thead><tr><th data-k="m" data-t="s">方法 <span class="ar">⇅</span></th><th data-k="acc" data-t="n">準確度 <span class="ar">⇅</span></th><th data-k="v" data-t="s">適用維生素 <span class="ar">⇅</span></th><th data-k="feat" data-t="s">特點 <span class="ar">⇅</span></th></tr></thead><tbody></tbody></table><div class="cap">★ 越多越準確。整合自 20.2–20.4。</div></div></section><section class="slide" data-slide="19" data-section="喚起行動" data-chart="rt"><div class="slide-inner"><div class="kicker">層析分離</div><h2 class="slide-title">水溶性維生素的<span class='hi'>HPLC 滯留時間</span></h2><div class="chartbox" style="height:52vh"><canvas id="chart_rt"></canvas></div><div class="cap">整合自 TFDAA0012.04 參考層析圖譜(分)。C18 反相管柱可把 9 種水溶性維生素逐一分開。</div></div></section><section class="slide" data-slide="20" data-section="喚起行動"><div class="slide-inner"><div class="kicker">應用與品管</div><h2 class="slide-title">維生素分析在<span class='hi'>守護</span>什麼</h2><div class="grid2" style="margin-top:16px"><div class="card b"><div class="ic">🏷️</div><div class="ct">營養標示查核</div><div class="cb">確認『維生素C 500mg』『維生素D 800IU』屬實、無誇大或不足</div></div><div class="card a"><div class="ic">➕</div><div class="ct">強化食品</div><div class="cb">麵粉、奶粉、機能飲料的維生素強化是否達標、有無過量</div></div><div class="card g"><div class="ic">💊</div><div class="ct">保健食品</div><div class="cb">綜合維他命膠囊/錠的含量與安定性(脂溶性過量有風險)</div></div><div class="card b"><div class="ic">🎯</div><div class="ct">品質保證</div><div class="cb">以標準參考物質(SRM)查核準確度、做方法確效</div></div></div></div></section><section class="slide" data-slide="21" data-section="喚起行動" data-game="g6"><div class="slide-inner"><div class="game no-nav" data-game="g6"><div class="game-head"><span class="tag a">小遊戲 ⑥</span><span class="gt">計算闖關：維生素含量</span><span class="score" id="g6score">未作答</span></div><div class="game-q">脂溶官方法：取樣 <b>M = 0.5 g</b>、最後定容 <b>V = 2 mL</b>；由標準曲線得維生素A濃度 <b>C = 10 µg/mL</b>。求含量(mg/g)。公式：C×V/(M×1000)。</div><div class="btnrow"><input class="numin" id="g6in" type="number" step="any" placeholder="?"> <span style="font-weight:800;color:var(--ink)">mg/g</span><button class="btn" id="g6check">對答案</button><button class="btn ghost" id="g6hint">提示</button></div><div class="fb" id="g6fb"></div></div></div></section><section class="slide" data-slide="22" data-section="喚起行動"><div class="slide-inner"><div class="kicker">重點整理</div><h2 class="slide-title">今天的五個關鍵</h2><div class="grid2" style="margin-top:18px"><ul class="clean"><li>13 種維生素＝<strong>4 脂溶(A·D·E·K)＋9 水溶(B 群·C)</strong>；溶解性決定方法</li><li>單位：mg／<strong>IU(活性)</strong>／%DV(每日值)要會換算</li><li>萃取因維生素而異：脂溶<strong>皂化</strong>、葉酸<strong>三酶</strong>、C<strong>冷萃低pH</strong></li></ul><ul class="clean"><li>三大方法類：生物＜微生物＜<strong>化學(HPLC)</strong>(準確度遞增)</li><li>官方法：脂溶 TFDAA0025(避光+BHT)、水溶 TFDAA0012(L-半胱胺酸)，皆 <strong>HPLC-PDA</strong></li></ul></div></div></section><section class="slide" data-slide="23" data-section="喚起行動"><div class="slide-inner"><div class="kicker">自我檢核</div><h2 class="slide-title">今天結束，你應該會…</h2><ul class="checklist no-nav" id="selfcheck" style="margin-top:18px;max-width:980px"><li data-k><span class="bx">✓</span>說出 13 種維生素與脂溶／水溶的分類及差異</li><li data-k><span class="bx">✓</span>解釋 mg、IU、%DV 的不同(IU 量的是活性)</li><li data-k><span class="bx">✓</span>說明為何各維生素萃取法不同、皂化與三酶法的用途</li><li data-k><span class="bx">✓</span>比較生物檢定、微生物檢定與化學法(HPLC)的取捨</li><li data-k><span class="bx">✓</span>描述維生素C的 DCIP 滴定原理與終點顏色</li><li data-k><span class="bx">✓</span>說出脂溶(TFDAA0025)與水溶(TFDAA0012)官方法的儀器、波長與抗氧化策略</li><li data-k><span class="bx">✓</span>依序排出脂溶維生素 HPLC 檢驗流程</li><li data-k><span class="bx">✓</span>用 C×V/(M×1000) 計算維生素含量</li></ul><p class="subtitle" style="margin-top:12px">點一下打勾——確認自己真的會了。</p></div></section><section class="slide" data-slide="24" data-section="喚起行動" data-cover="1"><div class="slide-inner"><div class="cover"><div class="kicker">下一步 · NEXT</div><h1>把維生素分析<br><span style='color:var(--accent-2)'>用起來</span></h1><div class="en"></div><div class="meta">📌 課後練習：Study Questions(萃取步驟、為何避光、DCIP 是否低/高估、HPLC 優缺)<br>🔜 銜接：<strong>紫外可見光譜 (Ch7)</strong>、<strong>HPLC (Ch13)</strong>、<strong>質譜 (Ch11)</strong>、食藥署 HPLC 公告法<br>🧪 思考：你的樣品是脂溶還水溶維生素？怕光怕氧嗎？要 HPLC、微生物還是滴定法？標示是 mg 還 IU？</div><div style="margin-top:24px"><span class="pill">脂溶/水溶</span><span class="pill">HPLC-PDA</span><span class="pill">皂化</span><span class="pill">DCIP 滴定</span><span class="pill">營養標示</span></div></div></div></section><script>window.CFG={"charts": {"wavelength": {"type": "bar", "yTitle": "定量波長 (nm)", "labels": ["泛酸B₅", "維生素C", "B₂/菸鹼", "D₂/D₃", "E", "B₆", "維生素A"], "datasets": [{"label": "定量波長 (nm)", "data": [210, 240, 260, 264, 280, 290, 325], "color": "#1f6feb"}]}, "rt": {"type": "bar", "yTitle": "滯留時間 (分)", "labels": ["維生素C", "菸鹼酸", "B₁", "B₆", "菸鹼醯胺", "泛酸", "L-5-MTHF", "葉酸", "B₂"], "datasets": [{"label": "滯留時間 (min)", "data": [3.43, 5.38, 6.61, 9.61, 11.33, 14.45, 17.3, 20.19, 22.5], "color": "#d9822b"}]}}, "bucket": {"g1": {"cats": ["脂溶性維生素", "水溶性維生素"], "items": [{"t": "維生素 A (視黃醇)", "c": "脂溶性維生素"}, {"t": "維生素 D", "c": "脂溶性維生素"}, {"t": "維生素 E (生育醇)", "c": "脂溶性維生素"}, {"t": "維生素 K", "c": "脂溶性維生素"}, {"t": "維生素 C (抗壞血酸)", "c": "水溶性維生素"}, {"t": "維生素 B₁ (硫胺)", "c": "水溶性維生素"}, {"t": "葉酸 (B₉)", "c": "水溶性維生素"}, {"t": "維生素 B₁₂ (鈷胺)", "c": "水溶性維生素"}], "ok": "🎉 全對！A·D·E·K 脂溶(會儲存)、B 群與 C 水溶(易排出、易氧化)。", "tip": "提示：只有 A、D、E、K 是脂溶；B 群與 C 都是水溶。"}, "g3": {"cats": ["生物檢定", "微生物檢定", "化學法 HPLC"], "items": [{"t": "以大鼠骨鈣化(line test)測維生素D", "c": "生物檢定"}, {"t": "主要僅用於維生素 D 與 B₁₂", "c": "生物檢定"}, {"t": "以乳酸菌生長量測定", "c": "微生物檢定"}, {"t": "僅限水溶性維生素、專一但費時", "c": "微生物檢定"}, {"t": "簡單、準確、精密，現今主流", "c": "化學法 HPLC"}, {"t": "可同時分析多種、配 MS 測 vitamers", "c": "化學法 HPLC"}], "ok": "🎉 正確！生物檢定接近生理活性、微生物檢定專一靈敏、HPLC 快速準確為主流。", "tip": "提示：動物餵食→生物；乳酸菌生長→微生物；管柱+波長→化學 HPLC。"}}, "mcq": {"g2": [{"q": "13 種維生素中，脂溶性有幾種？", "o": ["2", "4", "9", "13"], "a": 1, "e": "脂溶性 4 種(A、D、E、K)，其餘 9 種(B 群 8 + C)為水溶性。"}, {"q": "國際單位(IU)量的是維生素的什麼？", "o": ["質量", "生物活性(效力)", "體積", "熔點"], "a": 1, "e": "IU 衡量生物活性/效力而非質量，各維生素換算率不同。"}, {"q": "分析脂溶性維生素時，去除油脂常用的步驟是？", "o": ["皂化(saponification)", "發酵", "蒸餾", "滴定"], "a": 0, "e": "以 KOH 皂化把三酸甘油酯水解成皂去除，留下脂溶維生素。"}, {"q": "葉酸萃取常用的特殊處理是？", "o": ["皂化", "三酶法(trienzyme)", "通氮蒸餾", "灰化"], "a": 1, "e": "葉酸用 α-澱粉酶、蛋白酶、γ-麩胺醯水解酶的三酶法釋出。"}, {"q": "就『準確度與精密度』而言，三大方法類的高低順序是？", "o": ["生物 > 微生物 > 化學", "化學 > 微生物 > 生物", "三者相同", "微生物最高"], "a": 1, "e": "準確度：化學(HPLC) > 微生物 > 生物；操作簡便則相反。"}], "g5": [{"q": "要測膠囊中的脂溶性維生素 A／D／E，最適合的官方法是？", "o": ["微生物檢定", "HPLC-PDA(TFDAA0025)", "DCIP 滴定", "大鼠生物檢定"], "a": 1, "e": "脂溶性維生素以 HPLC-PDA(TFDAA0025)分析，三波長定量。"}, {"q": "水溶官方法為了保護最易氧化的維生素C，加入什麼？", "o": ["BHT", "L-半胱胺酸", "氯化鈉", "蔗糖"], "a": 1, "e": "水溶法加 L-半胱胺酸當還原保護劑，並現配維生素C標準液。"}, {"q": "脂溶性維生素檢驗為何要全程避光並加 BHT？", "o": ["增色", "A·D·E 對光與氧敏感、易降解", "加快流速", "降低成本"], "a": 1, "e": "脂溶維生素怕光怕氧，避光+BHT 抗氧化可防降解失準。"}, {"q": "要分辨同一維生素的不同形式(vitamers)並提高靈敏，宜用？", "o": ["DCIP 滴定", "HPLC-UV", "LC-MS/MS", "折射計"], "a": 2, "e": "LC-MS/MS 可辨識 vitamers、提高靈敏與專一。"}, {"q": "深色果汁用 DCIP 滴定看不出玫瑰紅終點，怎麼辦？", "o": ["放棄", "改用分光光度計於 545 nm 判讀", "加更多染料", "加熱"], "a": 1, "e": "有色樣品改測 545 nm 透光率變化判斷終點。"}]}, "sort": {"g4": {"steps": ["取膠囊/錠狀檢體均質、精確稱重(避光)", "加 75% DMSO 溶液，超音波振盪", "加正己烷振盪萃取，4300×g 離心取上層(重複)", "氮氣吹乾，以含 BHT 乙醇復溶定容、過濾", "注入 HPLC，C18 管柱以甲醇/水梯度分離", "PDA 於 D264／E280／A325 nm 測定，比對滯留時間與圖譜定量"], "shuffle": [3, 0, 5, 1, 4, 2], "ok": "🎉 順序正確！秤樣→DMSO超音波→正己烷萃取離心→吹乾復溶→HPLC分離→PDA定量。", "tip": "提示：先萃取(DMSO+正己烷)、離心取上層，吹乾復溶後才上 HPLC；偵測在最後一步。"}}, "calc": {"g6": {"answer": 0.04, "tol": 0.004, "ok": "🎉 正確！含量 = C×V/(M×1000) = 10×2/(0.5×1000) = 20/500 = <b>0.04 mg/g<\/b>(＞LOQ 0.002)。", "bad": "再算算：含量 = C×V/(M×1000) = 10×2/(0.5×1000)。", "hint": "提示：分子 10×2=20；分母 0.5×1000=500；20/500 = 0.04 mg/g。"}}, "cmp": {"cols": [{"k": "m"}, {"k": "acc", "t": "n", "star": true}, {"k": "v"}, {"k": "feat"}], "rows": [{"m": "生物檢定 Bioassay", "acc": 2, "v": "主要 D、B₁₂", "feat": "接近生理活性·慢且粗略·現少用"}, {"m": "微生物檢定", "acc": 4, "v": "水溶性維生素", "feat": "專一靈敏·費時·需嚴格操作"}, {"m": "化學-滴定/螢光", "acc": 3, "v": "C(DCIP)·B₁(硫胺色素)·B₂", "feat": "古典·設備簡單·專屬"}, {"m": "化學-HPLC/UHPLC", "acc": 5, "v": "脂溶+水溶大多數", "feat": "快速準確精密·主流·配MS測vitamers"}]}};</script><script>
+var CFG=window.CFG||{};
+var slides=[].slice.call(document.querySelectorAll('.slide'));
+var total=slides.length,cur=0;
+var prog=document.getElementById('progress'),pageInfo=document.getElementById('pageInfo'),secTag=document.getElementById('section-tag');
+function show(i){
+  cur=Math.max(0,Math.min(total-1,i));
+  slides.forEach(function(s,k){s.classList.toggle('active',k===cur)});
+  prog.style.width=((cur+1)/total*100)+'%';
+  pageInfo.textContent=(cur+1)+' / '+total;
+  secTag.textContent='— '+(slides[cur].dataset.section||'')+' —';
+  var ch=slides[cur].dataset.chart; if(ch) initChart(ch);
+  var g=slides[cur].dataset.game; if(g) initGame(g);
+}
+function next(){show(cur+1)} function prev(){show(cur-1)}
+function toggleFs(){if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()}else{document.exitFullscreen&&document.exitFullscreen()}}
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next()}
+  else if(e.key==='ArrowLeft'){prev()}
+  else if(e.key==='f'||e.key==='F'){toggleFs()}
+});
+document.addEventListener('click',function(e){
+  if(e.target.closest('.no-nav')) return;
+  if(e.target.closest('button,input,select,textarea,a,.chip,.opt,.bucket')) return;
+  var x=e.clientX/window.innerWidth;
+  if(x>0.72) next(); else if(x<0.28) prev();
+});
+
+/* ---------- charts ---------- */
+var chartDone={};
+function initChart(id){
+  if(chartDone[id]||typeof Chart==='undefined'||!CFG.charts||!CFG.charts[id]) return; chartDone[id]=1;
+  Chart.defaults.font.family="'Noto Sans TC',sans-serif"; Chart.defaults.color='#48597a';
+  var c=CFG.charts[id];
+  var el=document.getElementById('chart_'+id); if(!el) return;
+  var ds=c.datasets.map(function(d){return {label:d.label,data:d.data,
+    backgroundColor:d.color||'#1f6feb',borderColor:d.color||'#1f6feb',borderRadius:5,
+    fill:(c.type==='line'?false:true),tension:.3}});
+  new Chart(el,{type:c.type||'bar',data:{labels:c.labels,datasets:ds},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:(c.datasets.length>1),position:'top'}},
+      scales:{y:{beginAtZero:(c.zero!==false),title:{display:!!c.yTitle,text:c.yTitle||''}}}}});
+}
+
+/* ---------- games ---------- */
+var gameDone={};
+function setScore(el,v){var e=document.getElementById(el);if(e)e.textContent=v}
+function fb(el,msg,type){var f=document.getElementById(el);if(!f)return;f.className='fb show '+type;f.innerHTML=msg}
+function initGame(g){
+  if(gameDone[g])return; gameDone[g]=1;
+  if(CFG.bucket&&CFG.bucket[g]) return initBucket(g);
+  if(CFG.mcq&&CFG.mcq[g]) return initMCQ(g);
+  if(CFG.sort&&CFG.sort[g]) return initSort(g);
+  if(CFG.calc&&CFG.calc[g]) return initCalc(g);
+  if(g==='cmp') return initCmp();
+}
+
+function initBucket(g){
+  var cfg=CFG.bucket[g];
+  var data=cfg.items.map(function(x){return {t:x.t,c:x.c,at:null}});
+  var cats=cfg.cats, N=data.length;
+  var pool=document.getElementById(g+'pool'), bk=document.getElementById(g+'buckets');
+  var sel=null;
+  bk.style.gridTemplateColumns='repeat('+cats.length+',1fr)';
+  function paint(){[].slice.call(pool.children).forEach(function(c){c.classList.toggle('sel',+c.dataset.i===sel)})}
+  function render(){
+    pool.innerHTML=''; bk.innerHTML='';
+    var placed={}; cats.forEach(function(c){placed[c]=[]});
+    data.forEach(function(d,i){if(d.at)placed[d.at].push(i)});
+    data.forEach(function(d,i){ if(d.at) return;
+      var c=document.createElement('div');c.className='chip';c.textContent=d.t;c.dataset.i=i;
+      c.onclick=function(){sel=(sel===i?null:i);paint()}; pool.appendChild(c);
+    });
+    cats.forEach(function(cat){
+      var b=document.createElement('div');b.className='bucket';b.innerHTML='<div class="bh">'+cat+'</div>';
+      placed[cat].forEach(function(i){
+        var c=document.createElement('div');c.className='chip';c.textContent=data[i].t;
+        c.onclick=function(){data[i].at=null;sel=null;render()}; b.appendChild(c);
+      });
+      b.onclick=function(e){ if(e.target!==b&&!e.target.classList.contains('bh'))return;
+        if(sel!=null){data[sel].at=cat;sel=null;render()} };
+      bk.appendChild(b);
+    });
+    paint();
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; data.forEach(function(d){if(d.at===d.c)ok++});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 全對！','good');
+    else fb(g+'fb','答對 '+ok+'/'+N+'。'+(cfg.tip||'再調整看看。'),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    data.forEach(function(d){d.at=null}); sel=null; render(); setScore(g+'score','0 / '+N);
+    var f=document.getElementById(g+'fb'); if(f) f.className='fb';
+  };
+}
+
+function initMCQ(g){
+  var DATA=CFG.mcq[g], nq=DATA.length, idx=0, score=0, locked=false;
+  var qEl=document.getElementById(g+'q'), opEl=document.getElementById(g+'opts'), nextBtn=document.getElementById(g+'next');
+  function render(){
+    locked=false; var d=DATA[idx];
+    qEl.innerHTML='<span style="color:var(--accent)">Q'+(idx+1)+'.</span> '+d.q;
+    opEl.innerHTML=''; var f=document.getElementById(g+'fb'); if(f)f.className='fb'; if(nextBtn)nextBtn.style.display='none';
+    d.o.forEach(function(t,i){
+      var o=document.createElement('div');o.className='opt';o.textContent=t;
+      o.onclick=function(){
+        if(locked)return; locked=true; var ok=(i===d.a);
+        if(ok){o.classList.add('ok');score++}else{o.classList.add('no');opEl.children[d.a].classList.add('ok')}
+        [].slice.call(opEl.children).forEach(function(c,k){if(k!==i&&k!==d.a)c.classList.add('dim')});
+        setScore(g+'score',score+' / '+nq);
+        var done=(idx>=DATA.length-1);
+        var msg=(ok?'✅ 答對！':'❌ 正解：'+d.o[d.a]+'。')+'<br>'+d.e+(done?'<br><b>完成！總分 '+score+'/'+nq+'</b>':'');
+        fb(g+'fb',msg,ok?'good':'bad');
+        if(nextBtn) nextBtn.style.display=done?'none':'inline-block';
+      };
+      opEl.appendChild(o);
+    });
+  }
+  if(nextBtn) nextBtn.onclick=function(){if(idx<DATA.length-1){idx++;render()}};
+  render();
+}
+
+function initSort(g){
+  var cfg=CFG.sort[g], steps=cfg.steps, N=steps.length;
+  var order=(cfg.shuffle||steps.map(function(_,i){return i})).slice();
+  var list=document.getElementById(g+'list');
+  function render(){
+    list.innerHTML='';
+    order.forEach(function(stepIdx,pos){
+      var row=document.createElement('div');row.className='sortrow';
+      row.innerHTML='<div class="idx">'+(pos+1)+'</div><div class="txt">'+steps[stepIdx]+'</div>';
+      var ud=document.createElement('div');ud.className='ud';
+      var up=document.createElement('button');up.textContent='▲';
+      up.onclick=function(){if(pos>0){var t=order[pos-1];order[pos-1]=order[pos];order[pos]=t;render()}};
+      var dn=document.createElement('button');dn.textContent='▼';
+      dn.onclick=function(){if(pos<order.length-1){var t=order[pos+1];order[pos+1]=order[pos];order[pos]=t;render()}};
+      ud.appendChild(up);ud.appendChild(dn);row.appendChild(ud);list.appendChild(row);
+    });
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; order.forEach(function(v,i){if(v===i)ok++});
+    [].slice.call(list.children).forEach(function(r,i){r.classList.toggle('ok',order[i]===i);r.classList.toggle('no',order[i]!==i)});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 順序完全正確！','good');
+    else fb(g+'fb','對了 '+ok+'/'+N+' 個位置。'+(cfg.tip||''),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    order=(cfg.shuffle||steps.map(function(_,i){return i})).slice().reverse(); render();
+    var f=document.getElementById(g+'fb'); if(f)f.className='fb'; setScore(g+'score','— / '+N);
+  };
+}
+
+function initCalc(g){
+  var cfg=CFG.calc[g];
+  document.getElementById(g+'check').onclick=function(){
+    var v=parseFloat(document.getElementById(g+'in').value);
+    if(isNaN(v)){fb(g+'fb','請先輸入一個數字。','info');return}
+    if(Math.abs(v-cfg.answer)<=(cfg.tol||0.05)){
+      setScore(g+'score','✓ 答對'); fb(g+'fb',cfg.ok||('🎉 正確！答案是 '+cfg.answer),'good');
+    } else { setScore(g+'score','再試一次'); fb(g+'fb',cfg.bad||'再算算看。','bad'); }
+  };
+  var hb=document.getElementById(g+'hint');
+  if(hb) hb.onclick=function(){fb(g+'fb',cfg.hint||'提示：對照公式逐步代入。','info')};
+}
+
+function stars(n){return '★★★★★'.slice(0,n)+'☆☆☆☆☆'.slice(0,5-n)}
+function initCmp(){
+  if(!CFG.cmp) return;
+  var cols=CFG.cmp.cols, rows=CFG.cmp.rows.slice(), dir={};
+  var tb=document.querySelector('#cmpTable tbody');
+  function draw(){ tb.innerHTML=''; rows.forEach(function(r){
+    var tr=document.createElement('tr');
+    tr.innerHTML=cols.map(function(c,ci){
+      var v=r[c.k];
+      if(c.star) return '<td style="color:var(--accent-2)">'+stars(v)+'</td>';
+      return '<td'+(ci===0?' class="c"':'')+'>'+v+'</td>';
+    }).join(''); tb.appendChild(tr); }); }
+  draw();
+  document.querySelectorAll('#cmpTable thead th').forEach(function(th){
+    th.onclick=function(){var k=th.dataset.k,t=th.dataset.t;dir[k]=!dir[k];
+      rows.sort(function(a,b){var x=a[k],y=b[k];
+        if(t==='n')return dir[k]?x-y:y-x;
+        return dir[k]?String(x).localeCompare(String(y),'zh-Hant'):String(y).localeCompare(String(x),'zh-Hant')});
+      draw();};
+  });
+}
+show(0);
+</script>
+<script>document.addEventListener('click',function(e){var li=e.target.closest('#selfcheck li');if(li)li.classList.toggle('done')});</script>
+</body></html>
