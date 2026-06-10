@@ -1,0 +1,370 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>農藥多重殘留分析(六) QuEChERS LC-MS/MS · TFDAP0007.05</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script><style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{font-size:18px}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;background:var(--bg);
+  color:var(--ink);overflow:hidden;height:100vh;width:100vw}
+:root{
+  --bg:#eef2f8;--surface:#ffffff;--surface-2:#f6f9fd;
+  --ink:#15233f;--ink-2:#48597a;--ink-3:#8493ad;--line:#dde5f0;
+  --accent:#1f6feb;--accent-soft:#e7f0fe;
+  --accent-2:#d9822b;--accent-2-soft:#fbeede;
+  --ok:#1f9d6b;--ok-soft:#e3f6ee;--bad:#d94f4f;--bad-soft:#fbe7e7;--warn:#d9a32b;
+  --t2:clamp(1.4rem,3vw,2.3rem);
+  --shadow:0 10px 30px rgba(20,40,80,.10);--shadow-sm:0 3px 12px rgba(20,40,80,.08)}
+#progress{position:fixed;top:0;left:0;height:4px;width:0;z-index:50;
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .5s ease}
+#section-tag{position:fixed;top:16px;left:24px;z-index:40;font-size:.78rem;letter-spacing:.18em;
+  color:var(--accent);font-weight:700;font-family:"JetBrains Mono",monospace}
+#pageInfo{position:fixed;right:22px;bottom:16px;z-index:40;font-size:.82rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+#hint{position:fixed;left:24px;bottom:16px;z-index:40;font-size:.72rem;color:var(--ink-3)}
+#brand{position:fixed;right:22px;top:14px;z-index:40;font-size:.72rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:64px 84px;opacity:0;pointer-events:none;
+  transition:opacity .55s ease,transform .55s ease;transform:translateY(14px)}
+.slide.active{opacity:1;pointer-events:auto;transform:translateY(0)}
+.slide-inner{width:100%;max-width:1280px}
+.kicker{font-family:"JetBrains Mono",monospace;font-size:.8rem;letter-spacing:.16em;color:var(--accent);
+  font-weight:700;text-transform:uppercase;margin-bottom:10px}
+.slide-title{font-size:var(--t2);font-weight:900;line-height:1.18;color:var(--ink);letter-spacing:-.01em}
+.slide-title .hi{color:var(--accent-2)}
+.subtitle{font-size:clamp(.95rem,1.5vw,1.2rem);color:var(--ink-2);margin-top:12px;line-height:1.6}
+p,li{font-size:clamp(.92rem,1.4vw,1.12rem);line-height:1.68;color:var(--ink-2)}
+.lead{font-size:clamp(1.05rem,1.8vw,1.35rem);color:var(--ink);line-height:1.6}
+strong,b{color:var(--ink);font-weight:800}.em{color:var(--accent-2);font-weight:800}
+.divider{height:3px;width:64px;background:var(--accent-2);border-radius:2px;margin:18px 0}
+ul.clean{list-style:none}ul.clean li{position:relative;padding-left:26px;margin:10px 0}
+ul.clean li:before{content:"";position:absolute;left:4px;top:.62em;width:8px;height:8px;border-radius:2px;
+  background:var(--accent);transform:rotate(45deg)}
+.mono{font-family:"JetBrains Mono",monospace}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.grid2-1{display:grid;grid-template-columns:1.15fr .85fr;gap:34px;align-items:center}
+.flow6{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow-sm)}
+.card .ic{font-size:1.6rem;margin-bottom:8px}
+.card .ct{font-weight:800;color:var(--ink);font-size:clamp(1rem,1.5vw,1.2rem);margin-bottom:6px}
+.card .cb{font-size:clamp(.85rem,1.25vw,1rem);color:var(--ink-2);line-height:1.55}
+.card.b{border-top:4px solid var(--accent)}.card.a{border-top:4px solid var(--accent-2)}
+.card.g{border-top:4px solid var(--ok)}
+.tag{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:.7rem;padding:3px 9px;border-radius:999px;
+  background:var(--accent-soft);color:var(--accent);font-weight:700}
+.tag.a{background:var(--accent-2-soft);color:var(--accent-2)}
+.pill{display:inline-block;padding:5px 12px;border-radius:999px;background:var(--surface);border:1px solid var(--line);
+  font-size:.82rem;color:var(--ink-2);margin:3px 4px}
+.note{background:var(--accent-2-soft);border-left:4px solid var(--accent-2);border-radius:8px;padding:14px 18px;
+  color:var(--ink);font-size:clamp(.9rem,1.3vw,1.05rem);line-height:1.6}
+.eq{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 22px;
+  font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,1.7vw,1.4rem);color:var(--ink);text-align:center;box-shadow:var(--shadow-sm)}
+.eq .frac{display:inline-flex;flex-direction:column;text-align:center;vertical-align:middle;margin:0 6px}
+.eq .frac b{border-bottom:2px solid var(--ink);padding-bottom:3px}
+table.cmp{width:100%;border-collapse:collapse;font-size:clamp(.82rem,1.2vw,1.02rem)}
+table.cmp th,table.cmp td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line)}
+table.cmp thead th{color:var(--accent);font-weight:800;border-bottom:2px solid var(--accent);cursor:pointer;
+  user-select:none;white-space:nowrap}
+table.cmp thead th .ar{opacity:.4;font-size:.8em}
+table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--ink);font-weight:700}
+.cover{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 100px;
+  background:radial-gradient(1200px 600px at 80% 20%,var(--accent-2-soft),transparent 60%),
+  radial-gradient(900px 500px at 10% 90%,var(--accent-soft),transparent 55%),linear-gradient(135deg,#ffffff,#eef2f8)}
+.cover h1{font-size:clamp(2.4rem,6vw,4.6rem);font-weight:900;line-height:1.05;letter-spacing:-.02em;color:var(--ink)}
+.cover .en{font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,2vw,1.5rem);color:var(--accent);letter-spacing:.1em;margin-top:6px}
+.cover .meta{margin-top:26px;color:var(--ink-2);font-size:clamp(.9rem,1.4vw,1.1rem)}
+.hook{font-size:clamp(2rem,5vw,3.6rem);font-weight:900;color:var(--ink);line-height:1.2;letter-spacing:-.01em}
+.hook .hi{color:var(--accent)}
+.svgwrap{display:flex;align-items:center;justify-content:center}
+.svgwrap svg{max-width:100%;max-height:62vh;height:auto}
+.lbl{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink-2)}
+.lblb{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink);font-weight:700}
+.game{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 24px;box-shadow:var(--shadow)}
+.game-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.game-head .gt{font-weight:900;font-size:clamp(1.05rem,1.7vw,1.35rem);color:var(--ink)}
+.game-head .score{margin-left:auto;font-family:"JetBrains Mono",monospace;font-weight:700;color:var(--accent);
+  background:var(--accent-soft);padding:5px 13px;border-radius:999px;font-size:.9rem}
+.game-q{font-size:clamp(.95rem,1.5vw,1.18rem);color:var(--ink);font-weight:700;margin:6px 0 14px;line-height:1.5}
+.buckets{display:grid;gap:16px;margin-top:14px}
+.bucket{min-height:120px;border:2px dashed var(--line);border-radius:14px;padding:12px;background:var(--surface-2);transition:.2s}
+.bucket .bh{font-weight:800;color:var(--ink);text-align:center;margin-bottom:8px;font-size:.95rem}
+.pool{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;min-height:54px}
+.chip{padding:9px 15px;border-radius:10px;background:var(--surface);border:1px solid var(--line);font-weight:700;
+  color:var(--ink);cursor:pointer;box-shadow:var(--shadow-sm);font-size:.92rem;transition:.15s}
+.chip:hover{border-color:var(--accent);transform:translateY(-1px)}
+.chip.sel{background:var(--accent);color:#fff;border-color:var(--accent)}
+.chip.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.chip.no{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+.opt{padding:14px 18px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);cursor:pointer;
+  font-weight:700;color:var(--ink);font-size:clamp(.88rem,1.3vw,1.05rem);transition:.15s}
+.opt:hover{border-color:var(--accent);background:var(--accent-soft)}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.opt.no{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}.opt.dim{opacity:.5}
+.fb{margin-top:14px;padding:12px 16px;border-radius:10px;font-weight:700;display:none;
+  font-size:clamp(.85rem,1.3vw,1.02rem);line-height:1.5}
+.fb.show{display:block}.fb.good{background:var(--ok-soft);color:var(--ok)}
+.fb.bad{background:var(--bad-soft);color:var(--bad)}.fb.info{background:var(--accent-soft);color:var(--accent)}
+.btn{padding:10px 20px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-weight:800;cursor:pointer;
+  font-size:.92rem;font-family:inherit;box-shadow:var(--shadow-sm)}
+.btn:hover{filter:brightness(1.06)}.btn.ghost{background:var(--surface);color:var(--accent);border:1.5px solid var(--accent)}
+.btnrow{display:flex;gap:12px;margin-top:16px;align-items:center}
+.sortlist{display:flex;flex-direction:column;gap:6px;margin-top:6px;max-height:44vh;overflow-y:auto;padding-right:4px}
+.sortrow{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:7px 14px;box-shadow:var(--shadow-sm)}
+.sortrow .idx{font-family:"JetBrains Mono",monospace;font-weight:800;color:var(--accent);width:24px}
+.sortrow .txt{flex:1;font-weight:700;color:var(--ink);font-size:clamp(.85rem,1.25vw,1.02rem)}
+.sortrow .ud{display:flex;flex-direction:column;gap:3px}
+.sortrow .ud button{border:none;background:var(--accent-soft);color:var(--accent);border-radius:6px;width:30px;height:20px;
+  cursor:pointer;font-weight:900;line-height:1}
+.sortrow.ok{border-color:var(--ok);background:var(--ok-soft)}.sortrow.no{border-color:var(--bad)}
+.numin{font-family:"JetBrains Mono",monospace;font-size:1.2rem;font-weight:800;padding:10px 14px;border:1.5px solid var(--line);
+  border-radius:10px;width:140px;color:var(--ink);text-align:center}
+.numin:focus{outline:none;border-color:var(--accent)}
+.checklist{list-style:none}
+.checklist li{display:flex;align-items:center;gap:12px;padding:11px 14px;border:1px solid var(--line);border-radius:10px;
+  margin:8px 0;background:var(--surface);cursor:pointer;font-weight:700;color:var(--ink-2);font-size:clamp(.9rem,1.35vw,1.08rem);transition:.15s}
+.checklist li .bx{width:24px;height:24px;border-radius:6px;border:2px solid var(--accent);display:flex;align-items:center;
+  justify-content:center;color:#fff;font-weight:900;flex:0 0 auto}
+.checklist li.done{background:var(--ok-soft);border-color:var(--ok);color:var(--ink)}
+.checklist li.done .bx{background:var(--ok);border-color:var(--ok)}
+.chartbox{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow-sm);
+  height:60vh;max-height:520px;position:relative}
+.cap{font-size:.82rem;color:var(--ink-3);text-align:center;margin-top:8px}
+</style></head><body><div id="progress"></div><div id="section-tag"></div><div id="brand">農藥(六) · LC-MS/MS</div><div id="pageInfo"></div><div id="hint">← → / 空白鍵切頁　·　F 全螢幕　·　點兩側翻頁</div><section class="slide" data-slide="1" data-section="引起動機" data-cover="1"><div class="slide-inner"><div class="cover"><div class="kicker">食藥署公告檢驗方法 · TFDAP0007.05</div><h1>農藥<span style='color:var(--accent-2)'>多重殘留</span>分析(六)</h1><div class="en">Pesticide Multiresidue Analysis (6)</div><div class="meta">食品安全檢測　·　3 小時課程　·　含 6 個互動小遊戲<br>QuEChERS · LC-MS/MS · MRM · 32 項農藥 · 三類 dSPE 淨化</div><div style="margin-top:24px"><span class="pill">一次驗 32 種</span><span class="pill">QuEChERS</span><span class="pill">LC-MS/MS</span><span class="pill">ESI 正/負</span><span class="pill">三類淨化</span></div></div></div></section><section class="slide" data-slide="2" data-section="引起動機"><div class="slide-inner"><div style="text-align:center">
+  <div class="kicker" style="justify-content:center">先想一想</div>
+  <div class="hook">蔬果上殘留的<span class="hi">32 種農藥</span>(像克美素、二、四地…)，<br>有些極性又不揮發,怎麼一次驗？</div>
+  <p class="subtitle" style="max-width:850px;margin:22px auto 0">這些<strong>極性/酸性農藥</strong>難用 GC 做;用 <strong>QuEChERS 前處理 + LC-MS/MS</strong> 一次搞定。<br>
+  QuEChERS 是席捲全球的『快速、簡單、便宜』多重殘留前處理法。</p>
+  <div style="margin-top:24px"><span class="pill">極性農藥</span><span class="pill">多重殘留</span>
+  <span class="pill">ppb 級</span><span class="pill">高通量</span></div></div></div></section><section class="slide" data-slide="3" data-section="引起動機"><div class="slide-inner"><div class="kicker">背景</div><h2 class="slide-title">多重殘留分析的<span class='hi'>挑戰與解方</span></h2><div class="grid2" style="margin-top:20px"><div class="card b"><div class="ic">🧩</div><div class="ct">挑戰</div><div class="cb">農藥種類多、基質複雜、殘留 ppb 級;逐一檢驗太慢</div></div><div class="card a"><div class="ic">⚡</div><div class="ct">QuEChERS</div><div class="cb">Quick·Easy·Cheap·Effective·Rugged·Safe——一套快速前處理一次處理多種農藥</div></div><div class="card g"><div class="ic">💧</div><div class="ct">為何用 LC-MS/MS</div><div class="cb">本法(六)專攻<strong>極性/酸性農藥</strong>(克美素、2,4-D…),GC 不適合</div></div><div class="card b"><div class="ic">🎯</div><div class="ct">一次 32 項</div><div class="cb">20 項走 ESI 正離子 + 12 項走 ESI 負離子,合計 32 項</div></div></div></div></section><section class="slide" data-slide="4" data-section="引起動機"><div class="slide-inner"><div class="kicker">方法核心</div><h2 class="slide-title">QuEChERS → <span class='hi'>LC-MS/MS</span></h2><div class="svgwrap" style="margin-top:4px">
+<svg viewBox="0 0 980 220">
+ <defs><marker id="qa" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 Z" fill="#48597a"/></marker></defs>
+ <text x="490" y="24" text-anchor="middle" class="lblb" font-size="15">QuEChERS：乙腈萃取 → 加鹽分層 → dSPE 淨化 → LC-MS/MS</text>
+ <g font-size="12.5">
+  <rect x="14" y="80" width="180" height="58" rx="10" fill="#fbeede" stroke="#d9822b" stroke-width="2.2"/>
+  <text x="104" y="104" text-anchor="middle" class="lblb">乙腈萃取</text><text x="104" y="122" text-anchor="middle" class="lbl">1%甲酸乙腈+內標</text>
+  <rect x="244" y="80" width="180" height="58" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2.2"/>
+  <text x="334" y="104" text-anchor="middle" class="lblb">加鹽分層</text><text x="334" y="122" text-anchor="middle" class="lbl">MgSO₄/NaCl/檸檬酸鹽·離心</text>
+  <rect x="474" y="80" width="180" height="58" rx="10" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2.2"/>
+  <text x="564" y="104" text-anchor="middle" class="lblb">dSPE 淨化</text><text x="564" y="122" text-anchor="middle" class="lbl">PSA/C18/GCB 依基質</text>
+  <rect x="704" y="80" width="180" height="58" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2.2"/>
+  <text x="794" y="104" text-anchor="middle" class="lblb">LC-MS/MS</text><text x="794" y="122" text-anchor="middle" class="lbl">ESI±·MRM·32 農藥</text>
+  <rect x="906" y="84" width="64" height="50" rx="9" fill="#15233f"/>
+  <text x="938" y="113" text-anchor="middle" fill="#fff" font-weight="800" font-size="12">定量</text>
+ </g>
+ <g stroke="#48597a" stroke-width="2.4" marker-end="url(#qa)">
+  <line x1="194" y1="109" x2="240" y2="109"/><line x1="424" y1="109" x2="470" y2="109"/>
+  <line x1="654" y1="109" x2="700" y2="109"/><line x1="884" y1="109" x2="902" y2="109"/></g>
+ <text x="490" y="184" text-anchor="middle" class="lbl">QuEChERS = Quick · Easy · Cheap · Effective · Rugged · Safe(快速、簡單、便宜、有效、耐用、安全)</text>
+</svg></div></div></section><section class="slide" data-slide="5" data-section="引起動機" data-game="g1"><div class="slide-inner"><div class="game no-nav" data-game="g1"><div class="game-head"><span class="tag a">小遊戲 ①</span><span class="gt">萃取階段 vs 淨化階段</span><span class="score" id="g1score">0 / 8</span></div><div class="game-q">把 8 個試劑/步驟分到「乙腈萃取階段」或「dSPE 淨化階段」。</div><div class="pool" id="g1pool"></div><div class="buckets" id="g1buckets"></div><div class="fb" id="g1fb"></div><div class="btnrow"><button class="btn" id="g1check">檢查答案</button><button class="btn ghost" id="g1reset">重來</button></div></div></div></section><section class="slide" data-slide="6" data-section="維持注意"><div class="slide-inner"><div class="kicker">萃取</div><h2 class="slide-title">乙腈 + 鹽析<span class='hi'>分層</span></h2><div class="grid2" style="margin-top:16px"><div><ul class="clean"><li>檢體均質,加<strong>含 1%甲酸的乙腈</strong>與內標</li><li>加<strong>萃取鹽</strong>(無水硫酸鎂 + 氯化鈉 + 檸檬酸鈉/檸檬酸氫二鈉,檸檬酸鹽緩衝)</li><li>高速分散裝置(GenoGrinder)激烈振盪 → 鹽析使<strong>乙腈與水相分層</strong>,農藥進乙腈層</li><li>低溫離心,取<strong>乙腈上清液</strong>供淨化</li></ul></div><div class="note"><strong>為何加鹽？</strong><br>鹽析降低農藥在水相的溶解度、促進分層;檸檬酸鹽緩衝保護對 pH 敏感的農藥。</div></div></div></section><section class="slide" data-slide="7" data-section="維持注意"><div class="slide-inner"><div class="kicker">淨化</div><h2 class="slide-title">dSPE 依<span class='hi'>基質</span>選淨化劑</h2><div class="svgwrap" style="margin-top:4px">
+<svg viewBox="0 0 920 220">
+ <text x="460" y="22" text-anchor="middle" class="lblb" font-size="15">分散式固相萃取(dSPE)：依基質選不同淨化劑</text>
+ <rect x="20" y="48" width="280" height="150" rx="12" fill="#eef6ff" stroke="#1f6feb" stroke-width="2"/>
+ <text x="160" y="74" text-anchor="middle" class="lblb" fill="#1f6feb" font-size="14">I 類</text>
+ <text x="160" y="96" text-anchor="middle" class="lbl">新鮮蔬果·香辛(高水分)</text>
+ <text x="160" y="124" text-anchor="middle" class="lblb">PSA + MgSO₄</text>
+ <text x="160" y="148" text-anchor="middle" class="lbl">去有機酸、糖、極性雜質</text>
+ <text x="160" y="170" text-anchor="middle" class="lbl">與殘留水分</text>
+ <rect x="320" y="48" width="280" height="150" rx="12" fill="#fff6ea" stroke="#d9822b" stroke-width="2"/>
+ <text x="460" y="74" text-anchor="middle" class="lblb" fill="#d9822b" font-size="14">II 類</text>
+ <text x="460" y="96" text-anchor="middle" class="lbl">穀類·乾豆(蠟/油脂/醣高)</text>
+ <text x="460" y="124" text-anchor="middle" class="lblb">PSA + MgSO₄ + C18</text>
+ <text x="460" y="148" text-anchor="middle" class="lbl">多加 C18 去『油脂、蠟』</text>
+ <rect x="620" y="48" width="280" height="150" rx="12" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
+ <text x="760" y="74" text-anchor="middle" class="lblb" fill="#1f9d6b" font-size="14">III 類</text>
+ <text x="760" y="96" text-anchor="middle" class="lbl">乾燥茶葉·香辛(色素高)</text>
+ <text x="760" y="124" text-anchor="middle" class="lblb">PSA + MgSO₄ + GCB</text>
+ <text x="760" y="148" text-anchor="middle" class="lbl">多加 GCB 石墨化碳</text>
+ <text x="760" y="170" text-anchor="middle" class="lbl">去『色素』</text>
+</svg></div><div class="note" style="margin-top:8px"><strong>PSA</strong>去有機酸與極性雜質;高油脂基質多加 <strong>C18</strong> 去油脂蠟;高色素(茶葉)多加 <strong>GCB 石墨化碳</strong>去色素。淨化越乾淨,基質效應越小、訊號越穩。</div></div></section><section class="slide" data-slide="8" data-section="維持注意" data-game="g2"><div class="slide-inner"><div class="game no-nav" data-game="g2"><div class="game-head"><span class="tag a">小遊戲 ②</span><span class="gt">QuEChERS 即時測驗</span><span class="score" id="g2score">0 / 5</span></div><div class="game-q" id="g2q"></div><div class="opts" id="g2opts"></div><div class="fb" id="g2fb"></div><div class="btnrow"><button class="btn ghost" id="g2next" style="display:none">下一題 →</button></div></div></div></section><section class="slide" data-slide="9" data-section="維持注意"><div class="slide-inner"><div class="kicker">LC-MS/MS 偵測</div><h2 class="slide-title">ESI 正負切換 + <span class='hi'>MRM</span></h2><div class="grid2" style="margin-top:16px"><div><ul class="clean"><li>管柱 <strong>CORTECS C18</strong>(1.6 µm),醋酸銨/甲酸-甲醇梯度,0.3 mL/min</li><li>游離:<strong>ESI 正離子(4 kV)/負離子(3 kV)切換</strong>——20 項走正、12 項走負</li><li>偵測:<strong>MRM</strong>,每農藥監測母離子→子離子(定量+定性離子對)</li><li>內標 <strong>磷酸三苯酯(TPP)</strong>當品管參考;以<strong>基質匹配檢量線</strong>定量</li></ul></div><div class="note"><strong>基質匹配檢量線:</strong><br>用空白基質配檢量線,抵銷食品成分造成的離子化增強/抑制(基質效應)。</div></div></div></section><section class="slide" data-slide="10" data-section="維持注意" data-game="g3"><div class="slide-inner"><div class="game no-nav" data-game="g3"><div class="game-head"><span class="tag a">小遊戲 ③</span><span class="gt">三類 dSPE 配基質</span><span class="score" id="g3score">0 / 6</span></div><div class="game-q">把 6 個項目分到「I 類(蔬果)」「II 類(穀類乾豆)」或「III 類(茶葉)」。</div><div class="pool" id="g3pool"></div><div class="buckets" id="g3buckets"></div><div class="fb" id="g3fb"></div><div class="btnrow"><button class="btn" id="g3check">檢查答案</button><button class="btn ghost" id="g3reset">重來</button></div></div></div></section><section class="slide" data-slide="11" data-section="維持注意" data-game="g4"><div class="slide-inner"><div class="game no-nav" data-game="g4"><div class="game-head"><span class="tag a">小遊戲 ④</span><span class="gt">QuEChERS 多重殘留流程排序</span><span class="score" id="g4score">— / 6</span></div><div class="game-q">用 ▲▼ 把多重殘留分析(六)的 6 個步驟排成正確順序。</div><div class="sortlist" id="g4list"></div><div class="fb" id="g4fb"></div><div class="btnrow"><button class="btn" id="g4check">檢查順序</button><button class="btn ghost" id="g4reset">打亂重排</button></div></div></div></section><section class="slide" data-slide="12" data-section="維持注意"><div class="slide-inner"><div class="kicker">鑑別與計算</div><h2 class="slide-title">離子比確認 + 面積定量</h2><div class="grid2" style="margin-top:14px"><div class="eq">含量(ppm) = <span class="frac"><b>C × V</b><span>M</span></span></div><div><ul class="clean"><li><strong>C</strong>:由基質匹配檢量線求得濃度(µg/mL)</li><li><strong>V</strong>:萃取乙腈體積(10 mL)　<strong>M</strong>:取樣重(g)</li><li>鑑別:滯留時間 + 定性/定量<strong>離子比</strong>落在容許範圍</li><li>LOQ 依品項與基質約 <strong>0.01–0.05 ppm</strong></li></ul></div></div></div></section><section class="slide" data-slide="13" data-section="維持注意" data-game="g5"><div class="slide-inner"><div class="game no-nav" data-game="g5"><div class="game-head"><span class="tag a">小遊戲 ⑤</span><span class="gt">決策挑戰：選對策略</span><span class="score" id="g5score">0 / 5</span></div><div class="game-q" id="g5q"></div><div class="opts" id="g5opts"></div><div class="fb" id="g5fb"></div><div class="btnrow"><button class="btn ghost" id="g5next" style="display:none">下一題 →</button></div></div></div></section><section class="slide" data-slide="14" data-section="喚起行動" data-game="cmp"><div class="slide-inner"><div class="kicker">2.8 淨化</div><h2 class="slide-title">三類 dSPE 淨化（點欄位排序）</h2><table class="cmp" id="cmpTable" style="margin-top:14px"><thead><tr><th data-k="c" data-t="s">類別 <span class="ar">⇅</span></th><th data-k="mx" data-t="s">適用基質 <span class="ar">⇅</span></th><th data-k="s" data-t="s">淨化劑 <span class="ar">⇅</span></th><th data-k="r" data-t="s">主要去除 <span class="ar">⇅</span></th></tr></thead><tbody></tbody></table><div class="cap">整合自 TFDAP0007.05。依基質選淨化劑是 QuEChERS 的精髓。</div></div></section><section class="slide" data-slide="15" data-section="喚起行動" data-chart="rt"><div class="slide-inner"><div class="kicker">層析分離</div><h2 class="slide-title">部分農藥的<span class='hi'>滯留時間</span></h2><div class="chartbox" style="height:52vh"><canvas id="chart_rt"></canvas></div><div class="cap">整合自 TFDAP0007.05 參考層析圖譜(分):從克美素(0.82)到 bioresmethrin(14.87),CORTECS C18 把 32 種農藥逐一分開。</div></div></section><section class="slide" data-slide="16" data-section="喚起行動"><div class="slide-inner"><div class="kicker">方法定位</div><h2 class="slide-title">三種農藥檢驗法<span class='hi'>各司其職</span></h2><div class="grid3" style="margin-top:18px"><div class="card b"><div class="ic">💧</div><div class="ct">本法 · 多重殘留(六)</div><div class="cb">QuEChERS+LC-MS/MS,測極性/酸性農藥『個別』品項(32 項)</div></div><div class="card a"><div class="ic">🌫️</div><div class="ct">GC-MS/MS</div><div class="cb">測揮發、熱穩定的農藥(如有機磷、有機氯)</div></div><div class="card g"><div class="ic">🧅</div><div class="ct">二硫代胺基甲酸鹽法</div><div class="cb">裂解成共同產物 CS₂、GC-FPD 測『總量』</div></div></div><p class="subtitle" style="margin-top:14px">極性/不揮發→LC-MS/MS;揮發→GC-MS;特定族群(如 dithiocarbamate)→共同產物法。</p></div></section><section class="slide" data-slide="17" data-section="喚起行動" data-game="g6"><div class="slide-inner"><div class="game no-nav" data-game="g6"><div class="game-head"><span class="tag a">小遊戲 ⑥</span><span class="gt">計算闖關：農藥含量</span><span class="score" id="g6score">未作答</span></div><div class="game-q">QuEChERS-LC-MS/MS：取樣 <b>M = 10 g</b>、萃取乙腈 <b>V = 10 mL</b>;由檢量線得濃度 <b>C = 0.05 µg/mL</b>。求含量(ppm)。公式:C×V/M。</div><div class="btnrow"><input class="numin" id="g6in" type="number" step="any" placeholder="?"> <span style="font-weight:800;color:var(--ink)">ppm</span><button class="btn" id="g6check">對答案</button><button class="btn ghost" id="g6hint">提示</button></div><div class="fb" id="g6fb"></div></div></div></section><section class="slide" data-slide="18" data-section="喚起行動"><div class="slide-inner"><div class="kicker">重點整理</div><h2 class="slide-title">今天的五個關鍵</h2><div class="grid2" style="margin-top:18px"><ul class="clean"><li>本法(六)以 <strong>QuEChERS + LC-MS/MS</strong> 驗 <strong>32 項極性/酸性農藥</strong></li><li>QuEChERS:乙腈萃取 → 加鹽分層 → dSPE 淨化</li><li>三類 dSPE:I 類 PSA、II 類加 <strong>C18(去油脂)</strong>、III 類加 <strong>GCB(去色素)</strong></li></ul><ul class="clean"><li>LC-MS/MS:<strong>ESI 正/負切換</strong>、MRM、TPP 內標、基質匹配檢量線</li><li>含量 = C×V/M;鑑別靠滯留時間+離子比;LOQ 0.01–0.05 ppm</li></ul></div></div></section><section class="slide" data-slide="19" data-section="喚起行動"><div class="slide-inner"><div class="kicker">自我檢核</div><h2 class="slide-title">今天結束，你應該會…</h2><ul class="checklist no-nav" id="selfcheck" style="margin-top:18px;max-width:980px"><li data-k><span class="bx">✓</span>說明為何極性/酸性農藥要用 LC-MS/MS 而非 GC</li><li data-k><span class="bx">✓</span>說出 QuEChERS 的三大步驟與名稱由來</li><li data-k><span class="bx">✓</span>解釋加鹽(鹽析)與檸檬酸鹽緩衝的作用</li><li data-k><span class="bx">✓</span>依基質選對 dSPE 淨化劑(PSA/C18/GCB)</li><li data-k><span class="bx">✓</span>說明 ESI 正/負切換、MRM 與基質匹配檢量線</li><li data-k><span class="bx">✓</span>依序排出 QuEChERS 多重殘留流程</li><li data-k><span class="bx">✓</span>用 C×V/M 計算農藥殘留含量</li><li data-k><span class="bx">✓</span>比較本法與 GC-MS、二硫代胺基甲酸鹽法的定位</li></ul><p class="subtitle" style="margin-top:12px">點一下打勾——確認自己真的會了。</p></div></section><section class="slide" data-slide="20" data-section="喚起行動" data-cover="1"><div class="slide-inner"><div class="cover"><div class="kicker">延伸 · CONNECT</div><h1>從一籃蔬果<br><span style='color:var(--accent-2)'>看懂多重殘留</span></h1><div class="en"></div><div class="meta">🔗 同骨幹:<strong>LC-MS/MS + MRM</strong> 也用於甜味劑、四環素;本法多了 QuEChERS 與三類 dSPE<br>🔬 銜接:<strong>質譜 (Ch11)</strong>、<strong>HPLC (Ch13)</strong>、固相萃取、食品安全衛生管理<br>🧪 思考:你的農藥揮發嗎、極性如何?基質是蔬果、穀類還是茶葉?該用哪一種淨化劑?</div><div style="margin-top:24px"><span class="pill">QuEChERS</span><span class="pill">LC-MS/MS</span><span class="pill">dSPE</span><span class="pill">基質匹配</span><span class="pill">食安檢測</span></div></div></div></section><script>window.CFG={"charts": {"rt": {"type": "bar", "yTitle": "滯留時間 (分)", "labels": ["克美素", "賽滅淨", "依滅草", "二四地", "MCPA", "三氯比", "美速隆", "多寧", "Bioresmethrin"], "datasets": [{"label": "滯留時間 (min)", "data": [0.82, 2.52, 3.53, 5.83, 6.27, 6.75, 7.32, 11.34, 14.87], "color": "#1f6feb"}]}}, "bucket": {"g1": {"cats": ["乙腈萃取階段", "dSPE 淨化階段"], "items": [{"t": "含 1%甲酸的乙腈", "c": "乙腈萃取階段"}, {"t": "萃取鹽(MgSO₄/NaCl/檸檬酸鹽)", "c": "乙腈萃取階段"}, {"t": "高速分散裝置激烈振盪", "c": "乙腈萃取階段"}, {"t": "離心後取乙腈上清液", "c": "乙腈萃取階段"}, {"t": "PSA(去有機酸/極性雜質)", "c": "dSPE 淨化階段"}, {"t": "C18(去油脂蠟)", "c": "dSPE 淨化階段"}, {"t": "GCB(去色素)", "c": "dSPE 淨化階段"}, {"t": "再離心取上清、氮吹復溶", "c": "dSPE 淨化階段"}], "ok": "🎉 全對！乙腈+鹽萃取分層;PSA/C18/GCB 屬 dSPE 淨化。", "tip": "提示:跟『乙腈、加鹽、振盪、分層』有關→萃取;跟『PSA/C18/GCB、復溶』→淨化。"}, "g3": {"cats": ["I 類(蔬果)", "II 類(穀類乾豆)", "III 類(茶葉)"], "items": [{"t": "新鮮蔬菜/水果(高水分)", "c": "I 類(蔬果)"}, {"t": "用 PSA + MgSO₄", "c": "I 類(蔬果)"}, {"t": "穀類/乾豆(蠟·油脂·醣高)", "c": "II 類(穀類乾豆)"}, {"t": "多加 C18 去油脂", "c": "II 類(穀類乾豆)"}, {"t": "乾燥茶葉/香辛(色素高)", "c": "III 類(茶葉)"}, {"t": "多加 GCB 去色素", "c": "III 類(茶葉)"}], "ok": "🎉 正確！蔬果用 PSA;穀類乾豆加 C18 去油脂;茶葉加 GCB 去色素。", "tip": "提示:高水分蔬果→I 類;高油脂穀豆→II 類(C18);高色素茶葉→III 類(GCB)。"}}, "mcq": {"g2": [{"q": "本法(六)為何用 LC-MS/MS 而非 GC？", "o": ["比較便宜", "針對極性/酸性、不揮發的農藥", "速度快", "不需標準品"], "a": 1, "e": "克美素、2,4-D 等極性/不揮發農藥不適合 GC,用 LC-MS/MS。"}, {"q": "QuEChERS 名稱代表的特性不包含？", "o": ["Quick 快速", "Cheap 便宜", "Coloured 有色", "Safe 安全"], "a": 2, "e": "QuEChERS = Quick/Easy/Cheap/Effective/Rugged/Safe。"}, {"q": "萃取時加大量鹽的主要目的是？", "o": ["調色", "鹽析促進乙腈與水相分層", "當內標", "殺菌"], "a": 1, "e": "加鹽降低農藥在水相溶解度、促進乙腈分層;檸檬酸鹽兼緩衝。"}, {"q": "高色素的乾燥茶葉,dSPE 要多加什麼淨化劑？", "o": ["C18", "GCB 石墨化碳", "PSA only", "NaCl"], "a": 1, "e": "茶葉色素多,加 GCB(石墨化碳)去除色素。"}, {"q": "本法以什麼配製檢量線抵銷基質效應？", "o": ["純水", "純甲醇", "空白基質(基質匹配檢量線)", "乙腈"], "a": 2, "e": "用空白基質配檢量線,抵銷食品成分造成的離子化增強/抑制。"}], "g5": [{"q": "要一次篩檢蔬果上多種極性農藥,最有效率的是？", "o": ["逐一單測", "QuEChERS+LC-MS/MS 多重殘留", "只測顏色", "只看外觀"], "a": 1, "e": "QuEChERS+LC-MS/MS 一次處理並偵測多種農藥,高通量。"}, {"q": "高油脂的穀類/乾豆檢體,淨化要多加？", "o": ["GCB", "C18", "NaCl", "水"], "a": 1, "e": "高油脂基質加 C18 去油脂蠟,屬 II 類淨化。"}, {"q": "某農藥訊號在純溶劑與基質中差很多,代表？", "o": ["儀器壞", "有基質效應,需用基質匹配檢量線", "農藥揮發", "要加熱"], "a": 1, "e": "基質效應使訊號增強/抑制;用基質匹配檢量線校正。"}, {"q": "要分辨檢出的是哪一種農藥,本法靠什麼鑑別？", "o": ["顏色", "滯留時間 + 定性/定量離子比", "氣味", "密度"], "a": 1, "e": "以滯留時間與 MRM 離子比(落在容許範圍)鑑別品項。"}, {"q": "揮發、熱穩定的農藥(如有機磷),較適合用？", "o": ["本法 LC-MS/MS", "GC-MS/MS", "二硫代胺基甲酸鹽法", "滴定"], "a": 1, "e": "揮發、熱穩定的農藥用 GC-MS/MS;本法針對極性農藥。"}]}, "sort": {"g4": {"steps": ["檢體均質、精秤,加含 1%甲酸乙腈與內標", "加入萃取鹽(MgSO₄/NaCl/檸檬酸鹽),激烈振盪", "離心使乙腈與水相分層,取乙腈上清液", "上清液移入對應的 dSPE 淨化離心管(I/II/III 類)", "振盪離心、取上清,氮氣吹乾後以甲醇復溶過濾", "LC-MS/MS 以 ESI± MRM 分析,比對離子比與滯留時間定量"], "shuffle": [3, 0, 5, 1, 4, 2], "ok": "🎉 順序正確！乙腈萃取→加鹽分層→取上清→dSPE 淨化→復溶→LC-MS/MS。", "tip": "提示:先乙腈+鹽萃取分層、取上清,再依基質 dSPE 淨化、復溶後才上 LC-MS/MS。"}}, "calc": {"g6": {"answer": 0.05, "tol": 0.005, "ok": "🎉 正確！含量 = C×V/M = 0.05×10/10 = <b>0.05 ppm<\/b>。", "bad": "再算算：含量 = C×V/M = 0.05×10/10。", "hint": "提示:0.05×10 = 0.5;0.5/10 = 0.05 ppm。"}}, "cmp": {"cols": [{"k": "c"}, {"k": "mx"}, {"k": "s"}, {"k": "r"}], "rows": [{"c": "I 類", "mx": "新鮮蔬果·香辛(高水分)", "s": "PSA + MgSO₄", "r": "有機酸·糖·極性雜質·水分"}, {"c": "II 類", "mx": "穀類·乾豆(蠟/油脂/醣高)", "s": "PSA + MgSO₄ + C18", "r": "多去油脂、蠟"}, {"c": "III 類", "mx": "乾燥茶葉·香辛(色素高)", "s": "PSA + MgSO₄ + GCB", "r": "多去色素"}]}};</script><script>
+var CFG=window.CFG||{};
+var slides=[].slice.call(document.querySelectorAll('.slide'));
+var total=slides.length,cur=0;
+var prog=document.getElementById('progress'),pageInfo=document.getElementById('pageInfo'),secTag=document.getElementById('section-tag');
+function show(i){
+  cur=Math.max(0,Math.min(total-1,i));
+  slides.forEach(function(s,k){s.classList.toggle('active',k===cur)});
+  prog.style.width=((cur+1)/total*100)+'%';
+  pageInfo.textContent=(cur+1)+' / '+total;
+  secTag.textContent='— '+(slides[cur].dataset.section||'')+' —';
+  var ch=slides[cur].dataset.chart; if(ch) initChart(ch);
+  var g=slides[cur].dataset.game; if(g) initGame(g);
+}
+function next(){show(cur+1)} function prev(){show(cur-1)}
+function toggleFs(){if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()}else{document.exitFullscreen&&document.exitFullscreen()}}
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next()}
+  else if(e.key==='ArrowLeft'){prev()}
+  else if(e.key==='f'||e.key==='F'){toggleFs()}
+});
+document.addEventListener('click',function(e){
+  if(e.target.closest('.no-nav')) return;
+  if(e.target.closest('button,input,select,textarea,a,.chip,.opt,.bucket')) return;
+  var x=e.clientX/window.innerWidth;
+  if(x>0.72) next(); else if(x<0.28) prev();
+});
+
+/* ---------- charts ---------- */
+var chartDone={};
+function initChart(id){
+  if(chartDone[id]||typeof Chart==='undefined'||!CFG.charts||!CFG.charts[id]) return; chartDone[id]=1;
+  Chart.defaults.font.family="'Noto Sans TC',sans-serif"; Chart.defaults.color='#48597a';
+  var c=CFG.charts[id];
+  var el=document.getElementById('chart_'+id); if(!el) return;
+  var ds=c.datasets.map(function(d){return {label:d.label,data:d.data,
+    backgroundColor:d.color||'#1f6feb',borderColor:d.color||'#1f6feb',borderRadius:5,
+    fill:(c.type==='line'?false:true),tension:.3}});
+  new Chart(el,{type:c.type||'bar',data:{labels:c.labels,datasets:ds},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:(c.datasets.length>1),position:'top'}},
+      scales:{y:{beginAtZero:(c.zero!==false),title:{display:!!c.yTitle,text:c.yTitle||''}}}}});
+}
+
+/* ---------- games ---------- */
+var gameDone={};
+function setScore(el,v){var e=document.getElementById(el);if(e)e.textContent=v}
+function fb(el,msg,type){var f=document.getElementById(el);if(!f)return;f.className='fb show '+type;f.innerHTML=msg}
+function initGame(g){
+  if(gameDone[g])return; gameDone[g]=1;
+  if(CFG.bucket&&CFG.bucket[g]) return initBucket(g);
+  if(CFG.mcq&&CFG.mcq[g]) return initMCQ(g);
+  if(CFG.sort&&CFG.sort[g]) return initSort(g);
+  if(CFG.calc&&CFG.calc[g]) return initCalc(g);
+  if(g==='cmp') return initCmp();
+}
+
+function initBucket(g){
+  var cfg=CFG.bucket[g];
+  var data=cfg.items.map(function(x){return {t:x.t,c:x.c,at:null}});
+  var cats=cfg.cats, N=data.length;
+  var pool=document.getElementById(g+'pool'), bk=document.getElementById(g+'buckets');
+  var sel=null;
+  bk.style.gridTemplateColumns='repeat('+cats.length+',1fr)';
+  function paint(){[].slice.call(pool.children).forEach(function(c){c.classList.toggle('sel',+c.dataset.i===sel)})}
+  function render(){
+    pool.innerHTML=''; bk.innerHTML='';
+    var placed={}; cats.forEach(function(c){placed[c]=[]});
+    data.forEach(function(d,i){if(d.at)placed[d.at].push(i)});
+    data.forEach(function(d,i){ if(d.at) return;
+      var c=document.createElement('div');c.className='chip';c.textContent=d.t;c.dataset.i=i;
+      c.onclick=function(){sel=(sel===i?null:i);paint()}; pool.appendChild(c);
+    });
+    cats.forEach(function(cat){
+      var b=document.createElement('div');b.className='bucket';b.innerHTML='<div class="bh">'+cat+'</div>';
+      placed[cat].forEach(function(i){
+        var c=document.createElement('div');c.className='chip';c.textContent=data[i].t;
+        c.onclick=function(){data[i].at=null;sel=null;render()}; b.appendChild(c);
+      });
+      b.onclick=function(e){ if(e.target!==b&&!e.target.classList.contains('bh'))return;
+        if(sel!=null){data[sel].at=cat;sel=null;render()} };
+      bk.appendChild(b);
+    });
+    paint();
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; data.forEach(function(d){if(d.at===d.c)ok++});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 全對！','good');
+    else fb(g+'fb','答對 '+ok+'/'+N+'。'+(cfg.tip||'再調整看看。'),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    data.forEach(function(d){d.at=null}); sel=null; render(); setScore(g+'score','0 / '+N);
+    var f=document.getElementById(g+'fb'); if(f) f.className='fb';
+  };
+}
+
+function initMCQ(g){
+  var DATA=CFG.mcq[g], nq=DATA.length, idx=0, score=0, locked=false;
+  var qEl=document.getElementById(g+'q'), opEl=document.getElementById(g+'opts'), nextBtn=document.getElementById(g+'next');
+  function render(){
+    locked=false; var d=DATA[idx];
+    qEl.innerHTML='<span style="color:var(--accent)">Q'+(idx+1)+'.</span> '+d.q;
+    opEl.innerHTML=''; var f=document.getElementById(g+'fb'); if(f)f.className='fb'; if(nextBtn)nextBtn.style.display='none';
+    d.o.forEach(function(t,i){
+      var o=document.createElement('div');o.className='opt';o.textContent=t;
+      o.onclick=function(){
+        if(locked)return; locked=true; var ok=(i===d.a);
+        if(ok){o.classList.add('ok');score++}else{o.classList.add('no');opEl.children[d.a].classList.add('ok')}
+        [].slice.call(opEl.children).forEach(function(c,k){if(k!==i&&k!==d.a)c.classList.add('dim')});
+        setScore(g+'score',score+' / '+nq);
+        var done=(idx>=DATA.length-1);
+        var msg=(ok?'✅ 答對！':'❌ 正解：'+d.o[d.a]+'。')+'<br>'+d.e+(done?'<br><b>完成！總分 '+score+'/'+nq+'</b>':'');
+        fb(g+'fb',msg,ok?'good':'bad');
+        if(nextBtn) nextBtn.style.display=done?'none':'inline-block';
+      };
+      opEl.appendChild(o);
+    });
+  }
+  if(nextBtn) nextBtn.onclick=function(){if(idx<DATA.length-1){idx++;render()}};
+  render();
+}
+
+function initSort(g){
+  var cfg=CFG.sort[g], steps=cfg.steps, N=steps.length;
+  var order=(cfg.shuffle||steps.map(function(_,i){return i})).slice();
+  var list=document.getElementById(g+'list');
+  function render(){
+    list.innerHTML='';
+    order.forEach(function(stepIdx,pos){
+      var row=document.createElement('div');row.className='sortrow';
+      row.innerHTML='<div class="idx">'+(pos+1)+'</div><div class="txt">'+steps[stepIdx]+'</div>';
+      var ud=document.createElement('div');ud.className='ud';
+      var up=document.createElement('button');up.textContent='▲';
+      up.onclick=function(){if(pos>0){var t=order[pos-1];order[pos-1]=order[pos];order[pos]=t;render()}};
+      var dn=document.createElement('button');dn.textContent='▼';
+      dn.onclick=function(){if(pos<order.length-1){var t=order[pos+1];order[pos+1]=order[pos];order[pos]=t;render()}};
+      ud.appendChild(up);ud.appendChild(dn);row.appendChild(ud);list.appendChild(row);
+    });
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; order.forEach(function(v,i){if(v===i)ok++});
+    [].slice.call(list.children).forEach(function(r,i){r.classList.toggle('ok',order[i]===i);r.classList.toggle('no',order[i]!==i)});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 順序完全正確！','good');
+    else fb(g+'fb','對了 '+ok+'/'+N+' 個位置。'+(cfg.tip||''),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    order=(cfg.shuffle||steps.map(function(_,i){return i})).slice().reverse(); render();
+    var f=document.getElementById(g+'fb'); if(f)f.className='fb'; setScore(g+'score','— / '+N);
+  };
+}
+
+function initCalc(g){
+  var cfg=CFG.calc[g];
+  document.getElementById(g+'check').onclick=function(){
+    var v=parseFloat(document.getElementById(g+'in').value);
+    if(isNaN(v)){fb(g+'fb','請先輸入一個數字。','info');return}
+    if(Math.abs(v-cfg.answer)<=(cfg.tol||0.05)){
+      setScore(g+'score','✓ 答對'); fb(g+'fb',cfg.ok||('🎉 正確！答案是 '+cfg.answer),'good');
+    } else { setScore(g+'score','再試一次'); fb(g+'fb',cfg.bad||'再算算看。','bad'); }
+  };
+  var hb=document.getElementById(g+'hint');
+  if(hb) hb.onclick=function(){fb(g+'fb',cfg.hint||'提示：對照公式逐步代入。','info')};
+}
+
+function stars(n){return '★★★★★'.slice(0,n)+'☆☆☆☆☆'.slice(0,5-n)}
+function initCmp(){
+  if(!CFG.cmp) return;
+  var cols=CFG.cmp.cols, rows=CFG.cmp.rows.slice(), dir={};
+  var tb=document.querySelector('#cmpTable tbody');
+  function draw(){ tb.innerHTML=''; rows.forEach(function(r){
+    var tr=document.createElement('tr');
+    tr.innerHTML=cols.map(function(c,ci){
+      var v=r[c.k];
+      if(c.star) return '<td style="color:var(--accent-2)">'+stars(v)+'</td>';
+      return '<td'+(ci===0?' class="c"':'')+'>'+v+'</td>';
+    }).join(''); tb.appendChild(tr); }); }
+  draw();
+  document.querySelectorAll('#cmpTable thead th').forEach(function(th){
+    th.onclick=function(){var k=th.dataset.k,t=th.dataset.t;dir[k]=!dir[k];
+      rows.sort(function(a,b){var x=a[k],y=b[k];
+        if(t==='n')return dir[k]?x-y:y-x;
+        return dir[k]?String(x).localeCompare(String(y),'zh-Hant'):String(y).localeCompare(String(x),'zh-Hant')});
+      draw();};
+  });
+}
+show(0);
+</script>
+<script>document.addEventListener('click',function(e){var li=e.target.closest('#selfcheck li');if(li)li.classList.toggle('done')});</script>
+</body></html>

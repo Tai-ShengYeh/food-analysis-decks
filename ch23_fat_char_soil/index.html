@@ -1,0 +1,376 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>油脂特性分析 Fat Characterization · Nielsen Ch23</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script><style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{font-size:18px}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;background:var(--bg);
+  color:var(--ink);overflow:hidden;height:100vh;width:100vw}
+:root{
+  --bg:#eef2f8;--surface:#ffffff;--surface-2:#f6f9fd;
+  --ink:#15233f;--ink-2:#48597a;--ink-3:#8493ad;--line:#dde5f0;
+  --accent:#1f6feb;--accent-soft:#e7f0fe;
+  --accent-2:#d9822b;--accent-2-soft:#fbeede;
+  --ok:#1f9d6b;--ok-soft:#e3f6ee;--bad:#d94f4f;--bad-soft:#fbe7e7;--warn:#d9a32b;
+  --t2:clamp(1.4rem,3vw,2.3rem);
+  --shadow:0 10px 30px rgba(20,40,80,.10);--shadow-sm:0 3px 12px rgba(20,40,80,.08)}
+#progress{position:fixed;top:0;left:0;height:4px;width:0;z-index:50;
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .5s ease}
+#section-tag{position:fixed;top:16px;left:24px;z-index:40;font-size:.78rem;letter-spacing:.18em;
+  color:var(--accent);font-weight:700;font-family:"JetBrains Mono",monospace}
+#pageInfo{position:fixed;right:22px;bottom:16px;z-index:40;font-size:.82rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+#hint{position:fixed;left:24px;bottom:16px;z-index:40;font-size:.72rem;color:var(--ink-3)}
+#brand{position:fixed;right:22px;top:14px;z-index:40;font-size:.72rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:64px 84px;opacity:0;pointer-events:none;
+  transition:opacity .55s ease,transform .55s ease;transform:translateY(14px)}
+.slide.active{opacity:1;pointer-events:auto;transform:translateY(0)}
+.slide-inner{width:100%;max-width:1280px}
+.kicker{font-family:"JetBrains Mono",monospace;font-size:.8rem;letter-spacing:.16em;color:var(--accent);
+  font-weight:700;text-transform:uppercase;margin-bottom:10px}
+.slide-title{font-size:var(--t2);font-weight:900;line-height:1.18;color:var(--ink);letter-spacing:-.01em}
+.slide-title .hi{color:var(--accent-2)}
+.subtitle{font-size:clamp(.95rem,1.5vw,1.2rem);color:var(--ink-2);margin-top:12px;line-height:1.6}
+p,li{font-size:clamp(.92rem,1.4vw,1.12rem);line-height:1.68;color:var(--ink-2)}
+.lead{font-size:clamp(1.05rem,1.8vw,1.35rem);color:var(--ink);line-height:1.6}
+strong,b{color:var(--ink);font-weight:800}.em{color:var(--accent-2);font-weight:800}
+.divider{height:3px;width:64px;background:var(--accent-2);border-radius:2px;margin:18px 0}
+ul.clean{list-style:none}ul.clean li{position:relative;padding-left:26px;margin:10px 0}
+ul.clean li:before{content:"";position:absolute;left:4px;top:.62em;width:8px;height:8px;border-radius:2px;
+  background:var(--accent);transform:rotate(45deg)}
+.mono{font-family:"JetBrains Mono",monospace}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.grid2-1{display:grid;grid-template-columns:1.15fr .85fr;gap:34px;align-items:center}
+.flow6{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow-sm)}
+.card .ic{font-size:1.6rem;margin-bottom:8px}
+.card .ct{font-weight:800;color:var(--ink);font-size:clamp(1rem,1.5vw,1.2rem);margin-bottom:6px}
+.card .cb{font-size:clamp(.85rem,1.25vw,1rem);color:var(--ink-2);line-height:1.55}
+.card.b{border-top:4px solid var(--accent)}.card.a{border-top:4px solid var(--accent-2)}
+.card.g{border-top:4px solid var(--ok)}
+.tag{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:.7rem;padding:3px 9px;border-radius:999px;
+  background:var(--accent-soft);color:var(--accent);font-weight:700}
+.tag.a{background:var(--accent-2-soft);color:var(--accent-2)}
+.pill{display:inline-block;padding:5px 12px;border-radius:999px;background:var(--surface);border:1px solid var(--line);
+  font-size:.82rem;color:var(--ink-2);margin:3px 4px}
+.note{background:var(--accent-2-soft);border-left:4px solid var(--accent-2);border-radius:8px;padding:14px 18px;
+  color:var(--ink);font-size:clamp(.9rem,1.3vw,1.05rem);line-height:1.6}
+.eq{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 22px;
+  font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,1.7vw,1.4rem);color:var(--ink);text-align:center;box-shadow:var(--shadow-sm)}
+.eq .frac{display:inline-flex;flex-direction:column;text-align:center;vertical-align:middle;margin:0 6px}
+.eq .frac b{border-bottom:2px solid var(--ink);padding-bottom:3px}
+table.cmp{width:100%;border-collapse:collapse;font-size:clamp(.82rem,1.2vw,1.02rem)}
+table.cmp th,table.cmp td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line)}
+table.cmp thead th{color:var(--accent);font-weight:800;border-bottom:2px solid var(--accent);cursor:pointer;
+  user-select:none;white-space:nowrap}
+table.cmp thead th .ar{opacity:.4;font-size:.8em}
+table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--ink);font-weight:700}
+.cover{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 100px;
+  background:radial-gradient(1200px 600px at 80% 20%,var(--accent-2-soft),transparent 60%),
+  radial-gradient(900px 500px at 10% 90%,var(--accent-soft),transparent 55%),linear-gradient(135deg,#ffffff,#eef2f8)}
+.cover h1{font-size:clamp(2.4rem,6vw,4.6rem);font-weight:900;line-height:1.05;letter-spacing:-.02em;color:var(--ink)}
+.cover .en{font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,2vw,1.5rem);color:var(--accent);letter-spacing:.1em;margin-top:6px}
+.cover .meta{margin-top:26px;color:var(--ink-2);font-size:clamp(.9rem,1.4vw,1.1rem)}
+.hook{font-size:clamp(2rem,5vw,3.6rem);font-weight:900;color:var(--ink);line-height:1.2;letter-spacing:-.01em}
+.hook .hi{color:var(--accent)}
+.svgwrap{display:flex;align-items:center;justify-content:center}
+.svgwrap svg{max-width:100%;max-height:62vh;height:auto}
+.lbl{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink-2)}
+.lblb{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink);font-weight:700}
+.game{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 24px;box-shadow:var(--shadow)}
+.game-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.game-head .gt{font-weight:900;font-size:clamp(1.05rem,1.7vw,1.35rem);color:var(--ink)}
+.game-head .score{margin-left:auto;font-family:"JetBrains Mono",monospace;font-weight:700;color:var(--accent);
+  background:var(--accent-soft);padding:5px 13px;border-radius:999px;font-size:.9rem}
+.game-q{font-size:clamp(.95rem,1.5vw,1.18rem);color:var(--ink);font-weight:700;margin:6px 0 14px;line-height:1.5}
+.buckets{display:grid;gap:16px;margin-top:14px}
+.bucket{min-height:120px;border:2px dashed var(--line);border-radius:14px;padding:12px;background:var(--surface-2);transition:.2s}
+.bucket .bh{font-weight:800;color:var(--ink);text-align:center;margin-bottom:8px;font-size:.95rem}
+.pool{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;min-height:54px}
+.chip{padding:9px 15px;border-radius:10px;background:var(--surface);border:1px solid var(--line);font-weight:700;
+  color:var(--ink);cursor:pointer;box-shadow:var(--shadow-sm);font-size:.92rem;transition:.15s}
+.chip:hover{border-color:var(--accent);transform:translateY(-1px)}
+.chip.sel{background:var(--accent);color:#fff;border-color:var(--accent)}
+.chip.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.chip.no{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+.opt{padding:14px 18px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);cursor:pointer;
+  font-weight:700;color:var(--ink);font-size:clamp(.88rem,1.3vw,1.05rem);transition:.15s}
+.opt:hover{border-color:var(--accent);background:var(--accent-soft)}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.opt.no{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}.opt.dim{opacity:.5}
+.fb{margin-top:14px;padding:12px 16px;border-radius:10px;font-weight:700;display:none;
+  font-size:clamp(.85rem,1.3vw,1.02rem);line-height:1.5}
+.fb.show{display:block}.fb.good{background:var(--ok-soft);color:var(--ok)}
+.fb.bad{background:var(--bad-soft);color:var(--bad)}.fb.info{background:var(--accent-soft);color:var(--accent)}
+.btn{padding:10px 20px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-weight:800;cursor:pointer;
+  font-size:.92rem;font-family:inherit;box-shadow:var(--shadow-sm)}
+.btn:hover{filter:brightness(1.06)}.btn.ghost{background:var(--surface);color:var(--accent);border:1.5px solid var(--accent)}
+.btnrow{display:flex;gap:12px;margin-top:16px;align-items:center}
+.sortlist{display:flex;flex-direction:column;gap:6px;margin-top:6px;max-height:44vh;overflow-y:auto;padding-right:4px}
+.sortrow{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:7px 14px;box-shadow:var(--shadow-sm)}
+.sortrow .idx{font-family:"JetBrains Mono",monospace;font-weight:800;color:var(--accent);width:24px}
+.sortrow .txt{flex:1;font-weight:700;color:var(--ink);font-size:clamp(.85rem,1.25vw,1.02rem)}
+.sortrow .ud{display:flex;flex-direction:column;gap:3px}
+.sortrow .ud button{border:none;background:var(--accent-soft);color:var(--accent);border-radius:6px;width:30px;height:20px;
+  cursor:pointer;font-weight:900;line-height:1}
+.sortrow.ok{border-color:var(--ok);background:var(--ok-soft)}.sortrow.no{border-color:var(--bad)}
+.numin{font-family:"JetBrains Mono",monospace;font-size:1.2rem;font-weight:800;padding:10px 14px;border:1.5px solid var(--line);
+  border-radius:10px;width:140px;color:var(--ink);text-align:center}
+.numin:focus{outline:none;border-color:var(--accent)}
+.checklist{list-style:none}
+.checklist li{display:flex;align-items:center;gap:12px;padding:11px 14px;border:1px solid var(--line);border-radius:10px;
+  margin:8px 0;background:var(--surface);cursor:pointer;font-weight:700;color:var(--ink-2);font-size:clamp(.9rem,1.35vw,1.08rem);transition:.15s}
+.checklist li .bx{width:24px;height:24px;border-radius:6px;border:2px solid var(--accent);display:flex;align-items:center;
+  justify-content:center;color:#fff;font-weight:900;flex:0 0 auto}
+.checklist li.done{background:var(--ok-soft);border-color:var(--ok);color:var(--ink)}
+.checklist li.done .bx{background:var(--ok);border-color:var(--ok)}
+.chartbox{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow-sm);
+  height:60vh;max-height:520px;position:relative}
+.cap{font-size:.82rem;color:var(--ink-3);text-align:center;margin-top:8px}
+</style></head><body><div id="progress"></div><div id="section-tag"></div><div id="brand">油脂特性 · CH23</div><div id="pageInfo"></div><div id="hint">← → / 空白鍵切頁　·　F 全螢幕　·　點兩側翻頁</div><section class="slide" data-slide="1" data-section="引起動機" data-cover="1"><div class="slide-inner"><div class="cover"><div class="kicker">NIELSEN'S FOOD ANALYSIS · CHAPTER 23</div><h1>油脂<span style='color:var(--accent-2)'>特性</span>分析</h1><div class="en">Fat Characterization</div><div class="meta">食品分析　·　3 小時課程　·　含 6 個互動小遊戲<br>碘價 · 皂化價 · 酸價 · 過氧化價 · 氧化安定性 · 脂肪酸組成</div><div style="margin-top:24px"><span class="pill">碘價=不飽和度</span><span class="pill">皂化價=鏈長</span><span class="pill">過氧化價=氧化</span><span class="pill">發煙點</span><span class="pill">OSI/Rancimat</span></div></div></div></section><section class="slide" data-slide="2" data-section="引起動機"><div class="slide-inner"><div style="text-align:center">
+  <div class="kicker" style="justify-content:center">先想一想</div>
+  <div class="hook">一瓶油<span class="hi">壞了沒</span>？是橄欖油還是混了便宜油？<br>飽和還是不飽和？——怎麼用幾個<span class="hi">數字</span>說清楚？</div>
+  <p class="subtitle" style="max-width:850px;margin:22px auto 0">油脂的『特性分析』就是一組數字：<strong>碘價、皂化價、酸價、過氧化價</strong>…<br>
+  分別告訴你它的<strong>不飽和度、鏈長、水解與氧化劣化</strong>，攸關品質、保存與營養標示。</p>
+  <div style="margin-top:24px"><span class="pill">鑑別與摻假</span><span class="pill">新鮮度/油耗</span>
+  <span class="pill">飽和/trans 標示</span><span class="pill">保存期</span></div></div></div></section><section class="slide" data-slide="3" data-section="引起動機"><div class="slide-inner"><div class="kicker">23.2.2 劣化三路</div><h2 class="slide-title">油脂會怎麼<span class='hi'>變壞</span></h2><div class="grid3" style="margin-top:18px"><div class="card b"><div class="ic">💧</div><div class="ct">水解 Lipolysis</div><div class="cb">酯鍵被水解 → 游離脂肪酸(FFA)；短鏈 FFA 造成『水解酸敗』(乳品奶味)</div></div><div class="card a"><div class="ic">🔥</div><div class="ct">氧化 Oxidation</div><div class="cb">O₂ 攻擊不飽和鍵 → 氫過氧化物 → 醛酮 → <strong>油耗味</strong>(最主要的劣化)</div></div><div class="card g"><div class="ic">🍳</div><div class="ct">聚合 Polymerization</div><div class="cb">高溫油炸使分子聚合 → 黏度上升、總極性物增加</div></div></div><p class="subtitle" style="margin-top:14px">不同劣化用不同『值』來測：FFA/酸價測水解、過氧化價等測氧化。</p></div></section><section class="slide" data-slide="4" data-section="引起動機"><div class="slide-inner"><div class="kicker">23.2.2.2 氧化路徑</div><h2 class="slide-title">從<span class='hi'>無味</span>到<span class='hi'>油耗</span></h2><div class="svgwrap" style="margin-top:4px">
+<svg viewBox="0 0 980 250">
+ <defs><marker id="oa" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 Z" fill="#48597a"/></marker></defs>
+ <text x="490" y="24" text-anchor="middle" class="lblb" font-size="15">油脂氧化的路徑：初級(氫過氧化物) → 二級(醛酮) → 油耗味</text>
+ <g font-size="12.5">
+  <rect x="14" y="80" width="150" height="58" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2.2"/>
+  <text x="89" y="104" text-anchor="middle" class="lblb">不飽和油脂</text><text x="89" y="123" text-anchor="middle" class="lbl">+ O₂、光、金屬</text>
+  <rect x="214" y="80" width="170" height="58" rx="10" fill="#fbeede" stroke="#d9822b" stroke-width="2.2"/>
+  <text x="299" y="104" text-anchor="middle" class="lblb">氫過氧化物 LOOH</text><text x="299" y="123" text-anchor="middle" class="lbl">初級產物(無味)</text>
+  <rect x="434" y="80" width="190" height="58" rx="10" fill="#fbe7e7" stroke="#d94f4f" stroke-width="2.2"/>
+  <text x="529" y="104" text-anchor="middle" class="lblb">醛、酮、烴</text><text x="529" y="123" text-anchor="middle" class="lbl">二級產物(有味)</text>
+  <rect x="674" y="84" width="150" height="50" rx="9" fill="#15233f"/>
+  <text x="749" y="106" text-anchor="middle" fill="#fff" font-weight="800">油耗味 rancid</text>
+  <text x="749" y="124" text-anchor="middle" fill="#cfe0f6" font-size="11">感官可察覺</text>
+ </g>
+ <g stroke="#48597a" stroke-width="2.4" marker-end="url(#oa)">
+  <line x1="164" y1="109" x2="210" y2="109"/><line x1="384" y1="109" x2="430" y2="109"/><line x1="624" y1="109" x2="670" y2="109"/></g>
+ <g font-size="11.5" fill="#1f9d6b">
+  <text x="299" y="170" text-anchor="middle" class="lblb">↑ 過氧化價 PV、共軛雙烯 CD</text>
+  <text x="529" y="170" text-anchor="middle" class="lblb">↑ p-茴香胺價、TBARS、揮發物</text></g>
+ <text x="490" y="208" text-anchor="middle" class="lbl">過氧化價會『先升後降』(分解成二級產物)，所以要多種指標一起看</text>
+</svg></div></div></section><section class="slide" data-slide="5" data-section="引起動機" data-game="g1"><div class="slide-inner"><div class="game no-nav" data-game="g1"><div class="game-head"><span class="tag a">小遊戲 ①</span><span class="gt">物理特性 vs 化學特性</span><span class="score" id="g1score">0 / 8</span></div><div class="game-q">把 8 個檢驗項目分到「物理特性」或「化學特性」。</div><div class="pool" id="g1pool"></div><div class="buckets" id="g1buckets"></div><div class="fb" id="g1fb"></div><div class="btnrow"><button class="btn" id="g1check">檢查答案</button><button class="btn ghost" id="g1reset">重來</button></div></div></div></section><section class="slide" data-slide="6" data-section="維持注意"><div class="slide-inner"><div class="kicker">一圖看四值</div><h2 class="slide-title">每個『值』各看<span class='hi'>一處</span></h2><div class="svgwrap" style="margin-top:4px">
+<svg viewBox="0 0 620 250">
+ <text x="310" y="22" text-anchor="middle" class="lblb" font-size="15">一個三酸甘油酯，三種『值』各看一處</text>
+ <!-- glycerol backbone -->
+ <line x1="120" y1="70" x2="120" y2="190" stroke="#48597a" stroke-width="3"/>
+ <g font-size="13">
+  <line x1="120" y1="80" x2="200" y2="80" stroke="#48597a" stroke-width="2.4"/>
+  <text x="150" y="74" class="lbl">酯鍵</text>
+  <line x1="200" y1="80" x2="430" y2="80" stroke="#d9822b" stroke-width="3"/>
+  <path d="M280 80 l14 -10 M300 80 l14 -10" stroke="#1f6feb" stroke-width="2.4"/>
+  <text x="360" y="74" text-anchor="middle" class="lbl">脂肪酸鏈(含 C=C 雙鍵)</text>
+  <line x1="120" y1="130" x2="430" y2="130" stroke="#d9822b" stroke-width="3"/>
+  <line x1="120" y1="180" x2="430" y2="180" stroke="#d9822b" stroke-width="3"/>
+ </g>
+ <!-- callouts -->
+ <rect x="440" y="56" width="170" height="44" rx="8" fill="#eef6ff" stroke="#1f6feb" stroke-width="1.8"/>
+ <text x="525" y="74" text-anchor="middle" class="lblb" fill="#1f6feb" font-size="12">碘價 IV</text>
+ <text x="525" y="92" text-anchor="middle" class="lbl">數 C=C 雙鍵→不飽和度</text>
+ <rect x="440" y="108" width="170" height="44" rx="8" fill="#fff6ea" stroke="#d9822b" stroke-width="1.8"/>
+ <text x="525" y="126" text-anchor="middle" class="lblb" fill="#d9822b" font-size="12">皂化價 SV</text>
+ <text x="525" y="144" text-anchor="middle" class="lbl">皂化酯鍵→平均鏈長</text>
+ <rect x="440" y="160" width="170" height="44" rx="8" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="1.8"/>
+ <text x="525" y="178" text-anchor="middle" class="lblb" fill="#1f9d6b" font-size="12">酸價 AV / FFA</text>
+ <text x="525" y="196" text-anchor="middle" class="lbl">水解游離的脂肪酸</text>
+ <text x="120" y="214" text-anchor="middle" class="lbl">甘油</text>
+</svg></div><div class="note" style="margin-top:8px"><strong>碘價</strong>數雙鍵(不飽和度)、<strong>皂化價</strong>皂化酯鍵(平均鏈長)、<strong>酸價/FFA</strong>看水解出的游離脂肪酸、<strong>過氧化價</strong>看氧化生成的氫過氧化物。</div></div></section><section class="slide" data-slide="7" data-section="維持注意"><div class="slide-inner"><div class="kicker">23.4.1 / 23.4.2</div><h2 class="slide-title">碘價與皂化價</h2><div class="grid2" style="margin-top:16px"><div class="card a"><div class="ic">🟣</div><div class="ct">碘價 IV</div><div class="cb">每 100 g 油吸收的碘克數 → <strong>不飽和度</strong>。ICl 加成雙鍵，剩餘碘以硫代硫酸鈉/澱粉滴定。越不飽和、碘價越高</div></div><div class="card b"><div class="ic">🧼</div><div class="ct">皂化價 SV</div><div class="cb">皂化 1 g 油所需 KOH 的毫克數 → <strong>平均分子量/鏈長</strong>。KOH 皂化後回滴。皂化價越小、鏈越長</div></div></div><div class="note" style="margin-top:14px">兩者都可由<strong>脂肪酸組成計算</strong>(計算碘價/計算皂化價)，一次分析得兩個結果。</div></div></section><section class="slide" data-slide="8" data-section="維持注意" data-game="g2"><div class="slide-inner"><div class="game no-nav" data-game="g2"><div class="game-head"><span class="tag a">小遊戲 ②</span><span class="gt">油脂特性即時測驗</span><span class="score" id="g2score">0 / 5</span></div><div class="game-q" id="g2q"></div><div class="opts" id="g2opts"></div><div class="fb" id="g2fb"></div><div class="btnrow"><button class="btn ghost" id="g2next" style="display:none">下一題 →</button></div></div></div></section><section class="slide" data-slide="9" data-section="維持注意"><div class="slide-inner"><div class="kicker">23.4.3 / 23.4.5</div><h2 class="slide-title">酸價與過氧化價</h2><div class="grid2" style="margin-top:16px"><div class="card b"><div class="ic">🧪</div><div class="ct">酸價 AV / FFA</div><div class="cb">中和 1 g 油中游離脂肪酸所需 KOH mg → <strong>水解酸敗</strong>程度。油炸油常設 AV ≤ 2 mg KOH/g</div></div><div class="card a"><div class="ic">🫧</div><div class="ct">過氧化價 PV</div><div class="cb">每 kg 油的氫過氧化物毫當量 → <strong>初級氧化</strong>。KI 還原 ROOH 生碘,以硫代硫酸鈉滴定。PV>20 品質很差</div></div></div><div class="note" style="margin-top:14px"><strong>二級氧化</strong>指標：p-茴香胺價(醛,350nm)、TBARS(丙二醛,530nm)、共軛雙烯(232nm)、揮發物(hexanal)。<strong>Totox = p-茴香胺價 + 2×過氧化價</strong>。</div></div></section><section class="slide" data-slide="10" data-section="維持注意" data-game="g3"><div class="slide-inner"><div class="game no-nav" data-game="g3"><div class="game-head"><span class="tag a">小遊戲 ③</span><span class="gt">各『值』測什麼</span><span class="score" id="g3score">0 / 6</span></div><div class="game-q">把 6 個檢驗值分到「測不飽和度」「測鏈長/水解」或「測氧化」。</div><div class="pool" id="g3pool"></div><div class="buckets" id="g3buckets"></div><div class="fb" id="g3fb"></div><div class="btnrow"><button class="btn" id="g3check">檢查答案</button><button class="btn ghost" id="g3reset">重來</button></div></div></div></section><section class="slide" data-slide="11" data-section="維持注意"><div class="slide-inner"><div class="kicker">23.3 物理特性</div><h2 class="slide-title">不用試劑也能<span class='hi'>看出</span>很多</h2><div class="grid2" style="margin-top:16px"><div class="card b"><div class="ic">🔬</div><div class="ct">折射率 RI</div><div class="cb">隨不飽和度上升;可鑑別與測純度</div></div><div class="card a"><div class="ic">🌡️</div><div class="ct">熔點</div><div class="cb">毛細管/滑動/滴落熔點;反映固體脂與組成</div></div><div class="card g"><div class="ic">💨</div><div class="ct">發煙點</div><div class="cb">開始冒煙的溫度;<strong>FFA 越高、發煙點越低</strong></div></div><div class="card b"><div class="ic">🧈</div><div class="ct">固體脂含量 SFC</div><div class="cb">以脈衝 NMR 測固/液脂比例(連回 Ch10);決定塗抹性與口感</div></div></div></div></section><section class="slide" data-slide="12" data-section="維持注意" data-game="g4"><div class="slide-inner"><div class="game no-nav" data-game="g4"><div class="game-head"><span class="tag a">小遊戲 ④</span><span class="gt">碘價滴定流程排序</span><span class="score" id="g4score">— / 6</span></div><div class="game-q">用 ▲▼ 把碘價測定的 6 個步驟排成正確順序。</div><div class="sortlist" id="g4list"></div><div class="fb" id="g4fb"></div><div class="btnrow"><button class="btn" id="g4check">檢查順序</button><button class="btn ghost" id="g4reset">打亂重排</button></div></div></div></section><section class="slide" data-slide="13" data-section="維持注意"><div class="slide-inner"><div class="kicker">23.5 氧化安定性</div><h2 class="slide-title">預測油『撐得多久』</h2><div class="grid2" style="margin-top:16px"><div><ul class="clean"><li><strong>誘導期</strong>：抗氧化劑耗盡前氧化緩慢的時間,越長越安定</li><li><strong>OSI(油脂安定指數)</strong>：在 110/130°C 通空氣,測揮發酸使導電度急升的時間(<strong>Rancimat</strong>)</li><li><strong>氧消耗試驗</strong>(Oxipres/Oxitest):密閉測壓力下降,可用整顆食品</li><li>加速試驗快,但高溫路徑未必等於常溫,須對照真實貨架</li></ul></div><div class="note"><strong>用途：</strong>比較配方、抗氧化劑效果、包裝與儲存對保存期的影響。</div></div></div></section><section class="slide" data-slide="14" data-section="維持注意" data-game="g5"><div class="slide-inner"><div class="game no-nav" data-game="g5"><div class="game-head"><span class="tag a">小遊戲 ⑤</span><span class="gt">決策挑戰：選對檢驗</span><span class="score" id="g5score">0 / 5</span></div><div class="game-q" id="g5q"></div><div class="opts" id="g5opts"></div><div class="fb" id="g5fb"></div><div class="btnrow"><button class="btn ghost" id="g5next" style="display:none">下一題 →</button></div></div></div></section><section class="slide" data-slide="15" data-section="喚起行動" data-game="cmp"><div class="slide-inner"><div class="kicker">Table 23.3</div><h2 class="slide-title">油脂檢驗『值』一覽（點欄位排序）</h2><table class="cmp" id="cmpTable" style="margin-top:14px"><thead><tr><th data-k="v" data-t="s">檢驗值 <span class="ar">⇅</span></th><th data-k="t" data-t="s">測量目標 <span class="ar">⇅</span></th><th data-k="p" data-t="s">原理 <span class="ar">⇅</span></th><th data-k="m" data-t="s">數值意義 <span class="ar">⇅</span></th></tr></thead><tbody></tbody></table><div class="cap">整合自 Table 23.3。</div></div></section><section class="slide" data-slide="16" data-section="喚起行動" data-chart="iodine"><div class="slide-inner"><div class="kicker">23.4.1 數據</div><h2 class="slide-title">不同油脂的<span class='hi'>碘價</span></h2><div class="chartbox" style="height:52vh"><canvas id="chart_iodine"></canvas></div><div class="cap">整合自 Table 23.2:碘價反映不飽和度。椰子油最飽和(碘價低)、魚油最不飽和(碘價高)。</div></div></section><section class="slide" data-slide="17" data-section="喚起行動"><div class="slide-inner"><div class="kicker">23.6 脂肪酸組成</div><h2 class="slide-title">標示與健康的<span class='hi'>核心</span></h2><div class="grid2" style="margin-top:16px"><div class="card b"><div class="ic">🧬</div><div class="ct">脂肪酸 FAMEs</div><div class="cb">油脂轉成脂肪酸甲酯,以 <strong>GC</strong> 分離定量 → 飽和/不飽和/各脂肪酸%</div></div><div class="card a"><div class="ic">↩️</div><div class="ct">反式脂肪 trans</div><div class="cb">以 <strong>IR 966 cm⁻¹</strong> 或 GC 測;營養標示必填</div></div><div class="card g"><div class="ic">🧀</div><div class="ct">膽固醇/植物固醇</div><div class="cb">皂化後 TMS 衍生,以 GC 定量(營養標示)</div></div><div class="card b"><div class="ic">📊</div><div class="ct">發煙點 vs FFA</div><div class="cb">FFA 上升使發煙點下降,油炸油劣化的指標(見下頁圖)</div></div></div></div></section><section class="slide" data-slide="18" data-section="喚起行動" data-chart="smoke"><div class="slide-inner"><div class="kicker">23.3.3 數據</div><h2 class="slide-title">FFA 越高，<span class='hi'>發煙點</span>越低</h2><div class="chartbox" style="height:46vh"><canvas id="chart_smoke"></canvas></div><div class="cap">整合自 Fig 23.4(橄欖油):游離脂肪酸含量上升,發煙點明顯下降 → 油炸油劣化的警訊。</div></div></section><section class="slide" data-slide="19" data-section="喚起行動" data-game="g6"><div class="slide-inner"><div class="game no-nav" data-game="g6"><div class="game-head"><span class="tag a">小遊戲 ⑥</span><span class="gt">計算闖關：過氧化價</span><span class="score" id="g6score">未作答</span></div><div class="game-q">過氧化價滴定：檢液用 <b>S = 2.0 mL</b>、空白 <b>B = 0.1 mL</b> 之 <b>0.01 N</b> 硫代硫酸鈉；取樣 <b>W = 5 g</b>。求過氧化價(meq/kg)。公式：(S−B)×N/W×1000。</div><div class="btnrow"><input class="numin" id="g6in" type="number" step="any" placeholder="?"> <span style="font-weight:800;color:var(--ink)">meq/kg</span><button class="btn" id="g6check">對答案</button><button class="btn ghost" id="g6hint">提示</button></div><div class="fb" id="g6fb"></div></div></div></section><section class="slide" data-slide="20" data-section="喚起行動"><div class="slide-inner"><div class="kicker">重點整理</div><h2 class="slide-title">今天的五個關鍵</h2><div class="grid2" style="margin-top:18px"><ul class="clean"><li>油脂劣化三路：<strong>水解、氧化、聚合</strong>;氧化最關鍵</li><li><strong>碘價</strong>=不飽和度、<strong>皂化價</strong>=平均鏈長</li><li><strong>酸價/FFA</strong>=水解、<strong>過氧化價</strong>=初級氧化(會先升後降)</li></ul><ul class="clean"><li>二級氧化:p-茴香胺價、TBARS;<strong>Totox=p-AV+2PV</strong></li><li>安定性用 <strong>OSI(Rancimat)</strong>;脂肪酸/trans 用 GC、IR</li></ul></div></div></section><section class="slide" data-slide="21" data-section="喚起行動"><div class="slide-inner"><div class="kicker">自我檢核</div><h2 class="slide-title">今天結束，你應該會…</h2><ul class="checklist no-nav" id="selfcheck" style="margin-top:18px;max-width:980px"><li data-k><span class="bx">✓</span>說出油脂劣化的三條路徑與各自的檢驗</li><li data-k><span class="bx">✓</span>解釋碘價測不飽和度、皂化價測平均鏈長的原理</li><li data-k><span class="bx">✓</span>區分酸價(水解)與過氧化價(初級氧化)</li><li data-k><span class="bx">✓</span>說明為何過氧化價會先升後降、要搭配二級指標</li><li data-k><span class="bx">✓</span>舉出物理特性(折射率/熔點/發煙點/SFC)各反映什麼</li><li data-k><span class="bx">✓</span>說明 OSI/Rancimat 如何評估氧化安定性</li><li data-k><span class="bx">✓</span>用 (S−B)×N/W×1000 計算過氧化價</li><li data-k><span class="bx">✓</span>說出脂肪酸組成、trans、膽固醇的分析方法</li></ul><p class="subtitle" style="margin-top:12px">點一下打勾——確認自己真的會了。</p></div></section><section class="slide" data-slide="22" data-section="喚起行動" data-cover="1"><div class="slide-inner"><div class="cover"><div class="kicker">下一步 · NEXT</div><h1>把油脂特性<br><span style='color:var(--accent-2)'>用起來</span></h1><div class="en"></div><div class="meta">📌 課後練習：Study Questions(碘價/皂化價/過氧化價計算、Totox、OSI)<br>🔜 銜接：<strong>油脂分析 (Ch17)</strong>、<strong>NMR/SFC (Ch10)</strong>、<strong>GC (Ch14)</strong>、<strong>紅外 (Ch8)</strong><br>🧪 思考：你要知道油的『不飽和度、鏈長、還是新鮮度』?該選哪個值?要不要看二級氧化?</div><div style="margin-top:24px"><span class="pill">碘價</span><span class="pill">皂化價</span><span class="pill">過氧化價</span><span class="pill">OSI</span><span class="pill">脂肪酸/trans</span></div></div></div></section><script>window.CFG={"charts": {"iodine": {"type": "bar", "yTitle": "碘價 (g I₂ / 100 g)", "labels": ["椰子油", "棕櫚油", "豬脂", "橄欖油", "玉米油", "大豆油", "紅花油", "魚油"], "datasets": [{"label": "碘價", "data": [9, 50, 60, 85, 121, 128, 145, 175], "color": "#d9822b"}]}, "smoke": {"type": "line", "yTitle": "發煙點 (°C)", "zero": false, "labels": ["0.05", "0.1", "0.2", "0.4", "0.6", "0.8", "1.0"], "datasets": [{"label": "發煙點(橄欖油)", "data": [218, 205, 195, 177, 170, 165, 160], "color": "#1f6feb"}]}}, "bucket": {"g1": {"cats": ["物理特性", "化學特性"], "items": [{"t": "折射率 (RI)", "c": "物理特性"}, {"t": "熔點", "c": "物理特性"}, {"t": "發煙點", "c": "物理特性"}, {"t": "固體脂含量 (SFC)", "c": "物理特性"}, {"t": "碘價 (IV)", "c": "化學特性"}, {"t": "皂化價 (SV)", "c": "化學特性"}, {"t": "過氧化價 (PV)", "c": "化學特性"}, {"t": "TBARS (丙二醛)", "c": "化學特性"}], "ok": "🎉 全對！折射率/熔點/發煙點/SFC 是物理量;碘價/皂化價/過氧化價/TBARS 是化學量。", "tip": "提示：用儀器量『物理量』(溫度、折射、固液比)→物理;用反應/滴定/呈色→化學。"}, "g3": {"cats": ["測不飽和度", "測鏈長/水解", "測氧化"], "items": [{"t": "碘價(碘加成雙鍵)", "c": "測不飽和度"}, {"t": "共軛雙烯(UV 232 nm)", "c": "測不飽和度"}, {"t": "皂化價(平均分子量/鏈長)", "c": "測鏈長/水解"}, {"t": "酸價/FFA(水解出的游離脂肪酸)", "c": "測鏈長/水解"}, {"t": "過氧化價(初級·氫過氧化物)", "c": "測氧化"}, {"t": "TBARS(二級·丙二醛)", "c": "測氧化"}], "ok": "🎉 正確！碘價/CD 看雙鍵;皂化價/酸價看鏈長與水解;過氧化價/TBARS 看氧化。", "tip": "提示：跟『雙鍵』有關→不飽和度;跟『酯鍵/水解』→鏈長水解;跟『氫過氧化物/醛』→氧化。"}}, "mcq": {"g2": [{"q": "碘價(IV)反映油脂的什麼？", "o": ["鏈長", "不飽和度(雙鍵多寡)", "酸度", "水分"], "a": 1, "e": "碘加成到 C=C 雙鍵;碘價越高代表越不飽和。"}, {"q": "皂化價(SV)越小，代表脂肪酸鏈？", "o": ["越短", "越長", "越多雙鍵", "越氧化"], "a": 1, "e": "皂化價反映平均分子量;值越小代表平均鏈越長。"}, {"q": "酸價(AV)/游離脂肪酸(FFA)主要反映哪種劣化？", "o": ["氧化", "水解酸敗", "聚合", "結晶"], "a": 1, "e": "FFA 由酯鍵水解而來,酸價反映水解酸敗程度。"}, {"q": "過氧化價(PV)測的是？", "o": ["二級醛類", "初級氫過氧化物", "雙鍵", "游離脂肪酸"], "a": 1, "e": "PV 以碘滴定測氫過氧化物,是初級氧化指標。"}, {"q": "為什麼不能只靠過氧化價判斷油有沒有壞？", "o": ["太貴", "氫過氧化物會分解,PV 先升後降", "不準", "太慢"], "a": 1, "e": "PV 先升後降;須搭配 p-茴香胺價、TBARS 等二級指標。"}], "g5": [{"q": "想知道一瓶油『有多不飽和』(會不會易氧化)，測？", "o": ["酸價", "碘價", "水分", "顏色"], "a": 1, "e": "碘價反映不飽和度;越不飽和越易氧化。"}, {"q": "油炸油用久了想評估新鮮度，最常測？", "o": ["碘價", "酸價/FFA 與總極性物", "折射率", "熔點"], "a": 1, "e": "油炸劣化主要看 FFA/酸價、總極性物與聚合物。"}, {"q": "要比較兩種抗氧化劑哪個讓油更耐放，用？", "o": ["皂化價", "OSI/Rancimat 測誘導期", "碘價", "顏色"], "a": 1, "e": "OSI(Rancimat)測誘導期,誘導期越長越安定。"}, {"q": "要算油脂的總氧化程度(初級+二級)，用？", "o": ["只看 PV", "Totox = p-茴香胺價 + 2×過氧化價", "只看碘價", "只看酸價"], "a": 1, "e": "Totox 結合初級(PV)與二級(p-AV)指標反映總氧化。"}, {"q": "要做反式脂肪營養標示,常用的快速光譜法是？", "o": ["UV 280", "紅外 966 cm⁻¹", "螢光", "折射率"], "a": 1, "e": "反式雙鍵在 IR 966 cm⁻¹ 有吸收,可定 trans 含量。"}]}, "sort": {"g4": {"steps": ["精秤油樣,溶於適當溶劑", "加入過量 ICl,於暗處靜置使加成到雙鍵", "加碘化鉀,使剩餘 ICl 轉成游離碘", "以標準硫代硫酸鈉滴定游離碘(黃色將褪時加澱粉)", "繼續滴定至藍色消失為終點(另做空白)", "以 (B−S)×N×126.9/(W×1000)×100 算碘價"], "shuffle": [3, 0, 5, 1, 4, 2], "ok": "🎉 順序正確！秤樣溶解→加 ICl 暗反應→加 KI 釋碘→硫代硫酸鈉滴定→終點→計算。", "tip": "提示：先讓碘加成雙鍵,再把剩餘 ICl 變游離碘來滴定;藍色消失為終點。"}}, "calc": {"g6": {"answer": 3.8, "tol": 0.2, "ok": "🎉 正確！PV = (S−B)×N/W×1000 = (2.0−0.1)×0.01/5×1000 = 0.019/5×1000 = <b>3.8 meq/kg<\/b>。", "bad": "再算算：PV = (S−B)×N/W×1000 = (2.0−0.1)×0.01/5×1000。", "hint": "提示：(2.0−0.1)=1.9;1.9×0.01=0.019;0.019/5×1000 = 3.8 meq/kg。"}}, "cmp": {"cols": [{"k": "v"}, {"k": "t"}, {"k": "p"}, {"k": "m"}], "rows": [{"v": "碘價 IV", "t": "不飽和度", "p": "碘加成雙鍵", "m": "越高越不飽和"}, {"v": "皂化價 SV", "t": "平均鏈長", "p": "皂化所需 KOH", "m": "越小鏈越長"}, {"v": "酸價 AV/FFA", "t": "水解程度", "p": "中和游離脂肪酸", "m": "越高水解酸敗越多"}, {"v": "過氧化價 PV", "t": "初級氧化", "p": "碘滴定氫過氧化物", "m": "越高初級氧化越多(會先升後降)"}, {"v": "p-茴香胺價", "t": "二級氧化", "p": "醛類呈色 350 nm", "m": "與 PV 合算 Totox"}, {"v": "TBARS", "t": "二級氧化", "p": "丙二醛呈色 530 nm", "m": "越高油耗越嚴重"}]}};</script><script>
+var CFG=window.CFG||{};
+var slides=[].slice.call(document.querySelectorAll('.slide'));
+var total=slides.length,cur=0;
+var prog=document.getElementById('progress'),pageInfo=document.getElementById('pageInfo'),secTag=document.getElementById('section-tag');
+function show(i){
+  cur=Math.max(0,Math.min(total-1,i));
+  slides.forEach(function(s,k){s.classList.toggle('active',k===cur)});
+  prog.style.width=((cur+1)/total*100)+'%';
+  pageInfo.textContent=(cur+1)+' / '+total;
+  secTag.textContent='— '+(slides[cur].dataset.section||'')+' —';
+  var ch=slides[cur].dataset.chart; if(ch) initChart(ch);
+  var g=slides[cur].dataset.game; if(g) initGame(g);
+}
+function next(){show(cur+1)} function prev(){show(cur-1)}
+function toggleFs(){if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()}else{document.exitFullscreen&&document.exitFullscreen()}}
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next()}
+  else if(e.key==='ArrowLeft'){prev()}
+  else if(e.key==='f'||e.key==='F'){toggleFs()}
+});
+document.addEventListener('click',function(e){
+  if(e.target.closest('.no-nav')) return;
+  if(e.target.closest('button,input,select,textarea,a,.chip,.opt,.bucket')) return;
+  var x=e.clientX/window.innerWidth;
+  if(x>0.72) next(); else if(x<0.28) prev();
+});
+
+/* ---------- charts ---------- */
+var chartDone={};
+function initChart(id){
+  if(chartDone[id]||typeof Chart==='undefined'||!CFG.charts||!CFG.charts[id]) return; chartDone[id]=1;
+  Chart.defaults.font.family="'Noto Sans TC',sans-serif"; Chart.defaults.color='#48597a';
+  var c=CFG.charts[id];
+  var el=document.getElementById('chart_'+id); if(!el) return;
+  var ds=c.datasets.map(function(d){return {label:d.label,data:d.data,
+    backgroundColor:d.color||'#1f6feb',borderColor:d.color||'#1f6feb',borderRadius:5,
+    fill:(c.type==='line'?false:true),tension:.3}});
+  new Chart(el,{type:c.type||'bar',data:{labels:c.labels,datasets:ds},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:(c.datasets.length>1),position:'top'}},
+      scales:{y:{beginAtZero:(c.zero!==false),title:{display:!!c.yTitle,text:c.yTitle||''}}}}});
+}
+
+/* ---------- games ---------- */
+var gameDone={};
+function setScore(el,v){var e=document.getElementById(el);if(e)e.textContent=v}
+function fb(el,msg,type){var f=document.getElementById(el);if(!f)return;f.className='fb show '+type;f.innerHTML=msg}
+function initGame(g){
+  if(gameDone[g])return; gameDone[g]=1;
+  if(CFG.bucket&&CFG.bucket[g]) return initBucket(g);
+  if(CFG.mcq&&CFG.mcq[g]) return initMCQ(g);
+  if(CFG.sort&&CFG.sort[g]) return initSort(g);
+  if(CFG.calc&&CFG.calc[g]) return initCalc(g);
+  if(g==='cmp') return initCmp();
+}
+
+function initBucket(g){
+  var cfg=CFG.bucket[g];
+  var data=cfg.items.map(function(x){return {t:x.t,c:x.c,at:null}});
+  var cats=cfg.cats, N=data.length;
+  var pool=document.getElementById(g+'pool'), bk=document.getElementById(g+'buckets');
+  var sel=null;
+  bk.style.gridTemplateColumns='repeat('+cats.length+',1fr)';
+  function paint(){[].slice.call(pool.children).forEach(function(c){c.classList.toggle('sel',+c.dataset.i===sel)})}
+  function render(){
+    pool.innerHTML=''; bk.innerHTML='';
+    var placed={}; cats.forEach(function(c){placed[c]=[]});
+    data.forEach(function(d,i){if(d.at)placed[d.at].push(i)});
+    data.forEach(function(d,i){ if(d.at) return;
+      var c=document.createElement('div');c.className='chip';c.textContent=d.t;c.dataset.i=i;
+      c.onclick=function(){sel=(sel===i?null:i);paint()}; pool.appendChild(c);
+    });
+    cats.forEach(function(cat){
+      var b=document.createElement('div');b.className='bucket';b.innerHTML='<div class="bh">'+cat+'</div>';
+      placed[cat].forEach(function(i){
+        var c=document.createElement('div');c.className='chip';c.textContent=data[i].t;
+        c.onclick=function(){data[i].at=null;sel=null;render()}; b.appendChild(c);
+      });
+      b.onclick=function(e){ if(e.target!==b&&!e.target.classList.contains('bh'))return;
+        if(sel!=null){data[sel].at=cat;sel=null;render()} };
+      bk.appendChild(b);
+    });
+    paint();
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; data.forEach(function(d){if(d.at===d.c)ok++});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 全對！','good');
+    else fb(g+'fb','答對 '+ok+'/'+N+'。'+(cfg.tip||'再調整看看。'),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    data.forEach(function(d){d.at=null}); sel=null; render(); setScore(g+'score','0 / '+N);
+    var f=document.getElementById(g+'fb'); if(f) f.className='fb';
+  };
+}
+
+function initMCQ(g){
+  var DATA=CFG.mcq[g], nq=DATA.length, idx=0, score=0, locked=false;
+  var qEl=document.getElementById(g+'q'), opEl=document.getElementById(g+'opts'), nextBtn=document.getElementById(g+'next');
+  function render(){
+    locked=false; var d=DATA[idx];
+    qEl.innerHTML='<span style="color:var(--accent)">Q'+(idx+1)+'.</span> '+d.q;
+    opEl.innerHTML=''; var f=document.getElementById(g+'fb'); if(f)f.className='fb'; if(nextBtn)nextBtn.style.display='none';
+    d.o.forEach(function(t,i){
+      var o=document.createElement('div');o.className='opt';o.textContent=t;
+      o.onclick=function(){
+        if(locked)return; locked=true; var ok=(i===d.a);
+        if(ok){o.classList.add('ok');score++}else{o.classList.add('no');opEl.children[d.a].classList.add('ok')}
+        [].slice.call(opEl.children).forEach(function(c,k){if(k!==i&&k!==d.a)c.classList.add('dim')});
+        setScore(g+'score',score+' / '+nq);
+        var done=(idx>=DATA.length-1);
+        var msg=(ok?'✅ 答對！':'❌ 正解：'+d.o[d.a]+'。')+'<br>'+d.e+(done?'<br><b>完成！總分 '+score+'/'+nq+'</b>':'');
+        fb(g+'fb',msg,ok?'good':'bad');
+        if(nextBtn) nextBtn.style.display=done?'none':'inline-block';
+      };
+      opEl.appendChild(o);
+    });
+  }
+  if(nextBtn) nextBtn.onclick=function(){if(idx<DATA.length-1){idx++;render()}};
+  render();
+}
+
+function initSort(g){
+  var cfg=CFG.sort[g], steps=cfg.steps, N=steps.length;
+  var order=(cfg.shuffle||steps.map(function(_,i){return i})).slice();
+  var list=document.getElementById(g+'list');
+  function render(){
+    list.innerHTML='';
+    order.forEach(function(stepIdx,pos){
+      var row=document.createElement('div');row.className='sortrow';
+      row.innerHTML='<div class="idx">'+(pos+1)+'</div><div class="txt">'+steps[stepIdx]+'</div>';
+      var ud=document.createElement('div');ud.className='ud';
+      var up=document.createElement('button');up.textContent='▲';
+      up.onclick=function(){if(pos>0){var t=order[pos-1];order[pos-1]=order[pos];order[pos]=t;render()}};
+      var dn=document.createElement('button');dn.textContent='▼';
+      dn.onclick=function(){if(pos<order.length-1){var t=order[pos+1];order[pos+1]=order[pos];order[pos]=t;render()}};
+      ud.appendChild(up);ud.appendChild(dn);row.appendChild(ud);list.appendChild(row);
+    });
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; order.forEach(function(v,i){if(v===i)ok++});
+    [].slice.call(list.children).forEach(function(r,i){r.classList.toggle('ok',order[i]===i);r.classList.toggle('no',order[i]!==i)});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 順序完全正確！','good');
+    else fb(g+'fb','對了 '+ok+'/'+N+' 個位置。'+(cfg.tip||''),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    order=(cfg.shuffle||steps.map(function(_,i){return i})).slice().reverse(); render();
+    var f=document.getElementById(g+'fb'); if(f)f.className='fb'; setScore(g+'score','— / '+N);
+  };
+}
+
+function initCalc(g){
+  var cfg=CFG.calc[g];
+  document.getElementById(g+'check').onclick=function(){
+    var v=parseFloat(document.getElementById(g+'in').value);
+    if(isNaN(v)){fb(g+'fb','請先輸入一個數字。','info');return}
+    if(Math.abs(v-cfg.answer)<=(cfg.tol||0.05)){
+      setScore(g+'score','✓ 答對'); fb(g+'fb',cfg.ok||('🎉 正確！答案是 '+cfg.answer),'good');
+    } else { setScore(g+'score','再試一次'); fb(g+'fb',cfg.bad||'再算算看。','bad'); }
+  };
+  var hb=document.getElementById(g+'hint');
+  if(hb) hb.onclick=function(){fb(g+'fb',cfg.hint||'提示：對照公式逐步代入。','info')};
+}
+
+function stars(n){return '★★★★★'.slice(0,n)+'☆☆☆☆☆'.slice(0,5-n)}
+function initCmp(){
+  if(!CFG.cmp) return;
+  var cols=CFG.cmp.cols, rows=CFG.cmp.rows.slice(), dir={};
+  var tb=document.querySelector('#cmpTable tbody');
+  function draw(){ tb.innerHTML=''; rows.forEach(function(r){
+    var tr=document.createElement('tr');
+    tr.innerHTML=cols.map(function(c,ci){
+      var v=r[c.k];
+      if(c.star) return '<td style="color:var(--accent-2)">'+stars(v)+'</td>';
+      return '<td'+(ci===0?' class="c"':'')+'>'+v+'</td>';
+    }).join(''); tb.appendChild(tr); }); }
+  draw();
+  document.querySelectorAll('#cmpTable thead th').forEach(function(th){
+    th.onclick=function(){var k=th.dataset.k,t=th.dataset.t;dir[k]=!dir[k];
+      rows.sort(function(a,b){var x=a[k],y=b[k];
+        if(t==='n')return dir[k]?x-y:y-x;
+        return dir[k]?String(x).localeCompare(String(y),'zh-Hant'):String(y).localeCompare(String(x),'zh-Hant')});
+      draw();};
+  });
+}
+show(0);
+</script>
+<script>document.addEventListener('click',function(e){var li=e.target.closest('#selfcheck li');if(li)li.classList.toggle('done')});</script>
+</body></html>
