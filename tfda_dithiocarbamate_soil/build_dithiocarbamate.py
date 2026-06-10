@@ -46,7 +46,7 @@ FPD_SVG = """
  <!-- emission -->
  <g stroke="#7c3aed" stroke-width="2" opacity=".8">
   <line x1="165" y1="90" x2="230" y2="80"/><line x1="165" y1="100" x2="230" y2="100"/><line x1="165" y1="110" x2="230" y2="120"/></g>
- <text x="250" y="86" class="lbl">S 發出特定波長光</text>
+ <text x="195" y="54" text-anchor="middle" class="lbl">硫受激發、放出特定波長光</text>
  <!-- filter -->
  <rect x="300" y="72" width="40" height="56" rx="4" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
  <text x="320" y="150" text-anchor="middle" class="lblb" fill="#d9822b" font-size="12">325 nm</text>
@@ -56,7 +56,6 @@ FPD_SVG = """
  <rect x="430" y="76" width="110" height="48" rx="8" fill="#15233f"/>
  <text x="485" y="98" text-anchor="middle" fill="#fff" font-weight="800" font-size="12">光電倍增管</text>
  <text x="485" y="116" text-anchor="middle" fill="#cfe0f6" font-size="11">只記錄硫的訊號</text>
- <text x="280" y="216" text-anchor="middle" class="lbl">高選擇性 → 在複雜基質中專挑含硫的 CS₂(注意:FPD 對硫的反應非線性,標準曲線取面積『根號值』)</text>
 </svg>"""
 
 # ================================================ 引起動機 ================================================
@@ -97,7 +96,8 @@ add(ATT, dc.kt("裂解設計", "酸 + <span class='hi'>氯化亞錫</span>放出
     "CS₂ 易揮發,只取上部氣體即可,把不揮發的蔬果基質留在瓶裡、不汙染管柱。</div></div>")
 
 add(ATT, dc.kt("FPD 偵測", "只對<span class='hi'>含硫</span>化合物發亮") +
-    '<div class="svgwrap" style="margin-top:4px">' + FPD_SVG + '</div>')
+    '<div class="svgwrap" style="margin-top:4px">' + FPD_SVG + '</div>' +
+    '<div class="note" style="margin-top:8px"><strong>高選擇性</strong>讓 FPD 在複雜基質中專挑含硫的 CS₂;但 FPD 對硫的反應<strong>非線性</strong>，標準曲線須取波峰面積的<strong>『根號值』</strong>才線性。</div>')
 
 add(ATT, dc.game_mcq_inner("g2","小遊戲 ②","CS₂ 法即時測驗", 5), ' data-game="g2"')
 
