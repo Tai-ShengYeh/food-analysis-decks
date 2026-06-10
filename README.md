@@ -1,6 +1,6 @@
 # 食品分析 · 互動教學投影片（Nielsen's Food Analysis ＋ 食藥署公告檢驗方法）
 
-17 份互動式 HTML 教學 deck —— **13 章 Nielsen《食品分析》** ＋ **4 項衛福部食藥署公告／建議檢驗方法**。每份為 3 小時課程、淺色學術風，各含 **6 個嵌入式形成性評量小遊戲**（拖放配對、選擇題、排序、計算、可排序比較表、互動圖表）。單一 HTML、可離線、跨裝置（手機／平板／桌機）。
+18 份互動式 HTML 教學 deck —— **13 章 Nielsen《食品分析》** ＋ **5 項衛福部食藥署公告／建議檢驗方法**。每份為 3 小時課程、淺色學術風，各含 **6 個嵌入式形成性評量小遊戲**（拖放配對、選擇題、排序、計算、可排序比較表、互動圖表）。單一 HTML、可離線、跨裝置（手機／平板／桌機）。
 
 🔗 **線上入口（九宮格）**：<https://tai-shengyeh.github.io/food-analysis-decks/>
 
@@ -24,18 +24,19 @@
 | 20 | 維他命分析 Vitamin Analysis | [開啟 →](https://tai-shengyeh.github.io/food-analysis-decks/ch20_vitamin_soil/) |
 | 21 | 礦物質分析 Mineral Analysis | [開啟 →](https://tai-shengyeh.github.io/food-analysis-decks/ch21_mineral_soil/) |
 
-## 二、食藥署公告檢驗方法 · 食品安全檢測（4 項）
+## 二、食藥署公告檢驗方法 · 食品安全檢測（5 項）
 
 | 方法代號 | 主題 | 核心技術 | 線上連結 |
 |---|---|---|---|
 | MOHWA0030 | 食品中甜味劑（13 品項） | LC-MS/MS · ESI · MRM | [開啟 →](https://tai-shengyeh.github.io/food-analysis-decks/tfda_sweeteners_soil/) |
 | MOHWA0013 | 食品中二氧化硫 | 通氣蒸餾 ＋ 鹼滴定（Monier-Williams） | [開啟 →](https://tai-shengyeh.github.io/food-analysis-decks/tfda_so2_soil/) |
+| TFDAA0063 | 食品中二氧化硫（GC-MS 法） | 頂空進樣 · GC-MS · SIM · 內標法 | [開啟 →](https://tai-shengyeh.github.io/food-analysis-decks/tfda_so2_gcms_soil/) |
 | TFDAA0086 | 食品中硼酸 | 薑黃素呈色 · 550 nm 分光光度 | [開啟 →](https://tai-shengyeh.github.io/food-analysis-decks/tfda_boric_soil/) |
 | MOHWV0036 | 四環素類動物用藥殘留（7 品項） | LC-MS/MS · ESI · MRM · EDTA 螯合萃取 | [開啟 →](https://tai-shengyeh.github.io/food-analysis-decks/tfda_tetracycline_soil/) |
 
 > 依衛福部食藥署公告／建議檢驗方法之原理與流程編寫，為原創教學素材。
 
-**合計：17 份 deck · 約 471 頁 · 102 個小遊戲。**
+**合計：18 份 deck · 約 493 頁 · 108 個小遊戲。**
 
 ## 三、光譜系列 Ch6–8（附帶鏡像）
 
