@@ -1,12 +1,12 @@
 # 食品分析 · 互動教學投影片（Nielsen's Food Analysis ＋ 食藥署公告檢驗方法）
 
-16 份互動式 HTML 教學 deck —— **12 章 Nielsen《食品分析》** ＋ **4 項衛福部食藥署公告／建議檢驗方法**。每份為 3 小時課程、淺色學術風，各含 **6 個嵌入式形成性評量小遊戲**（拖放配對、選擇題、排序、計算、可排序比較表、互動圖表）。單一 HTML、可離線、跨裝置（手機／平板／桌機）。
+17 份互動式 HTML 教學 deck —— **13 章 Nielsen《食品分析》** ＋ **4 項衛福部食藥署公告／建議檢驗方法**。每份為 3 小時課程、淺色學術風，各含 **6 個嵌入式形成性評量小遊戲**（拖放配對、選擇題、排序、計算、可排序比較表、互動圖表）。單一 HTML、可離線、跨裝置（手機／平板／桌機）。
 
 🔗 **線上入口（九宮格）**：<https://tai-shengyeh.github.io/food-analysis-decks/>
 
 ---
 
-## 一、Nielsen《食品分析》章節（12 章）
+## 一、Nielsen《食品分析》章節（13 章）
 
 | 章 | 主題 | 線上連結 |
 |---|---|---|
@@ -21,6 +21,7 @@
 | 17 | 油脂分析 Fat Analysis | [開啟 →](https://tai-shengyeh.github.io/food-analysis-decks/ch17_fat_soil/) |
 | 18 | 蛋白質分析 Protein Analysis | [開啟 →](https://tai-shengyeh.github.io/food-analysis-decks/ch18_protein_soil/) |
 | 19 | 碳水化合物分析 Carbohydrate Analysis | [開啟 →](https://tai-shengyeh.github.io/food-analysis-decks/ch19_carb_soil/) |
+| 20 | 維他命分析 Vitamin Analysis | [開啟 →](https://tai-shengyeh.github.io/food-analysis-decks/ch20_vitamin_soil/) |
 | 21 | 礦物質分析 Mineral Analysis | [開啟 →](https://tai-shengyeh.github.io/food-analysis-decks/ch21_mineral_soil/) |
 
 ## 二、食藥署公告檢驗方法 · 食品安全檢測（4 項）
@@ -34,7 +35,7 @@
 
 > 依衛福部食藥署公告／建議檢驗方法之原理與流程編寫，為原創教學素材。
 
-**合計：16 份 deck · 約 447 頁 · 96 個小遊戲。**
+**合計：17 份 deck · 約 471 頁 · 102 個小遊戲。**
 
 ## 三、光譜系列 Ch6–8（附帶鏡像）
 
