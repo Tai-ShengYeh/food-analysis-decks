@@ -122,15 +122,40 @@ add(MOT, dc.kt("11.2.1 三大功能", "質譜儀的<span class='hi'>骨架</span
     '<p class="subtitle" style="text-align:center;margin-top:8px">不論氣態、液態或固態，樣品都要先變成<strong>氣相離子</strong>，' +
     "才能在高真空中被電磁場依 m/z 分離。</p>")
 
+MS_SPECTRUM_SVG = """
+<svg viewBox="0 0 540 372">
+ <text x="300" y="22" text-anchor="middle" class="lblb" font-size="15">丁烷的 EI 質譜：峰的位置 = m/z、高度 = 相對強度</text>
+ <line x1="64" y1="316" x2="64" y2="48" stroke="#48597a" stroke-width="1.6"/>
+ <line x1="64" y1="316" x2="516" y2="316" stroke="#48597a" stroke-width="1.6"/>
+ <g font-size="12" fill="#8493ad">
+  <line x1="60" y1="316" x2="64" y2="316" stroke="#8493ad"/><text x="56" y="320" text-anchor="end">0</text>
+  <line x1="60" y1="183" x2="64" y2="183" stroke="#8493ad"/><text x="56" y="187" text-anchor="end">50</text>
+  <line x1="60" y1="50" x2="64" y2="50" stroke="#8493ad"/><text x="56" y="54" text-anchor="end">100</text>
+ </g>
+ <text x="20" y="183" text-anchor="middle" class="lbl" transform="rotate(-90 20 183)">相對強度 (%)</text>
+ <g stroke="#d9822b" stroke-width="3.4" stroke-linecap="round">
+  <line x1="166" y1="316" x2="166" y2="290"/>
+  <line x1="261" y1="316" x2="261" y2="230"/>
+  <line x1="356" y1="316" x2="356" y2="50"/>
+  <line x1="450" y1="316" x2="450" y2="303"/>
+  <line x1="457" y1="316" x2="457" y2="235"/>
+ </g>
+ <g font-size="12" fill="#48597a" text-anchor="middle">
+  <text x="166" y="334">15</text><text x="261" y="334">29</text><text x="356" y="334">43</text><text x="457" y="334">58</text>
+ </g>
+ <text x="300" y="358" text-anchor="middle" class="lbl">m/z</text>
+ <text x="356" y="42" text-anchor="middle" class="lblb" fill="#d9822b" font-size="13">43 基峰</text>
+ <text x="474" y="228" text-anchor="start" class="lblb" fill="#1f6feb" font-size="12">58 分子離子 M⁺·</text>
+</svg>"""
+
 add(MOT, dc.kt("11.3 判讀基礎", "質譜圖怎麼看：<span class='hi'>基峰</span>與<span class='hi'>分子離子</span>") +
-    '<div class="grid2-1" style="margin-top:8px"><div>' +
-    dc.chart_inner("spectrum", "", "丁烷的 EI 質譜(示意)：x 軸 m/z、y 軸相對強度。基峰 m/z 43=100%，分子離子 m/z 58。",
-        kicker="", height="44vh") + '</div><div><ul class="clean">' +
+    '<div class="grid2-1" style="margin-top:8px"><div class="svgwrap">' + MS_SPECTRUM_SVG + '</div><div><ul class="clean">' +
     "<li><strong>基峰(base peak)</strong>：強度最高的峰，設為 100%</li>" +
     "<li><strong>分子(前驅)離子 M⁺•</strong>：完整分子失去一個電子，質量＝分子量</li>" +
     "<li><strong>子離子(碎片)</strong>：M⁺• 進一步裂解的產物</li>" +
-    "<li>丁烷(58)：基峰 43、另有 29、15；甲醇(32)：基峰 31</li>" +
-    '</ul></div></div>', ' data-chart="spectrum"')
+    "<li>丁烷(58)：基峰 m/z 43、另有 29、15；甲醇(32)：基峰 31</li>" +
+    "<li>質譜的峰是<strong>細線</strong>(位置=質量、高度=強度)，不是寬長條</li>" +
+    '</ul></div></div>')
 
 add(MOT, dc.game_bucket_inner("g1","小遊戲 ①","軟游離 vs 硬游離", 8,
     "把 8 個敘述分到「硬游離(多碎片)」或「軟游離(少碎片)」。"), ' data-game="g1"')
@@ -245,9 +270,6 @@ add(ACT, dc.cover("下一步 · NEXT",
 # ================================================ CFG ================================================
 CFG = {
   "charts": {
-    "spectrum": {"type":"bar","yTitle":"相對強度 (%)","zero":True,
-      "labels":["15","29","43","57","58"],
-      "datasets":[{"label":"丁烷 EI 質譜","data":[10,32,100,5,30],"color":"#d9822b"}]},
     "resolution": {"type":"bar","yTitle":"解析度 log₁₀(R)",
       "labels":["四極桿","離子阱","TOF","Orbitrap","FT-ICR"],
       "datasets":[{"label":"log₁₀(解析度)","data":[2.7,3.0,4.5,5.5,6.5],"color":"#1f6feb"}]}
