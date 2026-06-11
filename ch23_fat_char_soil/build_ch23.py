@@ -44,7 +44,9 @@ TAG_SVG = """
   <line x1="120" y1="80" x2="200" y2="80" stroke="#48597a" stroke-width="2.4"/>
   <text x="150" y="74" class="lbl">酯鍵</text>
   <line x1="200" y1="80" x2="430" y2="80" stroke="#d9822b" stroke-width="3"/>
-  <path d="M280 80 l14 -10 M300 80 l14 -10" stroke="#1f6feb" stroke-width="2.4"/>
+  <!-- one C=C double bond: two parallel lines along the chain, highlighted (what 碘價 counts) -->
+  <line x1="290" y1="80" x2="332" y2="80" stroke="#1f6feb" stroke-width="2.8"/>
+  <line x1="290" y1="86" x2="332" y2="86" stroke="#1f6feb" stroke-width="2.8"/>
   <text x="360" y="74" text-anchor="middle" class="lbl">脂肪酸鏈(含 C=C 雙鍵)</text>
   <line x1="120" y1="130" x2="430" y2="130" stroke="#d9822b" stroke-width="3"/>
   <line x1="120" y1="180" x2="430" y2="180" stroke="#d9822b" stroke-width="3"/>
