@@ -1,6 +1,6 @@
 # 食品分析 · 互動教學投影片（Nielsen's Food Analysis ＋ 食藥署公告檢驗方法）
 
-22 份互動式 HTML 教學 deck —— **15 章 Nielsen《食品分析》** ＋ **7 項衛福部食藥署公告／建議檢驗方法**。每份為 3 小時課程、淺色學術風，各含 **6 個嵌入式形成性評量小遊戲**（拖放配對、選擇題、排序、計算、可排序比較表、互動圖表）。單一 HTML、可離線、跨裝置（手機／平板／桌機）。
+23 份互動式 HTML 教學 deck —— **15 章 Nielsen《食品分析》** ＋ **8 項衛福部食藥署公告／建議檢驗方法**。每份為 3 小時課程、淺色學術風，各含 **6 個嵌入式形成性評量小遊戲**（拖放配對、選擇題、排序、計算、可排序比較表、互動圖表）。單一 HTML、可離線、跨裝置（手機／平板／桌機）。
 
 🔗 **線上入口（九宮格）**：<https://tai-shengyeh.github.io/food-analysis-decks/>
 
@@ -26,7 +26,7 @@
 | 22 | pH 與可滴定酸度 pH & Titratable Acidity | [開啟 →](https://tai-shengyeh.github.io/food-analysis-decks/ch22_acidity_soil/) |
 | 23 | 油脂特性分析 Fat Characterization | [開啟 →](https://tai-shengyeh.github.io/food-analysis-decks/ch23_fat_char_soil/) |
 
-## 二、食藥署公告檢驗方法 · 食品安全檢測（7 項）
+## 二、食藥署公告檢驗方法 · 食品安全檢測（8 項）
 
 | 方法代號 | 主題 | 核心技術 | 線上連結 |
 |---|---|---|---|
@@ -37,10 +37,13 @@
 | MOHWV0036 | 四環素類動物用藥殘留（7 品項） | LC-MS/MS · ESI · MRM · EDTA 螯合萃取 | [開啟 →](https://tai-shengyeh.github.io/food-analysis-decks/tfda_tetracycline_soil/) |
 | MOHWP0054 | 二硫代胺基甲酸鹽類殺菌劑 | 共同產物 CS₂ · 頂空 GC-FPD · 硫選擇 | [開啟 →](https://tai-shengyeh.github.io/food-analysis-decks/tfda_dithiocarbamate_soil/) |
 | TFDAP0007 | 農藥多重殘留分析（六）（32 項） | QuEChERS · LC-MS/MS · MRM · 三類 dSPE | [開啟 →](https://tai-shengyeh.github.io/food-analysis-decks/tfda_pesticide6_soil/) |
+| TFDAF0032 | 茶葉中多重元素（產地鑑別） | ICP-MS · 14 元素指紋 · PCA／LDA 互動 | [開啟 →](https://tai-shengyeh.github.io/food-analysis-decks/tea_multielement_soil/) |
 
 > 依衛福部食藥署公告／建議檢驗方法之原理與流程編寫，為原創教學素材。
 
-**合計：22 份 deck · 約 576 頁 · 132 個小遊戲。**
+**合計：23 份 deck · 約 599 頁 · 134 個小遊戲與互動圖表。**
+
+> 第 8 項（茶葉中多重元素 TFDAF0032）為深色主題的進階變體：以 ICP-MS 14 元素指紋＋**真實 PCA／LDA 互動**（可切換元素子集即時重算正確率）示範產地鑑別，依蔡承祥等 2021《台灣農業研究》研究編寫。
 
 ## 三、光譜系列 Ch6–8（附帶鏡像）
 
