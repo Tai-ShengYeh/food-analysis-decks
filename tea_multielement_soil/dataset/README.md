@@ -42,15 +42,32 @@ python tea_origin_pca_demo.py
 
 ---
 
-## 2. 真實、可下載的替代資料集（建議學生動手練）
+## 2. 真實、可引用的替代資料集（紅茶產地，本資料夾已附 CSV）
 
-茶葉產地的**逐筆**開放資料幾乎不存在（多為 "data on request"）。若要用**真實可下載**的資料練同一套手法（元素 × 樣本的分類），最佳選擇：
+茶葉產地的**逐筆**開放資料幾乎不存在（多為 "data on request"），但有 open-access 論文**內嵌了完整、有國別標籤的元素表**。本資料夾已把其中兩份整理成可直接讀的 CSV：
 
-**蜂蜜 ICP-OES 元素資料集** — Mendeley Data `tt6pp6pbpk`（**CC0 公眾領域**）
-- 429 樣本 × 12 元素，標籤 pure / syrup / adulterated（+ 花種 + region）
-- 原論文：Liu et al. 2021, *Food Chemistry* 343:128455
-- 與茶葉案例**化學計量完全同構**（都是「元素濃度表 → 標準化 → PCA / PLS-DA 分類」）
-- 注意：是 ICP-OES（非 ICP-MS）、是蜂蜜（非茶）；教「機制」一流，講「茶」時要誠實標註
+| 檔案 | 來源 | 內容 | 主要用途 |
+|------|------|------|----------|
+| `blacktea_7country_products.csv` | [B] 2021 | **20 個真實茶樣** × 8 元素，7 國（日/尼泊爾/肯亞/伊朗/斯里蘭卡/中國/印度）| **PCA**（真實點、無重建）|
+| `blacktea_4origin_reconstructed.csv` | [A] 2016 | 43 筆 × 13 元素，4 產地（中/印/錫蘭/肯亞）| **多類 PLS-DA**（重建自各產地 mean±SD）|
+| `tea_real_pca_demo.py` | — | 產生上兩個 CSV + 跑 PCA + 多類 PLS-DA(LOO-CV) | 一鍵重現 |
 
-> 教學設計建議（hybrid）：用**蜂蜜 CC0** 教 PCA/PLS-DA 的「機制與手感」（真實、可下載），
-> 用**本茶葉重建資料 + Tsai 2021 真實 PCA 結果**講「茶葉產地判別為何這樣做、為何有效」。
+**執行**：`python tea_real_pca_demo.py`
+
+**實跑結果（已驗證）**：
+- **[B] 20 個真實茶樣 PCA**：PC1 **31.5%** / PC2 **24.8%**（PC1+2＝56.3%）→ **幾乎重現論文自報的 PC1 29.96% / PC2 22.52%**，證明是真資料、流程正確（很好的可信度教學點）。
+- **[A] 4 國多類 PLS-DA（3 成分, LOO-CV）＝ 88.4%**：Ceylon 100%、India 94%、China 75%、Kenya 75%（China↔India/Kenya 互混 → 真實的「分類不總是滿分」）。
+
+**來源（皆 open-access，數值逐欄抄自論文內嵌表格，非臆造）**：
+- [A] Brzezicha-Cirocka et al. 2016, *Biol Trace Elem Res* — 紅茶 4 產地 14 元素（FAAS）。Table 4 各產地 mean±SD。**PMC5344953**。
+- [B] "Bioelements in black teas" 2021 — 紅茶 7 國 20 產品 8 元素（FAAS）。Table 1 逐產品值；論文自報 PCA。**PMC8512582**。
+
+**蜂蜜 CC0**（唯一「免抄、直接下載」的逐筆集）— Mendeley `tt6pp6pbpk`（**CC0 公眾領域**），429×12，pure/syrup/adulterated；原論文 Liu et al. 2021 *Food Chemistry* 343:128455。化學計量同構，教「機制」一流。
+
+> ⚠️ **誠實標註**：
+> - 技術是 **FAAS（非 ICP-MS）**；但「標準化→PCA→PLS-DA→LOO」流程與 ICP-MS 完全相同。
+> - `blacktea_4origin_reconstructed.csv` 是**重建**（依各產地 mean±SD 模擬逐筆，種子 2026 可重現）、非原始逐筆；`blacktea_7country_products.csv` 是 **20 個真實產品的逐樣平均值（無重建）**。
+> - 茶種為紅茶（非台灣烏龍）；講台灣案例時要說明。
+> - 台灣專屬的開放茶葉元素資料集**確認不存在**（Tsai 2021 只摘要開放、無可下載資料）。
+
+> 教學設計建議（hybrid）：用 **[B] 20 真實紅茶** 教 PCA「真實手感」、**[A] 4 國重建** 教多類 PLS-DA、**Tsai 2021 重建＋互動切換**講台灣產地與特徵選擇、**蜂蜜 CC0** 當免抄即跑的後備。
