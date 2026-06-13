@@ -1,0 +1,112 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>資料集 · 五種機器學習分類法（茶葉產地）</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0e1512;--surface:#1a241e;--surface-2:#13201a;--ink:#ecf4ea;--ink-2:#b6c8b4;--ink-3:#83977f;
+  --line:#2b3c32;--accent:#5fd07f;--accent-2:#e7ad4d;--bad:#ef7373}
+html,body{font-size:17px}
+body{font-family:"Noto Sans TC",system-ui,sans-serif;color:var(--ink);line-height:1.7;
+  background:radial-gradient(900px 600px at 88% -10%,rgba(231,173,77,.08),transparent 60%),
+    radial-gradient(900px 620px at 4% 110%,rgba(95,208,127,.08),transparent 60%),var(--bg);
+  min-height:100vh;padding:40px 18px 70px}
+.wrap{max-width:880px;margin:0 auto}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.kick{font-family:"JetBrains Mono",monospace;color:var(--accent-2);font-weight:700;letter-spacing:.14em;
+  font-size:.78rem;text-transform:uppercase}
+h1{font-size:clamp(1.5rem,4vw,2.3rem);font-weight:900;margin:6px 0 4px;letter-spacing:-.01em}
+.sub{color:var(--ink-2);margin-bottom:8px}
+.back{display:inline-block;margin-bottom:18px;font-family:"JetBrains Mono",monospace;font-size:.82rem;color:var(--ink-3)}
+h2{font-size:clamp(1.15rem,2.6vw,1.5rem);font-weight:900;margin:30px 0 10px;color:#fff}
+h2 .n{color:var(--accent)}
+p{color:var(--ink-2)}
+.files{display:grid;gap:13px;margin:16px 0}
+.file{background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--accent-2);
+  border-radius:14px;padding:15px 18px}
+.file .fn{font-family:"JetBrains Mono",monospace;font-weight:800;color:var(--accent);font-size:clamp(.92rem,1.6vw,1.08rem);
+  word-break:break-all}
+.file .fd{color:var(--ink-2);font-size:.92rem;margin:5px 0 9px}
+.file .dl{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:.8rem;font-weight:700;
+  background:rgba(95,208,127,.14);color:var(--accent);border:1px solid var(--line);border-radius:999px;padding:5px 13px}
+pre{background:#0b110d;border:1px solid var(--line);border-radius:12px;padding:14px 16px;overflow-x:auto;
+  font-family:"JetBrains Mono",monospace;font-size:clamp(.78rem,1.4vw,.92rem);line-height:1.65;color:#d6e8d2;margin:12px 0}
+pre .c{color:#6f8472}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:clamp(.82rem,1.5vw,.96rem)}
+th,td{padding:8px 12px;border-bottom:1px solid var(--line);text-align:center}
+th{color:var(--accent-2);font-weight:800}
+td.m{font-family:"JetBrains Mono",monospace;color:var(--accent);font-weight:700}
+.note{background:rgba(231,173,77,.1);border:1px solid var(--line);border-left:3px solid var(--accent-2);
+  border-radius:12px;padding:13px 16px;color:var(--ink);font-size:.92rem;margin:14px 0}
+.btnrow{display:flex;gap:12px;flex-wrap:wrap;margin:18px 0}
+.btn{display:inline-block;font-weight:800;border-radius:999px;padding:10px 20px;font-size:.92rem}
+.btn.solid{background:var(--accent);color:#0a140d}.btn.ghost{border:1.5px solid var(--accent);color:var(--accent)}
+.foot{margin-top:34px;padding-top:16px;border-top:1px solid var(--line);color:var(--ink-3);font-size:.82rem;line-height:1.7}
+</style></head><body><div class="wrap">
+
+<a class="back" href="index.html">← 回投影片</a>
+<div class="kick">Dataset · 教學資料集</div>
+<h1>五種機器學習分類法 · 資料集</h1>
+<div class="sub">搭配「以茶葉多重元素判別產地（LDA／Ridge／RF／Boosting／SVM）」投影片。下載即可在電腦上實跑、重現投影片裡的數字。</div>
+
+<h2><span class="n">①</span> 檔案清單（點即下載）</h2>
+<div class="files">
+  <div class="file">
+    <div class="fn"><a href="tea_five_models_demo.py">tea_five_models_demo.py</a></div>
+    <div class="fd">五種模型一起跑：標準化 ＋ 留一法（LOO-CV），輸出每個模型的 accuracy／precision／recall。<b>投影片數字的來源</b>，可重現。</div>
+    <a class="dl" href="tea_five_models_demo.py" download>⬇ 下載 .py</a>
+  </div>
+  <div class="file">
+    <div class="fn"><a href="tea_origin_teaching.csv">tea_origin_teaching.csv</a></div>
+    <div class="fd">20 個茶樣 × 21 個元素 ＋ 二分標籤（Taiwan／Non-Taiwan）。<b>教學重建資料</b>（見下方說明）。</div>
+    <a class="dl" href="tea_origin_teaching.csv" download>⬇ 下載 .csv</a>
+  </div>
+  <div class="file">
+    <div class="fn"><a href="five_models_scores.json">five_models_scores.json</a></div>
+    <div class="fd">五模型的實跑結果（投影片長條圖內嵌用）。</div>
+    <a class="dl" href="five_models_scores.json" download>⬇ 下載 .json</a>
+  </div>
+  <div class="file">
+    <div class="fn"><a href="README.md">README.md</a></div>
+    <div class="fd">資料說明、來源與授權標註。</div>
+    <a class="dl" href="README.md" download>⬇ 下載說明</a>
+  </div>
+</div>
+<div class="btnrow">
+  <a class="btn solid" href="https://github.com/Tai-ShengYeh/food-analysis-decks/tree/main/ml_five_models_soil/dataset">在 GitHub 瀏覽全部 ↗</a>
+  <a class="btn ghost" href="https://github.com/Tai-ShengYeh/food-analysis-decks/archive/refs/heads/main.zip">下載整包 ZIP ↗</a>
+</div>
+
+<h2><span class="n">②</span> 怎麼跑（初學者也 OK）</h2>
+<p>先裝好 Python（建議 3.12）與套件，再執行 demo。第一次用 Python？可參考
+<a href="https://tai-shengyeh.github.io/spectraview/#install">SpectraView 的「零基礎安裝」步驟</a>（用 winget 裝 git 與 Python 3.12）。</p>
+<pre><span class="c"># 1) 安裝套件（只需一次）</span>
+pip install scikit-learn pandas numpy
+
+<span class="c"># 2) 進到 dataset 資料夾後執行</span>
+python tea_five_models_demo.py</pre>
+<p>終端機會印出五個模型的正確率／精確率／召回率，並更新 <span style="font-family:'JetBrains Mono',monospace">five_models_scores.json</span>。</p>
+
+<h2><span class="n">③</span> 實跑結果（留一法 LOO-CV · 微量元素 T13）</h2>
+<table>
+  <thead><tr><th>模型</th><th>accuracy</th><th>precision</th><th>recall</th></tr></thead>
+  <tbody>
+    <tr><td>LDA</td><td class="m">95.0%</td><td>96.2%</td><td>93.8%</td></tr>
+    <tr><td>Ridge</td><td class="m">100.0%</td><td>100.0%</td><td>100.0%</td></tr>
+    <tr><td>Random Forest</td><td class="m">95.0%</td><td>96.2%</td><td>93.8%</td></tr>
+    <tr><td>Boosting</td><td class="m" style="color:var(--bad)">85.0%</td><td>90.0%</td><td>81.2%</td></tr>
+    <tr><td>SVM</td><td class="m">100.0%</td><td>100.0%</td><td>100.0%</td></tr>
+  </tbody>
+</table>
+<p style="font-size:.9rem">反直覺教學點：小資料（n=20）上最「高級」的 Boosting 反而最低，樸素的 Ridge／SVM 滿分——集成樹易過擬合、線性模型反而最穩。</p>
+
+<div class="note">⚠️ <b>資料性質（請對學生講清楚）</b>：<span style="font-family:'JetBrains Mono',monospace">tea_origin_teaching.csv</span> 為
+<b>教學重建資料</b>——依蔡承祥等（2021）《以元素特徵區別台灣茶葉與國外茶葉之初步研究，台灣農業研究 70(4):231–242》各國平均值與分布以亂數模擬（固定種子、可重現），<b>非原始逐筆量測值</b>，僅供教學實跑、不可當真實數據引用。真實可下載的同構替代資料（紅茶開放資料、蜂蜜 ICP-OES CC0）見 README。</div>
+
+<div class="foot">
+© 葉泰聖（Tai-Sheng Yeh）· 食品分析教學素材 ·
+<a href="index.html">回投影片</a> ·
+<a href="https://tai-shengyeh.github.io/">食品科學教學課程入口</a>
+</div>
+
+</div></body></html>
