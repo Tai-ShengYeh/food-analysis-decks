@@ -123,24 +123,10 @@ dc.CSS = dc.CSS + DARK
 dc.JS = dc.JS.replace(
     "Chart.defaults.color='#48597a';",
     "Chart.defaults.color='#b6c8b4';Chart.defaults.borderColor='rgba(255,255,255,.12)';")
-# Touch-swipe navigation for phones (appended to THIS deck's engine copy only).
-# Horizontal swipe = prev/next; vertical scroll untouched; skips interactive/scrollable areas.
-MOBILE_JS = r"""
-;(function(){
-  var x0=0,y0=0,t0=0,track=false;
-  document.addEventListener('touchstart',function(e){
-    if(e.touches.length>1){track=false;return;}
-    var t=e.changedTouches[0]; x0=t.clientX; y0=t.clientY; t0=Date.now(); track=true;
-  },{passive:true});
-  document.addEventListener('touchend',function(e){
-    if(!track) return; track=false;
-    if(e.target.closest('.no-nav,button,input,select,textarea,a,.chip,.opt,.bucket,.code,table,.owrap,.checklist')) return;
-    var t=e.changedTouches[0], dx=t.clientX-x0, dy=t.clientY-y0, dt=Date.now()-t0;
-    if(dt<700 && Math.abs(dx)>48 && Math.abs(dx)>Math.abs(dy)*1.5){ if(dx<0) next(); else prev(); }
-  },{passive:true});
-})();
-"""
-dc.JS = dc.JS + MOBILE_JS
+# NOTE: touch-swipe navigation now lives in the shared soil_deck_common.py engine
+# (added 2026-06-13), so we no longer append our own here — doing both would attach
+# two touchend listeners and skip 2 slides per swipe. The DARK @media CSS above stays
+# (it is more tailored than the engine's generic mobile block: .owrap / .grid5 / .code).
 
 # ============================================================ Python syntax highlighter
 # Single-pass tokeniser: strings + keywords in ONE re.sub so the keyword pass never
