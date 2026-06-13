@@ -1,0 +1,1 @@
+{"LDA": {"acc": 95.0, "precision": 96.2, "recall": 93.8}, "Ridge": {"acc": 100.0, "precision": 100.0, "recall": 100.0}, "Random Forest": {"acc": 95.0, "precision": 96.2, "recall": 93.8}, "Boosting": {"acc": 85.0, "precision": 90.0, "recall": 81.2}, "SVM": {"acc": 100.0, "precision": 100.0, "recall": 100.0}}
