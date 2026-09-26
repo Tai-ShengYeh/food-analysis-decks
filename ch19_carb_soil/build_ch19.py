@@ -191,6 +191,20 @@ add(ATT, dc.kt("19.4.1.2 另一還原糖法", "Lane-Eynon 滴定") +
     dc.card("📏","判讀","以達終點所需<strong>體積</strong>計算還原糖量；AOAC 945.66。反應非計量 → 仍需標準曲線","a") +
     '</div><div class="note" style="margin-top:16px">與 Somogyi-Nelson 同樣基於<strong>Cu(II)→Cu(I)</strong>，差別在「滴定到指示劑變色」而非比色。</div>')
 
+add(ATT, dc.kt("對照：課本 vs 乙級", "同樣是銅還原，定量方式不同") +
+    """<table class="cmp" style="margin-top:12px">
+ <thead><tr><th>方法</th><th>出處</th><th>還原步驟</th><th>定量方式</th><th>讀值</th></tr></thead>
+ <tbody>
+  <tr><td class="c">Somogyi-Nelson 法</td><td>Nielsen 課本</td><td>還原糖把 Cu²⁺ 還原成 Cu₂O</td><td>Cu₂O 還原<strong>砷鉬酸</strong>，生成鉬藍</td><td>比色 520 nm</td></tr>
+  <tr><td class="c">索摩基法（Somogyi）</td><td>乙級技能檢定</td><td>同上</td><td>以<strong>碘滴定</strong>求出消耗的銅</td><td>滴定體積</td></tr>
+  <tr><td class="c">Bertrand 法</td><td>乙級技能檢定</td><td>同上，分離出 Cu₂O 沉澱</td><td>Cu₂O 溶於<strong>硫酸鐵</strong>，生成的 Fe²⁺ 以 <strong>KMnO₄</strong> 滴定</td><td>滴定體積，查表換算糖量</td></tr>
+  <tr><td class="c">Lane-Eynon 法</td><td>Nielsen 課本、AOAC 945.66</td><td>樣品滴入沸騰的鹼性硫酸銅</td><td>Cu²⁺ 耗盡時甲基藍褪色</td><td>滴定體積</td></tr>
+ </tbody>
+</table>""" +
+    '<div class="note" style="margin-top:14px">四種方法前半段相同：還原糖把 Cu²⁺ 還原成 Cu₂O。差別在後半段怎麼數出 Cu 的量。'
+    '「Somogyi-Nelson」和乙級的「索摩基法」名字相近，但一個是<strong>比色</strong>、一個是<strong>碘滴定</strong>，作答時不要混淆。'
+    '四者都只測<strong>還原糖</strong>，蔗糖要先酸或酵素轉化才測得到。</div>')
+
 add(ATT, dc.game_sort_inner("g4","小遊戲 ③","膳食纖維流程排序", 6,
     "用 ▲▼ 把 AOAC 991.43 酵素-重量法測膳食纖維的 6 個步驟排成正確順序。"), ' data-game="g4"')
 
