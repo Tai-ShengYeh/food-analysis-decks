@@ -206,9 +206,36 @@ add(ATT, dc.kt("15.2.2 烘箱乾燥", "烘箱乾燥：簡單可靠") +
     "<li>失重 = 水分；需控制<span class='em'>時間與溫度</span></li>" +
     '</ul><div class="note" style="margin-top:14px">高糖樣品改用真空烘箱 ≤70°C，避免梅納褐變與糖水解。</div></div></div>')
 
-add(ATT, dc.chart_inner("dry", "不同烘箱的<span class='hi'>溫度差異</span>",
-    "整合 Table 15.4／15.5：烘箱內最大溫差越小越精準。", kicker="15.2.2 溫度控制", height="52vh"),
-    ' data-chart="dry"')
+T154_ROWS = [
+    # (食品, English, 先蒸氣浴預乾, 溫度 °C, 時間 h)
+    ("酪奶（液態）", "Buttermilk, liquid", True, "100", "3"),
+    ("天然起司", "Cheese, natural type only", False, "100", "16.5 ± 0.5"),
+    ("巧克力與可可", "Chocolate and cocoa", False, "100", "3"),
+    ("茅屋起司", "Cottage cheese", False, "100", "3"),
+    ("鮮奶油（液態、冷凍）", "Cream, liquid and frozen", True, "100", "3"),
+    ("蛋白（液態）", "Egg albumin, liquid", True, "130", "0.75"),
+    ("蛋白（乾燥）", "Egg albumin, dried", True, "100", "0.75"),
+    ("冰淇淋與冷凍甜點", "Ice cream and frozen desserts", True, "100", "3.5"),
+    ("乳（全脂、低脂、脫脂、濃縮脫脂）", "Milk", True, "100", "3"),
+    ("堅果（杏仁、花生、核桃）", "Nuts: almonds, peanuts, walnuts", False, "130", "3"),
+    ("果乾", "Fruit, dried", False, "70", "6"),
+    ("烘焙咖啡", "Coffee, roasted", False, "70", "16"),
+]
+T154_HTML = ('<table class="cmp" style="margin-top:8px;font-size:clamp(.74rem,1.05vw,.92rem)">'
+    '<thead><tr><th>食品 Product</th><th>先蒸氣浴預乾</th><th>烘箱溫度 (°C ± 2)</th><th>時間 (h)</th></tr></thead><tbody>' +
+    "".join('<tr><td>%s <span style="color:var(--ink-3)">%s</span></td><td class="c">%s</td><td class="c">%s</td><td class="c" style="white-space:nowrap">%s</td></tr>'
+            % (zh, en, "✓" if steam else "—", t, h) for zh, en, steam, t, h in T154_ROWS) +
+    '</tbody></table>')
+
+add(ATT, dc.kt("15.2.2 溫度與時間（Table 15.4）", "強制對流烘箱：<span class='hi'>各食品的溫度與時間</span>") +
+    '<div class="grid2-1" style="margin-top:4px;align-items:start"><div>' + T154_HTML +
+    '<div class="cap">依 Nielsen Table 15.4（節錄）整理。</div></div><div>' +
+    '<ul class="clean">' +
+    "<li><strong>多數食品 100 °C</strong>，但時間差很多：多數 3 小時，天然起司要 16.5 小時</li>" +
+    "<li><strong>液態、高水分樣品先在蒸氣浴上預乾</strong>，再進烘箱</li>" +
+    "<li><strong>130 °C</strong>：液態蛋白（0.75 小時）、堅果（3 小時）</li>" +
+    "<li><strong>70 °C</strong>：果乾（6 小時）、烘焙咖啡（16 小時），溫度較低、時間較長</li>" +
+    '</ul><div class="note" style="margin-top:12px">溫度和時間是<strong>方法的一部分</strong>：換了條件，量到的「水分」就不能直接比較。</div></div></div>')
 
 add(ATT, dc.kt("15.2.2 時間與溫度", "乾燥是一場<span class='hi'>取捨</span>") +
     '<div class="grid2" style="margin-top:16px">' +
@@ -338,10 +365,7 @@ CFG = {
   "charts": {
     "moist": {"type":"bar","yTitle":"% 水分",
       "labels":["西瓜","柳橙","蘋果","牛奶(2%)","雞胸肉","切達起司","白麵包","葡萄乾","奶油","玉米片","花生"],
-      "datasets":[{"label":"% 水分(濕基)","data":[91.5,86.3,85.6,89.3,68.6,36.8,13.4,15.3,15.9,3.5,1.6],"color":"#1f6feb"}]},
-    "dry": {"type":"bar","yTitle":"烘箱最大溫差 (°C)",
-      "labels":["對流(常壓)","強制對流","真空","微波","紅外"],
-      "datasets":[{"label":"內部最大溫差","data":[10,1,4,2,3],"color":"#d9822b"}]}
+      "datasets":[{"label":"% 水分(濕基)","data":[91.5,86.3,85.6,89.3,68.6,36.8,13.4,15.3,15.9,3.5,1.6],"color":"#1f6feb"}]}
   },
   "bucket": {
     "g1": {"cats":["自由水","結合水","包埋水"],
