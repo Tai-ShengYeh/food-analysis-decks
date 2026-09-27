@@ -746,7 +746,7 @@ input[type="range"].dilution-slider::-moz-range-thumb{
         <p style="font-size:.82rem; margin-bottom:6px;">攜帶型 FTIR / NIR / Raman</p>
         <span class="tag accent">§8.6</span>
       </div>
-      <div class="card" onclick="goToSlide(20)" style="cursor:pointer; padding:16px; border-color:rgba(255,0,110,0.4);">
+      <div class="card" onclick="goToSlide(22)" style="cursor:pointer; padding:16px; border-color:rgba(255,0,110,0.4);">
         <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
           <div class="card-icon" style="width:36px; height:36px; font-size:18px; margin:0; background:linear-gradient(135deg,var(--accent-2),var(--warn));">🎮</div>
           <h3 class="slide-h3" style="margin:0; font-size:1.05rem; color:var(--accent-2);">3 個小遊戲</h3>
@@ -1768,8 +1768,50 @@ input[type="range"].dilution-slider::-moz-range-thumb{
   </div>
 </section>
 
-<!-- ============ Slide 20: 遊戲 1 - 官能基配對 ============ -->
+
+<!-- ============ Slide 20: 新一代微型 NIR 技術 ============ -->
 <section class="slide" data-slide="20" data-section="喚起行動">
+  <div class="slide-inner">
+    <div class="kicker">— §8.6 延伸 ｜ Miniaturized NIR —</div>
+    <h2 class="slide-h2">新一代微型 NIR：一顆偵測器，四種「選波長」的方法</h2>
+    <p style="margin-bottom:8px;font-size:.88rem;">傳統光譜儀用<strong>光柵＋陣列偵測器</strong>同時讀所有波長（Avantes、Zeiss MMS-1），但 InGaAs 陣列很貴；微型 NIR 只放<em>一顆 InGaAs</em>，改成<strong>一次選一段波長、依序掃過去</strong>——小又便宜，代價是要掃描、波段較窄。</p>
+    <div class="grid-4" style="gap:10px;">
+<div class="card" style="padding:10px 12px;border-top:3px solid var(--good);"><svg viewBox="0 0 220 96" style="width:100%;height:64px;margin:0 0 6px"><defs><marker id="m8a" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path d="M0 0 L7 3.5 L0 7 Z" fill="#b8c5e0"/></marker></defs><rect x="6" y="36" width="10" height="24" fill="#b8c5e0"/><text x="11" y="74" text-anchor="middle" font-size="9" fill="#7a8bb8">狹縫</text><polygon points="40,30 56,30 60,66 36,66" fill="none" stroke="#00d4ff" stroke-width="1.6"/><text x="48" y="80" text-anchor="middle" font-size="9" fill="#7a8bb8">光柵</text><rect x="92" y="33" width="9" height="30" fill="#4a5680" transform="rotate(17 96 48)"/><rect x="104" y="33" width="9" height="30" fill="#4a5680" transform="rotate(17 108 48)"/><rect x="116" y="33" width="9" height="30" fill="#00e676" transform="rotate(-17 120 48)"/><rect x="128" y="33" width="9" height="30" fill="#4a5680" transform="rotate(17 132 48)"/><rect x="140" y="33" width="9" height="30" fill="#4a5680" transform="rotate(17 144 48)"/><rect x="152" y="33" width="9" height="30" fill="#4a5680" transform="rotate(17 156 48)"/><text x="126" y="86" text-anchor="middle" font-size="9" fill="#7a8bb8">DMD 微鏡（一欄一欄翻）</text><path d="M16 48 H34" stroke="#b8c5e0" stroke-width="1.4" marker-end="url(#m8a)"/><path d="M60 48 H86" stroke="#b8c5e0" stroke-width="1.4" marker-end="url(#m8a)"/><path d="M121 36 L176 14" stroke="#00e676" stroke-width="1.6" marker-end="url(#m8a)"/><circle cx="192" cy="12" r="9" fill="#ffb800"/><text x="192" y="34" text-anchor="middle" font-size="9" fill="#7a8bb8">1 顆 InGaAs</text></svg><strong style="color:var(--good);font-size:.95rem;">DLP 數位微鏡</strong><div style="font-size:.74rem;color:var(--ink-3);margin:2px 0 6px;">InnoSpectra（台灣新竹）＋ TI DLP NIRscan</div><ul style="font-size:.74rem;line-height:1.4;margin:0;padding-left:1.1em;color:var(--ink-2);"><li>光柵展開光譜，微鏡一欄一欄翻轉 ±17°，決定哪段波長進偵測器</li><li>Hadamard 模式一次開多欄再解碼，訊噪比較高</li><li>NIR-S-G1：900–1700 nm、約 10 nm；另有到 2400 nm 的型號</li></ul><div style="font-size:.74rem;margin-top:6px;color:var(--good);">🏫 本系設備：NIR-S-G1、T1、T11、R14</div></div><div class="card" style="padding:10px 12px;border-top:3px solid var(--accent-2);"><svg viewBox="0 0 220 96" style="width:100%;height:64px;margin:0 0 6px"><defs><marker id="m8b" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path d="M0 0 L7 3.5 L0 7 Z" fill="#b8c5e0"/></marker></defs><rect x="4" y="40" width="22" height="16" rx="3" fill="#b8c5e0"/><text x="15" y="72" text-anchor="middle" font-size="9" fill="#7a8bb8">光</text><line x1="92" y1="30" x2="112" y2="66" stroke="#00d4ff" stroke-width="2"/><text x="80" y="84" text-anchor="middle" font-size="9" fill="#7a8bb8">分光鏡</text><rect x="150" y="42" width="6" height="12" fill="#00d4ff"/><path d="M160 48 h14" stroke="#ff006e" stroke-width="1.6"/><text x="172" y="36" text-anchor="middle" font-size="9" fill="#ff006e">MEMS 動鏡</text><rect x="96" y="4" width="12" height="6" fill="#00d4ff"/><text x="116" y="11" text-anchor="start" font-size="9" fill="#7a8bb8">定鏡</text><path d="M26 48 H96" stroke="#b8c5e0" stroke-width="1.4"/><path d="M102 48 H146" stroke="#b8c5e0" stroke-width="1.2" stroke-dasharray="3 2"/><path d="M102 44 V14" stroke="#b8c5e0" stroke-width="1.2" stroke-dasharray="3 2"/><path d="M102 52 V76" stroke="#b8c5e0" stroke-width="1.4" marker-end="url(#m8b)"/><circle cx="102" cy="87" r="7" fill="#ffb800"/><text x="120" y="90" text-anchor="start" font-size="9" fill="#7a8bb8">干涉圖 → 傅立葉轉換</text></svg><strong style="color:var(--accent-2);font-size:.95rem;">MEMS 邁克生干涉（FT-NIR）</strong><div style="font-size:.74rem;color:var(--ink-3);margin:2px 0 6px;">Si-Ware NeoSpectra（手持機現為 BUCHI ProxiScout）</div><ul style="font-size:.74rem;line-height:1.4;margin:0;padding-left:1.1em;color:var(--ink-2);"><li>干涉儀蝕刻在晶片上，MEMS 動鏡改變光程差，干涉圖經傅立葉轉換成光譜</li><li>1350–2500 nm，涵蓋組合頻區</li><li>1550 nm 處解析度 16 nm，長波端較粗</li></ul><div style="font-size:.74rem;margin-top:6px;color:var(--good);">🏫 本系設備：NeoSpectra Scanner、Micro Development Kit、光纖模組</div></div><div class="card" style="padding:10px 12px;border-top:3px solid var(--accent);"><svg viewBox="0 0 220 96" style="width:100%;height:64px;margin:0 0 6px"><defs><marker id="m8c" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path d="M0 0 L7 3.5 L0 7 Z" fill="#b8c5e0"/></marker></defs><path d="M10 48 H78" stroke="#b8c5e0" stroke-width="1.4" marker-end="url(#m8c)"/><text x="40" y="40" text-anchor="middle" font-size="9" fill="#7a8bb8">寬頻光</text><rect x="84" y="20" width="6" height="56" fill="#00d4ff"/><rect x="118" y="20" width="6" height="56" fill="#00d4ff"/><path d="M92 12 H116" stroke="#ff006e" stroke-width="1.4"/><text x="104" y="90" text-anchor="middle" font-size="9" fill="#ff006e">間距 d 用電壓調</text><path d="M124 48 H176" stroke="#00e676" stroke-width="2" marker-end="url(#m8c)"/><text x="150" y="40" text-anchor="middle" font-size="9" fill="#00e676">只過 λ = 2d/m</text><circle cx="192" cy="48" r="9" fill="#ffb800"/><text x="192" y="72" text-anchor="middle" font-size="9" fill="#7a8bb8">InGaAs</text></svg><strong style="color:var(--accent);font-size:.95rem;">MEMS 法布立-培若濾光片</strong><div style="font-size:.74rem;color:var(--ink-3);margin:2px 0 6px;">Spectral Engines NIRONE（芬蘭）</div><ul style="font-size:.74rem;line-height:1.4;margin:0;padding-left:1.1em;color:var(--ink-2);"><li>兩片鏡子間距用電壓調，只讓 λ = 2d/m 通過</li><li>5 款各看 250–450 nm 寬的一段（1100–2450 nm），FWHM 12–28 nm</li><li>25×25×17.5 mm、15 g，要先選對波段</li></ul><div style="font-size:.74rem;margin-top:6px;color:var(--good);">🏫 本系設備：NIRONE S2.0、S2.2、S2.5</div></div><div class="card" style="padding:10px 12px;border-top:3px solid var(--warn);"><svg viewBox="0 0 220 96" style="width:100%;height:64px;margin:0 0 6px"><rect x="70" y="18" width="80" height="62" rx="30" fill="none" stroke="#b8c5e0" stroke-width="2"/><text x="110" y="12" text-anchor="middle" font-size="9" fill="#7a8bb8">TO-5 金屬罐 ≈ 1 g</text><rect x="88" y="34" width="44" height="5" fill="#00d4ff"/><rect x="88" y="46" width="44" height="5" fill="#00d4ff"/><rect x="96" y="60" width="28" height="8" fill="#ffb800"/><text x="158" y="40" text-anchor="start" font-size="9" fill="#00d4ff">FP 濾光片</text><text x="158" y="68" text-anchor="start" font-size="9" fill="#ffb800">InGaAs</text><text x="6" y="44" text-anchor="start" font-size="9" fill="#7a8bb8">光源、電路</text><text x="6" y="56" text-anchor="start" font-size="9" fill="#7a8bb8">要自己加</text><text x="110" y="94" text-anchor="middle" font-size="9" fill="#7a8bb8">嵌入式「感測元件」</text></svg><strong style="color:var(--warn);font-size:.95rem;">MEMS-FPI 感測元件</strong><div style="font-size:.74rem;color:var(--ink-3);margin:2px 0 6px;">Hamamatsu（C14272／C13272-02／C14273）</div><ul style="font-size:.74rem;line-height:1.4;margin:0;padding-left:1.1em;color:var(--ink-2);"><li>同原理，濾光片與 InGaAs 封在一個 TO-5 罐</li><li>1350–1650／1550–1850／1750–2150 nm，≤ 18–22 nm</li><li>光源、電路自己加，適合嵌進機台或家電</li></ul></div>
+    </div>
+    <div class="card" style="margin-top:8px;padding:8px 14px;border-left:3px solid var(--accent);font-size:.8rem;">
+      <strong style="color:var(--accent);">怎麼選？</strong> 要看 <strong>O–H、C–H 倍頻（約 900–1700 nm）</strong>選 DLP 900–1700 nm；要看<strong>組合頻（約 2000–2500 nm）</strong>選 FT-NIR 或長波款；只量一兩個成分、要塞進設備就選 FP 濾光片。共同限制：解析度約 10–28 nm、波段窄，<strong>一定要搭配化學計量模型</strong>。
+      綜述：Beć, Grabska &amp; Huck (2022) <a href="https://doi.org/10.3390/foods11101465" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700;">Foods 11:1465 ↗</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Slide 21: 手持 NIR 食品實例 ============ -->
+<section class="slide" data-slide="21" data-section="喚起行動">
+  <div class="slide-inner">
+    <div class="kicker">— §8.6 延伸 ｜ Handheld NIR in Food —</div>
+    <h2 class="slide-h2">手持 NIR 在食品上：能做什麼、要小心什麼</h2>
+    <div style="display:grid;grid-template-columns:1.35fr 1fr;gap:16px;margin-top:8px;">
+      <div>
+        <table class="tbl" style="font-size:.78rem;"><thead><tr><th>食品</th><th>儀器（技術）</th><th>結果</th><th>文獻</th></tr></thead><tbody><tr><td>奇異果可溶性固形物</td><td>SCiO（消費型口袋機）</td><td>R² = 0.77、RMSEP = 0.76 %</td><td><a href="https://doi.org/10.1016/j.postharvbio.2018.07.009" target="_blank" rel="noopener" style="color:var(--accent);">Li 等 2018 ↗</a></td></tr><tr><td>菠菜可溶性固形物、硝酸鹽</td><td>VIAVI MicroNIR Pro 1700（線性漸變濾光片，908–1676 nm）</td><td>SECV：SSC 1.0 %、硝酸鹽 766 mg/kg</td><td><a href="https://doi.org/10.1016/j.postharvbio.2020.111273" target="_blank" rel="noopener" style="color:var(--accent);">Torres 等 2020 ↗</a></td></tr><tr><td>奧勒岡（牛至）摻假</td><td>NeoSpectra Micro（MEMS FT-NIR）</td><td>正確判別：真品 93.0 %、摻假物 97.5 %</td><td><a href="https://doi.org/10.1016/j.talanta.2020.121533" target="_blank" rel="noopener" style="color:var(--accent);">McVey 等 2021 ↗</a></td></tr><tr><td>甜櫻桃品質</td><td>DLP NIRscan Nano 自組手持系統</td><td>定量 R² = 0.83；定性 F1 = 0.89</td><td><a href="https://doi.org/10.1016/j.compag.2018.07.017" target="_blank" rel="noopener" style="color:var(--accent);">Wang 等 2018 ↗</a></td></tr><tr><td>雞蛋新鮮度</td><td>手持 NIR（900–1700 nm）</td><td>新鮮／不新鮮 正確率 87.0 %</td><td><a href="https://doi.org/10.1016/j.jfoodeng.2021.110643" target="_blank" rel="noopener" style="color:var(--accent);">Cruz-Tirado 等 2021 ↗</a></td></tr></tbody></table>
+        <p style="font-size:.74rem;color:var(--ink-3);margin-top:6px;">數字照原文摘要引用；各研究的樣品、驗證方式不同，不能直接互比。</p>
+      </div>
+      <div>
+        <div class="card" style="border-left:3px solid var(--warn);padding:12px 14px;">
+          <strong style="color:var(--warn);">手持 NIR 的價值不是「取代桌上型儀器」</strong>
+          <p style="font-size:.84rem;margin-top:6px;">真正的瓶頸是：模型換了<strong>儀器、批次、日期、操作者、樣品狀態</strong>還準不準。</p>
+          <p style="font-size:.8rem;margin-top:6px;color:var(--ink-2);">儀器差異 → 光譜誤差 → 前處理 → <strong>校正轉移</strong> → <strong>外部驗證</strong> → 現場部署</p>
+          <p style="font-size:.8rem;margin-top:6px;color:var(--ink-2);">隨機拆分會高估表現；要留一個<strong>新批次、新日期或新儀器</strong>來驗證。液體樣品含水多時，<strong>短光徑＋選波段</strong>比加長光徑穩定。</p>
+        </div>
+        <div class="card" style="margin-top:10px;padding:10px 14px;font-size:.82rem;line-height:1.7;">
+          <strong>動手做：</strong><br><a href="https://tai-shengyeh.github.io/food-analysis-lab/labs/w07_sugar/index.html" target="_blank" rel="noopener" style="color:var(--good);font-weight:700;">實驗課 W7：NIR 非破壞測水果 Brix ↗</a><br><a href="https://tai-shengyeh.github.io/nir-calibration-transfer/" target="_blank" rel="noopener" style="color:var(--good);font-weight:700;">NIR 校正轉移：三台儀器的 corn 資料 ↗</a><br><a href="https://tai-shengyeh.github.io/nir-egg-freshness/" target="_blank" rel="noopener" style="color:var(--good);font-weight:700;">NIR 雞蛋新鮮度：手持 NIR＋PLS ↗</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Slide 22: 遊戲 1 - 官能基配對 ============ -->
+<section class="slide" data-slide="22" data-section="喚起行動">
   <div class="slide-inner">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
       <div>
@@ -1807,8 +1849,8 @@ input[type="range"].dilution-slider::-moz-range-thumb{
   </div>
 </section>
 
-<!-- ============ Slide 21: 遊戲 2 - 情境式技術選擇 ============ -->
-<section class="slide" data-slide="21" data-section="喚起行動">
+<!-- ============ Slide 23: 遊戲 2 - 情境式技術選擇 ============ -->
+<section class="slide" data-slide="23" data-section="喚起行動">
   <div class="slide-inner">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
       <div>
@@ -1840,8 +1882,8 @@ input[type="range"].dilution-slider::-moz-range-thumb{
   </div>
 </section>
 
-<!-- ============ Slide 22: 遊戲 3 - 光譜識讀挑戰 ============ -->
-<section class="slide" data-slide="22" data-section="喚起行動">
+<!-- ============ Slide 24: 遊戲 3 - 光譜識讀挑戰 ============ -->
+<section class="slide" data-slide="24" data-section="喚起行動">
   <div class="slide-inner">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
       <div>
@@ -1880,8 +1922,8 @@ input[type="range"].dilution-slider::-moz-range-thumb{
   </div>
 </section>
 
-<!-- ============ Slide 23: 學習成效儀表板 ============ -->
-<section class="slide" data-slide="23" data-section="喚起行動">
+<!-- ============ Slide 25: 學習成效儀表板 ============ -->
+<section class="slide" data-slide="25" data-section="喚起行動">
   <div class="slide-inner">
     <div class="kicker">— Learning Analytics —</div>
     <h2 class="slide-h2" style="margin-bottom:4px;">學習成效儀表板</h2>
@@ -1928,8 +1970,8 @@ input[type="range"].dilution-slider::-moz-range-thumb{
   </div>
 </section>
 
-<!-- ============ Slide 24: 行動 CTA + 總結 ============ -->
-<section class="slide" data-slide="24" data-section="喚起行動">
+<!-- ============ Slide 26: 行動 CTA + 總結 ============ -->
+<section class="slide" data-slide="26" data-section="喚起行動">
   <div class="slide-inner" style="text-align:center;">
     <div class="kicker">— Take Action —</div>
     <h2 class="slide-title" style="font-size:clamp(1.6rem,3.5vw,2.6rem); margin-bottom:8px;">學完之後，下一步？</h2>
@@ -1969,8 +2011,8 @@ input[type="range"].dilution-slider::-moz-range-thumb{
     </div>
 
     <div style="margin-top:16px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
-      <button class="btn" style="background:linear-gradient(135deg, var(--warn), var(--accent-2));" onclick="goToSlide(25)">🧪 進入實驗實作 (Bonus)</button>
-      <button class="btn btn-outline" onclick="goToSlide(23)">📊 看我的成績單</button>
+      <button class="btn" style="background:linear-gradient(135deg, var(--warn), var(--accent-2));" onclick="goToSlide(27)">🧪 進入實驗實作 (Bonus)</button>
+      <button class="btn btn-outline" onclick="goToSlide(25)">📊 看我的成績單</button>
       <button class="btn btn-outline" onclick="goToSlide(1)">↻ 重新開始</button>
     </div>
   </div>
@@ -1978,7 +2020,7 @@ input[type="range"].dilution-slider::-moz-range-thumb{
 
 <script>
 // ============ 全域狀態 ============
-const TOTAL_SLIDES = 26;
+const TOTAL_SLIDES = 28;
 const TEACHER_PASSWORD = 'teacher2026';  // 🔒 教師密碼，請在此修改後重新部署
 let currentSlide = 1;
 let student = JSON.parse(localStorage.getItem('chap8_student') || '{"name":"訪客","id":"","class":""}');
@@ -2039,11 +2081,11 @@ function showSlide(n){
 
   // 延遲渲染圖表（避免初始載入卡頓）
   if (n === 11 && !window.spectrumChartInit) initSpectrumChart();
-  if (n === 20 && !window.g1Init) initGame1();
-  if (n === 21 && !window.g2Init) initGame2();
-  if (n === 22 && !window.g3Init) initGame3();
-  if (n === 23) updateDashboard();
-  if (n === 25 && !window.dilInit) initDilutionCalc();
+  if (n === 22 && !window.g1Init) initGame1();
+  if (n === 23 && !window.g2Init) initGame2();
+  if (n === 24 && !window.g3Init) initGame3();
+  if (n === 25) updateDashboard();
+  if (n === 27 && !window.dilInit) initDilutionCalc();
 }
 
 function nextSlide(){ showSlide(currentSlide + 1); }
@@ -2980,8 +3022,8 @@ initCoverBg();
 showSlide(1);
 </script>
 
-<!-- ============ Slide 25: 酒精稀釋原理 + 互動計算器 ============ -->
-<section class="slide" data-slide="25" data-section="實驗實作">
+<!-- ============ Slide 27: 酒精稀釋原理 + 互動計算器 ============ -->
+<section class="slide" data-slide="27" data-section="實驗實作">
   <div class="slide-inner">
     <div class="kicker">— 實驗實作 ｜ Lab Practical —</div>
     <h2 class="slide-h2" style="margin-bottom:4px;">用 95% 酒精配製 10%—80% 標準液</h2>
@@ -3060,8 +3102,8 @@ showSlide(1);
   </div>
 </section>
 
-<!-- ============ Slide 26: 配製對照表 + 步驟 + 試管 ============ -->
-<section class="slide" data-slide="26" data-section="實驗實作">
+<!-- ============ Slide 28: 配製對照表 + 步驟 + 試管 ============ -->
+<section class="slide" data-slide="28" data-section="實驗實作">
   <div class="slide-inner">
     <div class="kicker">— 配製工作表 ｜ Worksheet —</div>
     <h2 class="slide-h2" style="margin-bottom:4px;">8 個濃度，一表搞定</h2>
