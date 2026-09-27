@@ -13,21 +13,50 @@ def add(sec, inner, attr=""):
 
 # ---------------- SVGs ----------------
 OVEN_SVG = """
-<svg viewBox="0 0 320 300">
- <defs><linearGradient id="go" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eaf2ff"/><stop offset="1" stop-color="#cfe0f6"/></linearGradient></defs>
- <rect x="40" y="40" width="240" height="200" rx="14" fill="url(#go)" stroke="#1f6feb" stroke-width="3"/>
- <rect x="58" y="60" width="204" height="150" rx="8" fill="#ffffff" stroke="#1f6feb" stroke-width="2"/>
- <line x1="58" y1="118" x2="262" y2="118" stroke="#cfe0f6" stroke-width="2"/>
- <line x1="58" y1="160" x2="262" y2="160" stroke="#cfe0f6" stroke-width="2"/>
- <rect x="92" y="92" width="48" height="20" rx="4" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
- <rect x="178" y="92" width="48" height="20" rx="4" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
- <rect x="92" y="134" width="48" height="20" rx="4" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
- <text x="160" y="80" text-anchor="middle" class="lblb">乾燥皿 + 樣品</text>
- <path d="M150 178 q5 -14 10 0 M170 178 q5 -14 10 0" fill="none" stroke="#d9822b" stroke-width="2.4"/>
- <circle cx="252" cy="50" r="9" fill="#d9822b"/>
- <text x="252" y="36" text-anchor="middle" class="lbl">風扇</text>
- <rect x="120" y="240" width="80" height="16" rx="5" fill="#48597a"/>
- <text x="160" y="288" text-anchor="middle" class="lbl">強制對流烘箱 forced-draft oven</text>
+<svg viewBox="0 0 360 300">
+ <defs>
+  <marker id="ovar" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#1f9d6b"/></marker>
+ </defs>
+ <!-- cabinet, chamber, control panel -->
+ <rect x="20" y="30" width="316" height="222" rx="12" fill="#eaf2ff" stroke="#1f6feb" stroke-width="3"/>
+ <rect x="36" y="46" width="222" height="190" rx="6" fill="#ffffff" stroke="#1f6feb" stroke-width="2"/>
+ <rect x="268" y="46" width="56" height="190" rx="6" fill="#f6f9fd" stroke="#1f6feb" stroke-width="1.5"/>
+ <rect x="275" y="60" width="42" height="22" rx="3" fill="#15233f"/>
+ <text x="296" y="76" text-anchor="middle" style="font-family:JetBrains Mono,monospace;font-size:13px;fill:#7ed957">105°C</text>
+ <circle cx="296" cy="108" r="9" fill="#ffffff" stroke="#48597a" stroke-width="1.6"/>
+ <line x1="296" y1="108" x2="301" y2="102" stroke="#48597a" stroke-width="1.6"/>
+ <text x="296" y="134" text-anchor="middle" class="lbl" style="font-size:10px">溫控</text>
+ <rect x="30" y="252" width="30" height="8" fill="#48597a"/><rect x="296" y="252" width="30" height="8" fill="#48597a"/>
+ <!-- wire shelves with dishes -->
+ <line x1="36" y1="116" x2="258" y2="116" stroke="#9aa8bf" stroke-width="2" stroke-dasharray="6 3"/>
+ <line x1="36" y1="172" x2="258" y2="172" stroke="#9aa8bf" stroke-width="2" stroke-dasharray="6 3"/>
+ <path d="M70 106 h40 l-3 9 h-34 Z" fill="#fbeede" stroke="#d9822b" stroke-width="1.6"/>
+ <path d="M130 106 h40 l-3 9 h-34 Z" fill="#fbeede" stroke="#d9822b" stroke-width="1.6"/>
+ <path d="M70 162 h40 l-3 9 h-34 Z" fill="#fbeede" stroke="#d9822b" stroke-width="1.6"/>
+ <path d="M130 162 h40 l-3 9 h-34 Z" fill="#fbeede" stroke="#d9822b" stroke-width="1.6"/>
+ <text x="120" y="140" text-anchor="middle" class="lbl" style="font-size:11px">鋁皿＋樣品（放在網架上）</text>
+ <!-- circulation fan on the back wall: guard ring + 4 blades + hub -->
+ <circle cx="222" cy="82" r="20" fill="#f6f9fd" stroke="#48597a" stroke-width="1.6"/>
+ <g fill="#d9822b" opacity=".9">
+  <ellipse cx="222" cy="71" rx="5" ry="10" transform="rotate(20 222 82)"/>
+  <ellipse cx="233" cy="82" rx="10" ry="5" transform="rotate(20 222 82)"/>
+  <ellipse cx="222" cy="93" rx="5" ry="10" transform="rotate(20 222 82)"/>
+  <ellipse cx="211" cy="82" rx="10" ry="5" transform="rotate(20 222 82)"/>
+ </g>
+ <circle cx="222" cy="82" r="3.5" fill="#48597a"/>
+ <text x="222" y="56" text-anchor="middle" class="lbl" style="font-size:11px">循環風扇</text>
+ <!-- heating element -->
+ <polyline points="48,222 60,212 72,222 84,212 96,222 108,212 120,222 132,212 144,222 156,212 168,222 180,212 192,222 204,212 216,222 228,212 240,222"
+   fill="none" stroke="#d9822b" stroke-width="2.2"/>
+ <text x="144" y="234" text-anchor="middle" class="lbl" style="font-size:10px">加熱元件</text>
+ <!-- forced air circulation -->
+ <g fill="none" stroke="#1f9d6b" stroke-width="1.8" stroke-dasharray="5 3" marker-end="url(#ovar)">
+  <path d="M244 100 Q 252 150 244 196"/>
+  <path d="M226 200 Q 150 192 60 200"/>
+  <path d="M46 190 Q 40 130 50 70"/>
+  <path d="M62 60 Q 130 52 196 70"/>
+ </g>
+ <text x="178" y="286" text-anchor="middle" class="lbl">強制對流烘箱（示意）：風扇讓熱風循環，箱內溫度均勻</text>
 </svg>"""
 
 KF_SVG = """

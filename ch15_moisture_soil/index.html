@@ -164,21 +164,50 @@ table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--
   <p class="lead" style="max-width:820px;margin:20px auto 0">多數<strong>直接法</strong>的根基：把水蒸乾，<strong>失去的重量</strong>就是水。剩下的固體＝<strong>總固形物</strong>。</p>
   <div class="eq" style="max-width:600px;margin:24px auto 0">% 水分 = <span class="frac"><b>濕重 − 乾重</b><span>濕重</span></span> × 100<br>
   <span style="font-size:.8em;color:var(--ink-2)">% 總固形物 = 100 − % 水分</span></div></div></div></section><section class="slide" data-slide="8" data-section="引起動機" data-game="g1"><div class="slide-inner"><div class="game no-nav" data-game="g1"><div class="game-head"><span class="tag a">小遊戲 ①</span><span class="gt">水的三種形式</span><span class="score" id="g1score">0 / 6</span></div><div class="game-q">把 6 個描述分到「自由水 / 結合水 / 包埋水」三類。</div><div class="pool" id="g1pool"></div><div class="buckets" id="g1buckets"></div><div class="fb" id="g1fb"></div><div class="btnrow"><button class="btn" id="g1check">檢查答案</button><button class="btn ghost" id="g1reset">重來</button></div></div></div></section><section class="slide" data-slide="9" data-section="維持注意"><div class="slide-inner"><div class="kicker">方法全覽</div><h2 class="slide-title">直接法 vs 間接法</h2><div class="grid2" style="margin-top:22px"><div class="card b"><div class="ic">🔥</div><div class="ct">直接法 · 去水</div><div class="cb">烘箱乾燥、蒸餾、Karl Fischer：把水移除或反應掉</div></div><div class="card a"><div class="ic">📡</div><div class="ct">間接法 · 測性質</div><div class="cb">介電、密度、折射率、NIR、冰點：測與水有關的物性</div></div><div class="card g"><div class="ic">⚖️</div><div class="ct">測量方式</div><div class="cb">直接法靠秤重 / 體積 / 滴定量化</div></div><div class="card b"><div class="ic">🎯</div><div class="ct">校正需求</div><div class="cb">間接法快速非破壞，但須對直接法建檢量線</div></div></div></div></section><section class="slide" data-slide="10" data-section="維持注意"><div class="slide-inner"><div class="kicker">15.2.2 烘箱乾燥</div><h2 class="slide-title">烘箱乾燥：簡單可靠</h2><div class="grid2-1" style="margin-top:8px"><div class="svgwrap">
-<svg viewBox="0 0 320 300">
- <defs><linearGradient id="go" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eaf2ff"/><stop offset="1" stop-color="#cfe0f6"/></linearGradient></defs>
- <rect x="40" y="40" width="240" height="200" rx="14" fill="url(#go)" stroke="#1f6feb" stroke-width="3"/>
- <rect x="58" y="60" width="204" height="150" rx="8" fill="#ffffff" stroke="#1f6feb" stroke-width="2"/>
- <line x1="58" y1="118" x2="262" y2="118" stroke="#cfe0f6" stroke-width="2"/>
- <line x1="58" y1="160" x2="262" y2="160" stroke="#cfe0f6" stroke-width="2"/>
- <rect x="92" y="92" width="48" height="20" rx="4" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
- <rect x="178" y="92" width="48" height="20" rx="4" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
- <rect x="92" y="134" width="48" height="20" rx="4" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
- <text x="160" y="80" text-anchor="middle" class="lblb">乾燥皿 + 樣品</text>
- <path d="M150 178 q5 -14 10 0 M170 178 q5 -14 10 0" fill="none" stroke="#d9822b" stroke-width="2.4"/>
- <circle cx="252" cy="50" r="9" fill="#d9822b"/>
- <text x="252" y="36" text-anchor="middle" class="lbl">風扇</text>
- <rect x="120" y="240" width="80" height="16" rx="5" fill="#48597a"/>
- <text x="160" y="288" text-anchor="middle" class="lbl">強制對流烘箱 forced-draft oven</text>
+<svg viewBox="0 0 360 300">
+ <defs>
+  <marker id="ovar" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#1f9d6b"/></marker>
+ </defs>
+ <!-- cabinet, chamber, control panel -->
+ <rect x="20" y="30" width="316" height="222" rx="12" fill="#eaf2ff" stroke="#1f6feb" stroke-width="3"/>
+ <rect x="36" y="46" width="222" height="190" rx="6" fill="#ffffff" stroke="#1f6feb" stroke-width="2"/>
+ <rect x="268" y="46" width="56" height="190" rx="6" fill="#f6f9fd" stroke="#1f6feb" stroke-width="1.5"/>
+ <rect x="275" y="60" width="42" height="22" rx="3" fill="#15233f"/>
+ <text x="296" y="76" text-anchor="middle" style="font-family:JetBrains Mono,monospace;font-size:13px;fill:#7ed957">105°C</text>
+ <circle cx="296" cy="108" r="9" fill="#ffffff" stroke="#48597a" stroke-width="1.6"/>
+ <line x1="296" y1="108" x2="301" y2="102" stroke="#48597a" stroke-width="1.6"/>
+ <text x="296" y="134" text-anchor="middle" class="lbl" style="font-size:10px">溫控</text>
+ <rect x="30" y="252" width="30" height="8" fill="#48597a"/><rect x="296" y="252" width="30" height="8" fill="#48597a"/>
+ <!-- wire shelves with dishes -->
+ <line x1="36" y1="116" x2="258" y2="116" stroke="#9aa8bf" stroke-width="2" stroke-dasharray="6 3"/>
+ <line x1="36" y1="172" x2="258" y2="172" stroke="#9aa8bf" stroke-width="2" stroke-dasharray="6 3"/>
+ <path d="M70 106 h40 l-3 9 h-34 Z" fill="#fbeede" stroke="#d9822b" stroke-width="1.6"/>
+ <path d="M130 106 h40 l-3 9 h-34 Z" fill="#fbeede" stroke="#d9822b" stroke-width="1.6"/>
+ <path d="M70 162 h40 l-3 9 h-34 Z" fill="#fbeede" stroke="#d9822b" stroke-width="1.6"/>
+ <path d="M130 162 h40 l-3 9 h-34 Z" fill="#fbeede" stroke="#d9822b" stroke-width="1.6"/>
+ <text x="120" y="140" text-anchor="middle" class="lbl" style="font-size:11px">鋁皿＋樣品（放在網架上）</text>
+ <!-- circulation fan on the back wall: guard ring + 4 blades + hub -->
+ <circle cx="222" cy="82" r="20" fill="#f6f9fd" stroke="#48597a" stroke-width="1.6"/>
+ <g fill="#d9822b" opacity=".9">
+  <ellipse cx="222" cy="71" rx="5" ry="10" transform="rotate(20 222 82)"/>
+  <ellipse cx="233" cy="82" rx="10" ry="5" transform="rotate(20 222 82)"/>
+  <ellipse cx="222" cy="93" rx="5" ry="10" transform="rotate(20 222 82)"/>
+  <ellipse cx="211" cy="82" rx="10" ry="5" transform="rotate(20 222 82)"/>
+ </g>
+ <circle cx="222" cy="82" r="3.5" fill="#48597a"/>
+ <text x="222" y="56" text-anchor="middle" class="lbl" style="font-size:11px">循環風扇</text>
+ <!-- heating element -->
+ <polyline points="48,222 60,212 72,222 84,212 96,222 108,212 120,222 132,212 144,222 156,212 168,222 180,212 192,222 204,212 216,222 228,212 240,222"
+   fill="none" stroke="#d9822b" stroke-width="2.2"/>
+ <text x="144" y="234" text-anchor="middle" class="lbl" style="font-size:10px">加熱元件</text>
+ <!-- forced air circulation -->
+ <g fill="none" stroke="#1f9d6b" stroke-width="1.8" stroke-dasharray="5 3" marker-end="url(#ovar)">
+  <path d="M244 100 Q 252 150 244 196"/>
+  <path d="M226 200 Q 150 192 60 200"/>
+  <path d="M46 190 Q 40 130 50 70"/>
+  <path d="M62 60 Q 130 52 196 70"/>
+ </g>
+ <text x="178" y="286" text-anchor="middle" class="lbl">強制對流烘箱（示意）：風扇讓熱風循環，箱內溫度均勻</text>
 </svg></div><div><ul class="clean"><li><strong>強制對流烘箱</strong>：風扇強制循環，溫差最小(≤1°C)</li><li><strong>真空烘箱</strong>：減壓(25–100 mmHg)下低溫(60–70°C)快乾</li><li><strong>對流(常壓)烘箱</strong>：無風扇、溫差可達 10°C，精度差</li><li>失重 = 水分；需控制<span class='em'>時間與溫度</span></li></ul><div class="note" style="margin-top:14px">高糖樣品改用真空烘箱 ≤70°C，避免梅納褐變與糖水解。</div></div></div></div></section><section class="slide" data-slide="11" data-section="維持注意"><div class="slide-inner"><div class="kicker">15.2.2 溫度與時間（Table 15.4）</div><h2 class="slide-title">強制對流烘箱：<span class='hi'>各食品的溫度與時間</span></h2><div class="grid2-1" style="margin-top:4px;align-items:start"><div><table class="cmp" style="margin-top:8px;font-size:clamp(.74rem,1.05vw,.92rem)"><thead><tr><th>食品 Product</th><th>先蒸氣浴預乾</th><th>烘箱溫度 (°C ± 2)</th><th>時間 (h)</th></tr></thead><tbody><tr><td>酪奶（液態） <span style="color:var(--ink-3)">Buttermilk, liquid</span></td><td class="c">✓</td><td class="c">100</td><td class="c" style="white-space:nowrap">3</td></tr><tr><td>天然起司 <span style="color:var(--ink-3)">Cheese, natural type only</span></td><td class="c">—</td><td class="c">100</td><td class="c" style="white-space:nowrap">16.5 ± 0.5</td></tr><tr><td>巧克力與可可 <span style="color:var(--ink-3)">Chocolate and cocoa</span></td><td class="c">—</td><td class="c">100</td><td class="c" style="white-space:nowrap">3</td></tr><tr><td>茅屋起司 <span style="color:var(--ink-3)">Cottage cheese</span></td><td class="c">—</td><td class="c">100</td><td class="c" style="white-space:nowrap">3</td></tr><tr><td>鮮奶油（液態、冷凍） <span style="color:var(--ink-3)">Cream, liquid and frozen</span></td><td class="c">✓</td><td class="c">100</td><td class="c" style="white-space:nowrap">3</td></tr><tr><td>蛋白（液態） <span style="color:var(--ink-3)">Egg albumin, liquid</span></td><td class="c">✓</td><td class="c">130</td><td class="c" style="white-space:nowrap">0.75</td></tr><tr><td>蛋白（乾燥） <span style="color:var(--ink-3)">Egg albumin, dried</span></td><td class="c">✓</td><td class="c">100</td><td class="c" style="white-space:nowrap">0.75</td></tr><tr><td>冰淇淋與冷凍甜點 <span style="color:var(--ink-3)">Ice cream and frozen desserts</span></td><td class="c">✓</td><td class="c">100</td><td class="c" style="white-space:nowrap">3.5</td></tr><tr><td>乳（全脂、低脂、脫脂、濃縮脫脂） <span style="color:var(--ink-3)">Milk</span></td><td class="c">✓</td><td class="c">100</td><td class="c" style="white-space:nowrap">3</td></tr><tr><td>堅果（杏仁、花生、核桃） <span style="color:var(--ink-3)">Nuts: almonds, peanuts, walnuts</span></td><td class="c">—</td><td class="c">130</td><td class="c" style="white-space:nowrap">3</td></tr><tr><td>果乾 <span style="color:var(--ink-3)">Fruit, dried</span></td><td class="c">—</td><td class="c">70</td><td class="c" style="white-space:nowrap">6</td></tr><tr><td>烘焙咖啡 <span style="color:var(--ink-3)">Coffee, roasted</span></td><td class="c">—</td><td class="c">70</td><td class="c" style="white-space:nowrap">16</td></tr></tbody></table><div class="cap">依 Nielsen Table 15.4（節錄）整理。</div></div><div><ul class="clean"><li><strong>多數食品 100 °C</strong>，但時間差很多：多數 3 小時，天然起司要 16.5 小時</li><li><strong>液態、高水分樣品先在蒸氣浴上預乾</strong>，再進烘箱</li><li><strong>130 °C</strong>：液態蛋白（0.75 小時）、堅果（3 小時）</li><li><strong>70 °C</strong>：果乾（6 小時）、烘焙咖啡（16 小時），溫度較低、時間較長</li></ul><div class="note" style="margin-top:12px">溫度和時間是<strong>方法的一部分</strong>：換了條件，量到的「水分」就不能直接比較。</div></div></div></div></section><section class="slide" data-slide="12" data-section="維持注意"><div class="slide-inner"><div class="kicker">15.2.2 時間與溫度</div><h2 class="slide-title">乾燥是一場<span class='hi'>取捨</span></h2><div class="grid2" style="margin-top:16px"><div class="card b"><div class="ic">⏱️</div><div class="ct">乾不夠</div><div class="cb">時間太短、溫度太低 → 水沒走完 → <strong>低估</strong>水分</div></div><div class="card a"><div class="ic">🔥</div><div class="ct">過頭了</div><div class="cb">時間太長、溫度太高 → 成分分解生水或揮發物流失 → 誤差</div></div></div><div class="note" style="margin-top:18px">技巧：液體(果汁/牛奶)先在<strong>蒸氣浴預乾</strong>避免噴濺；黏結樣品用<strong>砂皿法</strong>(乾砂+玻棒)分散、防結殼。乾燥到<strong>恆重</strong>(兩次秤重相差 < 0.1–0.2 mg)。</div></div></section><section class="slide" data-slide="13" data-section="維持注意" data-game="g2"><div class="slide-inner"><div class="game no-nav" data-game="g2"><div class="game-head"><span class="tag a">小遊戲 ②</span><span class="gt">烘箱乾燥即時測驗</span><span class="score" id="g2score">0 / 4</span></div><div class="game-q" id="g2q"></div><div class="opts" id="g2opts"></div><div class="fb" id="g2fb"></div><div class="btnrow"><button class="btn ghost" id="g2next" style="display:none">下一題 →</button></div></div></div></section><section class="slide" data-slide="14" data-section="維持注意"><div class="slide-inner"><div class="kicker">15.2.4 Karl Fischer</div><h2 class="slide-title">KF 滴定：微量水專家</h2><div class="svgwrap" style="margin-top:10px">
 <svg viewBox="0 0 480 340">
  <defs><marker id="arkf" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#1f9d6b"/></marker></defs>
