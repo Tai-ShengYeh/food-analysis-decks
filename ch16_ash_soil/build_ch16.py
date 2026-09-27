@@ -25,7 +25,7 @@ FURNACE_SVG = """
  <rect x="118" y="232" width="84" height="20" rx="5" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
  <text x="160" y="247" text-anchor="middle" class="lbl">550°C</text>
  <text x="160" y="50" text-anchor="middle" class="lbl" font-size="12">電熱元件加熱（無明火）</text>
- <text x="160" y="290" text-anchor="middle" class="lblb">馬弗爐 Muffle furnace</text>
+ <text x="160" y="290" text-anchor="middle" class="lblb">高溫爐 Muffle furnace</text>
 </svg>"""
 
 CRUCIBLE_SVG = """
@@ -87,7 +87,7 @@ DTREE_SVG = """
 add(MOT, dc.cover("NIELSEN'S FOOD ANALYSIS · CHAPTER 16",
     "灰分<span style='color:var(--accent-2)'>分析</span>", "Ash Analysis",
     "食品分析　·　3 小時課程　·　含 6 個互動小遊戲<br>乾式灰化 · 濕式灰化 · 微波灰化 · 坩堝 · 礦物前處理",
-    ["馬弗爐 550°C","酸消化","微波","水溶/酸不溶","% 灰分"]), ' data-cover="1"')
+    ["高溫爐 550°C","酸消化","微波","水溶/酸不溶","% 灰分"]), ' data-cover="1"')
 
 add(MOT, """<div style="text-align:center">
   <div class="kicker" style="justify-content:center">先想一想</div>
@@ -136,7 +136,7 @@ add(MOT, dc.game_bucket_inner("g1","小遊戲 ①","乾式 vs 濕式：分特徵
 # ---------------- 維持注意 ----------------
 add(ATT, dc.kt("方法全覽", "四大灰化方法") +
     '<div class="grid2" style="margin-top:22px">' +
-    dc.card("🔥","乾式灰化","馬弗爐 500–600°C 高溫燃燒；安全、免試劑","a") +
+    dc.card("🔥","乾式灰化","高溫爐 500–600°C 高溫燃燒；安全、免試劑","a") +
     dc.card("🧪","濕式灰化","強酸 + 氧化劑、100–120°C 氧化；礦物留溶液","b") +
     dc.card("📡","微波灰化","微波加熱(乾或濕)；數十分鐘、高通量","g") +
     dc.card("🔬","特殊灰分","水溶/不溶、酸不溶、鹼度、硫酸化灰分","b") + '</div>')
@@ -152,7 +152,7 @@ add(ATT, dc.kt("16.2.1 取樣前處理", "灰化前要<span class='hi'>準備</s
 
 add(ATT, dc.kt("16.2.2 乾式灰化", "Dry：高溫燒成灰") +
     '<div class="grid2-1" style="margin-top:8px"><div class="svgwrap">' + FURNACE_SVG + '</div><div><ul class="clean">' +
-    "<li><strong>原理</strong>：馬弗爐 <span class='em'>525°C 以上</span>，有機物在氧氣下燃燒成 CO₂ 與氮氧化物</li>" +
+    "<li><strong>原理</strong>：高溫爐 <span class='em'>525°C 以上</span>，有機物在氧氣下燃燒成 CO₂ 與氮氧化物</li>" +
     "<li><strong>時間</strong>：約 12–18 小時(或過夜)</li>" +
     "<li>剩下礦物 → 氧化物、硫酸鹽、磷酸鹽等</li>" +
     "<li><strong>優點</strong>：安全、免酸、可同時跑很多樣品</li>" +
@@ -184,7 +184,7 @@ add(ATT, dc.kt("16.2.3 濕式灰化", "Wet：用酸把有機物氧化掉") +
     "缺點：需<strong>全程顧爐</strong>、腐蝕性試劑、單次量少。</div></div>")
 
 add(ATT, dc.chart_inner("temp", "四種灰化的<span class='hi'>所需時間</span>",
-    "時間：Table 16.2（乾式 12–18 h 取中值 15 h；濕式 ~2 h；微波乾式/濕式各 ~30 min）。溫度：內文 16.1.1、16.2.4（微波濕式 AOAC/FDA 方法用 200 °C；微波馬弗爐最高可達 1200 °C）。", kicker="16.3 方法比較", height="52vh"),
+    "時間：Table 16.2（乾式 12–18 h 取中值 15 h；濕式 ~2 h；微波乾式/濕式各 ~30 min）。溫度：內文 16.1.1、16.2.4（微波濕式 AOAC/FDA 方法用 200 °C；微波高溫爐最高可達 1200 °C）。", kicker="16.3 方法比較", height="52vh"),
     ' data-chart="temp"')
 
 add(ATT, dc.game_sort_inner("g4","小遊戲 ③","乾式灰化流程排序", 6,
@@ -200,7 +200,7 @@ add(ATT, dc.kt("操作陷阱", "別把<span class='hi'>熱坩堝</span>直接丟
 add(ATT, dc.kt("16.2.4 微波灰化", "Microwave：分鐘級的灰化") +
     '<div class="grid2" style="margin-top:16px">' +
     dc.card("💧","微波濕式","酸消化於開放或密閉瓶；密閉可達 1500 psi、酸超過沸點，30 分內完成","b") +
-    dc.card("🔥","微波乾式","微波馬弗爐可達 1200°C，數分鐘灰化，最多省 97% 時間，常免抽氣櫃","a") +
+    dc.card("🔥","微波乾式","微波高溫爐可達 1200°C，數分鐘灰化，最多省 97% 時間，常免抽氣櫃","a") +
     '</div><div class="note" style="margin-top:18px">速度快 → <strong>通量大</strong>(5–24 樣/時)；但設備貴、單次裝載量較少。已廣用於品管。</div>')
 
 add(ATT, dc.kt("16.2.5 特殊灰分", "四種「特殊灰分」") +
@@ -255,7 +255,7 @@ add(ACT, dc.game_calc_inner("g6","小遊戲 ⑥","計算闖關",
 add(ACT, dc.kt("重點整理", "今天的五個關鍵") +
     '<div class="grid2" style="margin-top:18px"><ul class="clean">' +
     "<li><strong>灰分＝燒完剩下的礦物</strong>，是重量分析(秤灰重)</li>" +
-    "<li>乾式：<strong>馬弗爐 550°C</strong>、安全免酸、但慢且揮發流失</li>" +
+    "<li>乾式：<strong>高溫爐 550°C</strong>、安全免酸、但慢且揮發流失</li>" +
     "<li>濕式：<strong>酸氧化 100–120°C</strong>、礦物留溶液、適合礦物前處理</li></ul>" +
     '<ul class="clean"><li>微波(乾或濕)：分鐘級、高通量、設備貴</li>' +
     "<li>特殊灰分：水溶/酸不溶/鹼度/硫酸化 → 品質與摻假</li></ul></div>")
@@ -289,7 +289,7 @@ CFG = {
   },
   "bucket": {
     "g1": {"cats":["乾式灰化","濕式灰化"],
-      "items":[{"t":"馬弗爐 500–600°C","c":"乾式灰化"},{"t":"用強酸氧化","c":"濕式灰化"},
+      "items":[{"t":"高溫爐 500–600°C","c":"乾式灰化"},{"t":"用強酸氧化","c":"濕式灰化"},
         {"t":"礦物留在溶液","c":"濕式灰化"},{"t":"可同時跑多樣品","c":"乾式灰化"},
         {"t":"100–120°C 低溫","c":"濕式灰化"},{"t":"揮發性元素易流失","c":"乾式灰化"},
         {"t":"需全程顧爐","c":"濕式灰化"},{"t":"安全·免試劑","c":"乾式灰化"}],
@@ -304,8 +304,8 @@ CFG = {
   },
   "mcq": {
     "g2":[
-      {"q":"乾式灰化用的設備是？","o":["熱盤 + 酸","馬弗爐","離心機","分光光度計"],"a":1,
-       "e":"乾式灰化在馬弗爐 (muffle furnace) 中高溫燃燒。"},
+      {"q":"乾式灰化用的設備是？","o":["熱盤 + 酸","高溫爐","離心機","分光光度計"],"a":1,
+       "e":"乾式灰化在高溫爐 (muffle furnace) 中高溫燃燒。"},
       {"q":"典型乾式灰化的溫度約為？","o":["100–120°C","250°C","500–600°C","1500°C"],"a":2,
        "e":"乾式灰化約 525°C 以上，常用 550°C。"},
       {"q":"乾式灰化的主要缺點是？","o":["需用強酸","耗時長且揮發性元素流失","無法跑多樣品","不安全"],"a":1,
@@ -327,7 +327,7 @@ CFG = {
     ]
   },
   "sort": {
-    "g4":{"steps":["精秤 5–10 g 樣品入已知重坩堝(高水分先預乾)","用坩堝鉗把坩堝放入冷的馬弗爐",
+    "g4":{"steps":["精秤 5–10 g 樣品入已知重坩堝(高水分先預乾)","用坩堝鉗把坩堝放入冷的高溫爐",
        "約 550°C 加熱 12–18 小時(或過夜)","關爐，待降到 250°C 以下再緩緩開門",
        "用鉗夾入乾燥器，蓋好冷卻至室溫","秤重，算灰重 → % 灰分"],
        "shuffle":[3,0,5,1,4,2],
