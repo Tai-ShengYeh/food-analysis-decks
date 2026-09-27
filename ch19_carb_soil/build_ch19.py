@@ -12,7 +12,7 @@ def add(sec, inner, attr=""):
     S.append((sec, attr, inner))
 
 # ---------------- SVGs ----------------
-# 苯酚-硫酸法（總糖）顯色反應示意
+# 苯酚-硫酸法（總醣）顯色反應示意
 PHENOL_SVG = """
 <svg viewBox="0 0 560 240">
  <g font-size="13">
@@ -76,7 +76,7 @@ DTREE_SVG = """
   <path d="M510 70 C 590 120,610 120,625 150"/><path d="M560 70 C 800 110,860 120,875 150"/></g>
  <g font-size="14" font-weight="800">
   <rect x="30" y="150" width="190" height="124" rx="12" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
-  <text x="125" y="178" text-anchor="middle" fill="#15233f">總糖(混合醣)?</text>
+  <text x="125" y="178" text-anchor="middle" fill="#15233f">總醣(混合醣)?</text>
   <text x="125" y="206" text-anchor="middle" fill="#d9822b" font-size="16">苯酚-硫酸法</text>
   <text x="125" y="232" text-anchor="middle" fill="#48597a" font-size="12">490nm 比色</text>
   <text x="125" y="252" text-anchor="middle" fill="#48597a" font-size="12">糖醇不顯色</text>
@@ -102,7 +102,7 @@ DTREE_SVG = """
 add(MOT, dc.cover("NIELSEN'S FOOD ANALYSIS · CHAPTER 19",
     "碳水化合物<span style='color:var(--accent-2)'>分析</span>", "Carbohydrate Analysis",
     "食品分析　·　3 小時課程　·　含 6 個互動小遊戲<br>分類 · 苯酚-硫酸法 · 還原糖 · HPLC · 酵素法 · 澱粉 · 膳食纖維",
-    ["單/寡/多醣","總糖","還原糖","HPLC/PAD","膳食纖維"]), ' data-cover="1"')
+    ["單/寡/多醣","總醣","還原糖","HPLC/PAD","膳食纖維"]), ' data-cover="1"')
 
 add(MOT, """<div style="text-align:center">
   <div class="kicker" style="justify-content:center">先想一想</div>
@@ -114,7 +114,7 @@ add(MOT, """<div style="text-align:center">
 
 add(MOT, dc.kt("19.1 為什麼重要", "為什麼要分析碳水化合物") +
     '<div class="grid2" style="margin-top:22px">' +
-    dc.card("⚡","能量主角","可消化醣類提供熱量；自然界 90% 醣以多醣形式存在") +
+    dc.card("⚡","能量主角","可消化醣類提供熱量；自然界至少 90% 的醣以多醣形式存在") +
     dc.card("🏷️","標示法規","總碳水、總糖、添加糖、膳食纖維皆須正確標示","a") +
     dc.card("🍮","質地功能","增稠、穩定乳化泡沫、保水、抗凍融、褐變風味","g") +
     dc.card("🛡️","真偽品管","確認成分標示正確、偵測摻假與來源","b") + '</div>')
@@ -128,8 +128,8 @@ add(MOT, dc.kt("19.1 分類", "依分子大小<span class='hi'>分類</span>") +
     '</ul></div><div class="note"><strong>FAO/WHO 依分子大小分：</strong>糖(DP1–2)、寡醣(DP3–9)、多醣(DP&gt;9)。<br>' +
     "人類只能消化<strong>蔗糖、乳糖、麥芽糊精與澱粉</strong>；其餘多醣皆不可消化。</div></div>")
 
-add(MOT, dc.chart_inner("carb", "食物裡的<span class='hi'>碳水化合物</span>含量", "資料：USDA FoodData Central，% 總碳水化合物（濕基，概值）。",
-    kicker="19.1 食物中的含量"), ' data-chart="carb"')
+add(MOT, dc.chart_inner("carb", "食物裡的<span class='hi'>碳水化合物</span>含量", "資料：USDA FoodData Central（非課本表格；課本 19.1 指引可查 USDA 資料庫），% 總碳水化合物（濕基，概值）。",
+    kicker="延伸資料 · USDA"), ' data-chart="carb"')
 
 add(MOT, """<div style="text-align:center">
   <div class="kicker" style="justify-content:center">核心命題</div>
@@ -144,7 +144,7 @@ add(MOT, dc.game_bucket_inner("g1","小遊戲 ①","依分子大小分類", 7,
 # ---------------- 維持注意 ----------------
 add(ATT, dc.kt("方法全覽", "醣分析方法地圖") +
     '<div class="grid2" style="margin-top:22px">' +
-    dc.card("🟡","總糖","苯酚-硫酸法(490nm)——幾乎測所有醣","b") +
+    dc.card("🟡","總醣(總碳水)","苯酚-硫酸法(490nm)——幾乎測所有可溶醣(溶液須澄清)","b") +
     dc.card("🔵","還原糖","Somogyi-Nelson、Lane-Eynon(Cu²⁺還原)","a") +
     dc.card("🧬","個別糖","HPLC / HPAEC-PAD、GC、酵素法(GOPOD)","g") +
     dc.card("🌾","多醣/纖維","澱粉酵素法、膳食纖維 AOAC 重量法、果膠","b") + '</div>')
@@ -158,10 +158,10 @@ add(ATT, dc.kt("19.2 樣品前處理", "萃取與淨化") +
     '<div class="note">為何用 80% 乙醇而非水？<br>低分子醣<strong>可溶</strong>於熱 80% 乙醇，而<strong>多醣與蛋白不溶</strong>——萃取相當專一。' +
     "（不能用 Soxhlet：含水乙醇會共沸成 95%。）</div></div>")
 
-add(ATT, dc.kt("19.3 總糖", "苯酚-硫酸法") +
+add(ATT, dc.kt("19.3 總醣（總碳水化合物）", "苯酚-硫酸法") +
     '<div class="svgwrap" style="margin-top:10px">' + PHENOL_SVG + '</div>' +
     '<div class="note" style="margin-top:14px">濃硫酸使醣脫水成糠醛衍生物，與苯酚縮合成<strong>黃金色</strong>，於 <strong>490 nm</strong> 比色。' +
-    "簡單、快速、便宜；但<strong>糖醇不顯色</strong>，且反應非計量 → 必須用<strong>標準曲線</strong>。</div>")
+    "簡單、快速、便宜；但<strong>糖醇不顯色</strong>、溶液須<strong>澄清</strong>(不溶的醣測不到)，且反應非計量 → 必須用<strong>標準曲線</strong>。<br>註：營養標示的「總糖」＝游離單醣＋雙醣(FDA)，與這裡測的「總醣(總碳水化合物)」不同。</div>")
 
 add(ATT, dc.game_mcq_inner("g2","小遊戲 ②","醣類分析即時測驗", 4), ' data-game="g2"')
 
@@ -195,13 +195,13 @@ add(ATT, dc.kt("對照：課本 vs 乙級", "同樣是銅還原，定量方式�
     """<table class="cmp" style="margin-top:12px">
  <thead><tr><th>方法</th><th>出處</th><th>還原步驟</th><th>定量方式</th><th>讀值</th></tr></thead>
  <tbody>
-  <tr><td class="c">Somogyi-Nelson 法</td><td>Nielsen 課本</td><td>還原糖把 Cu²⁺ 還原成 Cu₂O</td><td>Cu₂O 還原<strong>砷鉬酸</strong>，生成鉬藍</td><td>比色 520 nm</td></tr>
+  <tr><td class="c">Somogyi-Nelson 法</td><td>Nielsen 課本</td><td>還原糖把 Cu²⁺ 還原成 Cu⁺（Cu₂O）</td><td>Cu⁺ 還原<strong>砷鉬酸</strong>錯合物，生成藍色</td><td>比色 520 nm</td></tr>
   <tr><td class="c">索摩基法（Somogyi）</td><td>乙級技能檢定</td><td>同上</td><td>以<strong>碘滴定</strong>求出消耗的銅</td><td>滴定體積</td></tr>
   <tr><td class="c">Bertrand 法</td><td>乙級技能檢定</td><td>同上，分離出 Cu₂O 沉澱</td><td>Cu₂O 溶於<strong>硫酸鐵</strong>，生成的 Fe²⁺ 以 <strong>KMnO₄</strong> 滴定</td><td>滴定體積，查表換算糖量</td></tr>
   <tr><td class="c">Lane-Eynon 法</td><td>Nielsen 課本、AOAC 945.66</td><td>樣品滴入沸騰的鹼性硫酸銅</td><td>Cu²⁺ 耗盡時甲基藍褪色</td><td>滴定體積</td></tr>
  </tbody>
 </table>""" +
-    '<div class="note" style="margin-top:14px">四種方法前半段相同：還原糖把 Cu²⁺ 還原成 Cu₂O。差別在後半段怎麼數出 Cu 的量。'
+    '<div class="note" style="margin-top:14px">四種方法前半段相同：還原糖把 Cu²⁺ 還原成 Cu⁺（Cu₂O）。差別在後半段怎麼數出 Cu 的量。'
     '「Somogyi-Nelson」和乙級的「索摩基法」名字相近，但一個是<strong>比色</strong>、一個是<strong>碘滴定</strong>，作答時不要混淆。'
     '四者都只測<strong>還原糖</strong>，蔗糖要先酸或酵素轉化才測得到。</div>')
 
@@ -237,7 +237,7 @@ add(ATT, dc.game_bucket_inner("g3","小遊戲 ④","方法「測什麼」分類"
 add(ATT, dc.kt("19.6 膳食纖維", "定義決定方法") +
     '<div class="grid2" style="margin-top:16px"><div><ul class="clean">' +
     "<li>膳食纖維＝小腸<strong>不可消化</strong>的醣類＋木質素等</li>" +
-    "<li>除非抗性澱粉外，<strong>所有非澱粉多醣</strong>皆屬纖維</li>" +
+    "<li>除了<strong>可消化(非抗性)澱粉</strong>，其他多醣理論上都屬纖維(抗性澱粉也算)</li>" +
     "<li>分<strong>可溶(SDF)</strong>與<strong>不可溶(IDF)</strong>；TDF＝SDF＋IDF</li>" +
     "<li>定義須先取得共識，方法才能照定義測量</li></ul></div>" +
     '<div class="note">難處：纖維除了化學定義，還牽涉<strong>生理效應</strong>（不同來源效果不同）。' +
@@ -261,8 +261,8 @@ add(ATT, dc.game_mcq_inner("g5","小遊戲 ⑤","決策挑戰：選對方法", 5
 # ---------------- 喚起行動 ----------------
 add(ACT, dc.cmp_inner("一張表選方法（點欄位排序）",
     [{"k":"m","t":"s","label":"方法"},{"k":"meas","t":"s","label":"測什麼"},
-     {"k":"speed","t":"n","label":"速度","star":True},{"k":"app","t":"s","label":"主要應用"}],
-    "速度：★ 越多越快。整合自 Table 19.2。", kicker="19.7 方法比較"), ' data-game="cmp"')
+     {"k":"lim","t":"s","label":"限制"},{"k":"app","t":"s","label":"主要應用"}],
+    "整合自 Table 19.2；Lane-Eynon 與 HPLC 的限制補自 19.4.1.2、19.4.2.1。", kicker="Table 19.2 方法比較"), ' data-game="cmp"')
 
 add(ACT, dc.chart_inner("fiber", "各食物的<span class='hi'>總膳食纖維</span>", "資料：Table 19.8（AOAC 991.43），g 纖維 / 100 g 食物（濕基）。",
     kicker="19.6 膳食纖維含量", height="52vh"), ' data-chart="fiber"')
@@ -282,7 +282,7 @@ add(ACT, dc.kt("19.10 計算", "膳食纖維 %：扣空白、蛋白、灰分") +
     '<span class="frac"><b>殘渣 − 蛋白 − 灰分 − 空白</b><span>樣品重</span></span> × 100</div>' +
     '<div><ul class="clean"><li>殘渣含少量殘留蛋白與灰分 → 須扣除</li>' +
     "<li>另扣<strong>試劑空白</strong>(blank)</li>" +
-    "<li>結果以<strong>乾基</strong>表示（若樣品已乾燥）</li>" +
+    "<li>若樣品先經乾燥/脫脂，須依失重<strong>校正回原樣品基準</strong>(19.6.2.2)</li>" +
     "<li>TDF ＝ IDF ＋ SDF</li></ul></div></div>")
 
 add(ACT, dc.game_calc_inner("g6","小遊戲 ⑥","計算闖關",
@@ -293,24 +293,24 @@ add(ACT, dc.kt("重點整理", "今天的五個關鍵") +
     '<div class="grid2" style="margin-top:18px"><ul class="clean">' +
     "<li><strong>沒有萬用法</strong>——依結構類型(單/寡/多醣)選方法</li>" +
     "<li>前處理：乾燥→脫脂→<strong>熱 80% 乙醇</strong>萃取低分子醣</li>" +
-    "<li>總糖<strong>苯酚-硫酸法</strong>；還原糖<strong>Somogyi-Nelson/Lane-Eynon</strong></li></ul>" +
+    "<li>總醣<strong>苯酚-硫酸法</strong>；還原糖<strong>Somogyi-Nelson/Lane-Eynon</strong></li></ul>" +
     '<ul class="clean"><li>個別糖看<strong>HPLC/HPAEC-PAD</strong>；澱粉用<strong>酵素→葡萄糖</strong></li>' +
     "<li>膳食纖維<strong>酵素-重量法</strong>：除澱粉/蛋白，秤殘渣扣蛋白灰分空白</li></ul></div>")
 
 add(ACT, dc.checklist_inner("今天結束，你應該會…",
     ["依分子大小分辨單醣、寡醣、多醣",
      "說明為何用熱 80% 乙醇萃取低分子醣",
-     "解釋苯酚-硫酸法測總糖的原理與限制",
+     "解釋苯酚-硫酸法測總醣的原理與限制",
      "說明還原糖法 (Somogyi-Nelson) 的化學基礎",
      "說出總澱粉酵素測定的兩種酵素與順序",
-     "判斷該用哪種方法（總糖/還原糖/個別糖/纖維）",
+     "判斷該用哪種方法（總醣/還原糖/個別糖/纖維）",
      "由殘渣數據算出 % 總膳食纖維"]))
 
 add(ACT, dc.cover("下一步 · NEXT",
     "把碳水化合物分析<br><span style='color:var(--accent-2)'>用起來</span>", "",
     "📌 課後練習：Study Questions、Practice Problems<br>"
     "🔜 銜接章節：<strong>蛋白質分析 (Ch18)</strong>、<strong>水分分析 (Ch15)</strong><br>"
-    "🧪 思考：你要測總糖、還原糖、個別糖，還是膳食纖維？該選哪種方法？",
+    "🧪 思考：你要測總醣、還原糖、個別糖，還是膳食纖維？該選哪種方法？",
     ["苯酚-硫酸法","Somogyi-Nelson","HPLC/PAD","酵素法","膳食纖維"]), ' data-cover="1"')
 
 # ---------------- CFG ----------------
@@ -331,9 +331,9 @@ CFG = {
         {"t":"澱粉","c":"多醣 (DP >9)"},{"t":"纖維素","c":"多醣 (DP >9)"}],
       "ok":"🎉 全對！單醣 DP1、寡醣 DP3–9、多醣 DP>9。",
       "tip":"提示：棉子糖/水蘇糖/麥芽糊精是寡醣；澱粉與纖維素是多醣。"},
-    "g3": {"cats":["總糖/還原糖","個別糖(專一)","多醣/纖維"],
-      "items":[{"t":"苯酚-硫酸法","c":"總糖/還原糖"},{"t":"Somogyi-Nelson","c":"總糖/還原糖"},
-        {"t":"Lane-Eynon","c":"總糖/還原糖"},
+    "g3": {"cats":["總醣/還原糖","個別糖(專一)","多醣/纖維"],
+      "items":[{"t":"苯酚-硫酸法","c":"總醣/還原糖"},{"t":"Somogyi-Nelson","c":"總醣/還原糖"},
+        {"t":"Lane-Eynon","c":"總醣/還原糖"},
         {"t":"HPLC/HPAEC-PAD","c":"個別糖(專一)"},{"t":"GOPOD 酵素","c":"個別糖(專一)"},
         {"t":"澱粉酵素法","c":"多醣/纖維"},{"t":"AOAC 纖維重量法","c":"多醣/纖維"}],
       "ok":"🎉 正確！苯酚-硫酸/還原糖法測總量，HPLC/酵素測個別糖，酵素重量法測多醣纖維。",
@@ -345,14 +345,14 @@ CFG = {
        "e":"總碳水＝總重−(水分+蛋白+脂肪+灰分)，是差減法，非直接測量。"},
       {"q":"前處理為何用熱 80% 乙醇而非水萃取單/寡醣？","o":["乙醇較便宜","低分子醣可溶、多醣與蛋白不溶","水會破壞糖","乙醇可滅菌"],"a":1,
        "e":"低分子醣溶於熱 80% 乙醇，而多醣與蛋白不溶——萃取相當專一。"},
-      {"q":"苯酚-硫酸法測總糖時，哪一類醣『不會』顯色？","o":["單醣","糖醇(如山梨醇)","雙醣","多醣"],"a":1,
+      {"q":"苯酚-硫酸法測總醣時，哪一類醣『不會』顯色？","o":["單醣","糖醇(如山梨醇)","雙醣","多醣"],"a":1,
        "e":"糖醇(alditol)不給陽性反應；幾乎所有單/寡/多醣會顯色。"},
       {"q":"還原糖法(Somogyi-Nelson)的化學基礎是？","o":["蛋白質沉澱","Cu(II)被還原成Cu(I)","脂肪皂化","胜肽鍵吸收"],"a":1,
        "e":"還原糖的醛基把 Cu²⁺ 還原成 Cu⁺，再還原砷鉬酸顯藍色。"}
     ],
     "g5":[
       {"q":"想一次測出混合樣品中「全部醣」的總量，最簡便？","o":["苯酚-硫酸法","HPLC","GC","DSC"],"a":0,
-       "e":"苯酚-硫酸法簡單快速，幾乎測所有醣的總糖(需標準曲線)。"},
+       "e":"苯酚-硫酸法簡單快速，幾乎測所有可溶醣的總量(總醣／總碳水化合物；需標準曲線)。"},
       {"q":"要同時分離並定量混合物中各個別糖，首選？","o":["苯酚-硫酸法","HPLC/HPAEC-PAD","Lane-Eynon","比重計"],"a":1,
        "e":"HPLC 能分離、定性(滯留時間)又定量(峰面積)，是個別糖首選。"},
       {"q":"要測食品中的『總澱粉』，正確做法是？","o":["苯酚-硫酸法直接測","酵素水解成葡萄糖再測","測比重","測折射率"],"a":1,
@@ -377,17 +377,17 @@ CFG = {
       "hint":"提示：分子 = 151.9−13.1−21.1−6.1 = 111.6 mg；÷1002.8 mg ×100 ≈ 11.1%。"}
   },
   "cmp": {
-    "cols":[{"k":"m"},{"k":"meas"},{"k":"speed"},{"k":"app"}],
+    "cols":[{"k":"m"},{"k":"meas"},{"k":"lim"},{"k":"app"}],
     "rows":[
-      {"m":"差減法","meas":"總碳水(扣除其他)","speed":5,"app":"營養標示(法定·非實測)"},
-      {"m":"苯酚-硫酸法","meas":"總糖(不含糖醇)","speed":4,"app":"總碳水·研究品管"},
-      {"m":"Somogyi-Nelson","meas":"還原糖","speed":3,"app":"葡萄糖/麥芽糖/糖漿"},
-      {"m":"Lane-Eynon","meas":"還原糖(滴定)","speed":3,"app":"還原糖·產品標準化"},
-      {"m":"HPLC/HPAEC-PAD","meas":"個別單/寡醣","speed":3,"app":"個別糖定性定量(首選)"},
-      {"m":"酵素法 GOPOD","meas":"特定糖(如葡萄糖)","speed":3,"app":"葡萄糖·蔗糖·乳糖·澱粉"},
-      {"m":"澱粉酵素法","meas":"總澱粉","speed":2,"app":"澱粉(水解成葡萄糖)"},
-      {"m":"AOAC 纖維重量法","meas":"膳食纖維(IDF/SDF/TDF)","speed":1,"app":"膳食纖維標示(法定)"},
-      {"m":"折射率/比重","meas":"溶液固形物濃度","speed":5,"app":"純糖漿快速估濃度"}
+      {"m":"差減法","meas":"總碳水(扣除其他)","lim":"非實測·依賴其他成分測定","app":"營養標示(法定·非實測)"},
+      {"m":"苯酚-硫酸法","meas":"總醣(不含糖醇)","lim":"溶液須澄清·需同組成標準曲線","app":"總碳水·研究品管"},
+      {"m":"Somogyi-Nelson","meas":"還原糖","lim":"溶液須澄清·果糖也有部分反應","app":"葡萄糖/麥芽糖/糖漿"},
+      {"m":"Lane-Eynon","meas":"還原糖(滴定)","lim":"反應非計量·需標準曲線","app":"還原糖·產品標準化"},
+      {"m":"HPLC/HPAEC-PAD","meas":"個別單/寡醣","lim":"需萃取與微米過濾·PAD 須每日校正","app":"個別糖定性定量(首選)"},
+      {"m":"酵素法 GOPOD","meas":"特定糖(如葡萄糖)","lim":"需萃取·溶液須澄清","app":"葡萄糖·蔗糖·澱粉(乳糖改用半乳糖氧化酶)"},
+      {"m":"澱粉酵素法","meas":"總澱粉","lim":"抗性澱粉未必測到·須扣游離葡萄糖·酶須純化","app":"澱粉(水解成葡萄糖)"},
+      {"m":"AOAC 纖維重量法","meas":"膳食纖維(IDF/SDF/TDF)","lim":"不含低分子可溶纖維·不代表生理功效","app":"膳食纖維標示(法定)"},
+      {"m":"折射率/比重","meas":"溶液固形物濃度","lim":"僅適純、單一物質溶液","app":"純糖漿快速估濃度"}
     ]
   }
 }

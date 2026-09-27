@@ -114,7 +114,7 @@ DTREE_SVG = """
   <rect x="780" y="150" width="190" height="124" rx="12" fill="#f6f9fd" stroke="#48597a" stroke-width="2"/>
   <text x="875" y="178" text-anchor="middle" fill="#15233f">多元素·痕量?</text>
   <text x="875" y="206" text-anchor="middle" fill="#15233f" font-size="16">AAS / ICP</text>
-  <text x="875" y="232" text-anchor="middle" fill="#48597a" font-size="12">ppb 級·靈敏</text>
+  <text x="875" y="232" text-anchor="middle" fill="#48597a" font-size="12">多元素·石墨爐/ICP-MS 達 ppb</text>
   <text x="875" y="252" text-anchor="middle" fill="#48597a" font-size="12">儀器貴·需灰化</text>
  </g>
 </svg>"""
@@ -149,8 +149,8 @@ add(MOT, dc.kt("21.1 分離 + 測定", "礦物質分析的<span class='hi'>骨�
     '</ul></div><div class="note"><strong>關鍵：最終目標是礦物質的「質量」。</strong><br>' +
     "滴定體積、吸光度需透過<strong>化學計量或標準曲線</strong>換算回礦物質量。</div></div>")
 
-add(MOT, dc.chart_inner("ca", "食物裡的<span class='hi'>鈣</span>含量", "資料：USDA SR-28，Ca（mg / 100 g 濕基）。",
-    kicker="21.1 食物中的含量"), ' data-chart="ca"')
+add(MOT, dc.chart_inner("ca", "食物裡的<span class='hi'>鈣</span>含量", "取自 Table 21.1（USDA SR-28）：Ca，mg / 100 g 濕基。（課本表頭印為「mg/g」，但數值實為每 100 g。）",
+    kicker="Table 21.1"), ' data-chart="ca"')
 
 add(MOT, """<div style="text-align:center">
   <div class="kicker" style="justify-content:center">核心命題</div>
@@ -181,13 +181,13 @@ add(ATT, dc.kt("21.3.1 EDTA 錯合滴定", "EDTA：測鈣與硬度") +
     "<li>須在 <span class='em'>pH 10</span>(氨緩衝)；指示劑 Calmagite/EBT</li>" +
     "<li>終點：<strong>粉紅 → 藍</strong>（金屬被 EDTA 奪走）</li>" +
     "<li>mol EDTA = mol (Ca + Mg) → 算硬度</li>" +
-    '</ul><div class="note" style="margin-top:14px">主要應用：水的<strong>總硬度</strong>(Ca+Mg)，以 CaCO₃ mg/L 表示。</div></div></div>')
+    '</ul><div class="note" style="margin-top:14px">主要應用：水的<strong>總硬度</strong>(Ca+Mg)，以 CaCO₃ mg/L 表示。單獨滴鈣時 Calmagite 需緩衝液含少量 Mg–EDTA 才能顯示終點(21.3.1.3)。</div></div></div>')
 
 add(ATT, dc.game_mcq_inner("g2","小遊戲 ②","EDTA 與前處理即時測驗", 4), ' data-game="g2"')
 
 add(ATT, dc.kt("21.3.2 沉澱滴定", "Mohr vs Volhard：測氯化物") +
     '<div class="grid2" style="margin-top:16px">' +
-    dc.card("➡️","Mohr 正滴定","AgNO₃ 直接滴 Cl⁻；K₂CrO₄ 為指示劑。過量 Ag⁺ 與鉻酸根生成<strong>磚紅色 Ag₂CrO₄</strong>為終點","b") +
+    dc.card("➡️","Mohr 正滴定","AgNO₃ 直接滴 Cl⁻；K₂CrO₄ 為指示劑。過量 Ag⁺ 與鉻酸根生成<strong>橘紅色 Ag₂CrO₄</strong>為終點(課本：出現第一抹橘色)","b") +
     dc.card("⬅️","Volhard 反滴定","先加<strong>過量</strong>AgNO₃，再用 KSCN 回滴；Fe³⁺ 指示劑遇過量 SCN⁻ 變<strong>紅色</strong>","a") +
     '</div><div class="note" style="margin-top:18px">兩法都用 Ag⁺ 沉澱 Cl⁻；測得氯後 ×1.648 換算成<strong>食鹽 (NaCl)</strong>。配藥須用<strong>煮沸水</strong>除碳酸鹽干擾。</div>')
 
@@ -195,7 +195,7 @@ add(ATT, dc.kt("沉澱滴定的化學", "Mohr 的兩步反應") +
     '<div class="grid2" style="margin-top:8px"><div class="eq" style="font-size:1.05rem">' +
     "Ag⁺ + Cl⁻ → AgCl↓<br><span style='font-size:.8em;color:var(--ink-2)'>白色混濁（先反應）</span></div>" +
     '<div class="eq" style="font-size:1.05rem">2Ag⁺ + CrO₄²⁻ → Ag₂CrO₄↓<br>' +
-    "<span style='font-size:.8em;color:var(--ink-2)'>磚紅（Cl⁻ 用盡後才出現＝終點）</span></div></div>" +
+    "<span style='font-size:.8em;color:var(--ink-2)'>橘紅（Cl⁻ 用盡後才出現＝終點）</span></div></div>" +
     '<div class="note" style="margin-top:16px">關鍵：AgCl 的溶解度比 Ag₂CrO₄ 低 → Cl⁻<strong>先</strong>被沉澱完，多餘 Ag⁺ 才去找鉻酸根顯色。</div>')
 
 add(ATT, dc.game_sort_inner("g4","小遊戲 ③","灰化→鈣分析流程排序", 7,
@@ -211,7 +211,7 @@ add(ATT, dc.kt("21.3.4 離子選擇電極", "ISE：直接讀離子") +
     '<div class="grid2" style="margin-top:16px"><div><ul class="clean">' +
     "<li>原理同 pH 電極，依 <strong>Nernst 方程</strong>產生電位</li>" +
     "<li>改變感應玻璃組成 → 對特定離子(Na⁺、Cl⁻、Ca²⁺…)專一</li>" +
-    "<li>電位(mV) ∝ 離子<strong>活度</strong>；用 ISA 緩衝固定離子強度</li>" +
+    "<li>電位(mV) 與離子<strong>活度的對數</strong>成線性(Nernst)；用 ISA 緩衝固定離子強度</li>" +
     "<li>以 <strong>mV vs log 濃度</strong> 標準曲線定量</li></ul></div>" +
     '<div class="note">優點：可直接測陰陽離子、不受濁度/顏色影響、設備便宜。<br>' +
     "缺點：<strong>低濃度測不準</strong>、反應慢、電極須專一。</div></div>")
@@ -229,7 +229,7 @@ add(ATT, dc.kt("21.4 快速鹽分析儀", "現場測鹽：又快又準") +
 add(ATT, dc.kt("21.5 vs 現代儀器", "傳統法 vs AAS / ICP") +
     '<div class="grid2" style="margin-top:16px">' +
     dc.card("🧪","傳統法","試劑器材常備、技術門檻低、單一元素便宜；但較耗人力、偵測限較高","b") +
-    dc.card("📡","AAS / ICP","多元素、痕量(ppb)、線性廣；但儀器貴、需訓練、多需灰化","a") +
+    dc.card("📡","AAS / ICP","可測多種元素(ICP-OES 可同時多元素、線性範圍廣)；石墨爐 AAS／ICP-MS 可達 ppb；但儀器貴、需訓練、多需灰化","a") +
     '</div><div class="note" style="margin-top:18px">小型實驗室、樣品少時 → <strong>傳統法</strong>合適；大量樣品/痕量/多元素 → <strong>AAS/ICP</strong>。</div>')
 
 add(ATT, dc.kt("21.2.3 干擾與校正", "讓數據可信的三招") +
@@ -244,12 +244,12 @@ add(ATT, dc.game_mcq_inner("g5","小遊戲 ⑤","決策挑戰：選對方法", 5
 # ---------------- 喚起行動 ----------------
 add(ACT, dc.cmp_inner("一張表選方法（點欄位排序）",
     [{"k":"m","t":"s","label":"方法"},{"k":"meas","t":"s","label":"原理/測什麼"},
-     {"k":"sens","t":"n","label":"靈敏度","star":True},{"k":"app","t":"s","label":"主要應用"}],
-    "靈敏度：★ 越多越靈敏(偵測限越低)。整合自 Table 21.3。", kicker="21.5 方法比較"), ' data-game="cmp"')
+     {"k":"con","t":"s","label":"主要缺點"},{"k":"app","t":"s","label":"主要應用"}],
+    "整合自 Table 21.3（原理、缺點、應用）。", kicker="21.5 方法比較"), ' data-game="cmp"')
 
 add(ACT, dc.chart_inner("range", "各法的<span class='hi'>偵測範圍</span>差很多",
-    "概念示意：ISE 約 1–10⁻⁶ M；ICP/AAS 可達 ppb。數值為數量級概念，非單一定值。",
-    kicker="21.5 偵測限概念", height="52vh"), ' data-chart="range"')
+    "<strong>示意（非課本數據）</strong>：只有 ISE 的約 1–10⁻⁶ M 出自課本(21.3.4.3，且低濃度端呈非線性)；課本 21.5 只說石墨爐 AAS 與 ICP-MS 可達 ppb、遠低於傳統法。其餘柱高為數量級概念，隨元素與條件而異。",
+    kicker="偵測限概念（示意）", height="52vh"), ' data-chart="range"')
 
 add(ACT, dc.kt("方法選擇", "跟著決策樹走") +
     '<div class="svgwrap" style="margin-top:10px">' + DTREE_SVG + '</div>' +
@@ -260,7 +260,7 @@ add(ACT, dc.kt("光譜法概念", "AAS：火焰原子吸收") +
     '<div class="note" style="margin-top:14px">火焰把樣品<strong>原子化</strong>，空心陰極燈發特定波長，原子吸收量<strong>正比於濃度</strong>。' +
     "ICP-OES 則以電漿激發、測<strong>發射</strong>光，可多元素同時、線性更廣。</div>")
 
-add(ACT, dc.kt("21.8 計算", "EDTA 滴定：算水的硬度") +
+add(ACT, dc.kt("計算練習", "EDTA 滴定：算水的硬度") +
     '<div class="grid2" style="margin-top:14px"><div class="eq" style="font-size:1.05rem">硬度(mg/L) = ' +
     '<span class="frac"><b>V<sub>EDTA</sub> · M<sub>EDTA</sub> · 100090</b><span>樣品體積 (L)</span></span></div>' +
     '<div><ul class="clean"><li>mol EDTA = mol (Ca+Mg)（1:1）</li>' +
@@ -301,12 +301,12 @@ add(ACT, dc.cover("下一步 · NEXT",
 CFG = {
   "charts": {
     "ca": {"type":"bar","yTitle":"Ca (mg/100 g)",
-      "labels":["牛奶","茅屋乳酪","雞肉腸","蛋","葡萄乾","馬鈴薯","全麥麵粉","糙米","蘋果","香蕉"],
-      "datasets":[{"label":"鈣 (mg/100 g)","data":[113,111,92,56,50,30,34,9,8,5],"color":"#1f6feb"}]},
+      "labels":["全脂牛奶","茅屋乳酪(低脂)","波隆那香腸","蛋","葡萄乾","全麥麵粉","馬鈴薯","糙米","蘋果","香蕉"],
+      "datasets":[{"label":"鈣 (mg/100 g)","data":[113,111,92,56,50,34,30,9,8,5],"color":"#1f6feb"}]},
     "range": {"type":"bar","yTitle":"log₁₀(偵測下限, M) 概念",
-      "labels":["EDTA 滴定","Mohr/Volhard","比色法","ISE","AAS","ICP-OES"],
-      "datasets":[{"label":"偵測下限數量級 (越負越靈敏)","data":[-3,-3,-5,-6,-7,-9],"color":"#d9822b"}],
-      "zero":False}
+      "labels":["EDTA 滴定","Mohr/Volhard","比色法","ISE","火焰 AAS","石墨爐 AAS / ICP-MS"],
+      "datasets":[{"label":"偵測下限數量級（示意，越負越靈敏）","data":[-3,-3,-6,-6,-7,-8],"color":"#d9822b"}],
+      "zero":True}
   },
   "bucket": {
     "g1": {"cats":["滴定(體積)","比色(吸光)","電位/光譜(儀器)"],
@@ -338,18 +338,18 @@ CFG = {
       {"q":"要測自來水的「總硬度」，最合適的傳統法是？","o":["Mohr 滴定","EDTA 錯合滴定","磷-鉬藍比色","UV 280"],"a":1,
        "e":"硬度＝Ca+Mg，EDTA 在 pH 10 一次滴定總量，以 CaCO₃ 表示。"},
       {"q":"測奶油的鹽(NaCl)含量，常用哪種滴定？","o":["EDTA","Mohr(AgNO₃+鉻酸)","Volhard 必須","Karl Fischer"],"a":1,
-       "e":"Mohr 正滴定直接用 AgNO₃ 滴氯，磚紅 Ag₂CrO₄ 為終點(AOAC 960.29)。"},
+       "e":"Mohr 正滴定直接用 AgNO₃ 滴氯，橘紅色 Ag₂CrO₄ 為終點(AOAC 960.29)。"},
       {"q":"乳酪在硝酸中溶解後測氯，較適合哪種法？","o":["Mohr","Volhard 反滴定","比色","ISE 不可用"],"a":1,
        "e":"酸性、需先過量沉澱再回滴的情況用 Volhard(AOAC 935.43)。"},
-      {"q":"要快速、非破壞且多元素同時測痕量礦物，選？","o":["EDTA 滴定","Mohr","ICP-OES","Quantab 試紙"],"a":2,
-       "e":"ICP-OES 多元素同時、痕量(ppb)、線性廣，但儀器貴需訓練。"},
+      {"q":"要對大量樣品同時測多種元素(如營養標示)，選？","o":["EDTA 滴定","Mohr","ICP-OES","Quantab 試紙"],"a":2,
+       "e":"ICP-OES 可同時測多元素、干擾少、線性範圍廣(Table 21.3)；但儀器貴、需訓練，多數樣品仍須先灰化。"},
       {"q":"想直接測牛奶中的鈣或低鈉冰淇淋的鈉，方便的選擇？","o":["離子選擇電極 ISE","Mohr","Volhard","重量法"],"a":0,
        "e":"ISE 可直接測特定離子、不受濁度顏色影響，適合 Na/K/Ca 等品管。"}
     ]
   },
   "sort": {
     "g4":{"steps":["樣品以非金屬器具磨碎、精秤","550°C 高溫灰化燒掉有機質",
-       "灰分以強酸溶解成礦物離子","加氨緩衝調至 pH 10、加 Calmagite 指示劑",
+       "灰分以強酸溶解成礦物離子","加含少量 Mg–EDTA 的氨緩衝(pH 10)與 Calmagite 指示劑",
        "用標準 EDTA 滴定至粉紅變藍","記錄 EDTA 體積，扣除試劑空白","由 mol EDTA 換算鈣含量"],
        "shuffle":[2,4,0,6,1,5,3],
        "ok":"🎉 順序正確！灰化→溶解→調 pH→滴定→扣空白→換算。",
@@ -363,15 +363,15 @@ CFG = {
       "hint":"提示：mol=8.0×10⁻⁵；×100090≈8.0 mg CaCO₃；÷0.050 L ≈ 160 mg/L。"}
   },
   "cmp": {
-    "cols":[{"k":"m"},{"k":"meas"},{"k":"sens"},{"k":"app"}],
+    "cols":[{"k":"m"},{"k":"meas"},{"k":"con"},{"k":"app"}],
     "rows":[
-      {"m":"EDTA 滴定","meas":"Ca+Mg 錯合(體積)","sens":2,"app":"水硬度·灰中鈣·試紙"},
-      {"m":"Mohr 滴定","meas":"Cl⁻ 沉澱(正滴定)","sens":2,"app":"奶油/食品鹽分"},
-      {"m":"Volhard 滴定","meas":"Cl⁻ 沉澱(反滴定)","sens":2,"app":"乳酪等高氯食品"},
-      {"m":"比色法","meas":"顯色+Beer 吸光","sens":4,"app":"磷·鐵等單一元素"},
-      {"m":"ISE","meas":"離子活度→mV","sens":3,"app":"Na/K/Cl/Ca 品管"},
-      {"m":"AAS","meas":"原子吸收","sens":5,"app":"單元素·痕量"},
-      {"m":"ICP-OES","meas":"原子發射","sens":5,"app":"多元素·痕量·標示"}
+      {"m":"EDTA 滴定","meas":"Ca+Mg 錯合(體積)","con":"可能有干擾物·終點主觀","app":"水硬度·灰中鈣·試紙"},
+      {"m":"Mohr 滴定","meas":"Cl⁻ 沉澱(正滴定)","con":"手動時終點主觀","app":"奶油/食品鹽分"},
+      {"m":"Volhard 滴定","meas":"Cl⁻ 沉澱(反滴定)","con":"終點主觀·試劑與時間多於 Mohr","app":"乳酪等高氯食品"},
+      {"m":"比色法","meas":"顯色+Beer 吸光","con":"耗費技術人員時間","app":"磷·鐵等單一元素"},
+      {"m":"ISE","meas":"離子活度→mV","con":"低濃度測不準·反應慢·部分電極易早衰","app":"Na/K/Cl/Ca 品管"},
+      {"m":"AAS","meas":"原子吸收","con":"儀器貴·每元素需不同燈·干擾較多·線性窄","app":"單元素·痕量"},
+      {"m":"ICP-OES","meas":"原子發射","con":"儀器貴·需訓練·多需灰化","app":"多元素·痕量·標示"}
     ]
   }
 }

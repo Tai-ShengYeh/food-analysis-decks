@@ -31,7 +31,7 @@ BLOCK_SVG = """
   <line x1="166" y1="100" x2="206" y2="100"/><line x1="362" y1="100" x2="402" y2="100"/>
   <line x1="568" y1="100" x2="608" y2="100"/><line x1="764" y1="100" x2="804" y2="100"/></g>
  <text x="486" y="40" text-anchor="middle" class="lblb" font-size="15">質譜儀三大功能：游離 → 依 m/z 分離 → 偵測 (Fig 11.1)</text>
- <text x="486" y="175" text-anchor="middle" class="lbl">全程高真空(10⁻⁶–10⁻⁸ torr)，避免離子與氣體分子碰撞</text>
+ <text x="486" y="175" text-anchor="middle" class="lbl">分析器/偵測器區真空最高(≈10⁻⁶–10⁻⁸ torr)，避免離子與氣體分子碰撞</text>
 </svg>"""
 
 QUAD_SVG = """
@@ -77,7 +77,7 @@ TQ_SVG = """
  <text x="860" y="125" text-anchor="middle" fill="#fff" font-weight="800">偵測器</text>
  <text x="145" y="76" text-anchor="middle" class="lbl">precursor</text>
  <text x="635" y="76" text-anchor="middle" class="lbl">product</text>
- <text x="490" y="200" text-anchor="middle" class="lbl">SRM/MRM：只看特定「離子對」→ 雜訊大降、靈敏度↑100–1000 倍，痕量定量首選</text>
+ <text x="490" y="200" text-anchor="middle" class="lbl">SRM/MRM：只看特定「離子對」→ 雜訊大降，比 UV/DAD 偵測靈敏 100–1000 倍，痕量定量首選</text>
 </svg>"""
 
 ESI_SVG = """
@@ -141,10 +141,15 @@ MS_SPECTRUM_SVG = """
  <text x="20" y="183" text-anchor="middle" class="lbl" transform="rotate(-90 20 183)">相對強度 (%)</text>
  <g stroke="#d9822b" stroke-width="3.4" stroke-linecap="round">
   <line x1="166" y1="316" x2="166" y2="300"/>
-  <line x1="261" y1="316" x2="261" y2="199"/>
+  <line x1="241" y1="316" x2="241" y2="300"/>
+  <line x1="248" y1="316" x2="248" y2="215"/>
+  <line x1="261" y1="316" x2="261" y2="196"/>
+  <line x1="329" y1="316" x2="329" y2="281"/>
+  <line x1="342" y1="316" x2="342" y2="239"/>
+  <line x1="349" y1="316" x2="349" y2="284"/>
   <line x1="356" y1="316" x2="356" y2="50"/>
-  <line x1="450" y1="316" x2="450" y2="303"/>
-  <line x1="457" y1="316" x2="457" y2="284"/>
+  <line x1="450" y1="316" x2="450" y2="308"/>
+  <line x1="457" y1="316" x2="457" y2="281"/>
  </g>
  <g font-size="12" fill="#48597a" text-anchor="middle">
   <text x="166" y="334">15</text><text x="261" y="334">29</text><text x="356" y="334">43</text><text x="457" y="334">58</text>
@@ -161,7 +166,7 @@ add(MOT, dc.kt("11.3 判讀基礎", "質譜圖怎麼看：<span class='hi'>基�
     "<li><strong>子離子(碎片)</strong>：M⁺• 進一步裂解的產物</li>" +
     "<li>丁烷(58)：基峰 m/z 43、另有 29、15；甲醇(32)：基峰 31</li>" +
     "<li>質譜的峰是<strong>細線</strong>(位置=質量、高度=強度)，不是寬長條</li>" +
-    '</ul></div></div>')
+    '</ul><p class="cap" style="text-align:left">左圖依 Fig 11.9 重繪（峰高為目測近似）。</p></div></div>')
 
 add(MOT, dc.game_bucket_inner("g1","小遊戲 ①","軟游離 vs 硬游離", 8,
     "把 8 個敘述分到「硬游離(多碎片)」或「軟游離(少碎片)」。"), ' data-game="g1"')
@@ -202,14 +207,14 @@ add(ATT, dc.game_bucket_inner("g3","小遊戲 ③","GC-MS vs LC-MS：誰適合�
 add(ATT, dc.kt("11.6 串聯質譜 MS/MS", "三重四極桿：痕量定量的<span class='hi'>主力</span>") +
     '<div class="svgwrap" style="margin-top:6px">' + TQ_SVG + '</div>' +
     '<div class="note" style="margin-top:10px"><strong>SRM/MRM</strong>(選擇/多重反應偵測)：Q1 選母離子、Q2 碰撞碎裂(CID)、Q3 選子離子，' +
-    "只盯特定「離子對」→ 雜訊大降、靈敏度提升 <strong>100–1000 倍</strong>。這就是農藥、獸藥、甜味劑官方法都用它的原因。</div>")
+    "只盯特定「離子對」→ 雜訊大降；靈敏度比 UV 或二極體陣列偵測器高 <strong>100–1000 倍</strong>(11.6 節)。這就是農藥、獸藥、三聚氰胺等官方法多用 LC-MS/MS 的原因。</div>")
 
 add(ATT, dc.game_sort_inner("g4","小遊戲 ④","三重四極桿 MRM 流程排序", 6,
     "用 ▲▼ 把 LC-MS/MS 做 MRM 定量的 6 個步驟排成正確順序。"), ' data-game="g4"')
 
 add(ATT, dc.kt("11.7 高解析質譜 HRMS", "用<span class='hi'>準確質量</span>算出分子式") +
     '<div class="grid2" style="margin-top:18px"><ul class="clean">' +
-    "<li>解析度以 <strong>FWHM</strong>(半高寬)定義；四極桿~500、Orbitrap~30,000、FT-ICR~3,000,000</li>" +
+    "<li>解析度以 <strong>FWHM</strong>(半高寬)定義；以 m/z 300 為例：四極桿/離子阱 ~500、Orbitrap/Q-TOF ~30,000、FTMS ~3,000,000</li>" +
     "<li><strong>準確質量</strong>＋同位素細結構 → 推出<strong>元素組成</strong></li>" +
     "<li>質量誤差 <strong>&lt; 5 ppm</strong> 即可可靠定出分子式</li></ul>" +
     '<div class="note">咖啡因 C₈H₁₀N₄O₂ 的三種質量：<br><strong>標稱 194</strong>(整數和)、' +
@@ -217,7 +222,7 @@ add(ATT, dc.kt("11.7 高解析質譜 HRMS", "用<span class='hi'>準確質量</s
     "<br>質量量得越準，越能唯一決定分子式。</div></div>")
 
 add(ATT, dc.chart_inner("resolution", "各質量分析器的<span class='hi'>解析度</span>",
-    "解析度取以 10 為底對數：四極桿~500 到 FT-ICR~3,000,000，跨 4 個數量級——解析度越高，越能分辨質量相近的離子。",
+    "資料：11.7 節 m/z 300 的計算例，R = m/FWHM（0.6、0.01、0.0001 Da）；y 軸為 log₁₀R。另：課本記 Orbitrap 規格 400,000(m/z 200)、FT-ICR 7,000,000(m/z 600)。解析度越高，越能分辨質量相近的離子。",
     kicker="11.7 解析度"), ' data-chart="resolution"')
 
 add(ATT, dc.game_mcq_inner("g5","小遊戲 ⑤","決策挑戰：選對質譜技術", 5), ' data-game="g5"')
@@ -226,11 +231,11 @@ add(ATT, dc.game_mcq_inner("g5","小遊戲 ⑤","決策挑戰：選對質譜技�
 add(ACT, dc.cmp_inner("一張表選質量分析器（點欄位排序）",
     [{"k":"m","t":"s","label":"分析器"},{"k":"res","t":"n","label":"解析度","star":True},
      {"k":"acc","t":"s","label":"質量準確度"},{"k":"cost","t":"n","label":"成本","star":True},{"k":"app","t":"s","label":"代表用途"}],
-    "解析度／成本 ★ 越多越高。整合自 Table 11.1 與 11.7。", kicker="11.2.4 / 11.7 比較"), ' data-game="cmp"')
+    "用途整理自 Table 11.1 與 11.7；解析度 ★ 為依 11.7 節(Q/IT ≈500 < Orbitrap/Q-TOF ≈30,000 < FTMS ≈3,000,000)與 Table 11.1(IT 高於 Q)的相對評等，成本 ★ 為示意(課本僅述 FT-ICR 明顯較貴)。", kicker="11.2.4 / 11.7 比較"), ' data-game="cmp"')
 
 add(ACT, dc.kt("11.8 應用", "質譜在食品的<span class='hi'>實戰</span>") +
     '<div class="grid2" style="margin-top:16px">' +
-    dc.card("☕","咖啡因/可可鹼","逆相 LC-MS/MS，以 SIM/MRM 分離定量(同質量異構物也能分)","b") +
+    dc.card("☕","咖啡因/可可鹼","逆相 LC-ESI-MS/MS：選擇離子軌跡定位 (M+H)⁺ 195.2；可可鹼/茶鹼同為 181.2，靠層析滯留時間分開","b") +
     dc.card("🥛","三聚氰胺(2008)","極性、不揮發→須 LC-MS/MS；母離子 127.1 → 子離子 85.1","a") +
     dc.card("🍵","綠茶兒茶素","ESI-MS 全掃描＋MS/MS，鑑定 epicatechin 等多酚","g") +
     dc.card("🦠","MALDI-TOF 微生物","以蛋白質指紋 24 小時內快速鑑定細菌、酵母菌","b") + '</div>')
@@ -250,10 +255,10 @@ add(ACT, dc.game_calc_inner("g6","小遊戲 ⑥","計算闖關：質量準確度
 
 add(ACT, dc.kt("重點整理", "今天的五個關鍵") +
     '<div class="grid2" style="margin-top:18px"><ul class="clean">' +
-    "<li>MS＝<strong>游離 → 依 m/z 分離 → 偵測</strong>；全程高真空</li>" +
+    "<li>MS＝<strong>游離 → 依 m/z 分離 → 偵測</strong>；分析器在高真空</li>" +
     "<li>游離：<strong>EI 硬</strong>(GC-MS、碎片多)、<strong>ESI 軟</strong>(LC-MS、多電荷)</li>" +
     "<li>分析器：四極桿/離子阱/TOF/Orbitrap，解析度差距大</li></ul>" +
-    '<ul class="clean"><li><strong>三重四極桿 MRM</strong>：痕量定量主力(靈敏度×100–1000)</li>' +
+    '<ul class="clean"><li><strong>三重四極桿 MRM</strong>：痕量定量主力(比 UV/DAD 靈敏 100–1000 倍)</li>' +
     "<li><strong>HRMS</strong> 準確質量(&lt;5 ppm)→ 定分子式；應用遍及農藥、獸藥、摻假</li></ul></div>")
 
 add(ACT, dc.checklist_inner("今天結束，你應該會…",
@@ -277,8 +282,8 @@ add(ACT, dc.cover("下一步 · NEXT",
 CFG = {
   "charts": {
     "resolution": {"type":"bar","yTitle":"解析度 log₁₀(R)",
-      "labels":["四極桿","離子阱","TOF","Orbitrap","FT-ICR"],
-      "datasets":[{"label":"log₁₀(解析度)","data":[2.7,3.0,4.5,5.5,6.5],"color":"#1f6feb"}]}
+      "labels":["四極桿/離子阱 R≈500","Orbitrap/Q-TOF R≈30,000","FTMS R≈3,000,000"],
+      "datasets":[{"label":"log₁₀(解析度 R)，m/z 300","data":[2.70,4.48,6.48],"color":"#1f6feb"}]}
   },
   "bucket": {
     "g1": {"cats":["硬游離(多碎片)","軟游離(少碎片)"],
@@ -296,7 +301,7 @@ CFG = {
       "items":[{"t":"揮發、熱穩定的小分子(精油、脂肪酸甲酯)","c":"適合 GC-MS"},
         {"t":"常用 EI 硬游離、比對質譜圖庫","c":"適合 GC-MS"},
         {"t":"需先衍生化才夠揮發(如 FAME)","c":"適合 GC-MS"},
-        {"t":"極性、不揮發或熱不穩定(三聚氰胺、農藥、抗生素)","c":"適合 LC-MS"},
+        {"t":"極性、不揮發或熱不穩定(三聚氰胺、黴菌毒素、抗生素)","c":"適合 LC-MS"},
         {"t":"常用 ESI/APCI 軟游離","c":"適合 LC-MS"},
         {"t":"大分子量、多電荷的蛋白質","c":"適合 LC-MS"}],
       "ok":"🎉 正確！揮發/熱穩定→GC-MS；極性/不揮發/大分子→LC-MS。",
@@ -345,10 +350,10 @@ CFG = {
   "cmp": {
     "cols":[{"k":"m"},{"k":"res","t":"n","star":True},{"k":"acc"},{"k":"cost","t":"n","star":True},{"k":"app"}],
     "rows":[
-      {"m":"四極桿 Q","res":2,"acc":"單位質量","cost":2,"app":"例行定量·SIM"},
+      {"m":"四極桿 Q","res":1,"acc":"單位質量","cost":2,"app":"例行定量·SIM"},
       {"m":"離子阱 IT","res":2,"acc":"單位質量","cost":2,"app":"多階 MSⁿ·結構解析"},
-      {"m":"飛行時間 TOF","res":4,"acc":"高","cost":3,"app":"大分子·全掃描篩檢"},
-      {"m":"Orbitrap","res":5,"acc":"極高(<5 ppm)","cost":4,"app":"未知物鑑定·農藥篩檢"},
+      {"m":"飛行時間 TOF","res":3,"acc":"高","cost":3,"app":"大分子·全掃描篩檢"},
+      {"m":"Orbitrap","res":4,"acc":"極高(<5 ppm)","cost":4,"app":"未知物鑑定·農藥篩檢"},
       {"m":"FT-ICR","res":5,"acc":"最高","cost":5,"app":"同位素細結構"}
     ]
   }

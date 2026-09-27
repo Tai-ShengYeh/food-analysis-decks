@@ -35,8 +35,8 @@ PHMETER_SVG = """
  <text x="474" y="148" text-anchor="middle" class="lblb" fill="#1f9d6b" font-size="13">Nernst</text>
  <text x="474" y="172" text-anchor="middle" class="lbl" font-size="11">E = E₀ + 2.303·RT/zF·log a</text>
  <text x="474" y="192" text-anchor="middle" class="lbl" font-size="12">電位 ↔ H⁺ 活性</text>
- <text x="474" y="232" text-anchor="middle" class="lbl" font-size="12">用前以 pH 4/7/10 緩衝液</text>
- <text x="474" y="250" text-anchor="middle" class="lbl" font-size="12">取兩點（涵蓋樣品）校正</text>
+ <text x="474" y="232" text-anchor="middle" class="lbl" font-size="12">常備 pH 4.0/7.0/9.0 緩衝液</text>
+ <text x="474" y="250" text-anchor="middle" class="lbl" font-size="12">選兩種(相差約3、涵蓋樣品)校正</text>
 </svg>"""
 
 ACID_SVG = """
@@ -78,7 +78,7 @@ add(MOT, dc.kt("22.1 兩個概念", "pH vs 可滴定酸度") +
 add(MOT, dc.kt("22.3 pH 基礎", "pH 計怎麼量") +
     '<div class="svgwrap" style="margin-top:4px">' + PHMETER_SVG + '</div>' +
     '<div class="note" style="margin-top:8px"><strong>pH = −log[H⁺]</strong>；pH 計是<strong>電位計</strong>，' +
-    "玻璃電極對 H⁺ 活性產生電位(Nernst)、與參考電極比較。用前以 <strong>pH 4/7/10 緩衝液兩點校正</strong>並做溫度補償。</div>")
+    "玻璃電極對 H⁺ 活性產生電位(Nernst)、與參考電極比較。用前以兩種<strong>相差約 3 個 pH 單位、涵蓋樣品 pH</strong> 的緩衝液做<strong>兩點校正</strong>（實驗室常備 pH 4.0／7.0／9.0，25 °C），並注意溫度。</div>")
 
 add(MOT, dc.game_bucket_inner("g1","小遊戲 ①","pH vs 可滴定酸度", 8,
     "把 8 個敘述分到「pH」或「可滴定酸度 TA」。"), ' data-game="g1"')
@@ -94,7 +94,7 @@ add(ATT, dc.kt("22.4 可滴定酸度", "用<span class='hi'>鹼</span>把酸中�
     "弱酸滴定的當量點落在鹼性側；酚酞在 pH 8.0–9.6 變色，剛好標示終點。CO₂ 干擾可先煮沸去除。</div></div>")
 
 add(ATT, dc.chart_inner("titration", "滴定曲線：<span class='hi'>強酸</span>與<span class='hi'>弱酸</span>",
-    "0.1 N 酸以 0.1 N NaOH 滴定(示意)。弱酸在 pKa 附近有緩衝平台、當量點在鹼性側；強酸在當量點(pH 7)急升。",
+    "0.1 N 鹽酸與 0.1 N 醋酸以 0.1 N NaOH 滴定之理論計算值（對應課本 Fig 22.3／22.4；醋酸 pKa 取 Table 22.4 的 4.76）。x 軸＝加入鹼量占當量點的 %。弱酸在 pKa 附近有緩衝區、當量點落在鹼性側(約 pH 8.7)；強酸在當量點(pH 7)急升。",
     kicker="22.4.2 滴定曲線", height="50vh"), ' data-chart="titration"')
 
 add(ATT, dc.game_mcq_inner("g2","小遊戲 ②","pH 與酸度即時測驗", 5), ' data-game="g2"')
@@ -102,7 +102,7 @@ add(ATT, dc.game_mcq_inner("g2","小遊戲 ②","pH 與酸度即時測驗", 5), 
 add(ATT, dc.kt("22.4.3 試劑準備", "NaOH 與<span class='hi'>標準酸</span>的眉角") +
     '<div class="grid2" style="margin-top:16px">' +
     dc.card("⚠️","NaOH 不是好基準","強吸濕、含 Na₂CO₃、會吸收空氣 CO₂ → 濃度不準，每批要『標定』","a") +
-    dc.card("🧪","用 KHP 標定","鄰苯二甲酸氫鉀(KHP)純、不吸濕、可乾燥、分子量大 → 當『標準酸』標定 NaOH","b") +
+    dc.card("🧪","用 KHP 標定","鄰苯二甲酸氫鉀(KHP)可製得很純、相對不吸濕、可於 120 °C 乾燥、分子量大 → 當『標準酸』標定 NaOH","b") +
     '</div><div class="note" style="margin-top:14px"><strong>去 CO₂：</strong>配 NaOH 用無 CO₂ 水(煮沸或通氮)；儲存用 ' +
     "<strong>ascarite 阱</strong>(鹼性吸收劑)擋空氣 CO₂；工作液每週重新標定。</div>")
 
@@ -133,11 +133,11 @@ add(ATT, dc.game_mcq_inner("g5","小遊戲 ⑤","決策挑戰：酸度分析判�
 add(ACT, dc.cmp_inner("常見食品酸的當量重（點欄位排序）",
     [{"k":"a","t":"s","label":"酸"},{"k":"mw","t":"n","label":"分子量"},{"k":"eq","t":"n","label":"當量重"},
      {"k":"n","t":"n","label":"可解離 H⁺"},{"k":"food","t":"s","label":"常見於"}],
-    "整合自 Table 22.1。當量重 = 分子量 ÷ 可解離 H⁺ 數。", kicker="Table 22.1"), ' data-game="cmp"')
+    "分子量、當量重取自 Table 22.1（四捨五入）；當量重 = 分子量 ÷ 每莫耳當量數。『常見於』依 22.4.6 與 Table 22.5（草酸見於葉菜、乳酸見於乳品）。", kicker="Table 22.1"), ' data-game="cmp"')
 
 add(ACT, dc.chart_inner("brix", "水果的<span class='hi'>典型 °Brix</span>",
-    "整合自 Table 22.5：成熟水果的糖度(°Brix)代表值。Brix 配合可滴定酸度算 Brix/酸比，可指示熟度。",
-    kicker="22.4.6 數據", height="50vh"), ' data-chart="brix"')
+    "取自 Table 22.5：柱高為課本典型 °Brix 範圍的<strong>中點</strong>，括號內為課本範圍（番茄課本只列單一值 4）。Brix 配合可滴定酸度算 Brix/酸比，可指示熟度。",
+    kicker="Table 22.5", height="50vh"), ' data-chart="brix"')
 
 add(ACT, dc.kt("應用", "pH 與酸度<span class='hi'>守護</span>什麼") +
     '<div class="grid2" style="margin-top:16px">' +
@@ -147,13 +147,13 @@ add(ACT, dc.kt("應用", "pH 與酸度<span class='hi'>守護</span>什麼") +
     dc.card("🧪","製程監控","發酵、醃漬、飲料配方都靠 pH/酸度把關","b") + '</div>')
 
 add(ACT, dc.game_calc_inner("g6","小遊戲 ⑥","計算闖關：% 酸",
-    "取柑橘汁 <b>W = 15 g</b>，以 <b>0.085 N NaOH</b> 滴定用去 <b>V = 17.5 mL</b>；以檸檬酸(當量重 <b>64</b>)表示。"
-    "求 % 酸。公式：N×V×當量重/(W×1000)×100。", unit="%"), ' data-game="g6"')
+    "課本例題(Eq. 22.14)：取果汁 <b>15 mL</b>，以 <b>0.085 N NaOH</b> 滴定用去 <b>17.5 mL</b>；以檸檬酸(當量重 <b>64</b>)表示。"
+    "求 % 酸(wt/vol)。公式：N×V₁×當量重/(V₂×1000)×100（果汁常以 mL 代替 g）。", unit="%"), ' data-game="g6"')
 
 add(ACT, dc.kt("重點整理", "今天的五個關鍵") +
     '<div class="grid2" style="margin-top:18px"><ul class="clean">' +
     "<li><strong>pH</strong>＝游離 H⁺ 強度(−log[H⁺])；<strong>可滴定酸度</strong>＝可中和的總酸量</li>" +
-    "<li>pH 計是電位計(Nernst)，用前以 4/7/10 緩衝液<strong>兩點校正</strong></li>" +
+    "<li>pH 計是電位計(Nernst)，用前以兩種緩衝液(常備 4/7/9)<strong>兩點校正</strong></li>" +
     "<li>可滴定酸度：0.1N NaOH 滴定到<strong>酚酞(pH 8.2)</strong>或電位終點</li></ul>" +
     '<ul class="clean"><li>NaOH 不純須以 <strong>KHP 標定</strong>、防 CO₂</li>' +
     "<li>% 酸 = N×V×當量重/(W×1000)×100；以<strong>主要酸</strong>表示</li></ul></div>")
@@ -179,13 +179,13 @@ add(ACT, dc.cover("下一步 · NEXT",
 CFG = {
   "charts": {
     "titration": {"type":"line","yTitle":"pH","zero":True,
-      "labels":["0","20","40","60","80","100","110","120","140"],
+      "labels":["0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%","110%","120%","130%","140%"],
       "datasets":[
-        {"label":"強酸(鹽酸)","data":[1.0,1.2,1.5,1.9,2.8,7.0,11.5,12.2,12.6],"color":"#1f6feb"},
-        {"label":"弱酸(醋酸,pKa 4.8)","data":[2.9,4.1,4.6,5.1,5.7,8.7,11.4,12.1,12.5],"color":"#d9822b"}]},
+        {"label":"強酸(0.1 N 鹽酸)","data":[1.0,1.09,1.18,1.27,1.37,1.48,1.6,1.75,1.95,2.28,7.0,11.68,11.96,12.12,12.22],"color":"#1f6feb"},
+        {"label":"弱酸(0.1 N 醋酸, pKa 4.76)","data":[2.88,3.81,4.16,4.39,4.58,4.76,4.94,5.13,5.36,5.71,8.73,11.68,11.96,12.12,12.22],"color":"#d9822b"}]},
     "brix": {"type":"bar","yTitle":"典型 °Brix",
-      "labels":["番茄","葡萄柚","檸檬","柳橙","蘋果","葡萄","鳳梨","香蕉"],
-      "datasets":[{"label":"°Brix(代表值)","data":[4,8.5,9,11.5,11.3,13.8,14.5,18],"color":"#d9822b"}]}
+      "labels":["番茄 (4)","葡萄柚 (7–10)","檸檬 (7.1–11.9)","蘋果 (9.12–13.5)","柳橙 (9–14)","葡萄 (13.3–14.4)","鳳梨 (12.3–16.8)","香蕉 (16.5–19.5)"],
+      "datasets":[{"label":"典型 °Brix（範圍中點）","data":[4,8.5,9.5,11.3,11.5,13.9,14.6,18],"color":"#d9822b"}]}
   },
   "bucket": {
     "g1": {"cats":["pH","可滴定酸度 TA"],
@@ -212,8 +212,8 @@ CFG = {
        "e":"弱酸當量點在鹼性側，用酚酞(變色約 pH 8.2)指示終點。"},
       {"q":"為什麼 NaOH 滴定液每批都要用 KHP 標定？","o":["KHP 較便宜","NaOH 吸濕、含碳酸鈉、濃度不準","KHP 顏色漂亮","為了加快"],"a":1,
        "e":"NaOH 強吸濕又吸 CO₂，濃度不可靠；用純淨的 KHP 標定其真實濃度。"},
-      {"q":"pH 計使用前的標準作業是？","o":["加熱","以 pH 4/7/10 緩衝液兩點校正","加鹽","稀釋樣品"],"a":1,
-       "e":"用涵蓋樣品 pH 的兩個緩衝液做兩點校正，並做溫度補償。"}
+      {"q":"pH 計使用前的標準作業是？","o":["加熱","以兩種涵蓋樣品 pH 的緩衝液兩點校正","加鹽","稀釋樣品"],"a":1,
+       "e":"課本(22.3.2.2)：選兩種相差約 3 個 pH 單位、涵蓋樣品 pH 的緩衝液做兩點校正；實驗室常備 pH 4.0/7.0/9.0 緩衝液。"}
     ],
     "g5":[
       {"q":"番茄汁顏色深，滴定看不出酚酞變色，怎麼辦？","o":["多加指示劑","改用 pH 計做電位滴定","稀釋到無色","用更濃的鹼"],"a":1,
@@ -238,8 +238,8 @@ CFG = {
   },
   "calc": {
     "g6":{"answer":0.635,"tol":0.03,
-      "ok":"🎉 正確！% 酸 = 0.085×17.5×64/(15×1000)×100 = 95.2/15000×100 ≈ <b>0.635%</b>(以檸檬酸計)。",
-      "bad":"再算算：% 酸 = N×V×當量重/(W×1000)×100 = 0.085×17.5×64/(15×1000)×100。",
+      "ok":"🎉 正確！% 酸 = 0.085×17.5×64/(15×1000)×100 = 95.2/15000×100 ≈ <b>0.635%</b>(wt/vol，以檸檬酸計；與課本 Eq. 22.14 相同)。",
+      "bad":"再算算：% 酸 = N×V₁×當量重/(V₂×1000)×100 = 0.085×17.5×64/(15×1000)×100。",
       "hint":"提示：0.085×17.5×64 = 95.2；95.2/(15×1000)×100 = 0.635%。"}
   },
   "cmp": {

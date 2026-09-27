@@ -121,7 +121,7 @@ add(MOT, dc.kt("14.1 為什麼用 GC", "GC 適合分析什麼") +
     dc.card("🍳","食品應用","脂肪酸、膽固醇、風味、溶劑、農藥、PCB","g") +
     dc.card("🧪","不合適的","糖、胺基酸、維生素 → 需先衍生化或改用 HPLC","b") + '</div>')
 
-add(MOT, dc.kt("14.1 核心原理", "兩種力量<span class='hi'>共同</span>分離") +
+add(MOT, dc.kt("14.4.1 核心原理", "兩種力量<span class='hi'>共同</span>分離") +
     '<div class="grid2" style="margin-top:18px"><div><ul class="clean">' +
     "<li><strong>移動相</strong>：載氣 (He/H₂/N₂) 帶著樣品前進</li>" +
     "<li><strong>固定相</strong>：管柱內壁的液膜，與分析物作用</li>" +
@@ -199,14 +199,14 @@ add(ATT, dc.kt("14.3.1 載氣", "三種載氣怎麼選") +
     "權衡速度與安全，He/H₂ 常勝過理論最佳的 N₂。</div>")
 
 add(ATT, dc.chart_inner("vand", "載氣與流速：<span class='hi'>van Deemter</span>",
-    "示意 van Deemter 曲線：HETP 越低分離越好。N₂ 谷底最低但落在低流速；He/H₂ 較平坦適合快速分析。",
+    "依 Fig. 14.19 目測讀值（C17、175 °C、OV-101 25 m×0.25 mm；近似值）。x = 平均線速度 (cm/s)。N₂ 谷底最低(≈0.22 mm @≈11 cm/s)但 >55 cm/s 即超出圖框；He/H₂ 在 ≈10 cm/s 急升(未畫)，之後較平坦，適合快速分析。",
     kicker="14.4.2 分離效率", height="52vh"), ' data-chart="vand"')
 
 add(ATT, dc.kt("14.3.5 偵測器", "四大常用偵測器") +
     '<div class="grid2" style="margin-top:16px">' +
-    dc.card("🔥","FID 火焰離子化","燒有機物產生離子；靈敏、線性最廣；食品最常用主力","b") +
+    dc.card("🔥","FID 火焰離子化","燒有機物產生離子；靈敏(10–100 pg)、線性範圍寬(10⁶–10⁷)；食品最常用主力","b") +
     dc.card("🌡️","TCD 熱導","測熱導差異；通用(含水/氣體)、非破壞；靈敏度低","a") +
-    dc.card("⚛️","ECD 電子捕獲","放射源；對含鹵/農藥極靈敏(pg)；線性窄、易飽和","g") +
+    dc.card("⚛️","ECD 電子捕獲","放射源；對含鹵/農藥極靈敏(0.05–1 pg)；線性窄、易飽和","g") +
     dc.card("🔬","MS 質譜","碎片離子=指紋；可鑑定未知物，亦作選擇性偵測","b") + '</div>')
 
 add(ATT, dc.kt("偵測器專長", "選擇性 vs 靈敏度") +
@@ -218,12 +218,37 @@ add(ATT, dc.kt("偵測器專長", "選擇性 vs 靈敏度") +
 add(ATT, dc.game_sort_inner("g4","小遊戲 ④","GC 分析流程排序", 7,
     "用 ▲▼ 把一次完整的 GC 分析排成正確順序（7 步）。"), ' data-game="g4"')
 
-add(ATT, dc.chart_inner("sens", "偵測器<span class='hi'>靈敏度</span>大不同",
-    "資料：Table 14.5 偵測下限 (pg，數值越小越靈敏)。ECD/FPD 屬痕量等級。",
-    kicker="14.3.5 偵測下限", height="52vh"), ' data-chart="sens"')
+# 偵測下限：Table 14.5 給的是「範圍」或「約值」，用對數軸浮動長條呈現（非取中值）
+add(ATT, dc.kt("14.3.5 偵測下限", "偵測器<span class='hi'>靈敏度</span>大不同") +
+    """<div class="chartbox" style="height:50vh"><canvas id="sensChart"></canvas></div>
+<div class="cap">資料：Table 14.5 偵測下限（pg，<strong>對數軸</strong>，越低越靈敏）：TCD 約 400；FID 10–100（多數有機物）；
+PID 1–10；FPD 硫 2、磷 0.9；ECD 0.05–1。長條＝課本給的範圍，單一值以短條標示。</div>
+<script>
+(function(){
+  function draw(){
+    if(typeof Chart==='undefined'){setTimeout(draw,60);return;}
+    var el=document.getElementById('sensChart'); if(!el||el._done) return; el._done=1;
+    var labels=['TCD','FID','PID','FPD (S)','FPD (P)','ECD'];
+    var rng=[[400,400],[10,100],[1,10],[2,2],[0.9,0.9],[0.05,1]];
+    var txt=['約 400 pg','10–100 pg','1–10 pg','2 pg','0.9 pg','0.05–1 pg'];
+    var col=['#8493ad','#d9822b','#1f9d6b','#7a4fd1','#7a4fd1','#1f6feb'];
+    new Chart(el,{type:'bar',
+      data:{labels:labels,datasets:[{label:'偵測下限 (pg)',data:rng,backgroundColor:col,borderColor:col,
+        borderRadius:4,minBarLength:8,barPercentage:0.6}]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},
+          tooltip:{callbacks:{label:function(c){return txt[c.dataIndex]}}}},
+        scales:{y:{type:'logarithmic',min:0.01,max:1000,
+          title:{display:true,text:'偵測下限 (pg，對數軸)'},
+          ticks:{callback:function(v){var l=Math.log10(v);return Math.abs(l-Math.round(l))<1e-6?String(+v.toPrecision(3)):''}}}}}
+    });
+  }
+  draw();
+})();
+</script>""")
 
 add(ATT, dc.kt("14.4.2 分離效率", "Van Deemter 三項") +
-    '<div class="grid2" style="margin-top:14px"><div class="eq">HETP = A + B/u + C·u</div>' +
+    '<div class="grid2" style="margin-top:14px"><div class="eq">HETP = A·u<sup>1/3</sup> + B/u + C·u<br><span style="font-size:.7em;color:var(--ink-2)">（課本 Eq. 14.1）</span></div>' +
     '<div><ul class="clean"><li><strong>A 渦流擴散</strong>：流路不均(毛細管很小)</li>' +
     "<li><strong>B/u 縱向擴散</strong>：流速太慢時變大</li>" +
     "<li><strong>C·u 質傳阻抗</strong>：流速太快來不及平衡</li>" +
@@ -244,7 +269,7 @@ add(ATT, dc.game_mcq_inner("g5","小遊戲 ⑤","決策挑戰：選偵測器/管
 add(ACT, dc.cmp_inner("一張表選偵測器（點欄位排序）",
     [{"k":"d","t":"s","label":"偵測器"},{"k":"meas","t":"s","label":"專測對象"},
      {"k":"sens","t":"n","label":"靈敏度","star":True},{"k":"app","t":"s","label":"主要應用"}],
-    "靈敏度：★ 越多越靈敏（偵測下限越低）。整合自 Table 14.5。", kicker="14.3.5 偵測器比較"), ' data-game="cmp"')
+    "靈敏度：★ 越多越靈敏，依 Table 14.5 偵測下限排序（TCD≈400 > FID 10–100 > PID 1–10 ≈ FPD 0.9–2 > ECD 0.05–1 pg）；NPD、MS 不在 Table 14.5，星等為教學估計。", kicker="14.3.5 偵測器比較"), ' data-game="cmp"')
 
 add(ACT, dc.kt("方法選擇", "跟著決策樹選偵測器") +
     '<div class="svgwrap" style="margin-top:10px">' + DTREE_SVG + '</div>' +
@@ -294,14 +319,11 @@ CFG = {
       "labels":["0","1","2","3","4","5","6","7","8","9","10","11","12"],
       "datasets":[{"label":"層析訊號","data":[2,3,28,6,4,15,5,3,40,7,4,22,3],"color":"#1f6feb"}]},
     "vand": {"type":"line","yTitle":"HETP (mm)","zero":True,
-      "labels":["10","20","30","40","50","60","70"],
+      "labels":["10","20","30","40","50","60","70","80","90"],
       "datasets":[
-        {"label":"N₂ 氮","data":[0.25,0.40,0.58,0.78,1.00,1.24,1.50],"color":"#1f6feb"},
-        {"label":"He 氦","data":[0.50,0.40,0.36,0.35,0.38,0.43,0.50],"color":"#d9822b"},
-        {"label":"H₂ 氫","data":[0.48,0.38,0.34,0.33,0.34,0.36,0.39],"color":"#1f9d6b"}]},
-    "sens": {"type":"bar","yTitle":"偵測下限 (pg，越小越靈敏)",
-      "labels":["TCD","FID","PID","FPD(P)","FPD(S)","ECD"],
-      "datasets":[{"label":"偵測下限 (pg)","data":[400,50,5,0.9,2,0.5],"color":"#d9822b"}]}
+        {"label":"N₂ 氮","data":[0.23,0.30,0.47,0.66,0.94,None,None,None,None],"color":"#1f6feb"},
+        {"label":"He 氦","data":[None,0.32,0.30,0.33,0.37,0.42,0.48,0.54,0.63],"color":"#d9822b"},
+        {"label":"H₂ 氫","data":[None,0.33,0.30,0.30,0.30,0.30,0.30,0.30,0.31],"color":"#1f9d6b"}]}
   },
   "bucket": {
     "g1": {"cats":["FID(一般有機物)","TCD(永久氣體/水)","ECD(含鹵/農藥)"],
@@ -356,10 +378,10 @@ CFG = {
       "hint":"提示：n=8；分數 = 0.50/2.00 = 0.25；LRI = 800 + 25 = 825。"}
   },
   "cmp": {
-    "cols":[{"k":"d"},{"k":"meas"},{"k":"sens"},{"k":"app"}],
+    "cols":[{"k":"d"},{"k":"meas"},{"k":"sens","t":"n","star":True},{"k":"app"}],
     "rows":[
-      {"d":"TCD 熱導","meas":"幾乎全部(含水/氣體)","sens":2,"app":"永久氣體·包裝氣體·非破壞"},
-      {"d":"FID 火焰離子","meas":"多數有機物","sens":4,"app":"脂肪酸·風味·通用主力"},
+      {"d":"TCD 熱導","meas":"幾乎全部(含水/氣體)","sens":1,"app":"永久氣體·包裝氣體·非破壞"},
+      {"d":"FID 火焰離子","meas":"多數有機物","sens":3,"app":"脂肪酸·風味·通用主力"},
       {"d":"ECD 電子捕獲","meas":"含鹵/硝基/雙鍵","sens":5,"app":"殘留農藥·PCB"},
       {"d":"FPD 火焰光度","meas":"硫 S / 磷 P","sens":4,"app":"有機磷農藥·硫化物風味"},
       {"d":"PID 光離子化","meas":"視游離能","sens":4,"app":"風味·嗅聞·非破壞"},

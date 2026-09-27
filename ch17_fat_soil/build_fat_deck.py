@@ -347,7 +347,7 @@ add(S_MOT, """
   <div class="kicker">NIELSEN'S FOOD ANALYSIS · CHAPTER 17</div>
   <h1>油脂<span style="color:var(--accent-2)">分析</span></h1>
   <div class="en">Fat Analysis</div>
-  <div class="meta">食品分析　·　3 小時課程　·　含 5 個互動小遊戲<br>
+  <div class="meta">食品分析　·　3 小時課程　·　含 6 個互動小遊戲<br>
   溶劑萃取 · 水解 · GC · 非溶劑濕式 · 儀器法</div>
 </div>""", attr=' data-cover="1"')
 
@@ -357,10 +357,10 @@ add(S_MOT, """
   <div class="kicker" style="justify-content:center">先想一想</div>
   <div class="hook">一塊餅乾，<span class="hi">到底有多少油？</span></div>
   <p class="subtitle" style="max-width:760px;margin:22px auto 0">
-  營養標示上的「脂肪 14.3 g」是怎麼量出來的？<br>
+  燕麥葡萄乾軟餅乾「每 100 g 含脂肪 14.3 g」（Table 17.2）是怎麼量出來的？<br>
   油脂無法用秤直接挑出來——必須靠它的<strong>化學性質</strong>把它「抓」出來。</p>
   <div style="margin-top:26px"><span class="pill">營養標示</span><span class="pill">品質管制</span>
-  <span class="pill">法規符合</span><span class="pill">產品識別</span></div>
+  <span class="pill">法規符合</span><span class="pill">標準身分</span></div>
 </div>""")
 
 # 3 importance
@@ -368,7 +368,7 @@ add(S_MOT, kt("17.1.4 為什麼重要", "為什麼要分析油脂") + """
 <div class="grid3" style="margin-top:26px">
 """ + card("🏷️", "營養標示", "法規要求標示脂肪含量，量錯就違規") +
    card("✅", "品質管制", "確認符合產品規格與製造標準", "a") +
-   card("🔬", "產品識別", "判定是否為標示的食品、是否摻假", "g") + """
+   card("🔬", "標準身分", "判定是否符合該食品的標準身分 (standard of identity)", "g") + """
 </div>
 <div class="note" style="margin-top:24px">量測不準會<strong>代價高昂</strong>——可能做出品質不良、功能不符的產品。</div>
 """)
@@ -404,7 +404,7 @@ add(S_MOT, kt("17.1.2 分類", "脂質的三大分類") + """
 # 6 content chart
 add(S_MOT, kt("17.1.3 食物中的含量", "食物裡<span class='hi'>多少油</span>？範圍超大") + """
 <div class="chartbox" style="margin-top:14px"><canvas id="chartFood"></canvas></div>
-<div class="cap">資料：USDA FoodData Central (2023)，% 脂肪（濕基）。從油品 ~94% 到水果 &lt;1%。</div>
+<div class="cap">資料：Table 17.2（USDA FoodData Central 2023），% 脂肪（濕基）。從油品 ~94% 到水果 &lt;1%。</div>
 """, attr=' data-chart="food"')
 
 # 7 core proposition
@@ -439,7 +439,7 @@ add(S_ATT, kt("方法全覽", "三大方法家族") + """
 <div class="grid3" style="margin-top:24px">
 """ + card("🧪", "溶劑萃取法", "Goldfisch、Soxhlet、Mojonnier、酸水解、氯仿-甲醇、GC", "b") +
    card("🥛", "非溶劑濕式法", "Babcock、Gerber——乳品專用，用 H₂SO₄ 消化", "a") +
-   card("📡", "儀器分析法", "IR/NIR、NMR、X-ray、ASE、SFE——快速、非破壞", "g") + """
+   card("📡", "儀器分析法", "IR/NIR、NMR、X-ray、ASE、SFE——快速，部分為非破壞", "g") + """
 </div>
 <div class="note" style="margin-top:22px">沒有「萬用」單一方法——<strong>選對方法取決於樣品種類與脂質型態</strong>。</div>
 """)
@@ -448,7 +448,7 @@ add(S_ATT, kt("方法全覽", "三大方法家族") + """
 add(S_ATT, kt("17.2.2 樣品前處理", "萃取前，先做三件事") + """
 <div class="flow6" style="margin-top:22px">
 """ + card("1️⃣", "預乾燥", "水分阻礙乙醚穿透；先除水才能有效萃取", "b") +
-   card("2️⃣", "粒徑縮小", "研磨增加表面積；堅果可液態氮冷凍後磨碎", "b") +
+   card("2️⃣", "粒徑縮小", "研磨增加表面積；含堅果、焦糖的能量棒等成品可先用液態氮冷凍再磨碎", "b") +
    card("3️⃣", "水解釋放", "酸/鹼水解打斷脂質與蛋白、碳水的鍵結", "a") + """
 </div>
 <div class="note" style="margin-top:22px">關鍵概念：許多食物的脂質<strong>與蛋白質/碳水結合</strong>，直接用溶劑萃取會「少算」。</div>
@@ -542,11 +542,11 @@ add(S_ATT, kt("17.2.6 不連續式", "為什麼要<span class='hi'>水解</span>
     <p class="lead">很多食物的脂質與蛋白、碳水<strong>結合</strong>，<br>不先水解就直接萃取會<span class="em">嚴重低估</span>。</p>
     <ul class="clean" style="margin-top:14px">
       <li>乾蛋：酸水解 42.4% vs 不水解 36.7%</li>
-      <li>麵粉、酵母、麵條同樣明顯偏低</li>
+      <li>酵母、麵粉、麵條、粗粒小麥粉同樣明顯偏低</li>
     </ul>
   </div>
 </div>
-<div class="cap">Table 17.3：酸水解 vs 不水解的脂肪回收率（%）</div>
+<div class="cap">Table 17.3：酸水解 vs 不水解測得的 % 脂肪。麵條、粗粒小麥粉課本給範圍（麵條 3.77–4.84 vs 2.1–3.91；粗粒小麥粉 1.86–1.93 vs 1.1–1.37），圖中取中值。</div>
 """, attr=' data-chart="hyd"')
 
 # 18 acid vs alkaline
@@ -663,7 +663,7 @@ add(S_ACT, kt("17.5 方法比較", "一張表選對方法（點欄位可排序�
  </tr></thead>
  <tbody></tbody>
 </table>
-<div class="cap">速度：★ 越多越快。整合自 Table 17.4 / 17.5。</div>
+<div class="cap">依 Table 17.4 / 17.5 整理；速度星等為教學評比（非課本數據）。</div>
 """, attr=' data-game="cmp"')
 
 # 28 decision tree
@@ -684,7 +684,7 @@ add(S_ACT, """
 </div>""", attr=' data-game="g5"')
 
 # 30 calculation worked
-add(S_ACT, kt("17.8 計算", "乾基 vs 濕基（範例詳解）") + """
+add(S_ACT, kt("17.8 練習題 1", "乾基 vs 濕基（範例詳解）") + """
 <div class="note" style="margin-top:8px">半濕食物 10 g，水分 25%。乾燥後測得脂肪 13.5%（乾基）。求原食物的脂肪 %？</div>
 <div class="grid2" style="margin-top:18px">
   <div>

@@ -66,8 +66,8 @@ DTREE_SVG = """
   <rect x="30" y="150" width="190" height="120" rx="12" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
   <text x="125" y="178" text-anchor="middle" fill="#15233f">高脂樣品?</text>
   <text x="125" y="206" text-anchor="middle" fill="#d9822b" font-size="16">Kjeldahl</text>
-  <text x="125" y="232" text-anchor="middle" fill="#48597a" font-size="12">Dumas 燃燒怕起火</text>
-  <text x="125" y="252" text-anchor="middle" fill="#48597a" font-size="12">高脂改用凱氏法</text>
+  <text x="125" y="232" text-anchor="middle" fill="#48597a" font-size="12">脂肪可能讓 Dumas</text>
+  <text x="125" y="252" text-anchor="middle" fill="#48597a" font-size="12">焚化時儀器起火</text>
   <rect x="280" y="150" width="190" height="120" rx="12" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
   <text x="375" y="178" text-anchor="middle" fill="#15233f">營養標示?</text>
   <text x="375" y="206" text-anchor="middle" fill="#1f6feb" font-size="16">Dumas</text>
@@ -116,7 +116,7 @@ add(MOT, dc.kt("18.1.1 分類與組成", "蛋白質與<span class='hi'>氮</span
     '</ul></div><div class="note"><strong>關鍵：氮是蛋白質最具辨識性的元素。</strong><br>' +
     "非蛋白氮 (NPN) 也含氮——所以氮法測到的是<strong>粗蛋白</strong>。</div></div>")
 
-add(MOT, dc.chart_inner("prot", "食物裡的<span class='hi'>蛋白質</span>含量", "資料：USDA FoodData Central (2023)，% 蛋白質（濕基）。",
+add(MOT, dc.chart_inner("prot", "食物裡的<span class='hi'>蛋白質</span>含量", "資料：Table 18.1（USDA FoodData Central 2023），% 蛋白質（濕基）。",
     kicker="18.1.3 食物中的含量"), ' data-chart="prot"')
 
 add(MOT, """<div style="text-align:center">
@@ -158,7 +158,7 @@ add(ATT, dc.kt("18.2.2 Dumas 燃燒法", "Dumas：快速、安全、自動") +
 
 add(ATT, dc.kt("兩種氮法比較", "Kjeldahl vs Dumas") +
     '<div class="grid2" style="margin-top:16px">' +
-    dc.card("🧪","Kjeldahl","測<strong>有機氮+氨</strong>；便宜、用腐蝕性試劑；<strong>高脂樣品首選</strong>（不怕燃燒起火）","b") +
+    dc.card("🧪","Kjeldahl","測<strong>有機氮+氨</strong>；便宜、用腐蝕性試劑；<strong>高脂樣品首選</strong>（脂肪可能使 Dumas 焚化時儀器起火，見 18.7）","b") +
     dc.card("🔥","Dumas","測<strong>總氮</strong>（含硝酸鹽）；快速安全、設備貴；營養標示/品管廣用","a") +
     '</div><div class="note" style="margin-top:18px">三聚氰胺等<strong>含氮摻假物</strong>會被兩種氮法一起算進去 → 虛報蛋白。</div>')
 
@@ -180,7 +180,7 @@ add(ATT, dc.kt("18.4 比色法", "顏色 = 蛋白質的訊號") +
 add(ATT, dc.kt("銅離子三兄弟", "Biuret → Lowry → BCA") +
     '<div class="grid3" style="margin-top:22px">' +
     dc.card("🟣","Biuret","胜肽鍵 + Cu²⁺ → 紫色 540nm。簡單、干擾少、靈敏度低","b") +
-    dc.card("🔬","Lowry","Biuret + 酚試劑(Trp/Tyr) → 750/500nm。靈敏但試劑不穩","a") +
+    dc.card("🔬","Lowry","Biuret + Folin 酚試劑(Trp/Tyr) → 750/500nm。靈敏；原法兩種試劑不穩(改良法已改用穩定試劑)","a") +
     dc.card("🟢","BCA","Cu⁺ 螯合 BCA → 562nm。靈敏、容忍洗滌劑，純化常用","g") + '</div>')
 
 add(ATT, dc.game_bucket_inner("g3","小遊戲 ④","方法依「應用場景」分類", 7,
@@ -189,7 +189,7 @@ add(ATT, dc.game_bucket_inner("g3","小遊戲 ④","方法依「應用場景」�
 add(ATT, dc.kt("18.5 UV 吸收法", "紫外光下的蛋白質") +
     '<div class="grid2" style="margin-top:16px">' +
     dc.card("🔆","280 nm","<strong>Trp / Tyr</strong> 芳香胺基酸吸收；非破壞、快速；適純化蛋白(Beer 定律 A=abc)","b") +
-    dc.card("〰️","205–220 nm","<strong>胜肽鍵</strong>吸收；可測少 Trp/Tyr 的胜肽；需純、清澈樣品","a") +
+    dc.card("〰️","190–220 nm","<strong>胜肽鍵</strong>吸收；可測少 Trp/Tyr 的胜肽；需純、清澈樣品","a") +
     '</div><div class="note" style="margin-top:18px">核酸也在 280nm 吸收 → 需相對純的樣品；不同蛋白 E₂₈₀ 不同。</div>')
 
 add(ATT, dc.kt("18.6 非蛋白氮 NPN", "抓出「假蛋白」摻假") +
@@ -213,13 +213,13 @@ add(ATT, dc.game_mcq_inner("g5","小遊戲 ⑤","決策挑戰：選對方法", 5
 add(ACT, dc.cmp_inner("一張表選方法（點欄位排序）",
     [{"k":"m","t":"s","label":"方法"},{"k":"meas","t":"s","label":"化學基礎"},
      {"k":"speed","t":"n","label":"速度","star":True},{"k":"app","t":"s","label":"主要應用"}],
-    "速度：★ 越多越快。整合自 Table 18.2。", kicker="18.7 方法比較"), ' data-game="cmp"')
+    "依 Table 18.2 與 18.7 整理；速度星等為教學評比（課本：IR 最快，比色法與 Dumas 快於 Kjeldahl）。", kicker="18.7 方法比較"), ' data-game="cmp"')
 
 add(ACT, dc.kt("方法選擇", "跟著決策樹走") +
     '<div class="svgwrap" style="margin-top:10px">' + DTREE_SVG + '</div>' +
     '<p class="subtitle" style="text-align:center;margin-top:14px">下一頁實戰：算一條火雞熱狗的粗蛋白 →</p>')
 
-add(ACT, dc.kt("18.11 計算", "凱氏定氮：從 mL HCl 到 % 蛋白") +
+add(ACT, dc.kt("18.2.1 計算（Eq. 18.6）", "凱氏定氮：從 mL HCl 到 % 蛋白") +
     '<div class="grid2" style="margin-top:14px"><div class="eq">% N = ' +
     '<span class="frac"><b>N · (V樣品−V空白) · 14.007</b><span>樣品克數</span></span> × 100</div>' +
     '<div><ul class="clean"><li>滴定的 mol HCl = mol NH₃ = mol N</li>' +
@@ -258,19 +258,19 @@ add(ACT, dc.cover("下一步 · NEXT",
 CFG = {
   "charts": {
     "prot": {"type":"bar","yTitle":"% 蛋白質",
-      "labels":["黃豆","脫脂奶粉","牛肉乾","鮪魚罐","切達起司","雞胸","全麥麵粉","蛋","優格","蘋果"],
+      "labels":["黃豆","脫脂奶粉","乾醃牛肉","鮪魚罐","切達起司","雞胸","全麥麵粉","蛋","優格","蘋果"],
       "datasets":[{"label":"% 蛋白質","data":[36.5,36.2,31.1,26.5,24.2,22.5,13.2,12.6,5.25,0.26],"color":"#1f6feb"}]},
     "fac": {"type":"bar","yTitle":"換算因子",
       "labels":["蛋/肉","牛奶","小麥","玉米","燕麥","黃豆","米"],
       "datasets":[{"label":"N→蛋白 換算因子","data":[6.25,6.38,5.33,5.65,5.36,5.52,5.17],"color":"#d9822b"}]}
   },
   "bucket": {
-    "g1": {"cats":["測氮","測胜肽鍵","測芳香胺基酸/染料"],
+    "g1": {"cats":["測氮","測胜肽鍵","測胺基酸側鏈(Trp/Tyr·鹼性)"],
       "items":[{"t":"Kjeldahl 凱氏","c":"測氮"},{"t":"Dumas 燃燒","c":"測氮"},
         {"t":"Biuret","c":"測胜肽鍵"},{"t":"紅外光譜 IR","c":"測胜肽鍵"},{"t":"UV 220nm","c":"測胜肽鍵"},
-        {"t":"UV 280nm","c":"測芳香胺基酸/染料"},{"t":"Bradford 染料","c":"測芳香胺基酸/染料"}],
-      "ok":"🎉 全對！氮法測 N、Biuret/IR/220nm 測胜肽鍵、280nm/染料測芳香胺基酸。",
-      "tip":"提示：紅外與 220nm 都是看「胜肽鍵」；280nm 看 Trp/Tyr。"},
+        {"t":"UV 280nm","c":"測胺基酸側鏈(Trp/Tyr·鹼性)"},{"t":"Bradford 染料","c":"測胺基酸側鏈(Trp/Tyr·鹼性)"}],
+      "ok":"🎉 全對！氮法測 N、Biuret/IR/220nm 測胜肽鍵；280nm 看芳香族 Trp/Tyr，染料結合看帶正電的鹼性胺基酸(Arg/Lys/His)。",
+      "tip":"提示：紅外與 220nm 都是看「胜肽鍵」；280nm 看 Trp/Tyr；染料以靜電結合鹼性胺基酸。"},
     "g3": {"cats":["營養標示/法定","蛋白純化研究","快速品管"],
       "items":[{"t":"Kjeldahl","c":"營養標示/法定"},{"t":"Dumas","c":"營養標示/法定"},
         {"t":"BCA","c":"蛋白純化研究"},{"t":"Lowry","c":"蛋白純化研究"},{"t":"UV 280nm","c":"蛋白純化研究"},
@@ -291,7 +291,7 @@ CFG = {
     ],
     "g5":[
       {"q":"高脂肪樣品(如香腸)測蛋白，較安全的選擇？","o":["Dumas 燃燒","Kjeldahl 凱氏","NIR","UV280"],"a":1,
-       "e":"高脂在 Dumas 燃燒可能起火，高脂樣品首選凱氏法。"},
+       "e":"脂肪可能在 Dumas 焚化時造成儀器起火（課本 18.7），高脂樣品首選凱氏法。"},
       {"q":"要做大量樣品的營養標示蛋白，現多用？","o":["Kjeldahl","Dumas 燃燒","Lowry","Bradford"],"a":1,
        "e":"Dumas 快速、安全、可自動化，已大量取代凱氏。"},
       {"q":"純化中的蛋白質定量、樣品含洗滌劑，最適合？","o":["BCA","UV280","Kjeldahl","Dumas"],"a":0,
@@ -315,7 +315,7 @@ CFG = {
       "hint":"提示：校正體積 8.6 mL；%N≈2.39%；×6.25 ≈ 14.9~15.0%。"}
   },
   "cmp": {
-    "cols":[{"k":"m"},{"k":"meas"},{"k":"speed"},{"k":"app"}],
+    "cols":[{"k":"m"},{"k":"meas"},{"k":"speed","t":"n","star":True},{"k":"app"}],
     "rows":[
       {"m":"Kjeldahl","meas":"總有機氮","speed":2,"app":"全部食品·高脂首選·法定"},
       {"m":"Dumas","meas":"總氮","speed":4,"app":"營養標示·品管(廣用)"},

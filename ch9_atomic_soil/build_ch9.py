@@ -179,7 +179,9 @@ POLY_TABLE = """
  <thead><tr><th>多原子離子</th><th>m/z</th><th>受干擾的元素</th></tr></thead>
  <tbody>
   <tr><td class="c">³⁸Ar¹H⁺</td><td>39</td><td>³⁹K⁺ (鉀)</td></tr>
+  <tr><td class="c">³⁵Cl¹⁶O⁺</td><td>51</td><td>⁵¹V⁺ (釩)</td></tr>
   <tr><td class="c">⁴⁰Ar¹²C⁺</td><td>52</td><td>⁵²Cr⁺ (鉻)</td></tr>
+  <tr><td class="c">³⁸Ar¹⁶O¹H⁺</td><td>55</td><td>⁵⁵Mn⁺ (錳)</td></tr>
   <tr><td class="c">⁴⁰Ar¹⁶O⁺</td><td>56</td><td>⁵⁶Fe⁺ (鐵)</td></tr>
   <tr><td class="c">⁴⁰Ar³⁵Cl⁺</td><td>75</td><td>⁷⁵As⁺ (砷)</td></tr>
   <tr><td class="c">⁴⁰Ar⁴⁰Ar⁺</td><td>80</td><td>⁸⁰Se⁺ (硒)</td></tr>
@@ -210,7 +212,8 @@ add(MOT, dc.kt("9.1 介紹", "兩種互補的原子光譜：<span class='hi'>吸
 add(MOT, dc.kt("9.1 元素的指紋", "為什麼能「認出」每個元素") +
     '<div class="svgwrap" style="margin-top:6px">' + EMISSION_SVG + '</div>' +
     '<p class="subtitle" style="text-align:center;margin-top:10px">不同元素的電子能階不同 → 吸收/發射的波長組合各異，' +
-    "如同條碼般可逐一辨識(Fig 9.1)。</p>")
+    "如同條碼般可逐一辨識。</p>" +
+    '<p class="cap" style="text-align:center">示意圖（譜線位置與顏色為示意，非實際波長）；課本 Fig 9.1 為 Ba、Y、Cu、Na、Sr 的實拍發射光譜。</p>')
 
 add(MOT, dc.kt("9.1 為什麼重要", "原子光譜在食品上的<span class='hi'>四個任務</span>") +
     '<div class="grid2" style="margin-top:20px">' +
@@ -228,7 +231,7 @@ add(MOT, dc.kt("9.1 核心概念", "原子化：把樣品變成<span class='hi'>
     "溫度越高，原子化越完全(但也更易游離)。</div></div></div>")
 
 add(MOT, dc.chart_inner("temp", "不同原子化方式的<span class='hi'>溫度</span>",
-    "整合自 Table 9.1：火焰 2000–3400 K、電熱 1500–3300 K、ICP 6000–7000 K。電漿溫度遠高於火焰，原子化更完全、干擾更少。",
+    "資料：Table 9.1 的近似原子化溫度範圍（柱＝範圍上下限）：火焰 2000–3400 K、電熱(石墨爐) 1500–3300 K、感應耦合氬電漿 6000–7000 K。電漿溫度遠高於火焰，原子化更完全、化學干擾更少。",
     kicker="9.1 原子化溫度"), ' data-chart="temp"')
 
 add(MOT, dc.game_bucket_inner("g1","小遊戲 ①","吸收 vs 發射：分特徵", 8,
@@ -284,8 +287,8 @@ add(ATT, dc.kt("9.2.4 安全", "乙炔是<span class='hi'>爆炸性</span>氣體
 
 add(ATT, dc.kt("9.2.5 干擾", "兩大類：<span class='hi'>光譜性</span>與<span class='hi'>非光譜性</span>") +
     '<div class="grid2" style="margin-top:16px">' +
-    dc.card("🌈","光譜性干擾","其他元素/分子在待測波長附近<strong>吸收或放光</strong>。例：Fe 213.856 與 Zn 213.859 nm 重疊；鹼土氧化物背景吸收。用氘燈、Zeeman 校正","b") +
-    dc.card("⚗️","非光譜性干擾","影響<strong>原子化效率或游離</strong>。含輸送、溶質揮發(磷酸鈣)、化學(難熔氧化物)、游離干擾","a") +
+    dc.card("🌈","光譜性干擾","其他元素/分子在待測波長附近<strong>吸收或放光</strong>。例：Zn 213.856 nm 與 Fe 213.859 nm 重疊；鹼土氧化物背景吸收。用氘燈、Zeeman 校正","b") +
+    dc.card("⚗️","非光譜性干擾","影響<strong>原子化效率或游離</strong>。含輸送、溶質汽化(高 Al、P 壓低鹼土金屬)、化學(難熔氧化物、焦磷酸鈣)、游離干擾","a") +
     '</div><div class="note" style="margin-top:14px"><strong>實例：</strong>牛奶測鈣時，磷酸鹽與鈣生成焦磷酸鈣壓低訊號→加<strong>鑭(La)</strong>當釋放劑；' +
     "鹼金屬易游離→加 K/Cs 當<strong>游離抑制劑</strong>。</div>")
 
@@ -314,7 +317,7 @@ add(ATT, dc.kt("9.5 ICP-MS", "不測光，改測<span class='hi'>離子的質荷
 
 add(ATT, dc.kt("9.5.2 ICP-MS 干擾", "同質量重疊：<span class='hi'>多原子</span>干擾") +
     '<div class="grid2-1" style="margin-top:12px"><div>' + POLY_TABLE +
-    '<p class="cap" style="text-align:left">Table 9.2：氬與酸中元素結合成多原子離子，質量恰與待測元素相同。</p></div>' +
+    '<p class="cap" style="text-align:left">Table 9.2（全 7 例）：氬與酸中元素結合成多原子離子，質量恰與待測元素相同。</p></div>' +
     '<div><ul class="clean">' +
     "<li><strong>同質異位素干擾</strong>：⁵⁸Fe 與 ⁵⁸Ni 重疊→改選 ⁵⁶Fe、⁶⁰Ni</li>" +
     "<li><strong>雙電荷干擾</strong>：¹³⁸Ba²⁺ 出現在 m/z 69，干擾 ⁶⁹Ga</li>" +
@@ -329,10 +332,10 @@ add(ACT, dc.cmp_inner("一張表選技術（點欄位排序）",
     [{"k":"m","t":"s","label":"技術"},{"k":"power","t":"n","label":"偵測力","star":True},
      {"k":"multi","t":"s","label":"多元素"},{"k":"range","t":"n","label":"工作範圍(數量級)"},
      {"k":"cost","t":"s","label":"成本"},{"k":"iso","t":"s","label":"同位素"}],
-    "偵測力 ★ 越多越靈敏；工作範圍為線性數量級。整合自 Table 9.3。", kicker="9.6 方法比較"), ' data-game="cmp"')
+    "多元素、工作範圍、成本、同位素取自 Table 9.3（工作範圍取範圍中點：火焰 3–4、石墨爐 ~2、ICP-OES 6–7、ICP-MS 9–10）。偵測力 ★ 為依 Table 9.3 文字描述的相對評等（示意，非課本數值）。", kicker="9.6 方法比較"), ' data-game="cmp"')
 
 add(ACT, dc.chart_inner("range", "四技術的<span class='hi'>線性工作範圍</span>",
-    "整合自 Table 9.3：數量級越大，可量測的濃度跨距越廣。ICP-MS 最寬(9–10)，火焰 AAS 最窄。",
+    "資料：Table 9.3 近似線性工作範圍（柱高＝範圍中點）：火焰 AAS 3–4、石墨爐 AAS ~2、ICP-OES 6–7、ICP-MS 9–10 個數量級。ICP-MS 最寬，石墨爐 AAS 最窄。",
     kicker="9.6 工作範圍", height="52vh"), ' data-chart="range"')
 
 add(ACT, dc.kt("9.6 偵測極限", "差距可達<span class='hi'>百萬倍</span>") +
@@ -384,10 +387,10 @@ CFG = {
   "charts": {
     "temp": {"type":"bar","yTitle":"原子化溫度 (K)",
       "labels":["火焰","石墨爐(電熱)","ICP 電漿"],
-      "datasets":[{"label":"典型溫度 K","data":[2700,2400,6500],"color":"#d9822b"}]},
+      "datasets":[{"label":"原子化溫度範圍 K","data":[[2000,3400],[1500,3300],[6000,7000]],"color":"#d9822b"}]},
     "range": {"type":"bar","yTitle":"線性工作範圍(數量級)",
       "labels":["火焰 AAS","石墨爐 AAS","ICP-OES","ICP-MS"],
-      "datasets":[{"label":"數量級","data":[3.5,2,6.5,9.5],"color":"#1f6feb"}]}
+      "datasets":[{"label":"數量級(範圍中點)","data":[3.5,2,6.5,9.5],"color":"#1f6feb"}]}
   },
   "bucket": {
     "g1": {"cats":["原子吸收 AAS","原子發射 AES"],
@@ -402,7 +405,7 @@ CFG = {
       "ok":"🎉 全對！AAS 靠外部 HCL 測吸收、一元素一支燈；AES 由原子自身發光、可多元素。",
       "tip":"提示：要外部光源、測『吸收』→ AAS；原子自己發光、測『發射』→ AES。"},
     "g3": {"cats":["光譜性干擾","非光譜性干擾"],
-      "items":[{"t":"Fe 213.856 與 Zn 213.859 nm 譜線重疊","c":"光譜性干擾"},
+      "items":[{"t":"Zn 213.856 與 Fe 213.859 nm 譜線重疊","c":"光譜性干擾"},
         {"t":"氧化鈣等鹼土分子譜帶造成背景吸收","c":"光譜性干擾"},
         {"t":"<250 nm 有機分子未燒盡造成背景吸收","c":"光譜性干擾"},
         {"t":"樣品黏度/表面張力改變霧化輸送速率","c":"非光譜性干擾"},

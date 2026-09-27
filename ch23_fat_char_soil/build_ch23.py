@@ -101,15 +101,15 @@ add(ATT, dc.kt("23.4.1 / 23.4.2", "碘價與皂化價") +
     '<div class="grid2" style="margin-top:16px">' +
     dc.card("🟣","碘價 IV","每 100 g 油吸收的碘克數 → <strong>不飽和度</strong>。ICl 加成雙鍵，剩餘碘以硫代硫酸鈉/澱粉滴定。越不飽和、碘價越高","a") +
     dc.card("🧼","皂化價 SV","皂化 1 g 油所需 KOH 的毫克數 → <strong>平均分子量/鏈長</strong>。KOH 皂化後回滴。皂化價越小、鏈越長","b") +
-    '</div><div class="note" style="margin-top:14px">兩者都可由<strong>脂肪酸組成計算</strong>(計算碘價/計算皂化價)，一次分析得兩個結果。</div>')
+    '</div><div class="note" style="margin-top:14px">兩者也常由<strong>脂肪酸組成(GC)計算</strong>(計算碘價 AOCS Cd 1c-85／計算皂化價 Cd 3a-94)；計算碘價可由同一次分析同時得到<strong>三酸甘油酯與 FFA 兩個碘價</strong>。</div>')
 
 add(ATT, dc.game_mcq_inner("g2","小遊戲 ②","油脂特性即時測驗", 5), ' data-game="g2"')
 
 add(ATT, dc.kt("23.4.3 / 23.4.5", "酸價與過氧化價") +
     '<div class="grid2" style="margin-top:16px">' +
-    dc.card("🧪","酸價 AV / FFA","中和 1 g 油中游離脂肪酸所需 KOH mg → <strong>水解酸敗</strong>程度。油炸油常設 AV ≤ 2 mg KOH/g","b") +
+    dc.card("🧪","酸價 AV / FFA","中和 1 g 油中游離脂肪酸所需 KOH mg → <strong>水解酸敗</strong>程度。油炸油有時以 2 mg KOH/g 為上限","b") +
     dc.card("🫧","過氧化價 PV","每 kg 油的氫過氧化物毫當量 → <strong>初級氧化</strong>。KI 還原 ROOH 生碘,以硫代硫酸鈉滴定。PV>20 品質很差","a") +
-    '</div><div class="note" style="margin-top:14px"><strong>二級氧化</strong>指標：p-茴香胺價(醛,350nm)、TBARS(丙二醛,530nm)、共軛雙烯(232nm)、揮發物(hexanal)。' +
+    '</div><div class="note" style="margin-top:14px"><strong>初級氧化</strong>另可測共軛雙烯(UV 232 nm)；<strong>二級氧化</strong>指標：p-茴香胺價(醛,350nm)、TBARS(丙二醛,530nm)、揮發物(如 hexanal)。' +
     "<strong>Totox = p-茴香胺價 + 2×過氧化價</strong>。</div>")
 
 add(ATT, dc.game_bucket_inner("g3","小遊戲 ③","各『值』測什麼", 6,
@@ -127,7 +127,7 @@ add(ATT, dc.game_sort_inner("g4","小遊戲 ④","碘價滴定流程排序", 6,
 
 add(ATT, dc.kt("23.5 氧化安定性", "預測油『撐得多久』") +
     '<div class="grid2" style="margin-top:16px"><div><ul class="clean">' +
-    "<li><strong>誘導期</strong>：抗氧化劑耗盡前氧化緩慢的時間,越長越安定</li>" +
+    "<li><strong>誘導期</strong>：氧化急遽上升之前的時間(Fig 23.6),越長越安定</li>" +
     "<li><strong>OSI(油脂安定指數)</strong>：在 110/130°C 通空氣,測揮發酸使導電度急升的時間(<strong>Rancimat</strong>)</li>" +
     "<li><strong>氧消耗試驗</strong>(Oxipres/Oxitest):密閉測壓力下降,可用整顆食品</li>" +
     "<li>加速試驗快,但高溫路徑未必等於常溫,須對照真實貨架</li>" +
@@ -139,11 +139,11 @@ add(ATT, dc.game_mcq_inner("g5","小遊戲 ⑤","決策挑戰：選對檢驗", 5
 add(ACT, dc.cmp_inner("油脂檢驗『值』一覽（點欄位排序）",
     [{"k":"v","t":"s","label":"檢驗值"},{"k":"t","t":"s","label":"測量目標"},
      {"k":"p","t":"s","label":"原理"},{"k":"m","t":"s","label":"數值意義"}],
-    "整合自 Table 23.3。", kicker="Table 23.3"), ' data-game="cmp"')
+    "整合自 Table 23.3；p-茴香胺價取自 23.4.6、各呈色波長見 23.4.6／23.4.7。", kicker="Table 23.3"), ' data-game="cmp"')
 
 add(ACT, dc.chart_inner("iodine", "不同油脂的<span class='hi'>碘價</span>",
-    "整合自 Table 23.2:碘價反映不飽和度。椰子油最飽和(碘價低)、魚油最不飽和(碘價高)。",
-    kicker="23.4.1 數據", height="52vh"), ' data-chart="iodine"')
+    "取自 Table 23.2：每條長條＝課本典型碘價<strong>範圍</strong>（g I₂/100 g）。椰子油最飽和(碘價低)、油鯡魚油(menhaden)最不飽和(碘價高)。",
+    kicker="Table 23.2 數據", height="52vh"), ' data-chart="iodine"')
 
 add(ACT, dc.kt("23.6 脂肪酸組成", "標示與健康的<span class='hi'>核心</span>") +
     '<div class="grid2" style="margin-top:16px">' +
@@ -152,9 +152,27 @@ add(ACT, dc.kt("23.6 脂肪酸組成", "標示與健康的<span class='hi'>核�
     dc.card("🧀","膽固醇/植物固醇","皂化後 TMS 衍生,以 GC 定量(營養標示)","g") +
     dc.card("📊","發煙點 vs FFA","FFA 上升使發煙點下降,油炸油劣化的指標(見下頁圖)","b") + '</div>')
 
-add(ACT, dc.chart_inner("smoke", "FFA 越高，<span class='hi'>發煙點</span>越低",
-    "整合自 Fig 23.4(橄欖油):游離脂肪酸含量上升,發煙點明顯下降 → 油炸油劣化的警訊。",
-    kicker="23.3.3 數據", height="46vh"), ' data-chart="smoke"')
+add(ACT, dc.kt("23.3.3 數據", "FFA 越高，<span class='hi'>發煙點</span>越低") +
+    '<div class="chartbox" style="height:46vh"><canvas id="smokeChart"></canvas></div>'
+    '<div class="cap">取自 Fig 23.4（橄欖油）的讀圖約值：游離脂肪酸由約 0.04% 升到 1.0%，發煙點約由 218 °C 降到 160 °C'
+    '（x 軸為真實數值間距）→ FFA 上升是油炸油劣化的警訊。</div>'
+    """<script>
+(function(){
+  function draw(){
+    if(typeof Chart==='undefined'){setTimeout(draw,60);return;}
+    var el=document.getElementById('smokeChart'); if(!el||el._done) return; el._done=1;
+    var pts=[[0.04,218],[0.06,210],[0.08,204],[0.10,199],[0.20,191],[0.40,177],[0.60,171],[0.80,166],[1.00,160]];
+    new Chart(el,{type:'line',
+      data:{datasets:[{label:'發煙點(橄欖油，Fig 23.4 讀圖值)',data:pts.map(function(p){return {x:p[0],y:p[1]}}),
+        borderColor:'#1f6feb',backgroundColor:'#1f6feb',pointRadius:5,borderWidth:2,tension:.3,fill:false}]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false}},
+        scales:{x:{type:'linear',min:0,max:1.2,title:{display:true,text:'游離脂肪酸 FFA (%)'}},
+                y:{min:150,max:230,title:{display:true,text:'發煙點 (°C)'}}}}});
+  }
+  draw();
+})();
+</script>""")
 
 add(ACT, dc.game_calc_inner("g6","小遊戲 ⑥","計算闖關：過氧化價",
     "過氧化價滴定：檢液用 <b>S = 2.0 mL</b>、空白 <b>B = 0.1 mL</b> 之 <b>0.01 N</b> 硫代硫酸鈉；取樣 <b>W = 5 g</b>。"
@@ -189,11 +207,8 @@ add(ACT, dc.cover("下一步 · NEXT",
 CFG = {
   "charts": {
     "iodine": {"type":"bar","yTitle":"碘價 (g I₂ / 100 g)",
-      "labels":["椰子油","棕櫚油","豬脂","橄欖油","玉米油","大豆油","紅花油","魚油"],
-      "datasets":[{"label":"碘價","data":[9,50,60,85,121,128,145,175],"color":"#d9822b"}]},
-    "smoke": {"type":"line","yTitle":"發煙點 (°C)","zero":False,
-      "labels":["0.05","0.1","0.2","0.4","0.6","0.8","1.0"],
-      "datasets":[{"label":"發煙點(橄欖油)","data":[218,205,195,177,170,165,160],"color":"#1f6feb"}]}
+      "labels":["椰子油 (5–13)","可可脂 (32–42)","棕櫚油 (45–56)","橄欖油 (75–94)","玉米油 (107–135)","大豆油 (118–139)","紅花籽油 (136–151)","油鯡魚油 (150–200)"],
+      "datasets":[{"label":"碘價範圍 (Table 23.2)","data":[[5,13],[32,42],[45,56],[75,94],[107,135],[118,139],[136,151],[150,200]],"color":"#d9822b"}]}
   },
   "bucket": {
     "g1": {"cats":["物理特性","化學特性"],
@@ -204,10 +219,10 @@ CFG = {
       "ok":"🎉 全對！折射率/熔點/發煙點/SFC 是物理量;碘價/皂化價/過氧化價/TBARS 是化學量。",
       "tip":"提示：用儀器量『物理量』(溫度、折射、固液比)→物理;用反應/滴定/呈色→化學。"},
     "g3": {"cats":["測不飽和度","測鏈長/水解","測氧化"],
-      "items":[{"t":"碘價(碘加成雙鍵)","c":"測不飽和度"},{"t":"共軛雙烯(UV 232 nm)","c":"測不飽和度"},
+      "items":[{"t":"碘價(碘加成雙鍵)","c":"測不飽和度"},{"t":"計算碘價(由 GC 脂肪酸組成算)","c":"測不飽和度"},
         {"t":"皂化價(平均分子量/鏈長)","c":"測鏈長/水解"},{"t":"酸價/FFA(水解出的游離脂肪酸)","c":"測鏈長/水解"},
         {"t":"過氧化價(初級·氫過氧化物)","c":"測氧化"},{"t":"TBARS(二級·丙二醛)","c":"測氧化"}],
-      "ok":"🎉 正確！碘價/CD 看雙鍵;皂化價/酸價看鏈長與水解;過氧化價/TBARS 看氧化。",
+      "ok":"🎉 正確！碘價/計算碘價看雙鍵;皂化價/酸價看鏈長與水解;過氧化價/TBARS 看氧化。(註：共軛雙烯 232 nm 是『初級氧化』指標，不是測不飽和度)",
       "tip":"提示：跟『雙鍵』有關→不飽和度;跟『酯鍵/水解』→鏈長水解;跟『氫過氧化物/醛』→氧化。"}
   },
   "mcq": {
@@ -254,8 +269,9 @@ CFG = {
     "cols":[{"k":"v"},{"k":"t"},{"k":"p"},{"k":"m"}],
     "rows":[
       {"v":"碘價 IV","t":"不飽和度","p":"碘加成雙鍵","m":"越高越不飽和"},
-      {"v":"皂化價 SV","t":"平均鏈長","p":"皂化所需 KOH","m":"越小鏈越長"},
+      {"v":"皂化價 SV","t":"平均分子量(鏈長)","p":"皂化所需 KOH","m":"越小鏈越長"},
       {"v":"酸價 AV/FFA","t":"水解程度","p":"中和游離脂肪酸","m":"越高水解酸敗越多"},
+      {"v":"共軛雙烯 CD","t":"初級氧化","p":"非共軛→共軛雙鍵,UV 232 nm","m":"氧化初期指標"},
       {"v":"過氧化價 PV","t":"初級氧化","p":"碘滴定氫過氧化物","m":"越高初級氧化越多(會先升後降)"},
       {"v":"p-茴香胺價","t":"二級氧化","p":"醛類呈色 350 nm","m":"與 PV 合算 Totox"},
       {"v":"TBARS","t":"二級氧化","p":"丙二醛呈色 530 nm","m":"越高油耗越嚴重"}

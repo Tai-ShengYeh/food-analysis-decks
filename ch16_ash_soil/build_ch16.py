@@ -120,7 +120,7 @@ add(MOT, dc.kt("16.1.2 應用面", "灰分透露的<span class='hi'>三件事</s
     dc.card("🛢️","保存期","脂質食品中高量<strong>過渡金屬</strong>會加速酸敗、縮短保存","a") + '</div>' +
     '<p class="subtitle" style="margin-top:18px">所以灰分既是「營養」指標，也是「品質、毒性、保存」的線索。</p>')
 
-add(MOT, dc.chart_inner("ashfood", "食物裡的<span class='hi'>灰分</span>含量", "資料：USDA FoodData Central，% 灰分（濕基）。乾燥食品最高，新鮮食品多 < 5%。",
+add(MOT, dc.chart_inner("ashfood", "食物裡的<span class='hi'>灰分</span>含量", "資料：Table 16.1（USDA FoodData Central），% 灰分（濕基）。乾燥食品最高(可達 12%)，新鮮食品很少 > 5%。",
     kicker="16.1.3 食物中的含量"), ' data-chart="ashfood"')
 
 add(MOT, """<div style="text-align:center">
@@ -165,8 +165,8 @@ add(ATT, dc.kt("坩堝怎麼選", "看耐溫與會不會污染") +
 
 add(ATT, dc.kt("坩堝的細節", "標記與<span class='hi'>預灰化</span>") +
     '<div class="grid2" style="margin-top:16px"><div><ul class="clean">' +
-    "<li>麥克筆寫的記號會在灰化時<strong>燒掉</strong> → 用鋼針刻、或鑽石筆刻痕</li>" +
-    "<li>可用 <strong>FeCl₃/HCl</strong>(鐵釘溶於濃 HCl)的棕色顏料做永久標記</li>" +
+    "<li>麥克筆寫的記號會在灰化時<strong>燒掉</strong> → 用鋼針書寫的實驗室專用墨水，或用鑽石筆刻痕</li>" +
+    "<li>刻痕處以 0.5 M <strong>FeCl₃</strong>（20% HCl）標記；鐵釘溶於濃 HCl 的棕色顏料也可</li>" +
     "<li>坩堝使用前要先<strong>灼燒並清潔</strong>(預灰化)，去除有機污染</li>" +
     "<li>酸洗 + 去離子水反覆沖洗，消除礦物污染</li></ul></div>" +
     '<div class="note"><strong>為什麼這麼講究？</strong>灰分是微量重量分析，<br>' +
@@ -179,12 +179,12 @@ add(ATT, dc.kt("16.2.3 濕式灰化", "Wet：用酸把有機物氧化掉") +
     "<li>又稱<strong>濕氧化 / 濕消化</strong></li>" +
     "<li>常用<strong>濃 HNO₃ + 濃 H₂SO₄</strong>(有時加 H₂O₂)，100–120°C</li>" +
     "<li>低溫且可用密閉壓力瓶 → <strong>礦物不揮發、留在溶液</strong></li>" +
-    "<li>過氯酸(HClO₄)會生爆炸性過氧化物，已停用</li></ul></div>" +
+    "<li>過氯酸(HClO₄)會生爆炸性過氧化物，現已幾乎不用</li></ul></div>" +
     '<div class="note"><strong>用途：</strong>為特定礦物分析(如 ICP)做前處理時的<strong>首選</strong>。<br>' +
     "缺點：需<strong>全程顧爐</strong>、腐蝕性試劑、單次量少。</div></div>")
 
-add(ATT, dc.chart_inner("temp", "三種灰化的<span class='hi'>溫度與時間</span>",
-    "整合自 Table 16.2：典型溫度(°C)與所需時間(小時)。微波大幅縮短時間。", kicker="16.3 方法比較", height="52vh"),
+add(ATT, dc.chart_inner("temp", "四種灰化的<span class='hi'>所需時間</span>",
+    "時間：Table 16.2（乾式 12–18 h 取中值 15 h；濕式 ~2 h；微波乾式/濕式各 ~30 min）。溫度：內文 16.1.1、16.2.4（微波濕式 AOAC/FDA 方法用 200 °C；微波馬弗爐最高可達 1200 °C）。", kicker="16.3 方法比較", height="52vh"),
     ' data-chart="temp"')
 
 add(ATT, dc.game_sort_inner("g4","小遊戲 ③","乾式灰化流程排序", 6,
@@ -216,7 +216,7 @@ add(ATT, dc.game_bucket_inner("g3","小遊戲 ④","特殊灰分：對應用途"
 add(ATT, dc.kt("樣品的麻煩", "高脂·高糖·高水分怎麼辦") +
     '<div class="grid2" style="margin-top:16px"><div><ul class="clean">' +
     "<li><strong>高脂/高蛋白</strong>(起司、香料、花生)：易冒煙起火 → 微開爐門慢燒，或先脫脂</li>" +
-    "<li><strong>高糖</strong>：易結焦成<strong>焦油</strong>(高估灰分) → 混棉絮、加幾滴橄欖油助蒸氣逸出</li>" +
+    "<li><strong>高糖</strong>：易結焦成<strong>焦油</strong>(高估灰分)；果凍類高糖高水分樣品混<strong>棉絮</strong>防噴濺；易結殼者加 1–2 滴精製橄欖油讓蒸氣逸出</li>" +
     "<li><strong>高水分</strong>(肉、糖漿)：先在蒸氣浴/紅外燈蒸乾</li></ul></div>" +
     '<div class="note">殘碳(黑色焦油)未燒完時：加幾滴水或硝酸<strong>再灰化</strong>；' +
     "仍不行就用<strong>無灰濾紙</strong>過濾後重灰化(扣濾紙重)。</div></div>")
@@ -232,15 +232,15 @@ add(ATT, dc.game_mcq_inner("g5","小遊戲 ⑤","決策挑戰：選對方法", 5
 
 # ---------------- 喚起行動 ----------------
 add(ACT, dc.cmp_inner("一張表選方法（點欄位排序）",
-    [{"k":"m","t":"s","label":"方法"},{"k":"temp","t":"n","label":"溫度°C"},
+    [{"k":"m","t":"s","label":"方法"},{"k":"temp","t":"s","label":"溫度°C"},
      {"k":"time","t":"s","label":"時間"},{"k":"safe","t":"n","label":"安全度","star":True},{"k":"app","t":"s","label":"主要應用"}],
-    "安全度：★ 越多越安全。整合自 Table 16.2。", kicker="16.3 方法比較"), ' data-game="cmp"')
+    "依 Table 16.2 與內文整理；安全度星等為教學評比（課本：乾式較安全、熱盤濕式具危險性）。", kicker="16.3 方法比較"), ' data-game="cmp"')
 
 add(ACT, dc.kt("方法選擇", "跟著決策樹走") +
     '<div class="svgwrap" style="margin-top:10px">' + DTREE_SVG + '</div>' +
     '<p class="subtitle" style="text-align:center;margin-top:14px">下一頁實戰：算一杯生咖啡的灰分 →</p>')
 
-add(ACT, dc.kt("16.6 計算", "從坩堝秤重到 % 灰分") +
+add(ACT, dc.kt("16.2.2 計算（Eq. 16.1）", "從坩堝秤重到 % 灰分") +
     '<div class="grid2" style="margin-top:14px"><div class="eq">% 灰分 = ' +
     '<span class="frac"><b>灰化後 − 坩堝空重</b><span>原樣品重</span></span> × 100</div>' +
     '<div><ul class="clean"><li>灰重 = (坩堝+灰) − 空坩堝</li>' +
@@ -280,13 +280,12 @@ add(ACT, dc.cover("下一步 · NEXT",
 CFG = {
   "charts": {
     "ashfood": {"type":"bar","yTitle":"% 灰分（濕基）",
-      "labels":["牛肉乾","裸麥麵包","炸魚排","葡萄乾","漢堡肉","煉乳","全麥麵粉","糙米","優格","蘋果"],
+      "labels":["牛肉乾","裸麥麵包","炸魚排","葡萄乾","漢堡肉","蒸發乳(罐裝)","全麥麵粉","糙米","低脂優格","蘋果"],
       "datasets":[{"label":"% 灰分","data":[6.8,2.5,2.5,1.9,1.9,1.6,1.6,1.5,1.1,0.2],"color":"#1f6feb"}]},
-    "temp": {"type":"bar","yTitle":"數值",
-      "labels":["乾式","濕式","微波乾式","微波濕式"],
+    "temp": {"type":"bar","yTitle":"所需時間 (小時)",
+      "labels":["乾式 500–600°C","濕式 100–120°C","微波乾式 (爐可達 1200°C)","微波濕式 (~200°C)"],
       "datasets":[
-        {"label":"溫度 °C","data":[550,110,1000,200],"color":"#d9822b"},
-        {"label":"時間 小時","data":[15,2,0.5,0.5],"color":"#1f6feb"}]}
+        {"label":"時間 (小時)","data":[15,2,0.5,0.5],"color":"#1f6feb"}]}
   },
   "bucket": {
     "g1": {"cats":["乾式灰化","濕式灰化"],
@@ -341,12 +340,12 @@ CFG = {
       "hint":"提示：灰重 0.0886 g；濕基 = 0.0886 ÷ 5.2146 × 100 ≈ 1.70%(乾基需再 ÷0.885 ≈ 1.92%)。"}
   },
   "cmp": {
-    "cols":[{"k":"m"},{"k":"temp","t":"n"},{"k":"time"},{"k":"safe","t":"n"},{"k":"app"}],
+    "cols":[{"k":"m"},{"k":"temp"},{"k":"time"},{"k":"safe","t":"n","star":True},{"k":"app"}],
     "rows":[
-      {"m":"乾式灰化","temp":550,"time":"12–18 h","safe":4,"app":"總灰分·概略分析·礦物前處理"},
-      {"m":"濕式灰化","temp":110,"time":"~2 h","safe":2,"app":"礦物前處理(官方法)·防揮發"},
-      {"m":"微波乾式","temp":1000,"time":"~30 min","safe":3,"app":"總灰分·品管(快速)"},
-      {"m":"微波濕式","temp":200,"time":"~30 min","safe":3,"app":"礦物前處理(快速·ICP)"}
+      {"m":"乾式灰化","temp":"500–600","time":"12–18 h","safe":4,"app":"總灰分·概略分析·礦物前處理"},
+      {"m":"濕式灰化","temp":"100–120","time":"~2 h","safe":2,"app":"礦物前處理(官方法)·防揮發"},
+      {"m":"微波乾式","temp":"爐可達 1200","time":"~30 min","safe":3,"app":"總灰分·品管(快速)"},
+      {"m":"微波濕式","temp":"~200(AOAC)","time":"~30 min","safe":3,"app":"礦物前處理(快速·ICP)"}
     ]
   }
 }

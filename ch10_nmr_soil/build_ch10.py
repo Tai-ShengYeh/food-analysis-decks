@@ -146,8 +146,39 @@ SPECTRO_SVG = """
  <rect x="470" y="150" width="70" height="50" rx="6" fill="#15233f"/>
  <text x="505" y="180" text-anchor="middle" fill="#fff" font-size="12" font-weight="800">工作站</text>
  <line x1="450" y1="180" x2="470" y2="180" stroke="#8493ad" stroke-width="2"/>
- <text x="280" y="312" text-anchor="middle" class="lbl">500 MHz 機：¹H 發射器 500 MHz、¹³C 125 MHz(Fig 10.5)</text>
+ <text x="280" y="312" text-anchor="middle" class="lbl">500 MHz 機：¹H 發射器 500 MHz、¹³C 125 MHz(10.3 節；架構見 Fig 10.5)</text>
 </svg>"""
+
+
+import json as _json
+def inline_chart(cid, kicker, title_html, cap, cfg_js, height="50vh"):
+    """Inline Chart.js with a true numeric (linear) x-axis. Waits until Chart.js is loaded
+    and the slide is visible (non-zero width) before drawing."""
+    return (dc.kt(kicker, title_html) +
+        '<div class="chartbox" style="height:%s"><canvas id="%s"></canvas></div><div class="cap">%s</div>' % (height, cid, cap) +
+        '<script>(function(){function draw(){var el=document.getElementById("%s");'
+        'if(typeof Chart==="undefined"||!el||el.offsetWidth===0){setTimeout(draw,120);return;}'
+        'if(el._done)return;el._done=1;new Chart(el,%s);}draw();})();</script>' % (cid, cfg_js))
+
+_B = [7.05, 9.4, 11.7, 14.1, 18.8, 23.5]
+_F = [300, 400, 500, 600, 800, 1000]
+FIELD_JS = ('{type:"scatter",data:{datasets:['
+  '{label:"f = 42.58 MHz/T × B₀（¹H 旋磁比，一般物理常數）",data:[{x:0,y:0},{x:24.5,y:1043}],showLine:true,pointRadius:0,borderColor:"#8493ad",borderDash:[6,4],borderWidth:1.6},'
+  '{label:"常見機型（依旋磁比推算）",data:%s,pointRadius:6,backgroundColor:"#1f6feb",borderColor:"#1f6feb"},'
+  '{label:"課本 10.2.1：11.7 T → 500 MHz",data:[{x:11.7,y:500}],pointRadius:10,pointStyle:"rectRot",backgroundColor:"#d9822b",borderColor:"#d9822b"}]},'
+  'options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:"top",labels:{boxWidth:12,font:{size:11}}}},'
+  'scales:{x:{type:"linear",min:0,max:25,title:{display:true,text:"磁場強度 B₀ (T)"}},y:{min:0,max:1100,title:{display:true,text:"¹H 共振頻率 (MHz)"}}}}}'
+  ) % _json.dumps([{"x": b, "y": f} for b, f in zip(_B, _F)])
+
+import math as _mm
+_curve = [{"x": n, "y": round(_mm.sqrt(n / 16.0), 3)} for n in [16] + list(range(32, 1025, 32))]
+_book = [{"x": n, "y": round(_mm.sqrt(n / 16.0), 2)} for n in (16, 32, 256, 512)]
+SCANS_JS = ('{type:"scatter",data:{datasets:['
+  '{label:"S/N ∝ √n（訊號平均的一般原理）",data:%s,showLine:true,pointRadius:0,borderColor:"#d9822b",borderWidth:2.4},'
+  '{label:"課本 10.2.4 常用掃描數：16、32（濃樣）／256、512（稀樣）",data:%s,pointRadius:7,backgroundColor:"#1f6feb",borderColor:"#1f6feb"}]},'
+  'options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:"top",labels:{boxWidth:12,font:{size:11}}}},'
+  'scales:{x:{type:"linear",min:0,max:1040,title:{display:true,text:"累加掃描次數 n"}},y:{min:0,max:9,title:{display:true,text:"相對 S/N（16 次 = 1）"}}}}}'
+  ) % (_json.dumps(_curve), _json.dumps(_book))
 
 # ================================================ 引起動機 ================================================
 add(MOT, dc.cover("NIELSEN'S FOOD ANALYSIS · CHAPTER 10",
@@ -187,9 +218,8 @@ add(MOT, dc.kt("10.2.1 Larmor 頻率", "為什麼叫「<span class='hi'>500 MHz<
     '</ul></div><div class="eq">f<sub>Larmor</sub> ∝ B₀<br>' +
     '<span style="font-size:.72em;color:var(--ink-2)">11.7 T → 500 MHz　·　14.1 T → 600 MHz</span></div></div>')
 
-add(MOT, dc.chart_inner("field", "磁場越強，<span class='hi'>共振頻率</span>越高",
-    "¹H 共振頻率與磁場強度成正比(示意對應)：常見機型 300/400/500/600/800/1000 MHz 對應磁場 7–23.5 T。",
-    kicker="10.2.1 頻率 ∝ 磁場"), ' data-chart="field"')
+add(MOT, inline_chart("fieldChart", "10.2.1 頻率 ∝ 磁場", "磁場越強，<span class='hi'>共振頻率</span>越高",
+    "¹H 共振頻率與磁場強度成正比（x 軸為真實數值間距）。課本只給 11.7 T → 500 MHz；其餘機型的磁場值依 ¹H 旋磁比 42.58 MHz/T 推算（一般物理常數，非課本數據）。", FIELD_JS))
 
 add(MOT, dc.game_bucket_inner("g1","小遊戲 ①","自旋取向：平行 vs 反平行", 8,
     "把 8 個敘述分到「平行 B₀(低能態)」或「反平行 B₀(高能態)」。"), ' data-game="g1"')
@@ -208,7 +238,7 @@ add(ATT, dc.kt("10.2.2 弛豫", "脈衝後怎麼回到平衡：T1 與 T2") +
     dc.card("🔁","T1 自旋-晶格弛豫","激發態核與周圍「晶格」交換能量，磁化沿 z 軸<strong>回復</strong>","b") +
     dc.card("🌀","T2 自旋-自旋弛豫","鄰近核互相影響使<strong>相位散開</strong>、xy 訊號衰減","a") +
     '</div><div class="note" style="margin-top:16px">關鍵：<strong>不同型態(液態 vs 固態)弛豫速率不同</strong>。' +
-    "這正是 NMR 能分辨水分活動度、固/液脂、玻璃轉化的物理基礎。</div>")
+    "這正是 NMR 能分辨水分移動性(mobility)、固/液脂、玻璃轉化的物理基礎。</div>")
 
 add(ATT, dc.game_mcq_inner("g2","小遊戲 ②","NMR 原理即時測驗", 5), ' data-game="g2"')
 
@@ -228,9 +258,8 @@ add(ATT, dc.kt("10.2.4 一維 NMR 實驗", "從脈衝到光譜：FID → 傅立�
     '<div class="note" style="margin-top:12px">樣品溶於<strong>氘化溶劑(D₂O)</strong>避免被溶劑質子蓋過；90° 脈衝後收到隨時間衰減的 ' +
     "<strong>FID(時域)</strong>，再做<strong>傅立葉轉換</strong>變成頻域光譜。各峰<strong>積分面積</strong>正比於質子數→可定量。</div>")
 
-add(ATT, dc.chart_inner("scans", "多掃幾次：<span class='hi'>訊雜比</span>的代價",
-    "訊雜比 S/N 與掃描次數的平方根成正比(S/N ∝ √n)。掃描×4 才能讓 S/N×2——解析度換來的是時間。",
-    kicker="10.2.4 訊號平均", height="50vh"), ' data-chart="scans"')
+add(ATT, inline_chart("scansChart", "10.2.4 訊號平均", "多掃幾次：<span class='hi'>訊雜比</span>的代價",
+    "課本 10.2.4：掃描通常以 16 次為增量，濃樣 16 或 32 次、稀樣 256 或 512 次，累加後訊雜比與解析度明顯改善。曲線 S/N ∝ √n 為訊號平均的一般原理（非課本數據）：掃描×4 才讓 S/N×2。", SCANS_JS))
 
 add(ATT, dc.game_sort_inner("g4","小遊戲 ④","一維 NMR 流程排序", 6,
     "用 ▲▼ 把一維 ¹H-NMR 實驗的 6 個步驟排成正確順序。"), ' data-game="g4"')
@@ -254,13 +283,13 @@ add(ATT, dc.game_mcq_inner("g5","小遊戲 ⑤","決策挑戰：選對 NMR 技�
 add(ACT, dc.cmp_inner("一張表看 NMR 的各種型態（點欄位排序）",
     [{"k":"m","t":"s","label":"技術"},{"k":"depth","t":"n","label":"資訊深度","star":True},
      {"k":"sample","t":"s","label":"樣品型態"},{"k":"cost","t":"n","label":"成本","star":True},{"k":"app","t":"s","label":"代表應用"}],
-    "資訊深度／成本 ★ 越多越高。整合自 10.3–10.4。", kicker="10.4 技術比較"), ' data-game="cmp"')
+    "樣品型態與代表應用整理自 10.3–10.4 與 Table 10.1；資訊深度／成本 ★ 為相對評等（示意，課本未給數值）。", kicker="10.4 技術比較"), ' data-game="cmp"')
 
 add(ACT, dc.kt("10.4 應用總覽", "NMR 在食品的<span class='hi'>用途地圖</span>") +
     '<div class="grid2" style="margin-top:18px">' +
     dc.card("🧪","結構與純度","碳水化合物結構、β-葡聚醣 1,3/1,4 鍵結比、增稠劑鑑定(2-D)","b") +
     dc.card("🛢️","油脂","脂肪酸組成(¹H 積分)、油品真偽、氧化追蹤、固體脂含量 SFC","a") +
-    dc.card("💧","水分與狀態","水分活動度 T2、玻璃轉化 Tg(NMR 狀態圖)","g") +
+    dc.card("💧","水分與狀態","水分(質子)移動性 T2、玻璃轉化 Tg(NMR 狀態圖)","g") +
     dc.card("🍊","成像 MRI","完整水果/包裝成像：凍傷、種子、水分遷移、結凍過程","b") + '</div>')
 
 add(ACT, dc.kt("10.4.1 液態 vs 固態 vs MRI", "同一原理，三種玩法") +
@@ -283,7 +312,7 @@ add(ACT, dc.kt("10.4.1.5 TD-NMR", "30 秒測出<span class='hi'>油脂與水分<
 add(ACT, dc.kt("10.4.2 摻假與品質", "NMR 指紋＋化學計量學") +
     '<div class="grid3" style="margin-top:18px">' +
     dc.card("🫒","橄欖油真偽","以 ¹³C/¹H NMR 結合多變量分析，揪出榛果油摻假、辨品種與產地","a") +
-    dc.card("🧃","果汁摻假","¹H NMR + PCA 區分葡萄柚汁摻入、鮮榨 vs 果渣回洗柳橙汁","b") +
+    dc.card("🧃","果汁摻假","NMR + 化學計量(ICA/PCA)揪出柳橙汁摻葡萄柚汁；¹H NMR + PCA 分辨鮮榨 vs 果渣回洗汁","b") +
     dc.card("🍺","啤酒批次","以乳酸、丙酮酸、酪胺酸等分辨不同生產地的品質一致性","g") + '</div>')
 
 add(ACT, dc.game_calc_inner("g6","小遊戲 ⑥","計算闖關：Larmor 頻率",
@@ -317,14 +346,7 @@ add(ACT, dc.cover("下一步 · NEXT",
 
 # ================================================ CFG ================================================
 CFG = {
-  "charts": {
-    "field": {"type":"line","yTitle":"¹H 共振頻率 (MHz)",
-      "labels":["7.05 T","9.4 T","11.7 T","14.1 T","18.8 T","23.5 T"],
-      "datasets":[{"label":"¹H 頻率","data":[300,400,500,600,800,1000],"color":"#1f6feb"}]},
-    "scans": {"type":"line","yTitle":"相對訊雜比 S/N (∝√n)",
-      "labels":["16 次","64 次","256 次","1024 次"],
-      "datasets":[{"label":"相對 S/N","data":[4,8,16,32],"color":"#d9822b"}]}
-  },
+  "charts": {},
   "bucket": {
     "g1": {"cats":["平行 B₀ (低能態)","反平行 B₀ (高能態)"],
       "items":[{"t":"能量較低、較穩定","c":"平行 B₀ (低能態)"},
@@ -377,10 +399,10 @@ CFG = {
   },
   "sort": {
     "g4":{"steps":["樣品溶於氘化溶劑(D₂O)、裝入 NMR 管放進磁鐵","核在 B₀ 中沿 z 軸對齊(平衡態)",
-       "施加 90° RF 脈衝，把磁化倒入 xy 平面","接收線圈收到衰減訊號→自由感應衰減 FID(時域)",
-       "對 FID 做傅立葉轉換→得到頻域 NMR 光譜","多次掃描相加、積分各峰→改善訊雜比並定量"],
+       "施加 90° RF 脈衝，把磁化倒入 xy 平面","接收線圈收到衰減訊號 FID(時域)；重複脈衝、累加多次掃描提升訊雜比",
+       "對 FID 做傅立葉轉換→得到頻域 NMR 光譜","積分各峰面積→比較相對質子數(定量)"],
        "shuffle":[2,4,0,5,1,3],
-       "ok":"🎉 順序正確！溶樣放磁鐵→平衡→90°脈衝→收 FID→傅立葉→相加積分。",
+       "ok":"🎉 順序正確！溶樣放磁鐵→平衡→90°脈衝→收 FID(多次累加)→傅立葉→積分定量。",
        "tip":"提示：先有平衡態才打脈衝；先得時域 FID 才能傅立葉成頻域光譜。"}
   },
   "calc": {
@@ -396,7 +418,7 @@ CFG = {
       {"m":"TD-NMR(低解析)","depth":1,"sample":"原樣(液/固)","cost":1,"app":"30 秒測油脂/水分·SFC"},
       {"m":"MRI","depth":3,"sample":"完整樣品","cost":5,"app":"成像凍傷/種子/水分遷移"},
       {"m":"固態 CP-MAS","depth":4,"sample":"粉末/組織","cost":4,"app":"澱粉/細胞壁結構·產地"},
-      {"m":"弛豫 relaxometry","depth":2,"sample":"原樣","cost":2,"app":"水分活動度 T2·玻璃轉化"}
+      {"m":"弛豫 relaxometry","depth":2,"sample":"原樣","cost":2,"app":"水分移動性 T2·玻璃轉化"}
     ]
   }
 }

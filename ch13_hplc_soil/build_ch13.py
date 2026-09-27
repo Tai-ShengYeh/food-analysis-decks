@@ -164,7 +164,7 @@ add(MOT, dc.kt("13.1 HPLC 是什麼", "高壓推一管<span class='hi'>分配差
     "作用力強者被拉住、晚出；作用力弱者先流出 → 在時間軸上分開。</div></div>")
 
 add(MOT, dc.chart_inner("apps", "HPLC 在食品的<span class='hi'>應用</span>有多廣",
-    "資料整理自 Table 13.1：各類食品成分常以 HPLC 分析（示意筆數）。",
+    "資料：Table 13.1 列出 10 類食品分析物（醣、維生素、胺基酸、蛋白質、酚類、農藥、黴菌毒素、抗生素、污染物、亞硫酸鹽），柱高＝列出該分離模式的分析物類別數。SEC（如果膠、大豆蛋白）與 HILIC（如醣類）在內文有應用，但未列入 Table 13.1。",
     kicker="13.3 食品應用"), ' data-chart="apps"')
 
 add(MOT, """<div style="text-align:center">
@@ -220,9 +220,13 @@ add(ATT, dc.kt("13.2.4 偵測器家族", "四種常見偵測器") +
     dc.card("💧","折射率 RI","近乎通用，但靈敏度低、<strong>不能用梯度</strong>；測醣/脂","g") +
     dc.card("⚡","電化學 EC","氧化還原/導電度；高選擇高靈敏；測兒茶酚胺、醣","b") + '</div>')
 
-add(ATT, dc.chart_inner("sens", "偵測器<span class='hi'>靈敏度</span>差很多",
-    "示意相對偵測極限（數字越大越靈敏，對數示意）。整合自 13.2.4。",
-    kicker="13.2.4 靈敏度比較", height="52vh"), ' data-chart="sens"')
+add(ATT, dc.kt("13.2.4 靈敏度比較", "偵測器<span class='hi'>靈敏度</span>：課本怎麼說") +
+    '<div class="grid2" style="margin-top:14px">' +
+    dc.card("✨","螢光","選擇性高、非常靈敏：偵測極限可比同化合物的吸光法低至 <strong>1/1000</strong>（課本唯一給出的數字）","a") +
+    dc.card("⚡","電化學(安培)","高選擇性、非常靈敏；不反應的化合物沒訊號","b") +
+    dc.card("🔆","UV-Vis 吸收","最常用；只看得到含發色團的化合物","g") +
+    dc.card("💧","折射率 RI","近乎通用，但測的是整體移動相性質 → 靈敏度較其他偵測器低、不可梯度","b") + '</div>' +
+    '<div class="note" style="margin-top:14px">ELSD 為非揮發、無發色團化合物的通用偵測器。除「螢光≈吸光法的 1/1000」外，課本對各偵測器只做定性比較，沒有可畫成長條圖的數值。</div>')
 
 add(ATT, dc.kt("沖提方式", "等度 vs 梯度沖提") +
     '<div class="grid2" style="margin-top:16px">' +
@@ -254,7 +258,7 @@ add(ATT, dc.kt("其餘模式", "離子交換 · 尺寸排阻 · 親和") +
     dc.card("🎯","親和 Affinity","固定化配體與目標<strong>可逆專一結合</strong>；純化醣蛋白、葉酸","a") + '</div>')
 
 add(ATT, dc.chart_inner("chrom", "讀懂一張<span class='hi'>層析圖</span>",
-    "訊號 vs 時間：先出的滯留時間短，波峰面積反映含量(示意)。",
+    "訊號 vs 時間：先出的滯留時間短，波峰面積反映含量。示意圖（非課本數據）。",
     kicker="13.2.5 層析圖", height="54vh"), ' data-chart="chrom"')
 
 add(ATT, dc.kt("關鍵參數", "滯留係數 k′ 看什麼") +
@@ -276,7 +280,7 @@ add(ACT, dc.cmp_inner("一張表選偵測器（點欄位排序）",
     [{"k":"d","t":"s","label":"偵測器"},{"k":"meas","t":"s","label":"偵測依據"},
      {"k":"sens","t":"n","label":"靈敏度","star":True},{"k":"grad","t":"s","label":"可梯度?"},
      {"k":"app","t":"s","label":"典型應用"}],
-    "靈敏度：★ 越多越靈敏。整合自 13.2.4。", kicker="13.2.4 偵測器比較"), ' data-game="cmp"')
+    "偵測依據與典型應用整理自 13.2.4；「RI 不可梯度」出自課本，其餘梯度欄為一般實務；靈敏度 ★ 為相對評等（示意）——課本僅給「螢光可比吸光法低至 1/1000」，其餘為定性描述。", kicker="13.2.4 偵測器比較"), ' data-game="cmp"')
 
 add(ACT, dc.kt("方法選擇", "跟著決策樹走") +
     '<div class="svgwrap" style="margin-top:8px">' + DTREE_SVG + '</div>' +
@@ -308,7 +312,7 @@ add(ACT, dc.kt("重點整理", "今天的五個關鍵") +
     "<li><strong>HPLC＝高壓推移動相</strong>過管柱，靠分配差異分離成分</li>" +
     "<li>五大元件：<strong>幫浦→注射器→管柱→偵測器→資料站</strong></li>" +
     "<li>模式：<strong>逆相(最常用)</strong>、正相、離子交換、尺寸排阻、親和</li></ul>" +
-    '<ul class="clean"><li>偵測器：UV-Vis(最常用)、螢光(最靈敏)、RI(通用但不可梯度)</li>' +
+    '<ul class="clean"><li>偵測器：UV-Vis(最常用)、螢光(DL 可低至吸光法 1/1000)、RI(通用但不可梯度)</li>' +
     "<li>定量靠<strong>檢量線</strong>：波峰面積 → 濃度(梯度除 SEC/RI 外皆可用)</li></ul></div>")
 
 add(ACT, dc.checklist_inner("今天結束，你應該會…",
@@ -323,32 +327,29 @@ add(ACT, dc.checklist_inner("今天結束，你應該會…",
 add(ACT, dc.cover("下一步 · NEXT",
     "把 HPLC<br><span style='color:var(--accent-2)'>用起來</span>", "",
     "📌 課後練習：Study Questions（保護柱、偵測器原理、k′、IEC/SEC 範例）<br>"
-    "🔜 銜接章節：<strong>氣相層析 (Ch12/14)</strong>、<strong>質譜 (Ch11)</strong>、<strong>胺基酸/蛋白分離 (Ch24)</strong><br>"
+    "🔜 銜接章節：<strong>層析原理 (Ch12)</strong>、<strong>氣相層析 (Ch14)</strong>、<strong>質譜 (Ch11)</strong>、<strong>胺基酸/蛋白分離 (Ch24)</strong><br>"
     "🧪 思考：你的分析物極性如何？帶電嗎？有 UV 吸收嗎？該選哪種模式與偵測器？",
     ["逆相 RP","UV-Vis","螢光","梯度","檢量線","UHPLC-MS"]), ' data-cover="1"')
 
 # ---------------- CFG ----------------
 CFG = {
   "charts": {
-    "apps": {"type":"bar","yTitle":"食品應用筆數(示意)",
-      "labels":["逆相 RP","離子交換","正相 NP","尺寸排阻","親和","疏水交互","HILIC"],
-      "datasets":[{"label":"應用情境數(示意)","data":[9,5,3,3,2,2,2],"color":"#1f6feb"}]},
-    "sens": {"type":"bar","yTitle":"相對靈敏度(示意,越大越靈敏)",
-      "labels":["螢光","電化學","UV-Vis","ELSD光散射","折射率 RI"],
-      "datasets":[{"label":"相對偵測能力(示意)","data":[1000,500,100,30,10],"color":"#d9822b"}]},
+    "apps": {"type":"bar","yTitle":"Table 13.1 中的分析物類別數",
+      "labels":["逆相 RP","離子交換 IEC","正相 NP","親和(含免疫親和)","疏水交互 HIC"],
+      "datasets":[{"label":"分析物類別數（共 10 類）","data":[9,5,3,2,1],"color":"#1f6feb"}]},
     "chrom": {"type":"line","yTitle":"偵測訊號 (mAU)","zero":True,
       "labels":["0","1","2","3","4","5","6","7","8","9","10","11","12"],
       "datasets":[{"label":"層析圖(訊號 vs 時間, 分鐘)",
         "data":[2,3,30,8,4,5,55,18,4,3,40,9,3],"color":"#1f6feb"}]}
   },
   "bucket": {
-    "g1": {"cats":["測光吸收/發光","測本體性質(整批移動相)","測電化學"],
+    "g1": {"cats":["測光吸收/發光","通用型(不靠發色團)","測電化學"],
       "items":[{"t":"UV-Vis 吸收","c":"測光吸收/發光"},{"t":"螢光 Fluorescence","c":"測光吸收/發光"},
         {"t":"二極體陣列 DAD","c":"測光吸收/發光"},
-        {"t":"折射率 RI","c":"測本體性質(整批移動相)"},{"t":"蒸發光散射 ELSD","c":"測本體性質(整批移動相)"},
+        {"t":"折射率 RI","c":"通用型(不靠發色團)"},{"t":"蒸發光散射 ELSD","c":"通用型(不靠發色團)"},
         {"t":"安培電流 (氧化還原)","c":"測電化學"},{"t":"導電度 Conductivity","c":"測電化學"}],
-      "ok":"🎉 全對！UV/螢光/DAD 看光、RI/ELSD 測整批移動相性質、安培/導電度靠電化學。",
-      "tip":"提示：RI 與 ELSD 測的是「整批移動相」的本體性質，不挑特定發色團。"},
+      "ok":"🎉 全對！UV/螢光/DAD 看分析物的光吸收或發光；RI(測移動相折射率變化)與 ELSD(蒸乾移動相、測非揮發顆粒散射光)都是不靠發色團的通用型；安培/導電度靠電化學。",
+      "tip":"提示：RI 與 ELSD 不需要分析物有發色團，屬通用型偵測器(適合醣、脂質)。"},
     "g3": {"cats":["推送移動相","送入樣品","分離與偵測"],
       "items":[{"t":"幫浦 Pump","c":"推送移動相"},{"t":"脈衝阻尼器","c":"推送移動相"},
         {"t":"注射閥/定量環","c":"送入樣品"},{"t":"自動進樣器","c":"送入樣品"},
@@ -395,12 +396,12 @@ CFG = {
       "hint":"提示：先 605−5.0 = 600，再 ÷ 24.0 = 25.0 µg/mL。"}
   },
   "cmp": {
-    "cols":[{"k":"d"},{"k":"meas"},{"k":"sens"},{"k":"grad"},{"k":"app"}],
+    "cols":[{"k":"d"},{"k":"meas"},{"k":"sens","t":"n","star":True},{"k":"grad"},{"k":"app"}],
     "rows":[
       {"d":"UV-Vis","meas":"發色團光吸收","sens":3,"grad":"可","app":"酚類·維生素·農藥(最常用)"},
       {"d":"螢光","meas":"放射螢光","sens":5,"grad":"可","app":"維生素·黴菌毒素(微量)"},
       {"d":"折射率 RI","meas":"移動相折射率","sens":1,"grad":"不可","app":"糖類·脂質(高濃度)"},
-      {"d":"電化學","meas":"氧化還原/導電","sens":4,"grad":"可","app":"兒茶酚胺·醣·離子"},
+      {"d":"電化學","meas":"氧化還原/導電","sens":4,"grad":"有限(基線易漂)","app":"兒茶酚胺·醣·離子"},
       {"d":"ELSD 光散射","meas":"非揮發顆粒散射","sens":2,"grad":"可","app":"脂質·聚合物(通用)"},
       {"d":"質譜 MS","meas":"質荷比 m/z","sens":5,"grad":"可","app":"定性定量·污染物"}
     ]

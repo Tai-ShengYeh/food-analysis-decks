@@ -137,6 +137,34 @@ DTREE_SVG = """
  </g>
 </svg>"""
 
+
+import json as _json
+def inline_chart(cid, kicker, title_html, cap, cfg_js, height="50vh"):
+    """Inline Chart.js with a true numeric (linear) x-axis; waits until Chart.js is loaded
+    and the slide is visible (non-zero width) before drawing."""
+    return (dc.kt(kicker, title_html) +
+        '<div class="chartbox" style="height:%s"><canvas id="%s"></canvas></div><div class="cap">%s</div>' % (height, cid, cap) +
+        '<script>(function(){function draw(){var el=document.getElementById("%s");'
+        'if(typeof Chart==="undefined"||!el||el.offsetWidth===0){setTimeout(draw,120);return;}'
+        'if(el._done)return;el._done=1;new Chart(el,%s);}draw();})();</script>' % (cid, cfg_js))
+
+# Van Deemter HETP = A + B/u + C*u with ASSUMED constants (textbook Fig 12.13 is a schematic without numbers)
+_A, _B, _C = 1.0, 1.2, 1.0
+_us = [round(0.2 + 0.05 * k, 2) for k in range(57)]          # 0.20 ... 3.00
+def _pts(f): return [{"x": u, "y": round(f(u), 3)} for u in _us]
+_uopt = (_B / _C) ** 0.5
+HETP_JS = ('{type:"scatter",data:{datasets:['
+  '{label:"HETP = A + B/u + Cu",data:%s,showLine:true,pointRadius:0,borderColor:"#d9822b",borderWidth:3},'
+  '{label:"A 渦流擴散",data:%s,showLine:true,pointRadius:0,borderColor:"#1f9d6b",borderDash:[6,4],borderWidth:1.6},'
+  '{label:"B/u 縱向擴散",data:%s,showLine:true,pointRadius:0,borderColor:"#1f6feb",borderDash:[6,4],borderWidth:1.6},'
+  '{label:"Cu 質傳阻力",data:%s,showLine:true,pointRadius:0,borderColor:"#7e57ff",borderDash:[6,4],borderWidth:1.6},'
+  '{label:"最佳流速 u_opt（HETP 最小）",data:[{x:%.3f,y:%.3f}],pointRadius:8,backgroundColor:"#d94f4f",borderColor:"#d94f4f"}]},'
+  'options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:"top",labels:{boxWidth:12,font:{size:11}}}},'
+  'scales:{x:{type:"linear",min:0,max:3,title:{display:true,text:"移動相流速 u（任意單位）"}},y:{min:0,max:8,title:{display:true,text:"HETP（任意單位）"}}}}}'
+  ) % (_json.dumps(_pts(lambda u: _A + _B / u + _C * u)), _json.dumps(_pts(lambda u: _A)),
+       _json.dumps(_pts(lambda u: _B / u)), _json.dumps(_pts(lambda u: _C * u)),
+       _uopt, _A + 2 * (_B * _C) ** 0.5)
+
 # ---------------- 引起動機 ----------------
 add(MOT, dc.cover("NIELSEN'S FOOD ANALYSIS · CHAPTER 12",
     "層析<span style='color:var(--accent-2)'>原理</span>", "Basic Principles of Chromatography",
@@ -167,7 +195,7 @@ add(MOT, dc.kt("12.2 先談萃取", "萃取：分離的起點") +
     '</ul></div><div class="note"><strong>分配係數 K：溶質在兩相濃度之比 (式 12.1)。</strong><br>' +
     "K = 相 1 濃度 ÷ 相 2 濃度。逆流萃取正是層析的概念前身。</div></div>")
 
-add(MOT, dc.chart_inner("polar", "<span class='hi'>極性</span>決定洗脫順序", "資料：Table 12.4 化合物極性序（相對等級，數字越大越極性）。",
+add(MOT, dc.chart_inner("polar", "<span class='hi'>極性</span>決定洗脫順序", "資料：Table 12.4 化合物類別極性序（依極性遞增排列）。課本只給順序、沒有數值——柱高僅代表序位 1–11，不是極性大小的量測值。",
     kicker="12.4.1 極性序"), ' data-chart="polar"')
 
 add(MOT, """<div style="text-align:center">
@@ -181,8 +209,8 @@ add(MOT, dc.kt("12.3.1 歷史", "從色素到<span class='hi'>層析學</span>")
     '<div class="grid2" style="margin-top:18px">' +
     dc.card("🌿","1903 Tsvet","俄國植物學家用碳酸鈣管柱分離葉片色素，命名 chromatography","g") +
     dc.card("🧪","1941 Martin & Synge","發展液–液分配層析，奠定理論板概念","b") +
-    dc.card("⛽","1960s GC","氣相層析商品化，先用於石油工業","a") +
-    dc.card("🚀","HPLC / SFC","由 GC 理論推進液相；SFC 1962 起應用於食品","b") + '</div>')
+    dc.card("⛽","1960 年代末 GC","因石油工業需求，成為第一個商品化的精密層析儀器","a") +
+    dc.card("🚀","HPLC / SFC","HPLC 借 GC 理論與儀器進展發展；SFC 1962 首次展示，近年漸用於食品分析","b") + '</div>')
 
 add(MOT, dc.game_bucket_inner("g1","小遊戲 ①","三種層析依「移動相」分類", 6,
     "移動相是什麼狀態？把 6 個關鍵字分到三類。"), ' data-game="g1"')
@@ -249,15 +277,15 @@ add(ATT, dc.kt("12.4.7 排阻層析", "SEC：依大小篩分") +
     '<div class="note">與其他模式相反：<strong>大分子先出、小分子後出</strong>。' +
     "溫和條件少變性，常作為純化的早期步驟，也可替代透析脫鹽。</div></div>")
 
-add(ATT, dc.chart_inner("hetp", "找出最佳<span class='hi'>流速</span>", "Van Deemter：HETP=A+B/u+Cu。HETP 越小、效率越高（代表性示意數據）。",
-    kicker="12.5.1.2.2 Van Deemter", height="52vh"), ' data-chart="hetp"')
+add(ATT, inline_chart("hetpChart", "12.5.1.2.2 Van Deemter", "找出最佳<span class='hi'>流速</span>",
+    "Van Deemter 式 12.8：HETP = A + B/u + Cu（x 軸為真實數值間距）。示意：常數 A、B、C 為假設值，非課本數據（課本 Fig 12.13 為無數值的示意圖）。HETP 越小、效率越高；流速太低 B/u 主導、太高 Cu 主導。", HETP_JS, height="52vh"))
 
 add(ATT, dc.kt("12.5.1.2.1 滯留時間", "讀懂層析圖") +
     '<div class="grid2" style="margin-top:16px">' +
     dc.card("⏱️","滯留時間 t_R","成分從進樣到出峰所需時間（或滯留體積 V_R）","b") +
     dc.card("💨","空容時間 t₀","不被滯留的成分(溶劑前緣)通過管柱的時間","a") +
     dc.card("✂️","校正滯留 t'_R","t'_R = t_R − t₀，扣掉系統死體積後的真實滯留","g") +
-    dc.card("📐","峰寬 w","基線寬度 w = 4σ；半高寬 w½ 更準確","b") + '</div>' +
+    dc.card("📐","峰寬 w","基線寬度 w = 4σ；峰不對稱或未完全分開時，半高寬 w½ 較準","b") + '</div>' +
     '<div class="note" style="margin-top:14px">跨系統比較時用<strong>校正滯留時間 t\'_R</strong> 較可靠。</div>')
 
 add(ATT, dc.kt("12.5.1 解析度", "把峰<span class='hi'>分得開</span>") +
@@ -290,7 +318,7 @@ add(ACT, dc.cmp_inner("一張表選分離模式（點欄位排序）",
 
 add(ACT, dc.kt("方法選擇", "跟著決策樹走") +
     '<div class="svgwrap" style="margin-top:10px">' + DTREE_SVG + '</div>' +
-    '<p class="subtitle" style="text-align:center;margin-top:14px">下一頁實戰：算兩個峰的解析度 Rs →</p>')
+    '<p class="subtitle" style="text-align:center;margin-top:14px">簡化自 Fig 12.10（小分子離子也可用離子對逆相或逆相）。下一頁實戰：算兩個峰的解析度 Rs →</p>')
 
 add(ACT, dc.kt("12.5.1 計算", "解析度：從滯留時間到 Rs") +
     '<div class="grid2" style="margin-top:14px"><div class="eq">R<sub>s</sub> = ' +
@@ -330,18 +358,15 @@ add(ACT, dc.cover("下一步 · NEXT",
 # ---------------- CFG ----------------
 CFG = {
   "charts": {
-    "polar": {"type":"bar","yTitle":"相對極性 (等級)",
-      "labels":["碳氟化物","飽和烴","烯類","芳香族","鹵化物","醚類","酯/酮/醛","醇/胺","醯胺","羧酸"],
-      "datasets":[{"label":"相對極性（Table 12.4，越大越極性）","data":[1,2,3,4,5,6,7,8,9,10],"color":"#1f6feb"}]},
-    "hetp": {"type":"line","yTitle":"HETP (任意單位)","zero":False,
-      "labels":["0.4","0.6","0.8","1.0","1.2","1.5","2.0","2.5","3.0"],
-      "datasets":[{"label":"HETP = A + B/u + Cu","data":[5.5,4.3,3.7,3.4,3.3,3.4,3.9,4.6,5.4],"color":"#d9822b"}]}
+    "polar": {"type":"bar","yTitle":"極性序位（1＝最低）",
+      "labels":["碳氟化物","飽和烴","烯類","芳香族","鹵化物","醚類","硝基化合物","酯≈酮≈醛","醇≈胺","醯胺","羧酸"],
+      "datasets":[{"label":"極性序位（Table 12.4；非量測值）","data":[1,2,3,4,5,6,7,8,9,10,11],"color":"#1f6feb"}]}
   },
   "bucket": {
     "g1": {"cats":["氣相 GC","液相 LC","超臨界流體 SFC"],
       "items":[{"t":"載送氣體 (He)","c":"氣相 GC"},{"t":"揮發性成分","c":"氣相 GC"},
         {"t":"水 / 乙腈","c":"液相 LC"},{"t":"逆相 HPLC","c":"液相 LC"},
-        {"t":"超臨界 CO₂","c":"超臨界流體 SFC"},{"t":"非揮發·熱不安定物","c":"超臨界流體 SFC"}],
+        {"t":"超臨界 CO₂","c":"超臨界流體 SFC"},{"t":"需背壓調節器維持超臨界","c":"超臨界流體 SFC"}],
       "ok":"🎉 全對！GC 用氣體移動相、LC 用液體、SFC 用超臨界流體（如 CO₂）。",
       "tip":"提示：移動相是氣體→GC；液體→LC；超臨界流體→SFC。"},
     "g3": {"cats":["極性固定相","非極性固定相","帶電/孔洞固定相"],

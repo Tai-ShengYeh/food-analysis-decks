@@ -22,7 +22,7 @@ OVEN_SVG = """
  <rect x="36" y="46" width="222" height="190" rx="6" fill="#ffffff" stroke="#1f6feb" stroke-width="2"/>
  <rect x="268" y="46" width="56" height="190" rx="6" fill="#f6f9fd" stroke="#1f6feb" stroke-width="1.5"/>
  <rect x="275" y="60" width="42" height="22" rx="3" fill="#15233f"/>
- <text x="296" y="76" text-anchor="middle" style="font-family:JetBrains Mono,monospace;font-size:13px;fill:#7ed957">105°C</text>
+ <text x="296" y="76" text-anchor="middle" style="font-family:JetBrains Mono,monospace;font-size:13px;fill:#7ed957">100°C</text>
  <circle cx="296" cy="108" r="9" fill="#ffffff" stroke="#48597a" stroke-width="1.6"/>
  <line x1="296" y1="108" x2="301" y2="102" stroke="#48597a" stroke-width="1.6"/>
  <text x="296" y="134" text-anchor="middle" class="lbl" style="font-size:10px">溫控</text>
@@ -152,7 +152,7 @@ DTREE_SVG = """
   <rect x="280" y="150" width="190" height="120" rx="12" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
   <text x="375" y="178" text-anchor="middle" fill="#15233f">低水分·高糖油?</text>
   <text x="375" y="206" text-anchor="middle" fill="#1f6feb" font-size="16">Karl Fischer</text>
-  <text x="375" y="232" text-anchor="middle" fill="#48597a" font-size="12">不加熱、最準</text>
+  <text x="375" y="232" text-anchor="middle" fill="#48597a" font-size="12">不加熱、準確度高</text>
   <text x="375" y="252" text-anchor="middle" fill="#48597a" font-size="12">巧克力·油脂·乾果</text>
   <rect x="530" y="150" width="190" height="120" rx="12" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
   <text x="625" y="178" text-anchor="middle" fill="#15233f">香料·揮發物?</text>
@@ -161,7 +161,7 @@ DTREE_SVG = """
   <text x="625" y="252" text-anchor="middle" fill="#48597a" font-size="12">香料官方法</text>
   <rect x="780" y="150" width="190" height="120" rx="12" fill="#f6f9fd" stroke="#48597a" stroke-width="2"/>
   <text x="875" y="178" text-anchor="middle" fill="#15233f">線上快速品管?</text>
-  <text x="875" y="206" text-anchor="middle" fill="#15233f" font-size="16">NIR / 微波</text>
+  <text x="875" y="206" text-anchor="middle" fill="#15233f" font-size="16">NIR / 微波吸收</text>
   <text x="875" y="232" text-anchor="middle" fill="#48597a" font-size="12">快速、非破壞</text>
   <text x="875" y="252" text-anchor="middle" fill="#48597a" font-size="12">需先校正</text>
  </g>
@@ -175,7 +175,7 @@ add(MOT, dc.cover("NIELSEN'S FOOD ANALYSIS · CHAPTER 15",
 
 add(MOT, """<div style="text-align:center">
   <div class="kicker" style="justify-content:center">先想一想</div>
-  <div class="hook">一片洋芋片為何要<span class="hi">控制到 1.5% 水？</span></div>
+  <div class="hook">一片洋芋片為何要<span class="hi">把水分壓到極低？</span></div>
   <p class="subtitle" style="max-width:780px;margin:22px auto 0">水分含量決定食品的<strong>保存性、口感、重量與合法性</strong>。<br>
   但水分子小又無所不在——是最重要、卻也最難測準的分析之一。</p>
   <div style="margin-top:24px"><span class="pill">保存性</span><span class="pill">品質</span>
@@ -230,7 +230,7 @@ add(ATT, dc.kt("方法全覽", "直接法 vs 間接法") +
 add(ATT, dc.kt("15.2.2 烘箱乾燥", "烘箱乾燥：簡單可靠") +
     '<div class="grid2-1" style="margin-top:8px"><div class="svgwrap">' + OVEN_SVG + '</div><div><ul class="clean">' +
     "<li><strong>強制對流烘箱</strong>：風扇強制循環，溫差最小(≤1°C)</li>" +
-    "<li><strong>真空烘箱</strong>：減壓(25–100 mmHg)下低溫(60–70°C)快乾</li>" +
+    "<li><strong>真空烘箱</strong>：減壓(25–100 mmHg)乾燥 3–6 h；一般 95–102°C，水果/高糖 60–70°C</li>" +
     "<li><strong>對流(常壓)烘箱</strong>：無風扇、溫差可達 10°C，精度差</li>" +
     "<li>失重 = 水分；需控制<span class='em'>時間與溫度</span></li>" +
     '</ul><div class="note" style="margin-top:14px">高糖樣品改用真空烘箱 ≤70°C，避免梅納褐變與糖水解。</div></div></div>')
@@ -277,8 +277,8 @@ add(ATT, dc.game_mcq_inner("g2","小遊戲 ②","烘箱乾燥即時測驗", 4), 
 
 add(ATT, dc.kt("15.2.4 Karl Fischer", "KF 滴定：微量水專家") +
     '<div class="svgwrap" style="margin-top:10px">' + KF_SVG + '</div>' +
-    '<div class="note" style="margin-top:16px">每 1 mol 水耗 1 mol I₂：水把 SO₂ 還原碘 → 過量碘到達終點。' +
-    "<strong>不加熱、快速、最準</strong>，是低水分高糖/高蛋白食品的首選。</div>")
+    '<div class="note" style="margin-top:16px">每 1 mol 水耗 1 mol I₂：有水存在時 SO₂ 把 I₂ 還原；水耗盡後過量 I₂ 即為終點。' +
+    "<strong>不加熱、快速、準確</strong>，是許多低水分、高糖/高蛋白食品的首選。</div>")
 
 add(ATT, dc.kt("15.2.3 蒸餾法", "甲苯共沸：直接量水") +
     '<div class="svgwrap" style="margin-top:10px">' + DIST_SVG + '</div>' +
@@ -292,15 +292,15 @@ add(ATT, dc.kt("15.2.5 物理(間接)法", "不去水，也能測水") +
     '<div class="grid3" style="margin-top:22px">' +
     dc.card("⚡","介電/微波","水介電常數 80 ≫ 乾物 10；測電容變化。穀物、線上品管(≤35%水)","b") +
     dc.card("💧","密度/折射率","比重計、糖度計(°Brix)、折射儀；測液體糖漿/果汁的固形物","a") +
-    dc.card("📡","NIR 近紅外","水的 −OH 在 1400／1920 nm 吸收；快速非破壞，穀物乾蔬官方法","g") + '</div>')
+    dc.card("📡","NIR 近紅外","水的 −OH 在 1400–1450／1920–1950 nm 吸收；快速非破壞，乾燥蔬菜官方法(AOAC 967.19)","g") + '</div>')
 
 add(ATT, dc.kt("15.2.2 快速熱重法", "幾分鐘 vs 幾小時") +
     '<div class="grid2" style="margin-top:16px">' +
     dc.card("📶","微波乾燥","微波能加熱蒸水，4–8 分鐘；起司/肉製品線上調整","b") +
-    dc.card("🔦","紅外/鹵素乾燥","紅外燈或鹵素加熱穿透樣品，10–25 分鐘快速品管","a") +
+    dc.card("🔦","紅外/鹵素乾燥","紅外燈加熱穿透樣品約 10–25 分鐘；鹵素/陶瓷加熱快速水分儀數分鐘出結果","a") +
     '</div><div class="note" style="margin-top:18px"><strong>熱重分析(TGA)</strong>：連續秤質量、控溫控氣氛，可定水分、水合物計量與分解——精準但設備貴。</div>')
 
-add(ATT, dc.kt("15.2.6 取樣的陷阱", "為什麼水分<span class='hi'>最難測準</span>？") +
+add(ATT, dc.kt("15.1.3 取樣的陷阱", "為什麼水分<span class='hi'>最難測準</span>？") +
     '<div class="note" style="margin-top:14px">起司在天平上 50% RH 只要 <strong>5 秒就失 0.01% 水</strong>；' +
     "乾燥粉末則會從空氣<strong>吸水</strong>。取樣到秤重必須又快又密閉。</div>" +
     '<div class="grid2" style="margin-top:18px">' +
@@ -332,7 +332,7 @@ add(ATT, dc.game_mcq_inner("g5","小遊戲 ⑤","決策挑戰：選對方法", 5
 add(ACT, dc.cmp_inner("一張表選方法（點欄位排序）",
     [{"k":"m","t":"s","label":"方法"},{"k":"meas","t":"s","label":"量測對象"},
      {"k":"speed","t":"n","label":"速度","star":True},{"k":"app","t":"s","label":"主要應用"}],
-    "速度：★ 越多越快。整合自 Table 15.5／15.6。", kicker="15.2.6 方法比較"), ' data-game="cmp"')
+    "依 Table 15.5／15.6 整理；速度星等為教學用相對評比（非課本數據）。", kicker="15.2.6 方法比較"), ' data-game="cmp"')
 
 add(ACT, dc.kt("方法選擇", "跟著決策樹走") +
     '<div class="svgwrap" style="margin-top:10px">' + DTREE_SVG + '</div>' +
@@ -423,7 +423,7 @@ CFG = {
     ],
     "g5":[
       {"q":"巧克力、油脂等低水分高糖/油樣品，最準的選擇？","o":["強制對流烘箱","Karl Fischer","折射率","冰點法"],"a":1,
-       "e":"KF 不加熱、快速、對低水分食品最準，是首選。"},
+       "e":"KF 不加熱、快速，對低水分食品準確度高於多數方法，是首選。"},
       {"q":"香料含揮發性成分，官方建議用哪種方法？","o":["甲苯共沸蒸餾","高溫對流烘箱","比重計","微波"],"a":0,
        "e":"蒸餾熱分解少、直接量水，是香料(986.21)官方法。"},
       {"q":"穀物工廠要快速、非破壞地監測水分，選？","o":["甲苯蒸餾","NIR 近紅外","Karl Fischer","真空烘箱"],"a":1,
@@ -447,16 +447,16 @@ CFG = {
       "hint":"提示：濕重=4.6274−1.0376=3.5898 g；乾重=1.7321−1.0376=0.6945 g；水/濕重×100≈80.65%。"}
   },
   "cmp": {
-    "cols":[{"k":"m"},{"k":"meas"},{"k":"speed"},{"k":"app"}],
+    "cols":[{"k":"m"},{"k":"meas"},{"k":"speed","t":"n","star":True},{"k":"app"}],
     "rows":[
       {"m":"強制對流烘箱","meas":"重量變化","speed":2,"app":"多種食品·官方法"},
       {"m":"真空烘箱","meas":"重量變化","speed":2,"app":"高糖/熱敏食品·官方法"},
       {"m":"微波乾燥","meas":"重量變化","speed":4,"app":"液體/起司·快速品管"},
       {"m":"紅外/鹵素乾燥","meas":"重量變化","speed":4,"app":"快速品管(單樣品)"},
-      {"m":"甲苯蒸餾","meas":"水的體積","speed":2,"app":"香料·乾果(官方法)"},
-      {"m":"Karl Fischer","meas":"滴定量(I₂)","speed":3,"app":"低水分高糖/油(最準)"},
+      {"m":"甲苯蒸餾","meas":"水的體積","speed":2,"app":"香料·起司·飼料(AOAC)"},
+      {"m":"Karl Fischer","meas":"滴定量(I₂)","speed":3,"app":"低水分高糖/油/蛋白(準確)"},
       {"m":"折射率","meas":"折射率(°Brix)","speed":5,"app":"糖漿·果汁·乳(固形物)"},
-      {"m":"NIR 近紅外","meas":"−OH 吸收","speed":5,"app":"穀物·乳品線上品管"}
+      {"m":"NIR 近紅外","meas":"−OH 吸收","speed":5,"app":"穀物業線上(水·蛋白·脂)"}
     ]
   }
 }

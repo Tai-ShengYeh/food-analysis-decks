@@ -48,7 +48,7 @@ MAP_SVG = """
 </svg>"""
 
 METHOD_SVG = """
-<svg viewBox="0 0 920 280">
+<svg viewBox="0 0 920 284">
  <text x="460" y="24" text-anchor="middle" class="lblb" font-size="15">三大類維生素分析法：由生物 → 微生物 → 化學，越快速簡便</text>
  <g font-size="13.5">
   <rect x="120" y="56" width="680" height="50" rx="10" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
@@ -56,15 +56,15 @@ METHOD_SVG = """
   <text x="640" y="86" text-anchor="end" class="lbl">人/動物餵食(大鼠骨鈣化)；僅 D、B₁₂</text>
   <rect x="120" y="116" width="680" height="50" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
   <text x="150" y="146" class="lblb">微生物檢定 Microbiological</text>
-  <text x="640" y="146" text-anchor="end" class="lbl">乳酸菌生長量；僅水溶性、專一靈敏但費時</text>
+  <text x="640" y="146" text-anchor="end" class="lbl">微生物生長量(常測濁度)；僅水溶性、專一靈敏但費時</text>
   <rect x="120" y="176" width="680" height="50" rx="10" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
   <text x="150" y="206" class="lblb">化學法 Chemical (HPLC 主流)</text>
-  <text x="640" y="206" text-anchor="end" class="lbl">快速準確精密；脂溶+水溶；可配 MS 測 vitamers</text>
+  <text x="640" y="206" text-anchor="end" class="lbl">簡單、準確、精密；脂溶+水溶；可配 MS 測 vitamers</text>
  </g>
  <defs><marker id="vu" markerUnits="userSpaceOnUse" markerWidth="14" markerHeight="12" refX="12" refY="6" orient="auto"><path d="M0 0 L13 6 L0 12 Z" fill="#15233f"/></marker>
   <marker id="vd" markerUnits="userSpaceOnUse" markerWidth="14" markerHeight="12" refX="12" refY="6" orient="auto"><path d="M0 0 L13 6 L0 12 Z" fill="#8493ad"/></marker></defs>
- <line x1="40" y1="56" x2="40" y2="226" stroke="#15233f" stroke-width="2.4" marker-end="url(#vu)"/>
- <text x="22" y="150" text-anchor="middle" class="lblb" transform="rotate(-90 22 150)">準確度／精密度 越往下越高</text>
+ <text x="460" y="256" text-anchor="middle" class="lbl" font-size="12.5">課本 20.1.5：此順序是『操作簡便度』，不一定是準確度與精密度的順序；</text>
+ <text x="460" y="274" text-anchor="middle" class="lbl" font-size="12.5">但 HPLC 等化學法因簡單、準確、精密，已是各維生素的首選(20.4.1.1)</text>
  <line x1="880" y1="56" x2="880" y2="226" stroke="#8493ad" stroke-width="2.4" marker-end="url(#vd)"/>
  <text x="900" y="150" text-anchor="middle" class="lbl" transform="rotate(90 900 150)">越往下越快速、操作簡便</text>
 </svg>"""
@@ -155,7 +155,7 @@ add(ATT, dc.kt("20.1.4 萃取", "每種維生素的萃取法<span class='hi'>都
 
 add(ATT, dc.kt("20.1.5 三大方法類", "從生物到化學，<span class='hi'>各有取捨</span>") +
     '<div class="svgwrap" style="margin-top:6px">' + METHOD_SVG + '</div>' +
-    '<p class="subtitle" style="text-align:center;margin-top:8px">越往化學法：越快速、準確精密，但需要儀器投資；越往生物法：越接近生理活性，但慢又粗略。</p>')
+    '<p class="subtitle" style="text-align:center;margin-top:8px">越往化學法：越簡便，HPLC 並具準確、精密，但儀器投資高；生物檢定最費時，現僅少數用於維生素 D、B₁₂。</p>')
 
 add(ATT, dc.game_mcq_inner("g2","小遊戲 ②","維生素分析原理測驗", 5), ' data-game="g2"')
 
@@ -201,9 +201,9 @@ add(ATT, dc.game_mcq_inner("g5","小遊戲 ⑤","決策挑戰：選對維生素�
 
 # ================================================ 喚起行動 ================================================
 add(ACT, dc.cmp_inner("四種分析路線一覽（點欄位排序）",
-    [{"k":"m","t":"s","label":"方法"},{"k":"acc","t":"n","label":"準確度","star":True},
+    [{"k":"m","t":"s","label":"方法"},{"k":"acc","t":"n","label":"操作簡便度","star":True},
      {"k":"v","t":"s","label":"適用維生素"},{"k":"feat","t":"s","label":"特點"}],
-    "★ 越多越準確。整合自 20.2–20.4。", kicker="20.5 方法比較"), ' data-game="cmp"')
+    "★ 越多越『操作簡便』（依 20.1.5：化學法 > 微生物檢定 > 生物檢定；課本註明此順序不一定代表準確度與精密度）。其餘欄整合自 20.2–20.5。", kicker="20.5 方法比較"), ' data-game="cmp"')
 
 add(ACT, dc.chart_inner("rt", "水溶性維生素的<span class='hi'>HPLC 滯留時間</span>",
     "整合自 TFDAA0012.04 參考層析圖譜(分)。C18 反相管柱可把 9 種水溶性維生素逐一分開。",
@@ -225,7 +225,7 @@ add(ACT, dc.kt("重點整理", "今天的五個關鍵") +
     "<li>13 種維生素＝<strong>4 脂溶(A·D·E·K)＋9 水溶(B 群·C)</strong>；溶解性決定方法</li>" +
     "<li>單位：mg／<strong>IU(活性)</strong>／%DV(每日值)要會換算</li>" +
     "<li>萃取因維生素而異：脂溶<strong>皂化</strong>、葉酸<strong>三酶</strong>、C<strong>冷萃低pH</strong></li></ul>" +
-    '<ul class="clean"><li>三大方法類：生物＜微生物＜<strong>化學(HPLC)</strong>(準確度遞增)</li>' +
+    '<ul class="clean"><li>三大方法類：生物＜微生物＜<strong>化學(HPLC)</strong>(操作簡便度遞增；HPLC 並具準確精密而成首選)</li>' +
     "<li>官方法：脂溶 TFDAA0025(避光+BHT)、水溶 TFDAA0012(L-半胱胺酸)，皆 <strong>HPLC-PDA</strong></li></ul></div>")
 
 add(ACT, dc.checklist_inner("今天結束，你應該會…",
@@ -266,12 +266,12 @@ CFG = {
     "g3": {"cats":["生物檢定","微生物檢定","化學法 HPLC"],
       "items":[{"t":"以大鼠骨鈣化(line test)測維生素D","c":"生物檢定"},
         {"t":"主要僅用於維生素 D 與 B₁₂","c":"生物檢定"},
-        {"t":"以乳酸菌生長量測定","c":"微生物檢定"},
+        {"t":"以微生物生長量(常測濁度)測定","c":"微生物檢定"},
         {"t":"僅限水溶性維生素、專一但費時","c":"微生物檢定"},
         {"t":"簡單、準確、精密，現今主流","c":"化學法 HPLC"},
         {"t":"可同時分析多種、配 MS 測 vitamers","c":"化學法 HPLC"}],
-      "ok":"🎉 正確！生物檢定接近生理活性、微生物檢定專一靈敏、HPLC 快速準確為主流。",
-      "tip":"提示：動物餵食→生物；乳酸菌生長→微生物；管柱+波長→化學 HPLC。"}
+      "ok":"🎉 正確！生物檢定用途非常有限、微生物檢定專一靈敏但費時、HPLC 簡單準確精密為主流。",
+      "tip":"提示：動物餵食→生物；細菌/酵母生長(濁度)→微生物；管柱+波長→化學 HPLC。"}
   },
   "mcq": {
     "g2":[
@@ -283,8 +283,8 @@ CFG = {
        "e":"以 KOH 皂化把三酸甘油酯水解成皂去除，留下脂溶維生素。"},
       {"q":"葉酸萃取常用的特殊處理是？","o":["皂化","三酶法(trienzyme)","通氮蒸餾","灰化"],"a":1,
        "e":"葉酸用 α-澱粉酶、蛋白酶、γ-麩胺醯水解酶的三酶法釋出。"},
-      {"q":"就『準確度與精密度』而言，三大方法類的高低順序是？","o":["生物 > 微生物 > 化學","化學 > 微生物 > 生物","三者相同","微生物最高"],"a":1,
-       "e":"準確度：化學(HPLC) > 微生物 > 生物；操作簡便度也是化學法最高、生物檢定最費時(Nielsen 20.1)。"}
+      {"q":"依課本 20.1.5，三大方法類『操作簡便度』由高到低是？","o":["生物 > 微生物 > 化學","化學 > 微生物 > 生物","三者相同","微生物最簡便"],"a":1,
+       "e":"課本 20.1.5：就操作簡便度，順序為化學 > 微生物 > 生物檢定——但『不一定』代表準確度與精密度也依此順序。HPLC 則因簡單、準確、精密成為首選(20.4.1.1)。"}
     ],
     "g5":[
       {"q":"要測膠囊中的脂溶性維生素 A／D／E，最適合的官方法是？","o":["微生物檢定","HPLC-PDA(TFDAA0025)","DCIP 滴定","大鼠生物檢定"],"a":1,
@@ -316,10 +316,10 @@ CFG = {
   "cmp": {
     "cols":[{"k":"m"},{"k":"acc","t":"n","star":True},{"k":"v"},{"k":"feat"}],
     "rows":[
-      {"m":"生物檢定 Bioassay","acc":2,"v":"主要 D、B₁₂","feat":"接近生理活性·慢且粗略·現少用"},
-      {"m":"微生物檢定","acc":4,"v":"水溶性維生素","feat":"專一靈敏·費時·需嚴格操作"},
-      {"m":"化學-滴定/螢光","acc":3,"v":"C(DCIP)·B₁(硫胺色素)·B₂","feat":"古典·設備簡單·專屬"},
-      {"m":"化學-HPLC/UHPLC","acc":5,"v":"脂溶+水溶大多數","feat":"快速準確精密·主流·配MS測vitamers"}
+      {"m":"生物檢定 Bioassay","acc":1,"v":"僅 D、B₁₂(且用途非常有限)","feat":"動物餵食(如大鼠骨鈣化)·最費時·無替代法時才用"},
+      {"m":"微生物檢定","acc":2,"v":"水溶性(常見 B₃、B₅、B₁₂)","feat":"專一靈敏·略費時·需嚴格操作"},
+      {"m":"化學-滴定/螢光","acc":3,"v":"C(DCIP)·B₁(硫胺色素)·B₂","feat":"古典官方法·設備簡單·專屬"},
+      {"m":"化學-HPLC/UHPLC","acc":3,"v":"脂溶+水溶大多數","feat":"簡單準確精密·儀器貴·配MS測vitamers"}
     ]
   }
 }
