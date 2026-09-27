@@ -254,7 +254,10 @@ add(ATT, dc.kt("19.7 物理與光譜法", "快速但只適純樣品") +
     dc.card("💧","比重/折射率","以比重計(°Brix)或折射計測糖漿濃度；僅適<strong>單一純物質</strong>(如純蔗糖)","b") +
     dc.card("🔄","旋光度","偏光儀測旋光；可由蔗糖水解前後('轉化')測蔗糖","a") +
     dc.card("📡","FTIR / NIR","快速、非破壞；乳品分析儀測乳糖；NIR 估纖維與糖，需先校正","g") + '</div>' +
-    '<div class="note" style="margin-top:16px">物理法快速便宜，但只對<strong>純溶液</strong>準確；光譜法為間接估計值，須建檢量線。</div>')
+    '<div class="note" style="margin-top:16px">物理法快速便宜，但只對<strong>純溶液</strong>準確；光譜法為間接估計值，須建檢量線。<br>'
+    '實例：<strong>NIR 非破壞測水果 °Brix</strong> 已是成熟商品（ATAGO、Felix 手持機），同樣要用折射計 Brix 建模與驗證——'
+    '<a class="no-nav" href="https://tai-shengyeh.github.io/food-analysis-lab/labs/w07_sugar/index.html" target="_blank" rel="noopener" '
+    'style="color:var(--accent);font-weight:700">實驗課 W7：非破壞 Brix 延伸 ↗</a></div>')
 
 add(ATT, dc.game_mcq_inner("g5","小遊戲 ⑤","決策挑戰：選對方法", 5), ' data-game="g5"')
 
