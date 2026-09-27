@@ -18,24 +18,25 @@ PHMETER_SVG = """
  <rect x="40" y="44" width="150" height="46" rx="8" fill="#15233f"/>
  <text x="115" y="73" text-anchor="middle" fill="#7ed957" font-family="JetBrains Mono" font-size="18">pH 3.59</text>
  <text x="115" y="104" text-anchor="middle" class="lbl">電壓計/放大器</text>
- <!-- electrodes -->
- <rect x="250" y="70" width="26" height="150" rx="5" fill="#cfe0f6" stroke="#1f6feb" stroke-width="2"/>
- <text x="263" y="244" text-anchor="middle" class="lbl">玻璃</text><text x="263" y="260" text-anchor="middle" class="lbl">指示電極</text>
- <circle cx="263" cy="226" r="8" fill="#1f6feb" opacity=".6"/>
- <rect x="320" y="70" width="26" height="150" rx="5" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
- <text x="333" y="244" text-anchor="middle" class="lbl">參考</text><text x="333" y="260" text-anchor="middle" class="lbl">電極(KCl)</text>
- <line x1="190" y1="60" x2="263" y2="70" stroke="#48597a" stroke-width="1.6"/>
- <line x1="190" y1="78" x2="333" y2="70" stroke="#48597a" stroke-width="1.6"/>
- <!-- beaker -->
- <path d="M225 210 h150 v50 a10 10 0 0 1 -10 10 h-130 a10 10 0 0 1 -10 -10 Z" fill="#e7f0fe" stroke="#48597a" stroke-width="2"/>
- <text x="300" y="290" text-anchor="middle" class="lbl">待測樣品</text>
+ <!-- beaker with sample; both electrodes dip into the solution -->
+ <path d="M205 190 h150 v70 a10 10 0 0 1 -10 10 h-130 a10 10 0 0 1 -10 -10 Z" fill="#f6f9fd"/>
+ <path d="M207 214 h146 v46 a8 8 0 0 1 -8 8 h-130 a8 8 0 0 1 -8 -8 Z" fill="#e7f0fe"/>
+ <rect x="236" y="70" width="26" height="160" rx="5" fill="#cfe0f6" stroke="#1f6feb" stroke-width="2"/>
+ <circle cx="249" cy="236" r="9" fill="#cfe0f6" stroke="#1f6feb" stroke-width="2"/>
+ <rect x="292" y="70" width="26" height="170" rx="5" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
+ <path d="M205 190 v70 a10 10 0 0 0 10 10 h130 a10 10 0 0 0 10 -10 v-70" fill="none" stroke="#48597a" stroke-width="2"/>
+ <text x="230" y="140" text-anchor="end" class="lbl">玻璃</text><text x="230" y="157" text-anchor="end" class="lbl">指示電極</text>
+ <text x="324" y="140" class="lbl">參考</text><text x="324" y="157" class="lbl">電極(KCl)</text>
+ <line x1="190" y1="78" x2="249" y2="70" stroke="#48597a" stroke-width="1.6"/>
+ <line x1="190" y1="56" x2="305" y2="70" stroke="#48597a" stroke-width="1.6"/>
+ <text x="280" y="290" text-anchor="middle" class="lbl">待測樣品</text>
  <!-- nernst -->
- <rect x="400" y="120" width="150" height="80" rx="10" fill="#f6f9fd" stroke="#1f9d6b" stroke-width="2"/>
- <text x="475" y="148" text-anchor="middle" class="lblb" fill="#1f9d6b" font-size="13">Nernst</text>
- <text x="475" y="172" text-anchor="middle" class="lbl">E = E₀ + 2.303·RT/zF·logA</text>
- <text x="475" y="192" text-anchor="middle" class="lbl">電位 ↔ H⁺ 活性</text>
- <text x="475" y="232" text-anchor="middle" class="lbl">用前先以 pH 4/7/10</text>
- <text x="475" y="248" text-anchor="middle" class="lbl">緩衝液兩點校正</text>
+ <rect x="394" y="120" width="160" height="80" rx="10" fill="#f6f9fd" stroke="#1f9d6b" stroke-width="2"/>
+ <text x="474" y="148" text-anchor="middle" class="lblb" fill="#1f9d6b" font-size="13">Nernst</text>
+ <text x="474" y="172" text-anchor="middle" class="lbl" font-size="11">E = E₀ + 2.303·RT/zF·log a</text>
+ <text x="474" y="192" text-anchor="middle" class="lbl" font-size="12">電位 ↔ H⁺ 活性</text>
+ <text x="474" y="232" text-anchor="middle" class="lbl" font-size="12">用前以 pH 4/7/10 緩衝液</text>
+ <text x="474" y="250" text-anchor="middle" class="lbl" font-size="12">取兩點（涵蓋樣品）校正</text>
 </svg>"""
 
 ACID_SVG = """

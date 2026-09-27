@@ -16,16 +16,24 @@ def add(sec, inner, attr=""):
 TITRATE_SVG = """
 <svg viewBox="0 0 320 380">
  <defs><linearGradient id="gt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eaf2ff"/><stop offset="1" stop-color="#cfe0f6"/></linearGradient></defs>
- <rect x="150" y="20" width="20" height="150" rx="4" fill="#fff" stroke="#1f6feb" stroke-width="2.4"/>
- <rect x="150" y="60" width="20" height="110" rx="0" fill="url(#gt)"/>
- <path d="M150 170 h20 l-7 20 h-6 z" fill="#1f6feb"/>
- <text x="232" y="64" class="lbl">滴定管</text>
- <text x="232" y="82" class="lbl">標準 EDTA / AgNO₃</text>
- <path d="M160 198 l-2 14 m2 -6 l-2 14" stroke="#1f6feb" stroke-width="2" fill="none"/>
- <path d="M110 250 h100 l-22 90 a30 30 0 0 1 -56 0 z" fill="url(#gt)" stroke="#1f6feb" stroke-width="2.4"/>
- <path d="M126 318 a30 30 0 0 0 68 0 z" fill="#fbeede"/>
- <text x="160" y="312" text-anchor="middle" class="lblb">樣品 + 指示劑</text>
- <text x="160" y="372" text-anchor="middle" class="lbl">終點：顏色改變</text>
+ <!-- burette: straight graduated tube, 0 mL at the top, stopcock at the bottom -->
+ <rect x="150" y="20" width="18" height="170" rx="3" fill="#fff" stroke="#1f6feb" stroke-width="2.4"/>
+ <rect x="152" y="42" width="14" height="147" fill="url(#gt)"/>
+ <line x1="158" y1="30" x2="168" y2="30" stroke="#1f6feb" stroke-width="1.3"/><line x1="162" y1="36" x2="168" y2="36" stroke="#1f6feb" stroke-width="0.9"/><line x1="162" y1="42" x2="168" y2="42" stroke="#1f6feb" stroke-width="0.9"/><line x1="162" y1="48" x2="168" y2="48" stroke="#1f6feb" stroke-width="0.9"/><line x1="162" y1="54" x2="168" y2="54" stroke="#1f6feb" stroke-width="0.9"/><line x1="158" y1="60" x2="168" y2="60" stroke="#1f6feb" stroke-width="1.3"/><line x1="162" y1="66" x2="168" y2="66" stroke="#1f6feb" stroke-width="0.9"/><line x1="162" y1="72" x2="168" y2="72" stroke="#1f6feb" stroke-width="0.9"/><line x1="162" y1="78" x2="168" y2="78" stroke="#1f6feb" stroke-width="0.9"/><line x1="162" y1="84" x2="168" y2="84" stroke="#1f6feb" stroke-width="0.9"/><line x1="158" y1="90" x2="168" y2="90" stroke="#1f6feb" stroke-width="1.3"/><line x1="162" y1="96" x2="168" y2="96" stroke="#1f6feb" stroke-width="0.9"/><line x1="162" y1="102" x2="168" y2="102" stroke="#1f6feb" stroke-width="0.9"/><line x1="162" y1="108" x2="168" y2="108" stroke="#1f6feb" stroke-width="0.9"/><line x1="162" y1="114" x2="168" y2="114" stroke="#1f6feb" stroke-width="0.9"/><line x1="158" y1="120" x2="168" y2="120" stroke="#1f6feb" stroke-width="1.3"/><line x1="162" y1="126" x2="168" y2="126" stroke="#1f6feb" stroke-width="0.9"/><line x1="162" y1="132" x2="168" y2="132" stroke="#1f6feb" stroke-width="0.9"/><line x1="162" y1="138" x2="168" y2="138" stroke="#1f6feb" stroke-width="0.9"/><line x1="162" y1="144" x2="168" y2="144" stroke="#1f6feb" stroke-width="0.9"/><line x1="158" y1="150" x2="168" y2="150" stroke="#1f6feb" stroke-width="1.3"/><line x1="162" y1="156" x2="168" y2="156" stroke="#1f6feb" stroke-width="0.9"/><line x1="162" y1="162" x2="168" y2="162" stroke="#1f6feb" stroke-width="0.9"/><line x1="162" y1="168" x2="168" y2="168" stroke="#1f6feb" stroke-width="0.9"/><line x1="162" y1="174" x2="168" y2="174" stroke="#1f6feb" stroke-width="0.9"/><line x1="158" y1="180" x2="168" y2="180" stroke="#1f6feb" stroke-width="1.3"/>
+ <text x="172" y="34" class="lbl" font-size="10">0</text>
+ <text x="172" y="184" class="lbl" font-size="10">50 mL</text>
+ <path d="M152 190 L156 200 L162 200 L166 190" fill="#eaf2ff" stroke="#1f6feb" stroke-width="2"/>
+ <rect x="150" y="200" width="18" height="7" rx="2" fill="#48597a"/>
+ <line x1="168" y1="203.5" x2="180" y2="203.5" stroke="#48597a" stroke-width="3" stroke-linecap="round"/>
+ <path d="M157 207 L158 222 L160 222 L161 207" fill="#eaf2ff" stroke="#1f6feb" stroke-width="1.6"/>
+ <path d="M159 232 q-4 6 0 9 q4 -3 0 -9 z" fill="#1f6feb"/>
+ <text x="196" y="70" class="lblb">滴定管</text>
+ <text x="196" y="88" class="lbl">標準 EDTA / AgNO₃</text>
+ <!-- Erlenmeyer (conical) flask -->
+ <path d="M145 258 V282 L108 346 Q104 354 114 354 H206 Q216 354 212 346 L175 282 V258" fill="url(#gt)" stroke="#1f6feb" stroke-width="2.4" stroke-linejoin="round"/>
+ <path d="M124 318 L108 346 Q104 354 114 354 H206 Q216 354 212 346 L196 318 Z" fill="#fbeede"/>
+ <text x="222" y="330" class="lblb">樣品 + 指示劑</text>
+ <text x="160" y="374" text-anchor="middle" class="lbl">終點：顏色改變</text>
 </svg>"""
 
 # 乾式灰化 → 溶解 → 分析（前處理流程示意）
@@ -59,8 +67,9 @@ AAS_SVG = """
   <rect x="14" y="86" width="86" height="54" rx="10" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
   <text x="57" y="108" text-anchor="middle" class="lblb">空心陰極燈</text>
   <text x="57" y="126" text-anchor="middle" class="lbl">HCL 特定波長</text>
-  <path d="M150 110 q24 -22 48 0 q24 22 48 0" fill="none" stroke="#d9822b" stroke-width="2.6"/>
-  <text x="198" y="86" text-anchor="middle" class="lbl">火焰：原子化</text>
+  <path d="M156 118 C 162 104, 172 100, 176 86 C 184 98, 192 96, 198 80 C 204 96, 212 98, 220 86 C 226 100, 236 104, 240 118 Z" fill="#fbeede" stroke="#d9822b" stroke-width="2.4" stroke-linejoin="round"/>
+  <line x1="144" y1="113" x2="252" y2="113" stroke="#8493ad" stroke-width="1.6" stroke-dasharray="4 3"/>
+  <text x="198" y="72" text-anchor="middle" class="lbl">火焰：原子化</text>
   <rect x="150" y="118" width="96" height="22" rx="6" fill="#fbeede" stroke="#d9822b" stroke-width="1.6"/>
   <text x="198" y="134" text-anchor="middle" class="lbl">樣品霧化</text>
   <rect x="300" y="86" width="86" height="54" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>

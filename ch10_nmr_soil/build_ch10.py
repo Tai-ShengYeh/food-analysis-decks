@@ -44,7 +44,7 @@ SPIN_SVG = """
  <line x1="490" y1="60" x2="490" y2="250" stroke="#8493ad" stroke-width="1.4" stroke-dasharray="4 4"/>
  <!-- net M -->
  <line x1="600" y1="240" x2="600" y2="90" stroke="#1f9d6b" stroke-width="4" marker-end="url(#ng)"/>
- <defs><marker id="ng" markerWidth="10" markerHeight="10" refX="6" refY="8" orient="auto"><path d="M3 0 L6 8 L0 8 Z" fill="#1f9d6b"/></marker></defs>
+ <defs><marker id="ng" markerUnits="userSpaceOnUse" markerWidth="18" markerHeight="16" refX="4" refY="8" orient="auto"><path d="M0 0 L18 8 L0 16 Z" fill="#1f9d6b"/></marker></defs>
  <ellipse cx="600" cy="86" rx="34" ry="12" fill="none" stroke="#8493ad" stroke-width="1.6"/>
  <text x="600" y="265" text-anchor="middle" class="lblb" fill="#1f9d6b">淨磁化 M</text>
  <text x="600" y="70" text-anchor="middle" class="lbl">進動(Larmor)</text>
@@ -60,7 +60,7 @@ PULSE_SVG = """
   <line x1="60" y1="160" x2="60" y2="60" stroke="#1f9d6b" stroke-width="4" marker-end="url(#pu)"/>
   <text x="60" y="215" text-anchor="middle" class="lblb">平衡：M 沿 B₀</text>
  </g>
- <defs><marker id="pu" markerWidth="10" markerHeight="10" refX="6" refY="8" orient="auto"><path d="M3 0 L6 8 L0 8 Z" fill="#1f9d6b"/></marker>
+ <defs><marker id="pu" markerUnits="userSpaceOnUse" markerWidth="16" markerHeight="14" refX="4" refY="7" orient="auto"><path d="M0 0 L16 7 L0 14 Z" fill="#1f9d6b"/></marker>
   <marker id="po" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 Z" fill="#d9822b"/></marker></defs>
  <text x="250" y="130" text-anchor="middle" class="lbl">90°脈衝</text>
  <line x1="215" y1="150" x2="285" y2="150" stroke="#d9822b" stroke-width="3" marker-end="url(#po)"/>
@@ -77,7 +77,10 @@ PULSE_SVG = """
  <g transform="translate(590,40)">
   <line x1="20" y1="160" x2="20" y2="30" stroke="#48597a" stroke-width="2"/>
   <line x1="20" y1="160" x2="110" y2="190" stroke="#48597a" stroke-width="2"/>
-  <path d="M15 95 q10 -10 20 0 q10 10 20 0 q10 -10 20 0" fill="none" stroke="#1f6feb" stroke-width="2.4"/>
+  <path d="M20 95 q7 -26 14 0 q7 22 14 0 q7 -17 14 0 q7 12 14 0 q7 -8 14 0 q7 5 14 0" fill="none" stroke="#1f6feb" stroke-width="2.4"/>
+  <text x="112" y="80" text-anchor="middle" class="lbl" font-size="11">FID</text>
+  <g fill="none" stroke="#d9822b" stroke-width="2"><ellipse cx="50" cy="140" rx="6" ry="14"/><ellipse cx="61" cy="140" rx="6" ry="14"/><ellipse cx="72" cy="140" rx="6" ry="14"/><ellipse cx="83" cy="140" rx="6" ry="14"/></g>
+  <text x="100" y="145" class="lbl" font-size="11">線圈</text>
   <text x="55" y="215" text-anchor="middle" class="lblb">接收線圈收訊號</text>
  </g>
 </svg>"""
@@ -131,7 +134,8 @@ SPECTRO_SVG = """
  <text x="145" y="40" text-anchor="middle" class="lbl">樣品入</text>
  <circle cx="145" cy="165" r="9" fill="#d9822b"/>
  <text x="145" y="292" text-anchor="middle" class="lblb">超導磁鐵(液氦 4.2 K)</text>
- <text x="145" y="200" text-anchor="middle" class="lbl">探頭 probe</text>
+ <line x1="158" y1="160" x2="222" y2="150" stroke="#8493ad" stroke-width="1.2"/>
+ <text x="262" y="154" text-anchor="middle" class="lbl">探頭 probe</text>
  <!-- console -->
  <rect x="300" y="120" width="150" height="120" rx="10" fill="#fbeede" stroke="#d9822b" stroke-width="2.4"/>
  <text x="375" y="148" text-anchor="middle" class="lblb">控制台 Console</text>

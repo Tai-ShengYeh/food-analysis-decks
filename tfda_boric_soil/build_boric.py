@@ -17,7 +17,7 @@ COLOR_SVG = """
  <defs><marker id="ba" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 Z" fill="#48597a"/></marker></defs>
  <text x="470" y="26" text-anchor="middle" class="lblb" font-size="15">薑黃素呈色：硼酸 → 玫瑰紅(定量)，加氨 → 變綠(確認)</text>
  <circle cx="90" cy="110" r="40" fill="#fff" stroke="#d9822b" stroke-width="2.4"/>
- <text x="90" y="106" text-anchor="middle" class="lblb" font-size="12">薑黃素</text><text x="90" y="124" text-anchor="middle" class="lbl">curcumin(黃)</text>
+ <text x="90" y="106" text-anchor="middle" class="lblb" font-size="12">薑黃素</text><text x="90" y="124" text-anchor="middle" class="lbl" font-size="11">curcumin(黃)</text>
  <text x="240" y="92" text-anchor="middle" class="lbl">+ 硼酸(酸性)</text>
  <line x1="134" y1="110" x2="300" y2="110" stroke="#48597a" stroke-width="2.4" marker-end="url(#ba)"/>
  <circle cx="350" cy="110" r="44" fill="#e23b5a" opacity=".85"/>

@@ -49,6 +49,8 @@ html,body{
 }
 .slide.active{opacity:1;pointer-events:auto;transform:translateY(0)}
 .slide-inner{width:100.0000%;max-width:1320px}
+/* poll QR shrinks on short windows so the vote panel (height:calc(100vh - 220px)) never clips it */
+.poll-view img[id^="qr-"]{width:min(170px,22vh)!important;height:min(170px,22vh)!important}
 .badge{
   display:inline-block;padding:4px 14px;border-radius:6px;
   font-size:clamp(.7rem,1.1vw,.95rem);font-weight:700;margin-bottom:10px;
@@ -1545,7 +1547,25 @@ function goTo(n) {
   document.getElementById('section-tag').textContent = '— '+next.dataset.section+' —';
   // 切換到文字雲頁時初始化 canvas
   if (n === 0) setTimeout(() => { if (window._wcInit) window._wcInit(); }, 60);
+  fitSlide(); setTimeout(fitSlide,80);
 }
+/* Scale the active slide down (never up) so it always fits the window,
+   whatever the browser zoom, window size or projector resolution. */
+function fitSlide(){
+  document.querySelectorAll('.slide-inner').forEach(function(e){e.style.transform='';});
+  if(window.innerWidth<=640) return;           /* phones keep the normal layout */
+  var s=document.querySelector('.slide.active'), el=s&&s.querySelector('.slide-inner'); if(!el) return;
+  var cs=getComputedStyle(s);
+  var availH=s.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom);
+  var availW=s.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight);
+  var h=el.scrollHeight, w=el.scrollWidth;
+  if(!h||!w) return;
+  var k=Math.min(1,availH/h,availW/w);
+  if(k<1){el.style.transformOrigin='center center';el.style.transform='scale('+Math.max(k,0.4).toFixed(3)+')';}
+}
+window.addEventListener('resize',fitSlide);
+if(document.fonts&&document.fonts.ready){document.fonts.ready.then(fitSlide);}
+document.addEventListener('click',function(){setTimeout(fitSlide,60)});
 
 document.addEventListener('keydown', e => {
   if (e.key==='ArrowRight'||e.key===' ') { e.preventDefault(); goTo(cur+1); }

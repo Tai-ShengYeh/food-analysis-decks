@@ -26,16 +26,17 @@ HEADSPACE_SVG = """
  <!-- headspace SO2 dots -->
  <g fill="#d9822b"><circle cx="160" cy="110" r="4"/><circle cx="200" cy="130" r="4"/><circle cx="235" cy="105" r="4"/>
   <circle cx="180" cy="155" r="4"/><circle cx="220" cy="170" r="4"/><circle cx="150" cy="135" r="4"/></g>
- <text x="195" y="95" text-anchor="middle" class="lblb" fill="#d9822b" font-size="12">頂空：SO₂ 氣體</text>
+ <text x="170" y="95" text-anchor="middle" class="lblb" fill="#d9822b" font-size="12">頂空：SO₂ 氣體</text>
  <!-- heat -->
  <path d="M150 270 q8 14 16 0 q8 -14 16 0 q8 14 16 0" fill="none" stroke="#d94f4f" stroke-width="2.4"/>
  <text x="195" y="292" text-anchor="middle" class="lbl">加熱 80°C · 15 分 · 攪拌</text>
  <!-- needle -->
- <line x1="195" y1="54" x2="195" y2="30" stroke="#15233f" stroke-width="2"/>
- <line x1="320" y1="30" x2="195" y2="30" stroke="#15233f" stroke-width="2"/>
+ <!-- needle through the septum into the headspace, gas carried to the GC -->
+ <line x1="228" y1="44" x2="228" y2="104" stroke="#15233f" stroke-width="2"/>
+ <path d="M228 44 H330 V150" fill="none" stroke="#15233f" stroke-width="2"/>
  <!-- arrow to GC-MS -->
  <defs><marker id="ha" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 Z" fill="#1f9d6b"/></marker></defs>
- <line x1="340" y1="150" x2="430" y2="150" stroke="#1f9d6b" stroke-width="3" marker-end="url(#ha)"/>
+ <line x1="330" y1="150" x2="430" y2="150" stroke="#1f9d6b" stroke-width="3" marker-end="url(#ha)"/>
  <text x="385" y="140" text-anchor="middle" class="lbl">取 1 mL 氣體</text>
  <rect x="440" y="110" width="180" height="80" rx="12" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2.4"/>
  <text x="530" y="145" text-anchor="middle" class="lblb">GC-MS</text>

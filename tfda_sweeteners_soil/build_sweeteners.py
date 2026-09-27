@@ -38,15 +38,15 @@ MRM_SVG = """
 <svg viewBox="0 0 640 250">
  <text x="320" y="22" text-anchor="middle" class="lblb" font-size="15">MRM：一個母離子 → 定量+定性兩個子離子</text>
  <circle cx="90" cy="120" r="34" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2.4"/>
- <text x="90" y="116" text-anchor="middle" class="lblb">母離子</text><text x="90" y="134" text-anchor="middle" class="lbl">precursor</text>
+ <text x="90" y="116" text-anchor="middle" class="lblb">母離子</text><text x="90" y="134" text-anchor="middle" class="lbl" font-size="11">precursor</text>
  <rect x="200" y="96" width="120" height="48" rx="10" fill="#fbeede" stroke="#d9822b" stroke-width="2.2"/>
  <text x="260" y="116" text-anchor="middle" class="lblb">碰撞碎裂</text><text x="260" y="133" text-anchor="middle" class="lbl">CID</text>
  <line x1="124" y1="120" x2="196" y2="120" stroke="#48597a" stroke-width="2.4"/>
  <g>
   <circle cx="470" cy="70" r="28" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2.4"/>
-  <text x="470" y="66" text-anchor="middle" class="lblb" font-size="12">定量離子</text><text x="470" y="82" text-anchor="middle" class="lbl">quantifier</text>
+  <text x="470" y="66" text-anchor="middle" class="lblb" font-size="12">定量離子</text><text x="470" y="84" text-anchor="middle" class="lbl" font-size="10.5">quantifier</text>
   <circle cx="470" cy="172" r="28" fill="#fbe7e7" stroke="#d94f4f" stroke-width="2.4"/>
-  <text x="470" y="168" text-anchor="middle" class="lblb" font-size="12">定性離子</text><text x="470" y="184" text-anchor="middle" class="lbl">qualifier</text>
+  <text x="470" y="168" text-anchor="middle" class="lblb" font-size="12">定性離子</text><text x="470" y="186" text-anchor="middle" class="lbl" font-size="10.5">qualifier</text>
   <line x1="322" y1="112" x2="442" y2="80" stroke="#48597a" stroke-width="2"/>
   <line x1="322" y1="128" x2="442" y2="164" stroke="#48597a" stroke-width="2"/></g>
  <text x="560" y="120" text-anchor="middle" class="lbl">兩者波峰面積比</text>

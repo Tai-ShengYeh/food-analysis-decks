@@ -20,7 +20,7 @@ QUECHERS_SVG = """
   <rect x="14" y="80" width="180" height="58" rx="10" fill="#fbeede" stroke="#d9822b" stroke-width="2.2"/>
   <text x="104" y="104" text-anchor="middle" class="lblb">乙腈萃取</text><text x="104" y="122" text-anchor="middle" class="lbl">1%甲酸乙腈+內標</text>
   <rect x="244" y="80" width="180" height="58" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2.2"/>
-  <text x="334" y="104" text-anchor="middle" class="lblb">加鹽分層</text><text x="334" y="122" text-anchor="middle" class="lbl">MgSO₄/NaCl/檸檬酸鹽·離心</text>
+  <text x="334" y="104" text-anchor="middle" class="lblb">加鹽分層</text><text x="334" y="122" text-anchor="middle" class="lbl" font-size="11.5">MgSO₄/NaCl/檸檬酸鹽·離心</text>
   <rect x="474" y="80" width="180" height="58" rx="10" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2.2"/>
   <text x="564" y="104" text-anchor="middle" class="lblb">dSPE 淨化</text><text x="564" y="122" text-anchor="middle" class="lbl">PSA/C18/GCB 依基質</text>
   <rect x="704" y="80" width="180" height="58" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2.2"/>

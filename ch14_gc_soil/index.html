@@ -75,8 +75,12 @@ table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--
 .hook .hi{color:var(--accent)}
 .svgwrap{display:flex;align-items:center;justify-content:center}
 .svgwrap svg{max-width:100%;max-height:62vh;height:auto}
-.lbl{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink-2)}
-.lblb{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink);font-weight:700}
+.lbl,.lblb{font-family:"Noto Sans TC",sans-serif}
+.lblb{font-weight:700}
+/* Defaults only: an SVG's own font-size / fill attributes win. */
+.lbl:not([font-size]),.lblb:not([font-size]){font-size:13px}
+.lbl:not([fill]){fill:var(--ink-2)}
+.lblb:not([fill]){fill:var(--ink)}
 .game{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 24px;box-shadow:var(--shadow)}
 .game-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
 .game-head .gt{font-weight:900;font-size:clamp(1.05rem,1.7vw,1.35rem);color:var(--ink)}
@@ -163,28 +167,28 @@ table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--
   <span style="font-size:.8em;color:var(--ink-2)">峰面積 → 定量 (有多少)</span></div></div></div></section><section class="slide" data-slide="7" data-section="引起動機" data-game="g1"><div class="slide-inner"><div class="game no-nav" data-game="g1"><div class="game-head"><span class="tag a">小遊戲 ①</span><span class="gt">偵測器測什麼</span><span class="score" id="g1score">0 / 6</span></div><div class="game-q">把 6 個分析物丟給最合適的偵測器。分到三類。</div><div class="pool" id="g1pool"></div><div class="buckets" id="g1buckets"></div><div class="fb" id="g1fb"></div><div class="btnrow"><button class="btn" id="g1check">檢查答案</button><button class="btn ghost" id="g1reset">重來</button></div></div></div></section><section class="slide" data-slide="8" data-section="維持注意"><div class="slide-inner"><div class="kicker">儀器全覽</div><h2 class="slide-title">GC 五大組件</h2><div class="svgwrap" style="margin-top:10px">
 <svg viewBox="0 0 620 240">
  <g font-size="13">
-  <rect x="12" y="92" width="104" height="62" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
-  <text x="64" y="116" text-anchor="middle" class="lblb">載氣鋼瓶</text>
-  <text x="64" y="136" text-anchor="middle" class="lbl">He / H₂ / N₂</text>
-  <rect x="152" y="92" width="104" height="62" rx="10" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
-  <text x="204" y="112" text-anchor="middle" class="lblb">注射口</text>
-  <text x="204" y="130" text-anchor="middle" class="lbl">汽化·分流</text>
-  <text x="204" y="146" text-anchor="middle" class="lbl">250°C</text>
-  <rect x="292" y="80" width="120" height="86" rx="12" fill="#f6f9fd" stroke="#48597a" stroke-width="2"/>
-  <text x="352" y="104" text-anchor="middle" class="lblb">烘箱 + 管柱</text>
-  <text x="352" y="124" text-anchor="middle" class="lbl">毛細管柱</text>
-  <text x="352" y="142" text-anchor="middle" class="lbl">溫度程式</text>
-  <path d="M312 150 q12 -10 24 0 t24 0 t24 0" fill="none" stroke="#1f6feb" stroke-width="2"/>
-  <rect x="448" y="92" width="104" height="62" rx="10" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
-  <text x="500" y="116" text-anchor="middle" class="lblb">偵測器</text>
-  <text x="500" y="136" text-anchor="middle" class="lbl">FID/TCD/MS</text>
-  <rect x="556" y="100" width="52" height="46" rx="8" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
-  <text x="582" y="120" text-anchor="middle" class="lbl">數據</text>
-  <text x="582" y="136" text-anchor="middle" class="lbl">層析圖</text>
+  <rect x="8" y="92" width="100" height="62" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
+  <text x="58" y="116" text-anchor="middle" class="lblb">載氣鋼瓶</text>
+  <text x="58" y="136" text-anchor="middle" class="lbl">He / H₂ / N₂</text>
+  <rect x="134" y="86" width="100" height="74" rx="10" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
+  <text x="184" y="108" text-anchor="middle" class="lblb">注射口</text>
+  <text x="184" y="128" text-anchor="middle" class="lbl">汽化·分流</text>
+  <text x="184" y="148" text-anchor="middle" class="lbl">250°C</text>
+  <rect x="260" y="76" width="112" height="96" rx="12" fill="#f6f9fd" stroke="#48597a" stroke-width="2"/>
+  <text x="316" y="98" text-anchor="middle" class="lblb">烘箱 + 管柱</text>
+  <text x="316" y="118" text-anchor="middle" class="lbl">毛細管柱</text>
+  <text x="316" y="138" text-anchor="middle" class="lbl">溫度程式</text>
+  <path d="M280 156 q12 -10 24 0 t24 0 t24 0" fill="none" stroke="#1f6feb" stroke-width="2"/>
+  <rect x="398" y="92" width="100" height="62" rx="10" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
+  <text x="448" y="116" text-anchor="middle" class="lblb">偵測器</text>
+  <text x="448" y="136" text-anchor="middle" class="lbl">FID/TCD/MS</text>
+  <rect x="524" y="92" width="88" height="62" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
+  <text x="568" y="116" text-anchor="middle" class="lblb">數據</text>
+  <text x="568" y="136" text-anchor="middle" class="lbl">層析圖</text>
   <g stroke="#8493ad" stroke-width="2.5" fill="none" marker-end="url(#arg)">
-   <path d="M116 123 h34"/><path d="M256 123 h34"/><path d="M412 123 h34"/><path d="M552 123 h2"/></g>
-  <defs><marker id="arg" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto">
-   <path d="M0 0 L8 4 L0 8 z" fill="#8493ad"/></marker></defs>
+   <path d="M108 123 h22"/><path d="M234 123 h22"/><path d="M372 123 h22"/><path d="M498 123 h22"/></g>
+  <defs><marker id="arg" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="10" refX="9" refY="5" orient="auto">
+   <path d="M0 0 L10 5 L0 10 z" fill="#8493ad"/></marker></defs>
   <text x="310" y="40" text-anchor="middle" class="lblb" font-size="15">氣相層析儀 (GC) 五大組件</text>
   <text x="310" y="58" text-anchor="middle" class="lbl">載氣 → 注射 → 分離 → 偵測 → 數據</text>
  </g>
@@ -252,7 +256,25 @@ function show(i){
   secTag.textContent='— '+(slides[cur].dataset.section||'')+' —';
   var ch=slides[cur].dataset.chart; if(ch) initChart(ch);
   var g=slides[cur].dataset.game; if(g) initGame(g);
+  fitSlide(); setTimeout(fitSlide,80);
 }
+/* Scale the active slide down (never up) so it always fits the window,
+   whatever the browser zoom, window size or projector resolution. */
+function fitSlide(){
+  slides.forEach(function(s){var e=s.querySelector('.slide-inner'); if(e){e.style.transform='';}});
+  if(window.innerWidth<=640) return;           /* phones keep the scrolling layout */
+  var s=slides[cur], el=s&&s.querySelector('.slide-inner'); if(!el) return;
+  var cs=getComputedStyle(s);
+  var availH=s.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom);
+  var availW=s.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight);
+  var h=el.scrollHeight, w=el.scrollWidth;
+  if(!h||!w) return;
+  var k=Math.min(1,availH/h,availW/w);
+  if(k<1){el.style.transformOrigin='center center';el.style.transform='scale('+Math.max(k,0.4).toFixed(3)+')';}
+}
+window.addEventListener('resize',fitSlide);
+if(document.fonts&&document.fonts.ready){document.fonts.ready.then(fitSlide);}
+document.addEventListener('click',function(){setTimeout(fitSlide,60)});
 function next(){show(cur+1)} function prev(){show(cur-1)}
 function toggleFs(){if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()}else{document.exitFullscreen&&document.exitFullscreen()}}
 document.addEventListener('keydown',function(e){

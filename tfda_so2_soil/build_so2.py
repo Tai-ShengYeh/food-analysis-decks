@@ -14,34 +14,37 @@ def add(sec, inner, attr=""):
 # ---------------- SVGs ----------------
 APPARATUS_SVG = """
 <svg viewBox="0 0 620 330">
+ <defs><marker id="sa" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 L9 5 L0 10 Z" fill="#1f9d6b"/></marker></defs>
  <text x="310" y="22" text-anchor="middle" class="lblb" font-size="15">通氣蒸餾裝置：把 SO₂ 從食品趕進吸收液</text>
- <!-- N2 source -->
- <rect x="20" y="200" width="60" height="80" rx="8" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
- <text x="50" y="245" text-anchor="middle" class="lbl">N₂</text><text x="50" y="298" text-anchor="middle" class="lbl">氮氣</text>
- <line x1="80" y1="235" x2="150" y2="235" stroke="#1f9d6b" stroke-width="3" marker-end="url(#sa)"/>
- <defs><marker id="sa" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 Z" fill="#1f9d6b"/></marker></defs>
- <!-- round-bottom flask (sample+acid) -->
- <circle cx="190" cy="250" r="42" fill="#fbeede" stroke="#d9822b" stroke-width="2.4"/>
- <path d="M178 212 h24 v-18 h-24 Z" fill="#fbeede" stroke="#d9822b" stroke-width="2.4"/>
- <text x="190" y="250" text-anchor="middle" class="lblb" font-size="12">檢體</text>
- <text x="190" y="267" text-anchor="middle" class="lbl" font-size="11">+磷酸</text>
- <text x="190" y="312" text-anchor="middle" class="lbl">圓底燒瓶(加熱)</text>
- <path d="M170 300 q8 14 16 0 q8 -14 16 0" fill="none" stroke="#d94f4f" stroke-width="2.2"/>
- <text x="225" y="308" class="lbl">🔥本生燈</text>
- <!-- tube up to condenser -->
- <line x1="190" y1="194" x2="190" y2="150" stroke="#48597a" stroke-width="3"/>
- <line x1="190" y1="150" x2="330" y2="150" stroke="#48597a" stroke-width="3"/>
- <!-- condenser -->
- <rect x="330" y="120" width="120" height="40" rx="8" fill="#cfe0f6" stroke="#1f6feb" stroke-width="2.2"/>
- <text x="390" y="113" text-anchor="middle" class="lbl">雙層冷凝管(冷卻水)</text>
- <line x1="450" y1="150" x2="500" y2="150" stroke="#48597a" stroke-width="3"/>
- <line x1="500" y1="150" x2="500" y2="200" stroke="#48597a" stroke-width="3"/>
- <!-- pear flask (absorber H2O2) -->
- <path d="M470 205 q30 60 60 0 q-10 -25 -30 -25 q-20 0 -30 25 Z" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2.4"/>
- <text x="500" y="232" text-anchor="middle" class="lblb" font-size="11">H₂O₂</text>
- <text x="500" y="290" text-anchor="middle" class="lbl">梨形燒瓶</text>
- <text x="500" y="306" text-anchor="middle" class="lbl">吸收液</text>
- <text x="560" y="160" class="lbl" fill="#1f6feb">SO₂→H₂SO₄</text>
+ <!-- N2 cylinder; inlet tube dips into the acidified sample -->
+ <rect x="20" y="150" width="56" height="110" rx="8" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
+ <text x="48" y="210" text-anchor="middle" class="lbl">N₂</text><text x="48" y="280" text-anchor="middle" class="lbl">氮氣</text>
+ <!-- round-bottom flask -->
+ <circle cx="190" cy="240" r="46" fill="#fbeede" stroke="#d9822b" stroke-width="2.4"/>
+ <path d="M150 262 A46 46 0 0 0 230 262 Z" fill="#f3d6b0"/>
+ <rect x="180" y="160" width="20" height="38" fill="#fbeede" stroke="#d9822b" stroke-width="2.4"/>
+ <rect x="182" y="192" width="16" height="10" fill="#fbeede"/>
+ <path d="M76 180 H140 L166 214 V268" fill="none" stroke="#1f9d6b" stroke-width="3" marker-end="url(#sa)"/>
+ <text x="196" y="232" text-anchor="middle" class="lblb" font-size="12">檢體</text>
+ <text x="198" y="250" text-anchor="middle" class="lbl" font-size="11">+磷酸</text>
+ <text x="242" y="228" class="lbl">圓底燒瓶</text>
+ <!-- Bunsen burner under the flask -->
+ <path d="M184 302 C 186 294, 190 292, 190 288 C 191 293, 196 296, 196 302 Z" fill="#fbeede" stroke="#d94f4f" stroke-width="1.8"/>
+ <rect x="184" y="303" width="12" height="18" rx="2" fill="#48597a"/>
+ <text x="206" y="318" class="lbl">加熱（本生燈）</text>
+ <!-- vertical reflux condenser on the flask -->
+ <rect x="176" y="70" width="28" height="92" rx="6" fill="#cfe0f6" stroke="#1f6feb" stroke-width="2.2"/>
+ <line x1="190" y1="60" x2="190" y2="164" stroke="#48597a" stroke-width="2"/>
+ <path d="M204 150 h12 M204 82 h12" stroke="#1f6feb" stroke-width="2.4"/>
+ <text x="222" y="112" class="lbl">冷凝管</text><text x="222" y="130" class="lbl" font-size="11">(冷卻水)</text>
+ <!-- pear-shaped absorption flask -->
+ <path d="M462 196 V214 C 430 234, 438 294, 480 298 C 522 294, 530 234, 498 214 V196" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2.4" stroke-linejoin="round"/>
+ <path d="M441 256 C 444 282, 458 296, 480 297 C 502 296, 516 282, 519 256 Z" fill="#cfe0f6"/>
+ <!-- delivery tube to the absorber, dipping into H2O2 -->
+ <path d="M190 60 V48 H470 V284" fill="none" stroke="#48597a" stroke-width="3"/>
+ <text x="532" y="262" class="lblb" font-size="12">H₂O₂ 吸收液</text>
+ <text x="532" y="282" class="lbl" font-size="12" fill="#1f6feb">SO₂ → H₂SO₄</text>
+ <text x="480" y="318" text-anchor="middle" class="lbl">梨形燒瓶</text>
 </svg>"""
 
 CHEM_SVG = """

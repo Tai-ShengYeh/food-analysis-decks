@@ -16,28 +16,28 @@ def add(sec, inner, attr=""):
 GC_FLOW_SVG = """
 <svg viewBox="0 0 620 240">
  <g font-size="13">
-  <rect x="12" y="92" width="104" height="62" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
-  <text x="64" y="116" text-anchor="middle" class="lblb">載氣鋼瓶</text>
-  <text x="64" y="136" text-anchor="middle" class="lbl">He / H₂ / N₂</text>
-  <rect x="152" y="92" width="104" height="62" rx="10" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
-  <text x="204" y="112" text-anchor="middle" class="lblb">注射口</text>
-  <text x="204" y="130" text-anchor="middle" class="lbl">汽化·分流</text>
-  <text x="204" y="146" text-anchor="middle" class="lbl">250°C</text>
-  <rect x="292" y="80" width="120" height="86" rx="12" fill="#f6f9fd" stroke="#48597a" stroke-width="2"/>
-  <text x="352" y="104" text-anchor="middle" class="lblb">烘箱 + 管柱</text>
-  <text x="352" y="124" text-anchor="middle" class="lbl">毛細管柱</text>
-  <text x="352" y="142" text-anchor="middle" class="lbl">溫度程式</text>
-  <path d="M312 150 q12 -10 24 0 t24 0 t24 0" fill="none" stroke="#1f6feb" stroke-width="2"/>
-  <rect x="448" y="92" width="104" height="62" rx="10" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
-  <text x="500" y="116" text-anchor="middle" class="lblb">偵測器</text>
-  <text x="500" y="136" text-anchor="middle" class="lbl">FID/TCD/MS</text>
-  <rect x="556" y="100" width="52" height="46" rx="8" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
-  <text x="582" y="120" text-anchor="middle" class="lbl">數據</text>
-  <text x="582" y="136" text-anchor="middle" class="lbl">層析圖</text>
+  <rect x="8" y="92" width="100" height="62" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
+  <text x="58" y="116" text-anchor="middle" class="lblb">載氣鋼瓶</text>
+  <text x="58" y="136" text-anchor="middle" class="lbl">He / H₂ / N₂</text>
+  <rect x="134" y="86" width="100" height="74" rx="10" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
+  <text x="184" y="108" text-anchor="middle" class="lblb">注射口</text>
+  <text x="184" y="128" text-anchor="middle" class="lbl">汽化·分流</text>
+  <text x="184" y="148" text-anchor="middle" class="lbl">250°C</text>
+  <rect x="260" y="76" width="112" height="96" rx="12" fill="#f6f9fd" stroke="#48597a" stroke-width="2"/>
+  <text x="316" y="98" text-anchor="middle" class="lblb">烘箱 + 管柱</text>
+  <text x="316" y="118" text-anchor="middle" class="lbl">毛細管柱</text>
+  <text x="316" y="138" text-anchor="middle" class="lbl">溫度程式</text>
+  <path d="M280 156 q12 -10 24 0 t24 0 t24 0" fill="none" stroke="#1f6feb" stroke-width="2"/>
+  <rect x="398" y="92" width="100" height="62" rx="10" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
+  <text x="448" y="116" text-anchor="middle" class="lblb">偵測器</text>
+  <text x="448" y="136" text-anchor="middle" class="lbl">FID/TCD/MS</text>
+  <rect x="524" y="92" width="88" height="62" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
+  <text x="568" y="116" text-anchor="middle" class="lblb">數據</text>
+  <text x="568" y="136" text-anchor="middle" class="lbl">層析圖</text>
   <g stroke="#8493ad" stroke-width="2.5" fill="none" marker-end="url(#arg)">
-   <path d="M116 123 h34"/><path d="M256 123 h34"/><path d="M412 123 h34"/><path d="M552 123 h2"/></g>
-  <defs><marker id="arg" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto">
-   <path d="M0 0 L8 4 L0 8 z" fill="#8493ad"/></marker></defs>
+   <path d="M108 123 h22"/><path d="M234 123 h22"/><path d="M372 123 h22"/><path d="M498 123 h22"/></g>
+  <defs><marker id="arg" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="10" refX="9" refY="5" orient="auto">
+   <path d="M0 0 L10 5 L0 10 z" fill="#8493ad"/></marker></defs>
   <text x="310" y="40" text-anchor="middle" class="lblb" font-size="15">氣相層析儀 (GC) 五大組件</text>
   <text x="310" y="58" text-anchor="middle" class="lbl">載氣 → 注射 → 分離 → 偵測 → 數據</text>
  </g>

@@ -21,8 +21,8 @@ PHENOL_SVG = """
   <text x="72" y="132" text-anchor="middle" class="lbl">清澈水溶液</text>
   <rect x="166" y="86" width="116" height="64" rx="10" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
   <text x="224" y="106" text-anchor="middle" class="lblb">加濃硫酸</text>
-  <text x="224" y="126" text-anchor="middle" class="lbl">脫水→糠醛</text>
-  <text x="224" y="144" text-anchor="middle" class="lbl">(furfural)</text>
+  <text x="224" y="126" text-anchor="middle" class="lbl" font-size="12">脫水→糠醛衍生物</text>
+  <text x="224" y="144" text-anchor="middle" class="lbl" font-size="12">(furfural / HMF)</text>
   <rect x="318" y="86" width="116" height="64" rx="10" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
   <text x="376" y="112" text-anchor="middle" class="lblb">與苯酚縮合</text>
   <text x="376" y="132" text-anchor="middle" class="lbl">黃金色產物</text>

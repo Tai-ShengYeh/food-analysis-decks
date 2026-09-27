@@ -24,7 +24,7 @@ CLEAVE_SVG = """
   <rect x="474" y="78" width="150" height="62" rx="10" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2.2"/>
   <text x="549" y="100" text-anchor="middle" class="lblb">CS₂ 氣體</text><text x="549" y="118" text-anchor="middle" class="lbl">跑到頂空</text>
   <rect x="674" y="78" width="150" height="62" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2.2"/>
-  <text x="749" y="100" text-anchor="middle" class="lblb">GC 分離</text><text x="749" y="118" text-anchor="middle" class="lbl">Porpak Q 柱</text>
+  <text x="749" y="100" text-anchor="middle" class="lblb">GC 分離</text><text x="749" y="118" text-anchor="middle" class="lbl">Porapak Q 柱</text>
   <rect x="874" y="82" width="96" height="54" rx="9" fill="#15233f"/>
   <text x="922" y="104" text-anchor="middle" fill="#fff" font-weight="800" font-size="12">FPD</text>
   <text x="922" y="122" text-anchor="middle" fill="#cfe0f6" font-size="10">硫選擇偵測</text>
@@ -38,14 +38,15 @@ CLEAVE_SVG = """
 FPD_SVG = """
 <svg viewBox="0 0 560 230">
  <text x="280" y="22" text-anchor="middle" class="lblb" font-size="15">火焰光度檢出器 FPD：只對『含硫』化合物發亮</text>
- <!-- flame -->
- <path d="M150 170 C120 120, 180 110, 150 60 C175 110, 200 130, 150 170 Z" fill="#9ad0ff" opacity=".7" stroke="#1f6feb" stroke-width="1.5"/>
- <text x="150" y="195" text-anchor="middle" class="lbl">氫火焰</text>
- <line x1="150" y1="200" x2="150" y2="180" stroke="#1f9d6b" stroke-width="3"/>
- <text x="150" y="216" text-anchor="middle" class="lbl">含 S 樣品進入</text>
+ <!-- flame on the burner jet -->
+ <rect x="144" y="168" width="12" height="30" rx="2" fill="#dde5f0" stroke="#48597a" stroke-width="1.5"/>
+ <path d="M150 168 C 128 150, 130 110, 150 62 C 170 110, 172 150, 150 168 Z" fill="#9ad0ff" opacity=".75" stroke="#1f6feb" stroke-width="1.5"/>
+ <text x="124" y="124" text-anchor="end" class="lbl">氫火焰</text>
+ <line x1="150" y1="212" x2="150" y2="200" stroke="#1f9d6b" stroke-width="3"/>
+ <text x="150" y="226" text-anchor="middle" class="lbl">含 S 樣品進入</text>
  <!-- emission -->
  <g stroke="#7c3aed" stroke-width="2" opacity=".8">
-  <line x1="165" y1="90" x2="230" y2="80"/><line x1="165" y1="100" x2="230" y2="100"/><line x1="165" y1="110" x2="230" y2="120"/></g>
+  <line x1="166" y1="92" x2="296" y2="86"/><line x1="168" y1="100" x2="296" y2="100"/><line x1="166" y1="108" x2="296" y2="114"/></g>
  <text x="195" y="54" text-anchor="middle" class="lbl">硫受激發、放出特定波長光</text>
  <!-- filter -->
  <rect x="300" y="72" width="40" height="56" rx="4" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
@@ -106,7 +107,7 @@ add(ATT, dc.kt("標準曲線的玄機", "面積取<span class='hi'>根號</span>
     "<li><strong>FPD 對硫的反應是非線性</strong>(約與含硫量平方相關)</li>" +
     "<li>所以標準曲線用<strong>波峰面積的『根號值』</strong>對 CS₂ 量作圖,才呈線性</li>" +
     "<li>以 CS₂ 標準品配 <strong>0.2–5 µg</strong> 製作標準曲線</li>" +
-    "<li>層析:Porpak Q 柱、140°C、注入器 180°C、檢出器 300°C</li>" +
+    "<li>層析:Porapak Q 柱、140°C、注入器 180°C、檢出器 300°C</li>" +
     '</ul></div><div class="note"><strong>記住:</strong>FPD 高選擇但『非線性』;<br>' +
     "用面積『根號值』線性化是這個方法的招牌細節。</div></div>")
 
@@ -196,7 +197,7 @@ CFG = {
       "items":[{"t":"鹽酸(酸化裂解)","c":"釋出 CS₂"},{"t":"氯化亞錫(還原)","c":"釋出 CS₂"},
         {"t":"加熱 80°C 120 分鐘","c":"釋出 CS₂"},{"t":"頂空進樣取上部氣體","c":"釋出 CS₂"},
         {"t":"FPD 火焰光度檢出器","c":"偵測 CS₂"},{"t":"325 nm 硫選擇濾光鏡","c":"偵測 CS₂"},
-        {"t":"Porpak Q 毛細管柱分離","c":"偵測 CS₂"},{"t":"CS₂ 對照標準品","c":"偵測 CS₂"}],
+        {"t":"Porapak Q 毛細管柱分離","c":"偵測 CS₂"},{"t":"CS₂ 對照標準品","c":"偵測 CS₂"}],
       "ok":"🎉 正確！酸/氯化亞錫/加熱/頂空把 CS₂ 放出來;FPD/濾光鏡/柱/標準品負責偵測定量。",
       "tip":"提示:跟『酸、還原、加熱、頂空』有關→釋出;跟『FPD、濾光鏡、柱、標準品』→偵測。"}
   },
@@ -228,7 +229,7 @@ CFG = {
   },
   "sort": {
     "g4":{"steps":["切碎檢體精秤,置於頂空分析瓶","加入鹽酸+氯化亞錫反應試劑,迅速封瓶混勻",
-       "於 80°C 加熱 120 分鐘,使二硫代胺基甲酸鹽裂解放出 CS₂","取 1 mL 頂空氣體注入 GC,Porpak Q 柱分離",
+       "於 80°C 加熱 120 分鐘,使二硫代胺基甲酸鹽裂解放出 CS₂","取 1 mL 頂空氣體注入 GC,Porapak Q 柱分離",
        "以 FPD(325 nm 硫濾光鏡)偵測 CS₂","以波峰面積根號值對標準曲線,算含量(C/M,以 CS₂ 計)"],
        "shuffle":[3,0,5,1,4,2],
        "ok":"🎉 順序正確！秤樣裝瓶→加試劑封瓶→加熱裂解→取頂空進 GC→FPD 偵測→根號面積定量。",

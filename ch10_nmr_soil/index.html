@@ -75,8 +75,12 @@ table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--
 .hook .hi{color:var(--accent)}
 .svgwrap{display:flex;align-items:center;justify-content:center}
 .svgwrap svg{max-width:100%;max-height:62vh;height:auto}
-.lbl{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink-2)}
-.lblb{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink);font-weight:700}
+.lbl,.lblb{font-family:"Noto Sans TC",sans-serif}
+.lblb{font-weight:700}
+/* Defaults only: an SVG's own font-size / fill attributes win. */
+.lbl:not([font-size]),.lblb:not([font-size]){font-size:13px}
+.lbl:not([fill]){fill:var(--ink-2)}
+.lblb:not([fill]){fill:var(--ink)}
 .game{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 24px;box-shadow:var(--shadow)}
 .game-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
 .game-head .gt{font-weight:900;font-size:clamp(1.05rem,1.7vw,1.35rem);color:var(--ink)}
@@ -186,7 +190,7 @@ table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--
  <line x1="490" y1="60" x2="490" y2="250" stroke="#8493ad" stroke-width="1.4" stroke-dasharray="4 4"/>
  <!-- net M -->
  <line x1="600" y1="240" x2="600" y2="90" stroke="#1f9d6b" stroke-width="4" marker-end="url(#ng)"/>
- <defs><marker id="ng" markerWidth="10" markerHeight="10" refX="6" refY="8" orient="auto"><path d="M3 0 L6 8 L0 8 Z" fill="#1f9d6b"/></marker></defs>
+ <defs><marker id="ng" markerUnits="userSpaceOnUse" markerWidth="18" markerHeight="16" refX="4" refY="8" orient="auto"><path d="M0 0 L18 8 L0 16 Z" fill="#1f9d6b"/></marker></defs>
  <ellipse cx="600" cy="86" rx="34" ry="12" fill="none" stroke="#8493ad" stroke-width="1.6"/>
  <text x="600" y="265" text-anchor="middle" class="lblb" fill="#1f9d6b">淨磁化 M</text>
  <text x="600" y="70" text-anchor="middle" class="lbl">進動(Larmor)</text>
@@ -200,7 +204,7 @@ table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--
   <line x1="60" y1="160" x2="60" y2="60" stroke="#1f9d6b" stroke-width="4" marker-end="url(#pu)"/>
   <text x="60" y="215" text-anchor="middle" class="lblb">平衡：M 沿 B₀</text>
  </g>
- <defs><marker id="pu" markerWidth="10" markerHeight="10" refX="6" refY="8" orient="auto"><path d="M3 0 L6 8 L0 8 Z" fill="#1f9d6b"/></marker>
+ <defs><marker id="pu" markerUnits="userSpaceOnUse" markerWidth="16" markerHeight="14" refX="4" refY="7" orient="auto"><path d="M0 0 L16 7 L0 14 Z" fill="#1f9d6b"/></marker>
   <marker id="po" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 Z" fill="#d9822b"/></marker></defs>
  <text x="250" y="130" text-anchor="middle" class="lbl">90°脈衝</text>
  <line x1="215" y1="150" x2="285" y2="150" stroke="#d9822b" stroke-width="3" marker-end="url(#po)"/>
@@ -217,7 +221,10 @@ table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--
  <g transform="translate(590,40)">
   <line x1="20" y1="160" x2="20" y2="30" stroke="#48597a" stroke-width="2"/>
   <line x1="20" y1="160" x2="110" y2="190" stroke="#48597a" stroke-width="2"/>
-  <path d="M15 95 q10 -10 20 0 q10 10 20 0 q10 -10 20 0" fill="none" stroke="#1f6feb" stroke-width="2.4"/>
+  <path d="M20 95 q7 -26 14 0 q7 22 14 0 q7 -17 14 0 q7 12 14 0 q7 -8 14 0 q7 5 14 0" fill="none" stroke="#1f6feb" stroke-width="2.4"/>
+  <text x="112" y="80" text-anchor="middle" class="lbl" font-size="11">FID</text>
+  <g fill="none" stroke="#d9822b" stroke-width="2"><ellipse cx="50" cy="140" rx="6" ry="14"/><ellipse cx="61" cy="140" rx="6" ry="14"/><ellipse cx="72" cy="140" rx="6" ry="14"/><ellipse cx="83" cy="140" rx="6" ry="14"/></g>
+  <text x="100" y="145" class="lbl" font-size="11">線圈</text>
   <text x="55" y="215" text-anchor="middle" class="lblb">接收線圈收訊號</text>
  </g>
 </svg></div><div><ul class="clean"><li>現代 NMR 用一個短 <strong>RF 脈衝</strong>同時激發一整段頻率(像敲鐘)</li><li><strong>90° 脈衝</strong>把淨磁化向量倒入 <strong>xy 平面</strong>，接收線圈就在那裡</li><li>脈衝後核相干進動、放出 RF 訊號被偵測</li><li>複雜的<strong>脈衝序列</strong>是 2-D NMR 解結構的關鍵</li></ul></div></div></div></section><section class="slide" data-slide="9" data-section="維持注意"><div class="slide-inner"><div class="kicker">10.2.2 弛豫</div><h2 class="slide-title">脈衝後怎麼回到平衡：T1 與 T2</h2><div class="grid2" style="margin-top:18px"><div class="card b"><div class="ic">🔁</div><div class="ct">T1 自旋-晶格弛豫</div><div class="cb">激發態核與周圍「晶格」交換能量，磁化沿 z 軸<strong>回復</strong></div></div><div class="card a"><div class="ic">🌀</div><div class="ct">T2 自旋-自旋弛豫</div><div class="cb">鄰近核互相影響使<strong>相位散開</strong>、xy 訊號衰減</div></div></div><div class="note" style="margin-top:16px">關鍵：<strong>不同型態(液態 vs 固態)弛豫速率不同</strong>。這正是 NMR 能分辨水分活動度、固/液脂、玻璃轉化的物理基礎。</div></div></section><section class="slide" data-slide="10" data-section="維持注意" data-game="g2"><div class="slide-inner"><div class="game no-nav" data-game="g2"><div class="game-head"><span class="tag a">小遊戲 ②</span><span class="gt">NMR 原理即時測驗</span><span class="score" id="g2score">0 / 5</span></div><div class="game-q" id="g2q"></div><div class="opts" id="g2opts"></div><div class="fb" id="g2fb"></div><div class="btnrow"><button class="btn ghost" id="g2next" style="display:none">下一題 →</button></div></div></div></section><section class="slide" data-slide="11" data-section="維持注意"><div class="slide-inner"><div class="kicker">10.2.3 化學位移與屏蔽</div><h2 class="slide-title">電子雲決定訊號<span class='hi'>落在哪</span></h2><div class="grid2-1" style="margin-top:8px"><div class="svgwrap">
@@ -265,7 +272,8 @@ table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--
  <text x="145" y="40" text-anchor="middle" class="lbl">樣品入</text>
  <circle cx="145" cy="165" r="9" fill="#d9822b"/>
  <text x="145" y="292" text-anchor="middle" class="lblb">超導磁鐵(液氦 4.2 K)</text>
- <text x="145" y="200" text-anchor="middle" class="lbl">探頭 probe</text>
+ <line x1="158" y1="160" x2="222" y2="150" stroke="#8493ad" stroke-width="1.2"/>
+ <text x="262" y="154" text-anchor="middle" class="lbl">探頭 probe</text>
  <!-- console -->
  <rect x="300" y="120" width="150" height="120" rx="10" fill="#fbeede" stroke="#d9822b" stroke-width="2.4"/>
  <text x="375" y="148" text-anchor="middle" class="lblb">控制台 Console</text>
@@ -290,7 +298,25 @@ function show(i){
   secTag.textContent='— '+(slides[cur].dataset.section||'')+' —';
   var ch=slides[cur].dataset.chart; if(ch) initChart(ch);
   var g=slides[cur].dataset.game; if(g) initGame(g);
+  fitSlide(); setTimeout(fitSlide,80);
 }
+/* Scale the active slide down (never up) so it always fits the window,
+   whatever the browser zoom, window size or projector resolution. */
+function fitSlide(){
+  slides.forEach(function(s){var e=s.querySelector('.slide-inner'); if(e){e.style.transform='';}});
+  if(window.innerWidth<=640) return;           /* phones keep the scrolling layout */
+  var s=slides[cur], el=s&&s.querySelector('.slide-inner'); if(!el) return;
+  var cs=getComputedStyle(s);
+  var availH=s.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom);
+  var availW=s.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight);
+  var h=el.scrollHeight, w=el.scrollWidth;
+  if(!h||!w) return;
+  var k=Math.min(1,availH/h,availW/w);
+  if(k<1){el.style.transformOrigin='center center';el.style.transform='scale('+Math.max(k,0.4).toFixed(3)+')';}
+}
+window.addEventListener('resize',fitSlide);
+if(document.fonts&&document.fonts.ready){document.fonts.ready.then(fitSlide);}
+document.addEventListener('click',function(){setTimeout(fitSlide,60)});
 function next(){show(cur+1)} function prev(){show(cur-1)}
 function toggleFs(){if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()}else{document.exitFullscreen&&document.exitFullscreen()}}
 document.addEventListener('keydown',function(e){

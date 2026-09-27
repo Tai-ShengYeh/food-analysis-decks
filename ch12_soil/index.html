@@ -75,8 +75,12 @@ table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--
 .hook .hi{color:var(--accent)}
 .svgwrap{display:flex;align-items:center;justify-content:center}
 .svgwrap svg{max-width:100%;max-height:62vh;height:auto}
-.lbl{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink-2)}
-.lblb{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink);font-weight:700}
+.lbl,.lblb{font-family:"Noto Sans TC",sans-serif}
+.lblb{font-weight:700}
+/* Defaults only: an SVG's own font-size / fill attributes win. */
+.lbl:not([font-size]),.lblb:not([font-size]){font-size:13px}
+.lbl:not([fill]){fill:var(--ink-2)}
+.lblb:not([fill]){fill:var(--ink)}
 .game{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 24px;box-shadow:var(--shadow)}
 .game-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
 .game-head .gt{font-weight:900;font-size:clamp(1.05rem,1.7vw,1.35rem);color:var(--ink)}
@@ -161,7 +165,7 @@ table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--
   <div class="eq" style="max-width:560px;margin:24px auto 0">分配係數 K = <span class="frac"><b>移動相中溶質濃度</b><span>固定相中溶質濃度</span></span><br>
   <span style="font-size:.8em;color:var(--ink-2)">與固定相作用越強 → 走得越慢 → 越晚洗出</span></div></div></div></section><section class="slide" data-slide="7" data-section="引起動機"><div class="slide-inner"><div class="kicker">12.3.1 歷史</div><h2 class="slide-title">從色素到<span class='hi'>層析學</span></h2><div class="grid2" style="margin-top:18px"><div class="card g"><div class="ic">🌿</div><div class="ct">1903 Tsvet</div><div class="cb">俄國植物學家用碳酸鈣管柱分離葉片色素，命名 chromatography</div></div><div class="card b"><div class="ic">🧪</div><div class="ct">1941 Martin & Synge</div><div class="cb">發展液–液分配層析，奠定理論板概念</div></div><div class="card a"><div class="ic">⛽</div><div class="ct">1960s GC</div><div class="cb">氣相層析商品化，先用於石油工業</div></div><div class="card b"><div class="ic">🚀</div><div class="ct">HPLC / SFC</div><div class="cb">由 GC 理論推進液相；SFC 1962 起應用於食品</div></div></div></div></section><section class="slide" data-slide="8" data-section="引起動機" data-game="g1"><div class="slide-inner"><div class="game no-nav" data-game="g1"><div class="game-head"><span class="tag a">小遊戲 ①</span><span class="gt">三種層析依「移動相」分類</span><span class="score" id="g1score">0 / 6</span></div><div class="game-q">移動相是什麼狀態？把 6 個關鍵字分到三類。</div><div class="pool" id="g1pool"></div><div class="buckets" id="g1buckets"></div><div class="fb" id="g1fb"></div><div class="btnrow"><button class="btn" id="g1check">檢查答案</button><button class="btn ghost" id="g1reset">重來</button></div></div></div></section><section class="slide" data-slide="9" data-section="維持注意"><div class="slide-inner"><div class="kicker">12.3.2 一般術語</div><h2 class="slide-title">層析家族<span class='hi'>樹</span></h2><div class="svgwrap" style="margin-top:10px">
 <svg viewBox="0 0 980 320">
- <rect x="400" y="14" width="180" height="48" rx="10" fill="#1f6feb"/>
+ <rect x="375" y="14" width="230" height="48" rx="10" fill="#1f6feb"/>
  <text x="490" y="44" text-anchor="middle" fill="#fff" font-weight="800" font-size="16">層析 Chromatography</text>
  <g stroke="#8493ad" stroke-width="2" fill="none">
   <path d="M460 62 C 300 90,210 95,200 120"/><path d="M490 62 v58"/>
@@ -178,15 +182,15 @@ table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--
   <text x="780" y="166" text-anchor="middle" class="lbl">移動相＝液體</text>
  </g>
  <g stroke="#8493ad" stroke-width="2" fill="none">
-  <path d="M740 176 C 640 205,600 210,590 235"/><path d="M780 176 v59"/>
-  <path d="M820 176 C 900 205,910 210,905 235"/></g>
+  <path d="M740 176 C 640 205,560 210,545 235"/><path d="M770 176 C 760 205,712 210,705 235"/>
+  <path d="M820 176 C 880 205,866 210,865 235"/></g>
  <g font-size="13" font-weight="700">
-  <rect x="500" y="235" width="180" height="44" rx="9" fill="#f6f9fd" stroke="#48597a" stroke-width="1.6"/>
-  <text x="590" y="262" text-anchor="middle" fill="#15233f">紙層析 Paper</text>
-  <rect x="690" y="235" width="180" height="44" rx="9" fill="#f6f9fd" stroke="#48597a" stroke-width="1.6"/>
-  <text x="780" y="262" text-anchor="middle" fill="#15233f">薄層 TLC</text>
-  <rect x="816" y="235" width="150" height="44" rx="9" fill="#f6f9fd" stroke="#48597a" stroke-width="1.6"/>
-  <text x="891" y="262" text-anchor="middle" fill="#15233f">管柱 Column</text>
+  <rect x="470" y="235" width="150" height="44" rx="9" fill="#f6f9fd" stroke="#48597a" stroke-width="1.6"/>
+  <text x="545" y="262" text-anchor="middle" fill="#15233f">紙層析 Paper</text>
+  <rect x="630" y="235" width="150" height="44" rx="9" fill="#f6f9fd" stroke="#48597a" stroke-width="1.6"/>
+  <text x="705" y="262" text-anchor="middle" fill="#15233f">薄層 TLC</text>
+  <rect x="790" y="235" width="150" height="44" rx="9" fill="#f6f9fd" stroke="#48597a" stroke-width="1.6"/>
+  <text x="865" y="262" text-anchor="middle" fill="#15233f">管柱 Column</text>
  </g>
 </svg></div><div class="note" style="margin-top:14px">依<strong>移動相</strong>分為 GC / LC / SFC；液相層析再分為平面式（紙、薄層 TLC）與管柱式。</div></div></section><section class="slide" data-slide="10" data-section="維持注意"><div class="slide-inner"><div class="kicker">12.3 管柱層析</div><h2 class="slide-title">管柱裡發生了什麼</h2><div class="grid2-1" style="margin-top:8px"><div class="svgwrap">
 <svg viewBox="0 0 300 400">
@@ -195,36 +199,41 @@ table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--
  <text x="150" y="33" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">注入樣品</text>
  <path d="M150 40 v18" stroke="#1f6feb" stroke-width="3"/>
  <rect x="110" y="58" width="80" height="270" rx="14" fill="url(#gc)" stroke="#1f6feb" stroke-width="3"/>
- <text x="150" y="78" text-anchor="middle" class="lblb">管柱 Column</text>
- <text x="150" y="96" text-anchor="middle" class="lbl">固定相</text>
+ <text x="102" y="150" text-anchor="end" class="lblb">管柱 Column</text>
+ <text x="102" y="168" text-anchor="end" class="lbl">(固定相)</text>
  <circle cx="135" cy="125" r="7" fill="#d9822b"/><circle cx="160" cy="135" r="7" fill="#d9822b"/>
  <circle cx="148" cy="180" r="7" fill="#1f9d6b"/><circle cx="166" cy="195" r="7" fill="#1f9d6b"/>
  <circle cx="138" cy="250" r="7" fill="#8b5cf6"/>
- <text x="232" y="100" class="lbl">移動相</text><text x="232" y="118" class="lbl">↓ 流洗</text>
- <text x="232" y="190" class="lbl">分配快</text><text x="232" y="208" class="lbl">→ 先出</text>
+ <text x="204" y="74" class="lbl">移動相</text><text x="204" y="92" class="lbl">↓ 流洗</text>
+ <text x="204" y="126" class="lbl">作用強</text><text x="204" y="144" class="lbl">→ 後出</text>
+ <text x="204" y="248" class="lbl">作用弱</text><text x="204" y="266" class="lbl">→ 先出</text>
  <path d="M150 328 v22" stroke="#1f6feb" stroke-width="3"/>
  <rect x="108" y="350" width="84" height="26" rx="7" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
  <text x="150" y="368" text-anchor="middle" class="lblb" font-size="12">偵測器 → 訊號</text>
  <text x="150" y="394" text-anchor="middle" class="lbl">管柱層析 Column chromatography</text>
 </svg></div><div><ul class="clean"><li><strong>移動相</strong>帶著樣品流過<strong>固定相</strong></li><li>各成分與固定相作用<span class='em'>強弱不同</span></li><li>作用弱者走得快 → <strong>先洗出</strong>；作用強者後出</li><li>出柱後經<strong>偵測器</strong>產生峰 (peak)</li></ul><div class="note" style="margin-top:14px">1903 年 Tsvet 用碳酸鈣管柱分離葉片色素，命名「chromatography」。</div></div></div></div></section><section class="slide" data-slide="11" data-section="維持注意"><div class="slide-inner"><div class="kicker">12.4 七大分離模式</div><h2 class="slide-title">依物理化學原理區分</h2><div class="grid2" style="margin-top:16px"><div class="card b"><div class="ic">🧲</div><div class="ct">吸附 / 分配</div><div class="cb">正相·逆相：靠極性差異 (van der Waals / 溶解度)</div></div><div class="card a"><div class="ic">💧</div><div class="ct">HILIC / HIC</div><div class="cb">親水交互作用 / 疏水交互作用</div></div><div class="card g"><div class="ic">⚡</div><div class="ct">離子交換</div><div class="cb">靜電作用，依電荷分離</div></div><div class="card b"><div class="ic">🔑</div><div class="ct">親和 / 排阻</div><div class="cb">專一結合 (affinity) / 依分子大小 (SEC)</div></div></div><div class="note" style="margin-top:14px">同一分離常牽涉<strong>不只一種機制</strong>；整理自 Table 12.3。</div></div></section><section class="slide" data-slide="12" data-section="維持注意" data-game="g2"><div class="slide-inner"><div class="game no-nav" data-game="g2"><div class="game-head"><span class="tag a">小遊戲 ②</span><span class="gt">層析原理即時測驗</span><span class="score" id="g2score">0 / 4</span></div><div class="game-q" id="g2q"></div><div class="opts" id="g2opts"></div><div class="fb" id="g2fb"></div><div class="btnrow"><button class="btn ghost" id="g2next" style="display:none">下一題 →</button></div></div></div></section><section class="slide" data-slide="13" data-section="維持注意"><div class="slide-inner"><div class="kicker">12.4.1 / 12.4.2</div><h2 class="slide-title">正相 vs 逆相</h2><div class="grid2" style="margin-top:16px"><div class="card a"><div class="ic">🟠</div><div class="ct">正相 Normal-phase</div><div class="cb">固定相<strong>極性</strong>(silica)、移動相非極性；<strong>非極性先出、極性後出</strong></div></div><div class="card b"><div class="ic">🔵</div><div class="ct">逆相 Reversed-phase</div><div class="cb">固定相<strong>非極性</strong>(C8/C18)、移動相極性(水/乙腈)；<strong>極性先出</strong></div></div></div><div class="note" style="margin-top:18px">逆相 HPLC 是食品分析<strong>最常用</strong>：維生素、多酚、類胡蘿蔔素、類黃酮。</div></div></section><section class="slide" data-slide="14" data-section="維持注意"><div class="slide-inner"><div class="kicker">12.3.5 超臨界流體</div><h2 class="slide-title">SFC：介於 GC 與 LC</h2><div class="grid2" style="margin-top:16px"><div class="card g"><div class="ic">🌫️</div><div class="ct">移動相</div><div class="cb">超臨界 CO₂（介於氣/液之間），可調壓力、溫度與組成</div></div><div class="card b"><div class="ic">🧴</div><div class="ct">強項</div><div class="cb">分析<strong>非揮發·熱不安定</strong>物；脂質、脂溶性維生素、Sudan 染料</div></div></div><div class="note" style="margin-top:18px">分析時間短、溶劑用量少；可用填充或毛細管柱，並可接質譜 (MS)。</div></div></section><section class="slide" data-slide="15" data-section="維持注意"><div class="slide-inner"><div class="kicker">12.4.5 離子交換</div><h2 class="slide-title">靠電荷分離</h2><div class="grid2" style="margin-top:16px"><div class="card b"><div class="ic">➖</div><div class="ct">陽離子交換</div><div class="cb">固定相帶<strong>負電</strong>(RSO₃⁻/RCO₂⁻)，抓陽離子</div></div><div class="card a"><div class="ic">➕</div><div class="ct">陰離子交換</div><div class="cb">固定相帶<strong>正電</strong>(R-NHR'₂⁺)，抓陰離子</div></div></div><div class="note" style="margin-top:18px">溶離策略：改變<strong>pH</strong> 或提高<strong>離子強度</strong>(如加 NaCl) 以削弱靜電作用。</div></div></section><section class="slide" data-slide="16" data-section="維持注意"><div class="slide-inner"><div class="kicker">12.4.6 親和層析</div><h2 class="slide-title">Affinity：專一鎖定</h2><div class="grid2" style="margin-top:16px"><div><ul class="clean"><li>固定相接上<strong>專一配基</strong>(抗體、酵素抑制劑、凝集素)</li><li>只有目標分子被<span class='em'>專一結合</span>，其餘直接洗掉</li><li>改 pH / 離子強度，或加競爭配基即可溶離</li><li>純化單一蛋白的<strong>高選擇性</strong>利器</li></ul></div><div class="note">「鑰匙–鎖」式的辨識：靠生物專一性而非極性或電荷，純化倍率極高，常一步到位。</div></div></div></section><section class="slide" data-slide="17" data-section="維持注意" data-game="g4"><div class="slide-inner"><div class="game no-nav" data-game="g4"><div class="game-head"><span class="tag a">小遊戲 ③</span><span class="gt">層析分析流程排序</span><span class="score" id="g4score">— / 7</span></div><div class="game-q">用 ▲▼ 把一次完整層析分析的 7 個步驟排成正確順序。</div><div class="sortlist" id="g4list"></div><div class="fb" id="g4fb"></div><div class="btnrow"><button class="btn" id="g4check">檢查順序</button><button class="btn ghost" id="g4reset">打亂重排</button></div></div></div></section><section class="slide" data-slide="18" data-section="維持注意"><div class="slide-inner"><div class="kicker">12.4.7 排阻層析</div><h2 class="slide-title">SEC：依大小篩分</h2><div class="grid2" style="margin-top:16px"><div><ul class="clean"><li>固定相為<strong>多孔膠體</strong>(如 Sephadex 葡聚醣)</li><li>大分子<span class='em'>進不了</span>孔洞 → 走孔隙體積 → <strong>先洗出</strong></li><li>小分子鑽進孔洞 → 路徑長 → 後出</li><li>可估蛋白質<strong>分子量</strong>(Kav vs log MW 檢量線)</li></ul></div><div class="note">與其他模式相反：<strong>大分子先出、小分子後出</strong>。溫和條件少變性，常作為純化的早期步驟，也可替代透析脫鹽。</div></div></div></section><section class="slide" data-slide="19" data-section="維持注意" data-chart="hetp"><div class="slide-inner"><div class="kicker">12.5.1.2.2 Van Deemter</div><h2 class="slide-title">找出最佳<span class='hi'>流速</span></h2><div class="chartbox" style="height:52vh"><canvas id="chart_hetp"></canvas></div><div class="cap">Van Deemter：HETP=A+B/u+Cu。HETP 越小、效率越高（代表性示意數據）。</div></div></section><section class="slide" data-slide="20" data-section="維持注意"><div class="slide-inner"><div class="kicker">12.5.1.2.1 滯留時間</div><h2 class="slide-title">讀懂層析圖</h2><div class="grid2" style="margin-top:16px"><div class="card b"><div class="ic">⏱️</div><div class="ct">滯留時間 t_R</div><div class="cb">成分從進樣到出峰所需時間（或滯留體積 V_R）</div></div><div class="card a"><div class="ic">💨</div><div class="ct">空容時間 t₀</div><div class="cb">不被滯留的成分(溶劑前緣)通過管柱的時間</div></div><div class="card g"><div class="ic">✂️</div><div class="ct">校正滯留 t'_R</div><div class="cb">t'_R = t_R − t₀，扣掉系統死體積後的真實滯留</div></div><div class="card b"><div class="ic">📐</div><div class="ct">峰寬 w</div><div class="cb">基線寬度 w = 4σ；半高寬 w½ 更準確</div></div></div><div class="note" style="margin-top:14px">跨系統比較時用<strong>校正滯留時間 t'_R</strong> 較可靠。</div></div></section><section class="slide" data-slide="21" data-section="維持注意"><div class="slide-inner"><div class="kicker">12.5.1 解析度</div><h2 class="slide-title">把峰<span class='hi'>分得開</span></h2><div class="svgwrap" style="margin-top:8px">
 <svg viewBox="0 0 560 250">
+ <defs><marker id="a2" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto-start-reverse">
+   <path d="M0 0 L8 4 L0 8 z" fill="#48597a"/></marker></defs>
  <g font-size="13">
   <line x1="40" y1="200" x2="540" y2="200" stroke="#8493ad" stroke-width="2"/>
   <line x1="40" y1="200" x2="40" y2="30" stroke="#8493ad" stroke-width="2"/>
   <text x="20" y="120" text-anchor="middle" class="lbl" transform="rotate(-90 20 120)">偵測訊號</text>
-  <text x="290" y="232" text-anchor="middle" class="lbl">時間 (或體積)</text>
-  <path d="M40 200 L160 198 Q200 198 215 120 Q230 198 270 198" fill="none" stroke="#1f6feb" stroke-width="2.6"/>
-  <path d="M270 198 Q330 198 350 70 Q372 198 460 198" fill="none" stroke="#d9822b" stroke-width="2.6"/>
+  <text x="290" y="240" text-anchor="middle" class="lbl">時間 (或體積)</text>
+  <path d="M140.0 200.0 L142.0 200.0 L144.0 200.0 L146.0 200.0 L148.0 200.0 L150.0 200.0 L152.0 200.0 L154.0 200.0 L156.0 200.0 L158.0 200.0 L160.0 200.0 L162.0 199.9 L164.0 199.9 L166.0 199.8 L168.0 199.7 L170.0 199.5 L172.0 199.3 L174.0 198.9 L176.0 198.3 L178.0 197.6 L180.0 196.5 L182.0 195.0 L184.0 193.1 L186.0 190.6 L188.0 187.5 L190.0 183.8 L192.0 179.3 L194.0 174.0 L196.0 168.1 L198.0 161.7 L200.0 154.9 L202.0 148.0 L204.0 141.2 L206.0 134.9 L208.0 129.4 L210.0 124.9 L212.0 121.8 L214.0 120.2 L216.0 120.2 L218.0 121.8 L220.0 124.9 L222.0 129.4 L224.0 134.9 L226.0 141.2 L228.0 148.0 L230.0 154.9 L232.0 161.7 L234.0 168.1 L236.0 174.0 L238.0 179.3 L240.0 183.8 L242.0 187.5 L244.0 190.6 L246.0 193.1 L248.0 195.0 L250.0 196.5 L252.0 197.6 L254.0 198.3 L256.0 198.9 L258.0 199.3 L260.0 199.5 L262.0 199.7 L264.0 199.8 L266.0 199.9 L268.0 199.9 L270.0 200.0 L272.0 200.0 L274.0 200.0 L276.0 200.0 L278.0 200.0 L280.0 200.0 L282.0 200.0 L284.0 200.0 L286.0 200.0 L288.0 200.0 L290.0 200.0" fill="none" stroke="#1f6feb" stroke-width="2.6"/>
+  <path d="M262.0 200.0 L264.0 200.0 L266.0 200.0 L268.0 200.0 L270.0 200.0 L272.0 199.9 L274.0 199.9 L276.0 199.9 L278.0 199.8 L280.0 199.7 L282.0 199.6 L284.0 199.5 L286.0 199.3 L288.0 199.0 L290.0 198.7 L292.0 198.2 L294.0 197.6 L296.0 196.9 L298.0 195.9 L300.0 194.7 L302.0 193.3 L304.0 191.5 L306.0 189.3 L308.0 186.8 L310.0 183.8 L312.0 180.3 L314.0 176.3 L316.0 171.7 L318.0 166.6 L320.0 161.0 L322.0 155.0 L324.0 148.5 L326.0 141.6 L328.0 134.5 L330.0 127.2 L332.0 120.0 L334.0 112.9 L336.0 106.1 L338.0 99.8 L340.0 94.1 L342.0 89.2 L344.0 85.3 L346.0 82.4 L348.0 80.6 L350.0 80.0 L352.0 80.6 L354.0 82.4 L356.0 85.3 L358.0 89.2 L360.0 94.1 L362.0 99.8 L364.0 106.1 L366.0 112.9 L368.0 120.0 L370.0 127.2 L372.0 134.5 L374.0 141.6 L376.0 148.5 L378.0 155.0 L380.0 161.0 L382.0 166.6 L384.0 171.7 L386.0 176.3 L388.0 180.3 L390.0 183.8 L392.0 186.8 L394.0 189.3 L396.0 191.5 L398.0 193.3 L400.0 194.7 L402.0 195.9 L404.0 196.9 L406.0 197.6 L408.0 198.2 L410.0 198.7 L412.0 199.0 L414.0 199.3 L416.0 199.5 L418.0 199.6 L420.0 199.7 L422.0 199.8 L424.0 199.9 L426.0 199.9 L428.0 199.9 L430.0 200.0 L432.0 200.0 L434.0 200.0 L436.0 200.0 L438.0 200.0 L440.0 200.0 L442.0 200.0 L444.0 200.0 L446.0 200.0 L448.0 200.0 L450.0 200.0 L452.0 200.0 L454.0 200.0 L456.0 200.0 L458.0 200.0 L460.0 200.0" fill="none" stroke="#d9822b" stroke-width="2.6"/>
+  <path d="M187.0 200 L215.0 103.0 L243.0 200" fill="none" stroke="#1f6feb" stroke-width="1" stroke-dasharray="4 3" opacity=".8"/>
+  <path d="M310.0 200 L350.0 54.4 L390.0 200" fill="none" stroke="#d9822b" stroke-width="1" stroke-dasharray="4 3" opacity=".8"/>
   <line x1="215" y1="120" x2="215" y2="200" stroke="#1f6feb" stroke-width="1" stroke-dasharray="3 3"/>
-  <line x1="350" y1="70" x2="350" y2="200" stroke="#d9822b" stroke-width="1" stroke-dasharray="3 3"/>
-  <line x1="215" y1="48" x2="350" y2="48" stroke="#48597a" stroke-width="1.4" marker-start="url(#a2)" marker-end="url(#a2)"/>
-  <text x="282" y="40" text-anchor="middle" class="lblb">Δt</text>
-  <text x="215" y="216" text-anchor="middle" class="lbl" fill="#1f6feb">t_R1</text>
-  <text x="350" y="216" text-anchor="middle" class="lbl" fill="#d9822b">t_R2</text>
-  <text x="190" y="186" text-anchor="middle" class="lbl">w₁</text>
-  <text x="405" y="186" text-anchor="middle" class="lbl">w₂</text>
-  <defs><marker id="a2" markerWidth="9" markerHeight="9" refX="4" refY="4" orient="auto">
-   <path d="M0 0 L8 4 L0 8 z" fill="#48597a"/></marker></defs>
+  <line x1="350" y1="80" x2="350" y2="200" stroke="#d9822b" stroke-width="1" stroke-dasharray="3 3"/>
+  <line x1="219" y1="56" x2="346" y2="56" stroke="#48597a" stroke-width="1.4" marker-start="url(#a2)" marker-end="url(#a2)"/>
+  <line x1="215" y1="50" x2="215" y2="118" stroke="#48597a" stroke-width="0.8"/>
+  <line x1="350" y1="50" x2="350" y2="78" stroke="#48597a" stroke-width="0.8"/>
+  <text x="282" y="48" text-anchor="middle" class="lblb">Δt</text>
+  <text x="215" y="218" text-anchor="middle" class="lbl" fill="#1f6feb">t<tspan font-size="10" dy="3">R1</tspan></text>
+  <text x="350" y="218" text-anchor="middle" class="lbl" fill="#d9822b">t<tspan font-size="10" dy="3">R2</tspan></text>
+  <text x="181" y="214" text-anchor="end" class="lbl" fill="#1f6feb">w₁</text>
+  <text x="396" y="214" text-anchor="start" class="lbl" fill="#d9822b">w₂</text>
   <text x="290" y="20" text-anchor="middle" class="lblb" font-size="15">層析峰與解析度 Rs = 2Δt / (w₁+w₂)</text>
  </g>
 </svg></div><div class="note" style="margin-top:14px">解析度 Rs 越大，兩峰分得越開。<strong>Rs = 2Δt / (w₁+w₂)</strong>（式 12.4），通常 Rs ≥ 1.5 視為基線分離。</div></div></section><section class="slide" data-slide="22" data-section="維持注意"><div class="slide-inner"><div class="kicker">12.5.1.2 三要素</div><h2 class="slide-title">效率 · 選擇性 · 容量</h2><div class="grid3" style="margin-top:22px"><div class="card b"><div class="ic">📊</div><div class="ct">效率 N</div><div class="cb">理論板數 N=16(t_R/w)²；板越多、峰越窄。HETP=L/N</div></div><div class="card a"><div class="ic">🎯</div><div class="ct">選擇性 α</div><div class="cb">分離因子 α=t'_R2/t'_R1；峰間相對距離</div></div><div class="card g"><div class="ic">⏱️</div><div class="ct">容量因子 k'</div><div class="cb">k'=(t_R−t₀)/t₀；停留在固定相的程度，常取 1–15</div></div></div><div class="note" style="margin-top:14px">Rs 與選擇性<strong>線性</strong>相關，但與效率僅<strong>平方根</strong>相關——N 要 4 倍才讓 Rs 加倍。</div></div></section><section class="slide" data-slide="23" data-section="維持注意" data-game="g3"><div class="slide-inner"><div class="game no-nav" data-game="g3"><div class="game-head"><span class="tag a">小遊戲 ④</span><span class="gt">固定相依「化學本質」分類</span><span class="score" id="g3score">0 / 6</span></div><div class="game-q">換個角度——這些分離模式的固定相本質是什麼？分到三類。</div><div class="pool" id="g3pool"></div><div class="buckets" id="g3buckets"></div><div class="fb" id="g3fb"></div><div class="btnrow"><button class="btn" id="g3check">檢查答案</button><button class="btn ghost" id="g3reset">重來</button></div></div></div></section><section class="slide" data-slide="24" data-section="維持注意"><div class="slide-inner"><div class="kicker">12.5.3 定量分析</div><h2 class="slide-title">內標 vs 外標</h2><div class="grid2" style="margin-top:16px"><div class="card b"><div class="ic">🧮</div><div class="ct">外標法</div><div class="cb">另外配標準品分開進樣，建<strong>峰面積–濃度</strong>檢量線；需偵測器穩定</div></div><div class="card a"><div class="ic">🎯</div><div class="ct">內標法</div><div class="cb">加入已知量內標物，用<strong>峰面積比</strong>校正；補償前處理損失與進樣誤差</div></div></div><div class="note" style="margin-top:18px">內標物須與分析物<strong>性質相似但分得開</strong>、且樣品中本不存在（Table 12.7）。</div></div></section><section class="slide" data-slide="25" data-section="維持注意" data-game="g5"><div class="slide-inner"><div class="game no-nav" data-game="g5"><div class="game-head"><span class="tag a">小遊戲 ⑤</span><span class="gt">決策挑戰：選對模式</span><span class="score" id="g5score">0 / 5</span></div><div class="game-q" id="g5q"></div><div class="opts" id="g5opts"></div><div class="fb" id="g5fb"></div><div class="btnrow"><button class="btn ghost" id="g5next" style="display:none">下一題 →</button></div></div></div></section><section class="slide" data-slide="26" data-section="喚起行動" data-game="cmp"><div class="slide-inner"><div class="kicker">12.4 模式比較</div><h2 class="slide-title">一張表選分離模式（點欄位排序）</h2><table class="cmp" id="cmpTable" style="margin-top:14px"><thead><tr><th data-k="m" data-t="s">模式 <span class="ar">⇅</span></th><th data-k="sp" data-t="s">固定相 <span class="ar">⇅</span></th><th data-k="mp" data-t="s">移動相 <span class="ar">⇅</span></th><th data-k="by" data-t="s">依何分離 <span class="ar">⇅</span></th></tr></thead><tbody></tbody></table><div class="cap">整合自 Table 12.3。點欄位標題可排序。</div></div></section><section class="slide" data-slide="27" data-section="喚起行動"><div class="slide-inner"><div class="kicker">方法選擇</div><h2 class="slide-title">跟著決策樹走</h2><div class="svgwrap" style="margin-top:10px">
@@ -270,7 +279,25 @@ function show(i){
   secTag.textContent='— '+(slides[cur].dataset.section||'')+' —';
   var ch=slides[cur].dataset.chart; if(ch) initChart(ch);
   var g=slides[cur].dataset.game; if(g) initGame(g);
+  fitSlide(); setTimeout(fitSlide,80);
 }
+/* Scale the active slide down (never up) so it always fits the window,
+   whatever the browser zoom, window size or projector resolution. */
+function fitSlide(){
+  slides.forEach(function(s){var e=s.querySelector('.slide-inner'); if(e){e.style.transform='';}});
+  if(window.innerWidth<=640) return;           /* phones keep the scrolling layout */
+  var s=slides[cur], el=s&&s.querySelector('.slide-inner'); if(!el) return;
+  var cs=getComputedStyle(s);
+  var availH=s.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom);
+  var availW=s.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight);
+  var h=el.scrollHeight, w=el.scrollWidth;
+  if(!h||!w) return;
+  var k=Math.min(1,availH/h,availW/w);
+  if(k<1){el.style.transformOrigin='center center';el.style.transform='scale('+Math.max(k,0.4).toFixed(3)+')';}
+}
+window.addEventListener('resize',fitSlide);
+if(document.fonts&&document.fonts.ready){document.fonts.ready.then(fitSlide);}
+document.addEventListener('click',function(){setTimeout(fitSlide,60)});
 function next(){show(cur+1)} function prev(){show(cur-1)}
 function toggleFs(){if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()}else{document.exitFullscreen&&document.exitFullscreen()}}
 document.addEventListener('keydown',function(e){

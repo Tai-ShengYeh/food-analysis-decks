@@ -75,8 +75,12 @@ table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--
 .hook .hi{color:var(--accent)}
 .svgwrap{display:flex;align-items:center;justify-content:center}
 .svgwrap svg{max-width:100%;max-height:62vh;height:auto}
-.lbl{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink-2)}
-.lblb{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink);font-weight:700}
+.lbl,.lblb{font-family:"Noto Sans TC",sans-serif}
+.lblb{font-weight:700}
+/* Defaults only: an SVG's own font-size / fill attributes win. */
+.lbl:not([font-size]),.lblb:not([font-size]){font-size:13px}
+.lbl:not([fill]){fill:var(--ink-2)}
+.lblb:not([fill]){fill:var(--ink)}
 .game{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 24px;box-shadow:var(--shadow)}
 .game-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
 .game-head .gt{font-weight:900;font-size:clamp(1.05rem,1.7vw,1.35rem);color:var(--ink)}
@@ -162,16 +166,19 @@ table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--
   <span style="font-size:.8em;color:var(--ink-2)">蛋白多含 16% N → 因子 = 100/16 = 6.25</span></div></div></div></section><section class="slide" data-slide="7" data-section="引起動機" data-game="g1"><div class="slide-inner"><div class="game no-nav" data-game="g1"><div class="game-head"><span class="tag a">小遊戲 ①</span><span class="gt">方法依「測什麼」分類</span><span class="score" id="g1score">0 / 7</span></div><div class="game-q">每個方法的化學基礎是什麼？把 7 個方法分到三類。</div><div class="pool" id="g1pool"></div><div class="buckets" id="g1buckets"></div><div class="fb" id="g1fb"></div><div class="btnrow"><button class="btn" id="g1check">檢查答案</button><button class="btn ghost" id="g1reset">重來</button></div></div></div></section><section class="slide" data-slide="8" data-section="維持注意"><div class="slide-inner"><div class="kicker">方法全覽</div><h2 class="slide-title">四大方法家族</h2><div class="grid2" style="margin-top:22px"><div class="card b"><div class="ic">🧪</div><div class="ct">氮法</div><div class="cb">Kjeldahl 凱氏定氮、Dumas 燃燒法</div></div><div class="card a"><div class="ic">📡</div><div class="ct">光譜法</div><div class="cb">紅外 IR / NIR（胜肽鍵）</div></div><div class="card g"><div class="ic">🎨</div><div class="ct">比色法</div><div class="cb">Biuret、Lowry、BCA、染料結合</div></div><div class="card b"><div class="ic">🔆</div><div class="ct">UV 吸收</div><div class="cb">280nm(Trp/Tyr)、220nm(胜肽鍵)</div></div></div></div></section><section class="slide" data-slide="9" data-section="維持注意"><div class="slide-inner"><div class="kicker">18.2.1 凱氏定氮</div><h2 class="slide-title">Kjeldahl：百年經典</h2><div class="grid2-1" style="margin-top:8px"><div class="svgwrap">
 <svg viewBox="0 0 300 380">
  <defs><linearGradient id="gk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eaf2ff"/><stop offset="1" stop-color="#cfe0f6"/></linearGradient></defs>
- <path d="M150 20 v90" stroke="#1f6feb" stroke-width="3"/>
- <path d="M135 24 h30" stroke="#1f6feb" stroke-width="3"/>
- <circle cx="150" cy="250" r="78" fill="url(#gk)" stroke="#1f6feb" stroke-width="3"/>
- <path d="M138 112 h24 v40 h-24 z" fill="url(#gk)" stroke="#1f6feb" stroke-width="3"/>
- <path d="M95 270 a58 58 0 0 0 110 0 z" fill="#fbeede"/>
- <text x="150" y="258" text-anchor="middle" class="lblb">樣品 + H₂SO₄</text>
- <text x="150" y="278" text-anchor="middle" class="lbl">+ 催化劑</text>
- <path d="M132 70 q6 -14 12 0 M150 60 q6 -14 12 0" fill="none" stroke="#d9822b" stroke-width="2.4"/>
- <text x="210" y="70" class="lbl">加熱消化</text>
- <rect x="104" y="336" width="92" height="18" rx="6" fill="#48597a"/>
+ <!-- Kjeldahl flask: round bulb + long neck in one piece -->
+ <path d="M140 30 V172 A72 72 0 1 0 160 172 V30" fill="url(#gk)" stroke="#1f6feb" stroke-width="3" stroke-linejoin="round"/>
+ <path d="M136 30 h28" stroke="#1f6feb" stroke-width="3" stroke-linecap="round"/>
+ <path d="M91 262 a60 60 0 0 0 118 0 z" fill="#fbeede"/>
+ <text x="150" y="236" text-anchor="middle" class="lblb">樣品 + H₂SO₄</text>
+ <text x="150" y="254" text-anchor="middle" class="lbl">+ 催化劑</text>
+ <!-- acid fumes leave the neck -->
+ <path d="M145 24 q-4 -4 0 -8 q4 -4 0 -8 q-4 -4 0 -6 M155 24 q-4 -4 0 -8 q4 -4 0 -8 q-4 -4 0 -6" fill="none" stroke="#8493ad" stroke-width="1.6"/>
+ <text x="176" y="60" class="lbl" font-size="12">長頸：減少酸液噴濺</text>
+ <!-- heater with flames under the flask -->
+ <path d="M128 330 q5 -12 10 0 M146 330 q5 -12 10 0 M164 330 q5 -12 10 0" fill="none" stroke="#d9822b" stroke-width="2.4"/>
+ <rect x="104" y="334" width="92" height="16" rx="6" fill="#48597a"/>
+ <text x="206" y="347" class="lbl">加熱消化</text>
  <text x="150" y="372" text-anchor="middle" class="lbl">凱氏瓶 Kjeldahl flask</text>
 </svg></div><div><ul class="clean"><li><strong>消化</strong>：H₂SO₄ + 催化劑把有機氮轉成硫酸銨</li><li><strong>中和蒸餾</strong>：加鹼釋出氨，蒸餾入硼酸液</li><li><strong>滴定</strong>：標準 HCl 滴定硼酸根 → 算出 N</li><li>測到的是<span class='em'>粗蛋白</span>（含非蛋白氮）</li></ul><div class="note" style="margin-top:14px">1883 年 Johann Kjeldahl 發明；三步驟沿用至今。</div></div></div></div></section><section class="slide" data-slide="10" data-section="維持注意" data-chart="fac"><div class="slide-inner"><div class="kicker">18.2.1 換算因子</div><h2 class="slide-title">為什麼換算因子<span class='hi'>不一樣</span>？</h2><div class="chartbox" style="height:52vh"><canvas id="chart_fac"></canvas></div><div class="cap">Table 18.3：不同食物蛋白的含氮量不同 → 換算因子不同。</div></div></section><section class="slide" data-slide="11" data-section="維持注意" data-game="g2"><div class="slide-inner"><div class="game no-nav" data-game="g2"><div class="game-head"><span class="tag a">小遊戲 ②</span><span class="gt">凱氏定氮即時測驗</span><span class="score" id="g2score">0 / 4</span></div><div class="game-q" id="g2q"></div><div class="opts" id="g2opts"></div><div class="fb" id="g2fb"></div><div class="btnrow"><button class="btn ghost" id="g2next" style="display:none">下一題 →</button></div></div></div></section><section class="slide" data-slide="12" data-section="維持注意"><div class="slide-inner"><div class="kicker">18.2.2 Dumas 燃燒法</div><h2 class="slide-title">Dumas：快速、安全、自動</h2><div class="svgwrap" style="margin-top:10px">
 <svg viewBox="0 0 560 230">
@@ -181,7 +188,7 @@ table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--
   <text x="69" y="126" text-anchor="middle" class="lbl">700–1000°C / O₂</text>
   <rect x="160" y="80" width="110" height="64" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
   <text x="215" y="106" text-anchor="middle" class="lblb">銅還原管</text>
-  <text x="215" y="126" text-anchor="middle" class="lbl">600°C：NOx→N₂</text>
+  <text x="215" y="126" text-anchor="middle" class="lbl" font-size="12">600°C：NOx→N₂</text>
   <rect x="306" y="80" width="110" height="64" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
   <text x="361" y="106" text-anchor="middle" class="lblb">GC 管柱</text>
   <text x="361" y="126" text-anchor="middle" class="lbl">He 載送分離</text>
@@ -237,7 +244,25 @@ function show(i){
   secTag.textContent='— '+(slides[cur].dataset.section||'')+' —';
   var ch=slides[cur].dataset.chart; if(ch) initChart(ch);
   var g=slides[cur].dataset.game; if(g) initGame(g);
+  fitSlide(); setTimeout(fitSlide,80);
 }
+/* Scale the active slide down (never up) so it always fits the window,
+   whatever the browser zoom, window size or projector resolution. */
+function fitSlide(){
+  slides.forEach(function(s){var e=s.querySelector('.slide-inner'); if(e){e.style.transform='';}});
+  if(window.innerWidth<=640) return;           /* phones keep the scrolling layout */
+  var s=slides[cur], el=s&&s.querySelector('.slide-inner'); if(!el) return;
+  var cs=getComputedStyle(s);
+  var availH=s.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom);
+  var availW=s.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight);
+  var h=el.scrollHeight, w=el.scrollWidth;
+  if(!h||!w) return;
+  var k=Math.min(1,availH/h,availW/w);
+  if(k<1){el.style.transformOrigin='center center';el.style.transform='scale('+Math.max(k,0.4).toFixed(3)+')';}
+}
+window.addEventListener('resize',fitSlide);
+if(document.fonts&&document.fonts.ready){document.fonts.ready.then(fitSlide);}
+document.addEventListener('click',function(){setTimeout(fitSlide,60)});
 function next(){show(cur+1)} function prev(){show(cur-1)}
 function toggleFs(){if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()}else{document.exitFullscreen&&document.exitFullscreen()}}
 document.addEventListener('keydown',function(e){

@@ -19,45 +19,64 @@ COLUMN_SVG = """
  <text x="150" y="33" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">注入樣品</text>
  <path d="M150 40 v18" stroke="#1f6feb" stroke-width="3"/>
  <rect x="110" y="58" width="80" height="270" rx="14" fill="url(#gc)" stroke="#1f6feb" stroke-width="3"/>
- <text x="150" y="78" text-anchor="middle" class="lblb">管柱 Column</text>
- <text x="150" y="96" text-anchor="middle" class="lbl">固定相</text>
+ <text x="102" y="150" text-anchor="end" class="lblb">管柱 Column</text>
+ <text x="102" y="168" text-anchor="end" class="lbl">(固定相)</text>
  <circle cx="135" cy="125" r="7" fill="#d9822b"/><circle cx="160" cy="135" r="7" fill="#d9822b"/>
  <circle cx="148" cy="180" r="7" fill="#1f9d6b"/><circle cx="166" cy="195" r="7" fill="#1f9d6b"/>
  <circle cx="138" cy="250" r="7" fill="#8b5cf6"/>
- <text x="232" y="100" class="lbl">移動相</text><text x="232" y="118" class="lbl">↓ 流洗</text>
- <text x="232" y="190" class="lbl">分配快</text><text x="232" y="208" class="lbl">→ 先出</text>
+ <text x="204" y="74" class="lbl">移動相</text><text x="204" y="92" class="lbl">↓ 流洗</text>
+ <text x="204" y="126" class="lbl">作用強</text><text x="204" y="144" class="lbl">→ 後出</text>
+ <text x="204" y="248" class="lbl">作用弱</text><text x="204" y="266" class="lbl">→ 先出</text>
  <path d="M150 328 v22" stroke="#1f6feb" stroke-width="3"/>
  <rect x="108" y="350" width="84" height="26" rx="7" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
  <text x="150" y="368" text-anchor="middle" class="lblb" font-size="12">偵測器 → 訊號</text>
  <text x="150" y="394" text-anchor="middle" class="lbl">管柱層析 Column chromatography</text>
 </svg>"""
 
+import math as _m
+def _gauss(c, h, sd, x0, x1, base=200):
+    pts = []
+    x = x0
+    while x <= x1 + 0.01:
+        pts.append("%.1f %.1f" % (x, base - h * _m.exp(-((x - c) / sd) ** 2 / 2)))
+        x += 2
+    return "M" + " L".join(pts)
+def _tangents(c, h, sd, col, base=200):
+    top = base - 2 * h * _m.exp(-0.5)
+    return ('<path d="M%.1f %d L%.1f %.1f L%.1f %d" fill="none" stroke="%s" stroke-width="1" stroke-dasharray="4 3" opacity=".8"/>'
+            % (c - 2 * sd, base, c, top, c + 2 * sd, base, col))
+_P1 = (215, 80, 14)   # centre, height, sigma  -> w1 = 4σ = 56
+_P2 = (350, 120, 20)  # -> w2 = 80
 PEAK_SVG = """
 <svg viewBox="0 0 560 250">
+ <defs><marker id="a2" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto-start-reverse">
+   <path d="M0 0 L8 4 L0 8 z" fill="#48597a"/></marker></defs>
  <g font-size="13">
   <line x1="40" y1="200" x2="540" y2="200" stroke="#8493ad" stroke-width="2"/>
   <line x1="40" y1="200" x2="40" y2="30" stroke="#8493ad" stroke-width="2"/>
   <text x="20" y="120" text-anchor="middle" class="lbl" transform="rotate(-90 20 120)">偵測訊號</text>
-  <text x="290" y="232" text-anchor="middle" class="lbl">時間 (或體積)</text>
-  <path d="M40 200 L160 198 Q200 198 215 120 Q230 198 270 198" fill="none" stroke="#1f6feb" stroke-width="2.6"/>
-  <path d="M270 198 Q330 198 350 70 Q372 198 460 198" fill="none" stroke="#d9822b" stroke-width="2.6"/>
+  <text x="290" y="240" text-anchor="middle" class="lbl">時間 (或體積)</text>
+  <path d="%s" fill="none" stroke="#1f6feb" stroke-width="2.6"/>
+  <path d="%s" fill="none" stroke="#d9822b" stroke-width="2.6"/>
+  %s
+  %s
   <line x1="215" y1="120" x2="215" y2="200" stroke="#1f6feb" stroke-width="1" stroke-dasharray="3 3"/>
-  <line x1="350" y1="70" x2="350" y2="200" stroke="#d9822b" stroke-width="1" stroke-dasharray="3 3"/>
-  <line x1="215" y1="48" x2="350" y2="48" stroke="#48597a" stroke-width="1.4" marker-start="url(#a2)" marker-end="url(#a2)"/>
-  <text x="282" y="40" text-anchor="middle" class="lblb">Δt</text>
-  <text x="215" y="216" text-anchor="middle" class="lbl" fill="#1f6feb">t_R1</text>
-  <text x="350" y="216" text-anchor="middle" class="lbl" fill="#d9822b">t_R2</text>
-  <text x="190" y="186" text-anchor="middle" class="lbl">w₁</text>
-  <text x="405" y="186" text-anchor="middle" class="lbl">w₂</text>
-  <defs><marker id="a2" markerWidth="9" markerHeight="9" refX="4" refY="4" orient="auto">
-   <path d="M0 0 L8 4 L0 8 z" fill="#48597a"/></marker></defs>
+  <line x1="350" y1="80" x2="350" y2="200" stroke="#d9822b" stroke-width="1" stroke-dasharray="3 3"/>
+  <line x1="219" y1="56" x2="346" y2="56" stroke="#48597a" stroke-width="1.4" marker-start="url(#a2)" marker-end="url(#a2)"/>
+  <line x1="215" y1="50" x2="215" y2="118" stroke="#48597a" stroke-width="0.8"/>
+  <line x1="350" y1="50" x2="350" y2="78" stroke="#48597a" stroke-width="0.8"/>
+  <text x="282" y="48" text-anchor="middle" class="lblb">Δt</text>
+  <text x="215" y="218" text-anchor="middle" class="lbl" fill="#1f6feb">t<tspan font-size="10" dy="3">R1</tspan></text>
+  <text x="350" y="218" text-anchor="middle" class="lbl" fill="#d9822b">t<tspan font-size="10" dy="3">R2</tspan></text>
+  <text x="181" y="214" text-anchor="end" class="lbl" fill="#1f6feb">w₁</text>
+  <text x="396" y="214" text-anchor="start" class="lbl" fill="#d9822b">w₂</text>
   <text x="290" y="20" text-anchor="middle" class="lblb" font-size="15">層析峰與解析度 Rs = 2Δt / (w₁+w₂)</text>
  </g>
-</svg>"""
+</svg>""" % (_gauss(*_P1, 140, 290), _gauss(*_P2, 262, 460), _tangents(*_P1, "#1f6feb"), _tangents(*_P2, "#d9822b"))
 
 FAMILY_SVG = """
 <svg viewBox="0 0 980 320">
- <rect x="400" y="14" width="180" height="48" rx="10" fill="#1f6feb"/>
+ <rect x="375" y="14" width="230" height="48" rx="10" fill="#1f6feb"/>
  <text x="490" y="44" text-anchor="middle" fill="#fff" font-weight="800" font-size="16">層析 Chromatography</text>
  <g stroke="#8493ad" stroke-width="2" fill="none">
   <path d="M460 62 C 300 90,210 95,200 120"/><path d="M490 62 v58"/>
@@ -74,15 +93,15 @@ FAMILY_SVG = """
   <text x="780" y="166" text-anchor="middle" class="lbl">移動相＝液體</text>
  </g>
  <g stroke="#8493ad" stroke-width="2" fill="none">
-  <path d="M740 176 C 640 205,600 210,590 235"/><path d="M780 176 v59"/>
-  <path d="M820 176 C 900 205,910 210,905 235"/></g>
+  <path d="M740 176 C 640 205,560 210,545 235"/><path d="M770 176 C 760 205,712 210,705 235"/>
+  <path d="M820 176 C 880 205,866 210,865 235"/></g>
  <g font-size="13" font-weight="700">
-  <rect x="500" y="235" width="180" height="44" rx="9" fill="#f6f9fd" stroke="#48597a" stroke-width="1.6"/>
-  <text x="590" y="262" text-anchor="middle" fill="#15233f">紙層析 Paper</text>
-  <rect x="690" y="235" width="180" height="44" rx="9" fill="#f6f9fd" stroke="#48597a" stroke-width="1.6"/>
-  <text x="780" y="262" text-anchor="middle" fill="#15233f">薄層 TLC</text>
-  <rect x="816" y="235" width="150" height="44" rx="9" fill="#f6f9fd" stroke="#48597a" stroke-width="1.6"/>
-  <text x="891" y="262" text-anchor="middle" fill="#15233f">管柱 Column</text>
+  <rect x="470" y="235" width="150" height="44" rx="9" fill="#f6f9fd" stroke="#48597a" stroke-width="1.6"/>
+  <text x="545" y="262" text-anchor="middle" fill="#15233f">紙層析 Paper</text>
+  <rect x="630" y="235" width="150" height="44" rx="9" fill="#f6f9fd" stroke="#48597a" stroke-width="1.6"/>
+  <text x="705" y="262" text-anchor="middle" fill="#15233f">薄層 TLC</text>
+  <rect x="790" y="235" width="150" height="44" rx="9" fill="#f6f9fd" stroke="#48597a" stroke-width="1.6"/>
+  <text x="865" y="262" text-anchor="middle" fill="#15233f">管柱 Column</text>
  </g>
 </svg>"""
 

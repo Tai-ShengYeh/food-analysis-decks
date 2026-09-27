@@ -15,16 +15,19 @@ def add(sec, inner, attr=""):
 KJELDAHL_SVG = """
 <svg viewBox="0 0 300 380">
  <defs><linearGradient id="gk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eaf2ff"/><stop offset="1" stop-color="#cfe0f6"/></linearGradient></defs>
- <path d="M150 20 v90" stroke="#1f6feb" stroke-width="3"/>
- <path d="M135 24 h30" stroke="#1f6feb" stroke-width="3"/>
- <circle cx="150" cy="250" r="78" fill="url(#gk)" stroke="#1f6feb" stroke-width="3"/>
- <path d="M138 112 h24 v40 h-24 z" fill="url(#gk)" stroke="#1f6feb" stroke-width="3"/>
- <path d="M95 270 a58 58 0 0 0 110 0 z" fill="#fbeede"/>
- <text x="150" y="258" text-anchor="middle" class="lblb">樣品 + H₂SO₄</text>
- <text x="150" y="278" text-anchor="middle" class="lbl">+ 催化劑</text>
- <path d="M132 70 q6 -14 12 0 M150 60 q6 -14 12 0" fill="none" stroke="#d9822b" stroke-width="2.4"/>
- <text x="210" y="70" class="lbl">加熱消化</text>
- <rect x="104" y="336" width="92" height="18" rx="6" fill="#48597a"/>
+ <!-- Kjeldahl flask: round bulb + long neck in one piece -->
+ <path d="M140 30 V172 A72 72 0 1 0 160 172 V30" fill="url(#gk)" stroke="#1f6feb" stroke-width="3" stroke-linejoin="round"/>
+ <path d="M136 30 h28" stroke="#1f6feb" stroke-width="3" stroke-linecap="round"/>
+ <path d="M91 262 a60 60 0 0 0 118 0 z" fill="#fbeede"/>
+ <text x="150" y="236" text-anchor="middle" class="lblb">樣品 + H₂SO₄</text>
+ <text x="150" y="254" text-anchor="middle" class="lbl">+ 催化劑</text>
+ <!-- acid fumes leave the neck -->
+ <path d="M145 24 q-4 -4 0 -8 q4 -4 0 -8 q-4 -4 0 -6 M155 24 q-4 -4 0 -8 q4 -4 0 -8 q-4 -4 0 -6" fill="none" stroke="#8493ad" stroke-width="1.6"/>
+ <text x="176" y="60" class="lbl" font-size="12">長頸：減少酸液噴濺</text>
+ <!-- heater with flames under the flask -->
+ <path d="M128 330 q5 -12 10 0 M146 330 q5 -12 10 0 M164 330 q5 -12 10 0" fill="none" stroke="#d9822b" stroke-width="2.4"/>
+ <rect x="104" y="334" width="92" height="16" rx="6" fill="#48597a"/>
+ <text x="206" y="347" class="lbl">加熱消化</text>
  <text x="150" y="372" text-anchor="middle" class="lbl">凱氏瓶 Kjeldahl flask</text>
 </svg>"""
 
@@ -36,7 +39,7 @@ DUMAS_SVG = """
   <text x="69" y="126" text-anchor="middle" class="lbl">700–1000°C / O₂</text>
   <rect x="160" y="80" width="110" height="64" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
   <text x="215" y="106" text-anchor="middle" class="lblb">銅還原管</text>
-  <text x="215" y="126" text-anchor="middle" class="lbl">600°C：NOx→N₂</text>
+  <text x="215" y="126" text-anchor="middle" class="lbl" font-size="12">600°C：NOx→N₂</text>
   <rect x="306" y="80" width="110" height="64" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
   <text x="361" y="106" text-anchor="middle" class="lblb">GC 管柱</text>
   <text x="361" y="126" text-anchor="middle" class="lbl">He 載送分離</text>

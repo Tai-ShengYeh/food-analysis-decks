@@ -32,19 +32,21 @@ OVEN_SVG = """
 
 KF_SVG = """
 <svg viewBox="0 0 480 340">
- <defs><marker id="arkf" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#1f9d6b"/></marker></defs>
+ <defs><marker id="arkf" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#1f9d6b"/></marker></defs>
  <text x="240" y="22" text-anchor="middle" class="lblb" font-size="15">Karl Fischer 滴定</text>
- <!-- 滴定管 burette -->
+ <!-- 滴定管 burette: straight graduated tube, 0 at top, stopcock at bottom -->
  <rect x="170" y="44" width="26" height="92" rx="3" fill="#eaf2ff" stroke="#1f6feb" stroke-width="2.5"/>
- <rect x="173" y="58" width="20" height="62" fill="#d9822b" opacity="0.5"/>
- <line x1="170" y1="72" x2="178" y2="72" stroke="#1f6feb" stroke-width="1.2"/>
- <line x1="170" y1="94" x2="178" y2="94" stroke="#1f6feb" stroke-width="1.2"/>
- <line x1="170" y1="116" x2="178" y2="116" stroke="#1f6feb" stroke-width="1.2"/>
+ <rect x="173" y="60" width="20" height="74" fill="#d9822b" opacity="0.5"/>
+ <line x1="168" y1="52" x2="178" y2="52" stroke="#1f6feb" stroke-width="1.1"/><line x1="170" y1="60" x2="178" y2="60" stroke="#1f6feb" stroke-width="1.1"/><line x1="170" y1="68" x2="178" y2="68" stroke="#1f6feb" stroke-width="1.1"/><line x1="170" y1="76" x2="178" y2="76" stroke="#1f6feb" stroke-width="1.1"/><line x1="170" y1="84" x2="178" y2="84" stroke="#1f6feb" stroke-width="1.1"/><line x1="168" y1="92" x2="178" y2="92" stroke="#1f6feb" stroke-width="1.1"/><line x1="170" y1="100" x2="178" y2="100" stroke="#1f6feb" stroke-width="1.1"/><line x1="170" y1="108" x2="178" y2="108" stroke="#1f6feb" stroke-width="1.1"/><line x1="170" y1="116" x2="178" y2="116" stroke="#1f6feb" stroke-width="1.1"/><line x1="170" y1="124" x2="178" y2="124" stroke="#1f6feb" stroke-width="1.1"/>
+ <text x="200" y="56" class="lbl" font-size="10">0</text>
  <text x="162" y="66" text-anchor="end" class="lblb">滴定管</text>
  <text x="162" y="84" text-anchor="end" class="lbl">KF 試劑 (I₂)</text>
+ <path d="M176 136 L180 146 L186 146 L190 136" fill="#eaf2ff" stroke="#1f6feb" stroke-width="2"/>
+ <rect x="175" y="146" width="16" height="7" rx="2" fill="#48597a"/>
+ <line x1="191" y1="149.5" x2="202" y2="149.5" stroke="#48597a" stroke-width="3" stroke-linecap="round"/>
  <!-- 加液管 + 滴 -->
- <path d="M183 136 v42" stroke="#1f6feb" stroke-width="3" fill="none"/>
- <circle cx="183" cy="170" r="3.4" fill="#d9822b"/>
+ <path d="M183 153 v25" stroke="#1f6feb" stroke-width="3" fill="none"/>
+ <circle cx="183" cy="168" r="3.4" fill="#d9822b"/>
  <!-- 密閉蓋 -->
  <rect x="120" y="178" width="126" height="12" rx="4" fill="#cfe0f6" stroke="#1f6feb" stroke-width="2"/>
  <text x="175" y="173" text-anchor="end" class="lbl">密閉蓋 · 隔絕大氣水分</text>
@@ -68,22 +70,40 @@ KF_SVG = """
 
 DIST_SVG = """
 <svg viewBox="0 0 420 300">
- <defs><linearGradient id="gd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbeede"/><stop offset="1" stop-color="#f3d6b0"/></linearGradient></defs>
- <path d="M70 230 a58 58 0 1 0 -4 0 z" fill="url(#gd)" stroke="#1f6feb" stroke-width="3"/>
- <text x="68" y="200" text-anchor="middle" class="lblb">樣品</text>
- <text x="68" y="220" text-anchor="middle" class="lbl">+ 甲苯</text>
- <path d="M50 246 q4 -12 8 0 M70 246 q4 -12 8 0" fill="none" stroke="#d9822b" stroke-width="2.4"/>
- <text x="68" y="284" text-anchor="middle" class="lbl">加熱共沸</text>
- <path d="M68 116 v-44 h120" stroke="#1f6feb" stroke-width="3" fill="none"/>
- <rect x="188" y="56" width="34" height="120" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
- <text x="205" y="48" text-anchor="middle" class="lbl">水分收集管</text>
- <rect x="190" y="120" width="30" height="52" fill="#cfe0f6"/>
- <text x="205" y="150" text-anchor="middle" class="lblb" font-size="12">水</text>
- <path d="M222 80 h70" stroke="#1f6feb" stroke-width="3" fill="none"/>
- <rect x="292" y="50" width="110" height="60" rx="10" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
- <text x="347" y="76" text-anchor="middle" class="lblb" font-size="13">冷凝管</text>
- <text x="347" y="96" text-anchor="middle" class="lbl" font-size="12">回流甲苯</text>
- <text x="210" y="28" text-anchor="middle" class="lblb" font-size="15">甲苯共沸蒸餾（Bidwell–Sterling）</text>
+ <defs><linearGradient id="gd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbeede"/><stop offset="1" stop-color="#f3d6b0"/></linearGradient>
+  <marker id="ard" markerUnits="userSpaceOnUse" markerWidth="9" markerHeight="8" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#48597a"/></marker></defs>
+ <text x="210" y="22" text-anchor="middle" class="lblb" font-size="15">甲苯共沸蒸餾（Bidwell–Sterling）</text>
+ <!-- round-bottom flask -->
+ <circle cx="90" cy="212" r="48" fill="url(#gd)" stroke="#1f6feb" stroke-width="3"/>
+ <rect x="81" y="122" width="18" height="46" fill="#fbeede" stroke="#1f6feb" stroke-width="2.4"/>
+ <rect x="83" y="160" width="14" height="12" fill="#fbeede"/>
+ <text x="90" y="210" text-anchor="middle" class="lblb">樣品</text>
+ <text x="90" y="229" text-anchor="middle" class="lbl">+ 甲苯</text>
+ <path d="M76 272 q4 -12 8 0 M96 272 q4 -12 8 0" fill="none" stroke="#d9822b" stroke-width="2.4"/>
+ <text x="90" y="294" text-anchor="middle" class="lbl">加熱共沸</text>
+ <!-- side arm: vapour up, toluene overflow back -->
+ <path d="M90 122 V92 H150" fill="none" stroke="#1f6feb" stroke-width="3"/>
+ <line x1="72" y1="150" x2="72" y2="126" stroke="#48597a" stroke-width="1.6" marker-end="url(#ard)"/>
+ <text x="66" y="142" text-anchor="end" class="lbl" font-size="11">蒸氣</text>
+ <text x="104" y="84" text-anchor="middle" class="lbl" font-size="10.5">甲苯溢流回瓶</text>
+ <!-- vertical reflux condenser on top of the trap -->
+ <rect x="147" y="34" width="28" height="52" rx="5" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
+ <line x1="161" y1="30" x2="161" y2="90" stroke="#1f9d6b" stroke-width="2"/>
+ <path d="M175 76 h12 M175 44 h12" stroke="#1f9d6b" stroke-width="2.4"/>
+ <text x="196" y="54" class="lblb" font-size="13">冷凝管</text>
+ <text x="196" y="72" class="lbl" font-size="12">蒸氣冷凝後滴入收集管</text>
+ <!-- graduated trap: water sinks, toluene on top -->
+ <rect x="150" y="90" width="22" height="112" rx="4" fill="#fbeede" stroke="#1f6feb" stroke-width="2.2"/>
+ <rect x="152" y="160" width="18" height="40" fill="#cfe0f6"/>
+ <g stroke="#1f6feb" stroke-width="1">
+  <line x1="166" y1="168" x2="172" y2="168"/><line x1="166" y1="176" x2="172" y2="176"/><line x1="166" y1="184" x2="172" y2="184"/><line x1="166" y1="192" x2="172" y2="192"/></g>
+ <rect x="154" y="202" width="14" height="6" rx="2" fill="#48597a"/>
+ <line x1="168" y1="205" x2="178" y2="205" stroke="#48597a" stroke-width="3" stroke-linecap="round"/>
+ <text x="196" y="120" class="lblb" font-size="13">刻度收集管</text>
+ <text x="196" y="138" class="lbl" font-size="12">甲苯層（輕）在上</text>
+ <line x1="174" y1="182" x2="192" y2="182" stroke="#8493ad" stroke-width="1.2"/>
+ <text x="196" y="178" class="lblb" font-size="12" fill="#1f6feb">水層沉底</text>
+ <text x="196" y="195" class="lbl" font-size="12">直接讀水的體積 (mL)</text>
 </svg>"""
 
 DTREE_SVG = """

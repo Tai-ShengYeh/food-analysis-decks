@@ -24,27 +24,27 @@ FURNACE_SVG = """
  <text x="160" y="172" text-anchor="middle" class="lblb">坩堝+樣品</text>
  <rect x="118" y="232" width="84" height="20" rx="5" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
  <text x="160" y="247" text-anchor="middle" class="lbl">550°C</text>
- <path d="M158 60 q4 -16 8 0 M170 52 q4 -16 8 0" fill="none" stroke="#d94f4f" stroke-width="2.6"/>
+ <text x="160" y="50" text-anchor="middle" class="lbl" font-size="12">電熱元件加熱（無明火）</text>
  <text x="160" y="290" text-anchor="middle" class="lblb">馬弗爐 Muffle furnace</text>
 </svg>"""
 
 CRUCIBLE_SVG = """
 <svg viewBox="0 0 560 230">
  <g font-size="13">
-  <path d="M60 80 L100 170 L20 170 Z" fill="#f3eee7" stroke="#48597a" stroke-width="2.4"/>
-  <ellipse cx="60" cy="80" rx="40" ry="12" fill="#fff" stroke="#48597a" stroke-width="2.4"/>
+  <path d="M22 84 L36 164 Q36 170 42 170 L78 170 Q84 170 84 164 L98 84 Z" fill="#f3eee7" stroke="#48597a" stroke-width="2.4"/>
+  <ellipse cx="60" cy="84" rx="38" ry="10" fill="#fff" stroke="#48597a" stroke-width="2.4"/>
   <text x="60" y="200" text-anchor="middle" class="lblb">瓷坩堝</text>
   <text x="60" y="218" text-anchor="middle" class="lbl">便宜·常用</text>
-  <path d="M200 80 L240 170 L160 170 Z" fill="#eef6ff" stroke="#1f6feb" stroke-width="2.4"/>
-  <ellipse cx="200" cy="80" rx="40" ry="12" fill="#fff" stroke="#1f6feb" stroke-width="2.4"/>
+  <path d="M162 84 L176 164 Q176 170 182 170 L218 170 Q224 170 224 164 L238 84 Z" fill="#eef6ff" stroke="#1f6feb" stroke-width="2.4"/>
+  <ellipse cx="200" cy="84" rx="38" ry="10" fill="#fff" stroke="#1f6feb" stroke-width="2.4"/>
   <text x="200" y="200" text-anchor="middle" class="lblb">石英坩堝</text>
   <text x="200" y="218" text-anchor="middle" class="lbl">耐酸·耐高溫</text>
-  <path d="M340 80 L380 170 L300 170 Z" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2.4"/>
-  <ellipse cx="340" cy="80" rx="40" ry="12" fill="#fff" stroke="#1f9d6b" stroke-width="2.4"/>
+  <path d="M302 84 L316 164 Q316 170 322 170 L358 170 Q364 170 364 164 L378 84 Z" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2.4"/>
+  <ellipse cx="340" cy="84" rx="38" ry="10" fill="#fff" stroke="#1f9d6b" stroke-width="2.4"/>
   <text x="340" y="200" text-anchor="middle" class="lblb">鉑坩堝</text>
   <text x="340" y="218" text-anchor="middle" class="lbl">最惰性·最貴</text>
-  <path d="M480 80 L520 170 L440 170 Z" fill="#fff6ea" stroke="#d9822b" stroke-width="2.4" stroke-dasharray="5 4"/>
-  <ellipse cx="480" cy="80" rx="40" ry="12" fill="#fff" stroke="#d9822b" stroke-width="2.4"/>
+  <path d="M442 84 L456 164 Q456 170 462 170 L498 170 Q504 170 504 164 L518 84 Z" fill="#fff6ea" stroke="#d9822b" stroke-width="2.4" stroke-dasharray="5 4"/>
+  <ellipse cx="480" cy="84" rx="38" ry="10" fill="#fff" stroke="#d9822b" stroke-width="2.4"/>
   <text x="480" y="200" text-anchor="middle" class="lblb">石英纖維</text>
   <text x="480" y="218" text-anchor="middle" class="lbl">拋棄·快冷</text>
   <text x="280" y="34" text-anchor="middle" class="lblb" font-size="15">坩堝選擇：看耐溫與是否污染</text>

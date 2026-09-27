@@ -49,7 +49,7 @@ MAP_SVG = """
 
 METHOD_SVG = """
 <svg viewBox="0 0 920 280">
- <text x="460" y="24" text-anchor="middle" class="lblb" font-size="15">三大類維生素分析法：準確度 ↑ 與 操作簡便 ↑ 互為反向</text>
+ <text x="460" y="24" text-anchor="middle" class="lblb" font-size="15">三大類維生素分析法：由生物 → 微生物 → 化學，越快速簡便</text>
  <g font-size="13.5">
   <rect x="120" y="56" width="680" height="50" rx="10" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
   <text x="150" y="86" class="lblb">生物檢定 Bioassay</text>
@@ -61,12 +61,12 @@ METHOD_SVG = """
   <text x="150" y="206" class="lblb">化學法 Chemical (HPLC 主流)</text>
   <text x="640" y="206" text-anchor="end" class="lbl">快速準確精密；脂溶+水溶；可配 MS 測 vitamers</text>
  </g>
- <defs><marker id="vu" markerWidth="10" markerHeight="10" refX="4" refY="8" orient="auto"><path d="M4 0 L8 8 L0 8 Z" fill="#15233f"/></marker>
-  <marker id="vd" markerWidth="10" markerHeight="10" refX="4" refY="2" orient="auto"><path d="M4 10 L8 2 L0 2 Z" fill="#8493ad"/></marker></defs>
- <line x1="40" y1="226" x2="40" y2="56" stroke="#15233f" stroke-width="2.4" marker-end="url(#vu)"/>
- <text x="22" y="150" text-anchor="middle" class="lblb" transform="rotate(-90 22 150)">準確度／精密度 ↑</text>
+ <defs><marker id="vu" markerUnits="userSpaceOnUse" markerWidth="14" markerHeight="12" refX="12" refY="6" orient="auto"><path d="M0 0 L13 6 L0 12 Z" fill="#15233f"/></marker>
+  <marker id="vd" markerUnits="userSpaceOnUse" markerWidth="14" markerHeight="12" refX="12" refY="6" orient="auto"><path d="M0 0 L13 6 L0 12 Z" fill="#8493ad"/></marker></defs>
+ <line x1="40" y1="56" x2="40" y2="226" stroke="#15233f" stroke-width="2.4" marker-end="url(#vu)"/>
+ <text x="22" y="150" text-anchor="middle" class="lblb" transform="rotate(-90 22 150)">準確度／精密度 越往下越高</text>
  <line x1="880" y1="56" x2="880" y2="226" stroke="#8493ad" stroke-width="2.4" marker-end="url(#vd)"/>
- <text x="900" y="150" text-anchor="middle" class="lbl" transform="rotate(90 900 150)">操作簡便 ↑</text>
+ <text x="900" y="150" text-anchor="middle" class="lbl" transform="rotate(90 900 150)">越往下越快速、操作簡便</text>
 </svg>"""
 
 HPLC_SVG = """
@@ -100,7 +100,7 @@ DCIP_SVG = """
  <circle cx="350" cy="112" r="42" fill="#f6f9fd" stroke="#8493ad" stroke-width="2.4"/>
  <text x="350" y="108" text-anchor="middle" class="lblb" font-size="12">仍無色</text><text x="350" y="126" text-anchor="middle" class="lbl">DCIP 被還原</text>
  <text x="350" y="170" text-anchor="middle" class="lbl">還有 C → 染料持續褪色</text>
- <text x="540" y="92" text-anchor="middle" class="lbl">C 耗盡，再一滴</text>
+ <text x="474" y="92" text-anchor="middle" class="lbl">C 耗盡，再一滴</text>
  <line x1="396" y1="112" x2="552" y2="112" stroke="#48597a" stroke-width="2.4" marker-end="url(#da)"/>
  <circle cx="602" cy="112" r="42" fill="#e8417a" opacity=".85"/>
  <text x="602" y="108" text-anchor="middle" fill="#fff" font-weight="800" font-size="12">玫瑰紅</text><text x="602" y="126" text-anchor="middle" fill="#fff" font-size="11">終點!</text>
@@ -155,7 +155,7 @@ add(ATT, dc.kt("20.1.4 萃取", "每種維生素的萃取法<span class='hi'>都
 
 add(ATT, dc.kt("20.1.5 三大方法類", "從生物到化學，<span class='hi'>各有取捨</span>") +
     '<div class="svgwrap" style="margin-top:6px">' + METHOD_SVG + '</div>' +
-    '<p class="subtitle" style="text-align:center;margin-top:8px">越往化學法：越準確精密、但儀器與技術門檻越高；越往生物法：越接近生理活性、但慢又粗略。</p>')
+    '<p class="subtitle" style="text-align:center;margin-top:8px">越往化學法：越快速、準確精密，但需要儀器投資；越往生物法：越接近生理活性，但慢又粗略。</p>')
 
 add(ATT, dc.game_mcq_inner("g2","小遊戲 ②","維生素分析原理測驗", 5), ' data-game="g2"')
 
@@ -284,7 +284,7 @@ CFG = {
       {"q":"葉酸萃取常用的特殊處理是？","o":["皂化","三酶法(trienzyme)","通氮蒸餾","灰化"],"a":1,
        "e":"葉酸用 α-澱粉酶、蛋白酶、γ-麩胺醯水解酶的三酶法釋出。"},
       {"q":"就『準確度與精密度』而言，三大方法類的高低順序是？","o":["生物 > 微生物 > 化學","化學 > 微生物 > 生物","三者相同","微生物最高"],"a":1,
-       "e":"準確度：化學(HPLC) > 微生物 > 生物；操作簡便則相反。"}
+       "e":"準確度：化學(HPLC) > 微生物 > 生物；操作簡便度也是化學法最高、生物檢定最費時(Nielsen 20.1)。"}
     ],
     "g5":[
       {"q":"要測膠囊中的脂溶性維生素 A／D／E，最適合的官方法是？","o":["微生物檢定","HPLC-PDA(TFDAA0025)","DCIP 滴定","大鼠生物檢定"],"a":1,

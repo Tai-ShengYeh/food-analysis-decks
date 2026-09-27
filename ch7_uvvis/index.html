@@ -998,7 +998,25 @@ function go(dir) {
   cur = Math.max(0, Math.min(total - 1, cur + dir));
   slides[cur].classList.add('active');
   updateUI();
+  fitSlide(); setTimeout(fitSlide,80);
 }
+/* Scale the active slide down (never up) so it always fits the window,
+   whatever the browser zoom, window size or projector resolution. */
+function fitSlide(){
+  document.querySelectorAll('.slide-inner').forEach(function(e){e.style.transform='';});
+  if(window.innerWidth<=640) return;           /* phones keep the normal layout */
+  var s=document.querySelector('.slide.active'), el=s&&s.querySelector('.slide-inner'); if(!el) return;
+  var cs=getComputedStyle(s);
+  var availH=s.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom);
+  var availW=s.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight);
+  var h=el.scrollHeight, w=el.scrollWidth;
+  if(!h||!w) return;
+  var k=Math.min(1,availH/h,availW/w);
+  if(k<1){el.style.transformOrigin='center center';el.style.transform='scale('+Math.max(k,0.4).toFixed(3)+')';}
+}
+window.addEventListener('resize',fitSlide);
+if(document.fonts&&document.fonts.ready){document.fonts.ready.then(fitSlide);}
+document.addEventListener('click',function(){setTimeout(fitSlide,60)});
 
 function updateUI() {
   const pct = ((cur + 1) / total * 100).toFixed(2);
@@ -1032,6 +1050,7 @@ document.addEventListener('keydown', e => {
 });
 
 updateUI();
+fitSlide();
 </script>
 
 <!-- ══════════════════════════════════════════════════

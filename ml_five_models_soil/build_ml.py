@@ -44,7 +44,7 @@ body{background:
   radial-gradient(900px 620px at 4% 110%,rgba(95,208,127,.07),transparent 60%),
   var(--bg)}
 .note{color:var(--ink)}
-.lbl{fill:var(--ink-2)}.lblb{fill:var(--ink)}
+.lbl:not([fill]){fill:var(--ink-2)}.lblb:not([fill]){fill:var(--ink)}
 table.cmp tbody tr:hover{background:rgba(95,208,127,.07)}
 table.cmp thead th{color:var(--accent)}
 table.cmp td.c{color:var(--accent);font-weight:800}
@@ -183,9 +183,9 @@ SVG_LDA = r"""
 
 SVG_RIDGE = r"""
 <svg viewBox="0 0 380 230">
- <defs><marker id="ar" markerWidth="9" markerHeight="9" refX="6" refY="4" orient="auto">
-   <path d="M0 0 L7 4 L0 8 z" fill="#e7ad4d"/></marker></defs>
- <text x="64" y="26" fill="#9fb39c" font-size="12.5" text-anchor="middle">無懲罰（亂、過擬合）</text>
+ <defs><marker id="ar" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+   <path d="M0 0 L11 6 L0 12 z" fill="#e7ad4d"/></marker></defs>
+ <text x="86" y="26" fill="#9fb39c" font-size="12.5" text-anchor="middle">無懲罰（亂、過擬合）</text>
  <text x="300" y="26" fill="#9fb39c" font-size="12.5" text-anchor="middle">＋L2 收縮（穩）</text>
  <line x1="20" y1="170" x2="150" y2="170" stroke="#2b3c32" stroke-width="1.5"/>
  <line x1="232" y1="170" x2="362" y2="170" stroke="#2b3c32" stroke-width="1.5"/>
@@ -198,8 +198,8 @@ SVG_RIDGE = r"""
    <rect x="290" y="120" width="16" height="50"/><rect x="314" y="150" width="16" height="20"/>
    <rect x="338" y="138" width="16" height="32"/></g>
  <line x1="160" y1="110" x2="226" y2="110" stroke="#e7ad4d" stroke-width="2.4" marker-end="url(#ar)"/>
- <text x="193" y="100" fill="#e7ad4d" font-size="12.5" text-anchor="middle" font-weight="700">L2 懲罰</text>
- <text x="64" y="200" fill="#b6c8b4" font-size="12" text-anchor="middle">係數大、隨雜訊亂跳</text>
+ <text x="193" y="98" fill="#e7ad4d" font-size="12.5" text-anchor="middle" font-weight="700">L2 懲罰</text>
+ <text x="86" y="200" fill="#b6c8b4" font-size="12" text-anchor="middle">係數大、隨雜訊亂跳</text>
  <text x="300" y="200" fill="#b6c8b4" font-size="12" text-anchor="middle">係數變小、更穩健</text>
 </svg>"""
 
@@ -250,7 +250,7 @@ SVG_BOOST = r"""
  <text x="191" y="170" fill="#e7ad4d" font-size="14" font-weight="800" text-anchor="middle">Σ 逐步加總</text>
  <text x="191" y="188" fill="#b6c8b4" font-size="11.5" text-anchor="middle">一棵接一棵、愈來愈準</text>
  <g stroke="#6f8472" stroke-width="2.2" fill="none" marker-end="url(#ab)">
-   <path d="M44 96 C 60 130,150 130,150 148"/><path d="M174 96 L 180 148"/><path d="M304 96 C 290 130,210 132,212 148"/></g>
+   <path d="M44 124 C 60 142,140 140,150 148"/><path d="M178 124 L 182 146"/><path d="M304 124 C 290 142,224 140,214 148"/></g>
  <text x="191" y="220" fill="#b6c8b4" font-size="12.5" text-anchor="middle">強，但小資料容易過擬合</text>
 </svg>"""
 
@@ -264,11 +264,11 @@ SVG_SVM = r"""
  <g fill="#5fd07f"><circle cx="70" cy="50" r="5"/><circle cx="96" cy="40" r="5"/><circle cx="60" cy="84" r="5"/>
    <circle cx="118" cy="64" r="5"/></g>
  <!-- support vectors (ringed) -->
- <circle cx="104" cy="96" r="7" fill="#5fd07f" stroke="#ecf4ea" stroke-width="2"/>
+ <circle cx="138" cy="114" r="7" fill="#5fd07f" stroke="#ecf4ea" stroke-width="2"/>
  <!-- class FG (lower-right) -->
  <g fill="#e7ad4d"><circle cx="250" cy="150" r="5"/><circle cx="278" cy="140" r="5"/><circle cx="300" cy="170" r="5"/>
    <circle cx="320" cy="150" r="5"/></g>
- <circle cx="222" cy="128" r="7" fill="#e7ad4d" stroke="#ecf4ea" stroke-width="2"/>
+ <circle cx="222" cy="116" r="7" fill="#e7ad4d" stroke="#ecf4ea" stroke-width="2"/>
  <text x="300" y="16" fill="#cbd9c6" font-size="12.5" font-weight="700">分界線</text>
  <text x="150" y="205" fill="#b6c8b4" font-size="12" text-anchor="middle">↔ 最大間隔 margin</text>
  <text x="40" y="40" fill="#9fb39c" font-size="12">臺灣</text>
@@ -293,7 +293,10 @@ SVG_ORANGE = (
  # top pipeline
  + owidget(20, 40, "File", "tea CSV", "#5fd07f")
  + owidget(190, 40, "Preprocess", "Normalize 標準化", "#5fd07f")
- + owidget(372, 40, "Test &amp; Score", "留一法 LOO-CV", "#e7ad4d")
+ + ('<g transform="translate(372,40)"><rect x="0" y="0" width="108" height="48" rx="11" fill="#1a241e" stroke="#e7ad4d" stroke-width="2"/>'
+        '<rect x="0" y="0" width="108" height="7" rx="3.5" fill="#e7ad4d"/>'
+        '<text x="54" y="26" text-anchor="middle" fill="#ecf4ea" font-size="13" font-weight="800">Test &amp; Score</text>'
+        '<text x="54" y="41" text-anchor="middle" fill="#cdb98a" font-size="10">留一法 LOO-CV</text></g>')
  + owidget(560, 40, "Confusion", "Matrix 混淆矩陣", "#e7ad4d")
  + owidget(748, 40, "Data Table", "看資料", "#5fd07f")
  # learners row
@@ -312,7 +315,7 @@ SVG_ORANGE = (
  + '<path d="M504 250 C 480 190,470 150,444 92"/>' # SVM -> Test&Score
  + '<path d="M654 250 C 620 180,520 150,470 90"/>' # LogReg -> Test&Score
  + '</g>'
- '<text x="470" y="200" text-anchor="middle" fill="#b6c8b4" font-size="12.5">4 個 Learner 一起接進 Test &amp; Score，表格直接比正確率</text>'
+ '<text x="470" y="362" text-anchor="middle" fill="#b6c8b4" font-size="12.5">4 個 Learner 一起接進 Test &amp; Score，表格直接比正確率</text>'
  '</svg>')
 
 # ============================================================ bar chart (real LOO-CV)

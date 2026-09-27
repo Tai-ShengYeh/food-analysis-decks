@@ -75,8 +75,12 @@ table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--
 .hook .hi{color:var(--accent)}
 .svgwrap{display:flex;align-items:center;justify-content:center}
 .svgwrap svg{max-width:100%;max-height:62vh;height:auto}
-.lbl{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink-2)}
-.lblb{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink);font-weight:700}
+.lbl,.lblb{font-family:"Noto Sans TC",sans-serif}
+.lblb{font-weight:700}
+/* Defaults only: an SVG's own font-size / fill attributes win. */
+.lbl:not([font-size]),.lblb:not([font-size]){font-size:13px}
+.lbl:not([fill]){fill:var(--ink-2)}
+.lblb:not([fill]){fill:var(--ink)}
 .game{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 24px;box-shadow:var(--shadow)}
 .game-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
 .game-head .gt{font-weight:900;font-size:clamp(1.05rem,1.7vw,1.35rem);color:var(--ink)}
@@ -166,7 +170,7 @@ body{background:
   radial-gradient(880px 520px at 8% 94%,rgba(95,208,127,.16),transparent 55%),
   linear-gradient(135deg,#0f1714,#13211a 55%,#0c1310)}
 .note{color:var(--ink)}
-.lbl{fill:var(--ink-2)}.lblb{fill:var(--ink)}
+.lbl:not([fill]){fill:var(--ink-2)}.lblb:not([fill]){fill:var(--ink)}
 table.cmp tbody tr:hover{background:rgba(95,208,127,.07)}
 table.cmp thead th{color:var(--accent)}
 /* full-bleed image slides */
@@ -256,9 +260,9 @@ table.cmp th,table.cmp td{padding:6px 14px}
   <text x="70" y="92" text-anchor="middle" fill="#ecf4ea" font-weight="800">霧化</text>
   <text x="70" y="112" text-anchor="middle" fill="#9fb39c">檢液→微滴氣膠</text>
   <rect x="160" y="60" width="128" height="76" rx="11" fill="#241409" stroke="#e7ad4d" stroke-width="2"/>
-  <path d="M176 98 q24 -26 48 0 q24 26 48 0" fill="none" stroke="url(#pl)" stroke-width="4"/>
+  <path d="M180 104 q22 -12 44 0 q22 12 44 0" fill="none" stroke="url(#pl)" stroke-width="4"/>
   <text x="224" y="86" text-anchor="middle" fill="#e7ad4d" font-weight="800">氬電漿</text>
-  <text x="224" y="124" text-anchor="middle" fill="#f0c074" font-size="12">~6000–8000 K 離子化</text>
+  <text x="224" y="129" text-anchor="middle" fill="#f0c074" font-size="12">~6000–8000 K 離子化</text>
   <rect x="318" y="64" width="116" height="68" rx="11" fill="#13201a" stroke="#5fd07f" stroke-width="2"/>
   <text x="376" y="92" text-anchor="middle" fill="#ecf4ea" font-weight="800">介面錐</text>
   <text x="376" y="112" text-anchor="middle" fill="#9fb39c">離子導入真空</text>
@@ -410,7 +414,25 @@ function show(i){
   secTag.textContent='— '+(slides[cur].dataset.section||'')+' —';
   var ch=slides[cur].dataset.chart; if(ch) initChart(ch);
   var g=slides[cur].dataset.game; if(g) initGame(g);
+  fitSlide(); setTimeout(fitSlide,80);
 }
+/* Scale the active slide down (never up) so it always fits the window,
+   whatever the browser zoom, window size or projector resolution. */
+function fitSlide(){
+  slides.forEach(function(s){var e=s.querySelector('.slide-inner'); if(e){e.style.transform='';}});
+  if(window.innerWidth<=640) return;           /* phones keep the scrolling layout */
+  var s=slides[cur], el=s&&s.querySelector('.slide-inner'); if(!el) return;
+  var cs=getComputedStyle(s);
+  var availH=s.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom);
+  var availW=s.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight);
+  var h=el.scrollHeight, w=el.scrollWidth;
+  if(!h||!w) return;
+  var k=Math.min(1,availH/h,availW/w);
+  if(k<1){el.style.transformOrigin='center center';el.style.transform='scale('+Math.max(k,0.4).toFixed(3)+')';}
+}
+window.addEventListener('resize',fitSlide);
+if(document.fonts&&document.fonts.ready){document.fonts.ready.then(fitSlide);}
+document.addEventListener('click',function(){setTimeout(fitSlide,60)});
 function next(){show(cur+1)} function prev(){show(cur-1)}
 function toggleFs(){if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()}else{document.exitFullscreen&&document.exitFullscreen()}}
 document.addEventListener('keydown',function(e){

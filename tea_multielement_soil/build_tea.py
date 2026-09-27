@@ -40,7 +40,7 @@ body{background:
   radial-gradient(880px 520px at 8% 94%,rgba(95,208,127,.16),transparent 55%),
   linear-gradient(135deg,#0f1714,#13211a 55%,#0c1310)}
 .note{color:var(--ink)}
-.lbl{fill:var(--ink-2)}.lblb{fill:var(--ink)}
+.lbl:not([fill]){fill:var(--ink-2)}.lblb:not([fill]){fill:var(--ink)}
 table.cmp tbody tr:hover{background:rgba(95,208,127,.07)}
 table.cmp thead th{color:var(--accent)}
 /* full-bleed image slides */
@@ -169,9 +169,9 @@ SVG_ICPMS = r"""
   <text x="70" y="92" text-anchor="middle" fill="#ecf4ea" font-weight="800">霧化</text>
   <text x="70" y="112" text-anchor="middle" fill="#9fb39c">檢液→微滴氣膠</text>
   <rect x="160" y="60" width="128" height="76" rx="11" fill="#241409" stroke="#e7ad4d" stroke-width="2"/>
-  <path d="M176 98 q24 -26 48 0 q24 26 48 0" fill="none" stroke="url(#pl)" stroke-width="4"/>
+  <path d="M180 104 q22 -12 44 0 q22 12 44 0" fill="none" stroke="url(#pl)" stroke-width="4"/>
   <text x="224" y="86" text-anchor="middle" fill="#e7ad4d" font-weight="800">氬電漿</text>
-  <text x="224" y="124" text-anchor="middle" fill="#f0c074" font-size="12">~6000–8000 K 離子化</text>
+  <text x="224" y="129" text-anchor="middle" fill="#f0c074" font-size="12">~6000–8000 K 離子化</text>
   <rect x="318" y="64" width="116" height="68" rx="11" fill="#13201a" stroke="#5fd07f" stroke-width="2"/>
   <text x="376" y="92" text-anchor="middle" fill="#ecf4ea" font-weight="800">介面錐</text>
   <text x="376" y="112" text-anchor="middle" fill="#9fb39c">離子導入真空</text>

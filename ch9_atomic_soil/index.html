@@ -75,8 +75,12 @@ table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--
 .hook .hi{color:var(--accent)}
 .svgwrap{display:flex;align-items:center;justify-content:center}
 .svgwrap svg{max-width:100%;max-height:62vh;height:auto}
-.lbl{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink-2)}
-.lblb{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink);font-weight:700}
+.lbl,.lblb{font-family:"Noto Sans TC",sans-serif}
+.lblb{font-weight:700}
+/* Defaults only: an SVG's own font-size / fill attributes win. */
+.lbl:not([font-size]),.lblb:not([font-size]){font-size:13px}
+.lbl:not([fill]){fill:var(--ink-2)}
+.lblb:not([fill]){fill:var(--ink)}
 .game{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 24px;box-shadow:var(--shadow)}
 .game-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
 .game-head .gt{font-weight:900;font-size:clamp(1.05rem,1.7vw,1.35rem);color:var(--ink)}
@@ -188,8 +192,8 @@ table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--
  <text x="582" y="300" text-anchor="end" class="lbl">長波長 (紅) →</text>
 </svg></div><p class="subtitle" style="text-align:center;margin-top:10px">不同元素的電子能階不同 → 吸收/發射的波長組合各異，如同條碼般可逐一辨識(Fig 9.1)。</p></div></section><section class="slide" data-slide="5" data-section="引起動機"><div class="slide-inner"><div class="kicker">9.1 為什麼重要</div><h2 class="slide-title">原子光譜在食品上的<span class='hi'>四個任務</span></h2><div class="grid2" style="margin-top:20px"><div class="card g"><div class="ic">🥛</div><div class="ct">營養礦物</div><div class="cb">定量 Ca、Fe、Zn、K、Mg…——營養標示與品質的核心</div></div><div class="card a"><div class="ic">☠️</div><div class="ct">毒性重金屬</div><div class="cb">Pb、Cd、As、Hg 常需 ppb–ppt 級偵測，攸關食安</div></div><div class="card b"><div class="ic">🌍</div><div class="ct">產地溯源</div><div class="cb">以元素/同位素指紋追蹤食品的地理來源</div></div><div class="card b"><div class="ic">🏷️</div><div class="ct">規格與品質</div><div class="cb">強化食品(如鐵強化麵粉)是否達標、是否摻假</div></div></div></div></section><section class="slide" data-slide="6" data-section="引起動機"><div class="slide-inner"><div class="kicker">9.1 核心概念</div><h2 class="slide-title">原子化：把樣品變成<span class='hi'>自由原子</span></h2><div class="grid2-1" style="margin-top:8px"><div class="svgwrap">
 <svg viewBox="0 0 380 360">
- <defs><marker id="au" markerWidth="10" markerHeight="10" refX="4" refY="8" orient="auto">
-   <path d="M4 0 L8 8 L0 8 Z" fill="#1f6feb"/></marker></defs>
+ <defs><marker id="au" markerWidth="6" markerHeight="6" refX="1" refY="3" orient="auto">
+   <path d="M0 0 L6 3 L0 6 Z" fill="#1f6feb"/></marker></defs>
  <line x1="70" y1="330" x2="70" y2="40" stroke="#1f6feb" stroke-width="3" marker-end="url(#au)"/>
  <g font-size="13">
   <rect x="92" y="300" width="220" height="40" rx="8" fill="#f6f9fd" stroke="#48597a" stroke-width="1.8"/>
@@ -208,7 +212,7 @@ table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--
   <text x="202" y="78" text-anchor="middle" class="lblb">離子 M⁺</text>
   <text x="202" y="94" text-anchor="middle" class="lbl">游離 ionization (過熱→干擾)</text>
  </g>
- <text x="40" y="36" class="lbl">能量↑</text>
+ <text x="84" y="40" class="lbl">能量 ↑</text>
 </svg></div><div><ul class="clean"><li>食品中元素多以<strong>化合物</strong>存在，必須先變成<strong>自由中性原子</strong>才能做原子光譜</li><li>溶液 → <strong>去溶劑</strong> → <strong>汽化</strong> → <strong>原子化</strong>(自由原子)</li><li>原子吸收測<strong>原子</strong>不測離子；溫度過高造成<strong>游離</strong>反而是干擾</li></ul><div class="note" style="margin-top:12px">能量來源決定溫度：火焰、石墨爐(電熱)、氬電漿。溫度越高，原子化越完全(但也更易游離)。</div></div></div></div></section><section class="slide" data-slide="7" data-section="引起動機" data-chart="temp"><div class="slide-inner"><div class="kicker">9.1 原子化溫度</div><h2 class="slide-title">不同原子化方式的<span class='hi'>溫度</span></h2><div class="chartbox"><canvas id="chart_temp"></canvas></div><div class="cap">整合自 Table 9.1：火焰 2000–3400 K、電熱 1500–3300 K、ICP 6000–7000 K。電漿溫度遠高於火焰，原子化更完全、干擾更少。</div></div></section><section class="slide" data-slide="8" data-section="引起動機" data-game="g1"><div class="slide-inner"><div class="game no-nav" data-game="g1"><div class="game-head"><span class="tag a">小遊戲 ①</span><span class="gt">吸收 vs 發射：分特徵</span><span class="score" id="g1score">0 / 8</span></div><div class="game-q">把 8 個敘述分到「原子吸收 AAS」或「原子發射 AES」。</div><div class="pool" id="g1pool"></div><div class="buckets" id="g1buckets"></div><div class="fb" id="g1fb"></div><div class="btnrow"><button class="btn" id="g1check">檢查答案</button><button class="btn ghost" id="g1reset">重來</button></div></div></div></section><section class="slide" data-slide="9" data-section="維持注意"><div class="slide-inner"><div class="kicker">9.2 原子吸收光譜 AAS</div><h2 class="slide-title">Alan Walsh 1952：用<span class='hi'>吸收</span>定量</h2><div class="grid2" style="margin-top:16px"><div><ul class="clean"><li>原理：氣態<strong>自由中性原子</strong>吸收 UV-Vis(200–800 nm)的<strong>專屬波長</strong></li><li>吸光度由<strong>比爾定律</strong>與原子濃度成正比 → 配標準曲線定量</li><li>火焰式一次只能測<strong>一個元素</strong>，且每元素要換一支燈</li><li>測不到磷(P)等<strong>非金屬</strong>(吸收落在真空紫外，需真空)</li></ul></div><div class="note"><strong>兩種原子化：</strong>火焰原子化(穩定易用) 與 電熱(石墨爐)原子化(偵測極限更低、樣品更少)。雖被 ICP 取代於商業，仍是大學教學主力。</div></div></div></section><section class="slide" data-slide="10" data-section="維持注意"><div class="slide-inner"><div class="kicker">9.2.1 / 9.2.2 原子化</div><h2 class="slide-title">火焰 vs 石墨爐</h2><div class="grid2" style="margin-top:18px"><div class="card a"><div class="ic">🔥</div><div class="ct">火焰原子化</div><div class="cb">樣品<strong>霧化</strong>進火焰(空氣-乙炔/笑氣-乙炔)；穩定、易用，但靈敏度較低、樣品停留短</div></div><div class="card b"><div class="ic">🧯</div><div class="ct">石墨爐(電熱)</div><div class="cb">樣品(0.5–100 µL)注入石墨管，分階段加熱→蒸乾→灰化→2000–3000 K 原子化</div></div></div><div class="grid2" style="margin-top:14px"><div class="card g"><div class="ic">✅</div><div class="ct">石墨爐優點</div><div class="cb">偵測極限更低、所需樣品更少</div></div><div class="card a"><div class="ic">⚠️</div><div class="ct">石墨爐代價</div><div class="cb">設備貴、通量低、基質干擾大、精密度較差</div></div></div></div></section><section class="slide" data-slide="11" data-section="維持注意"><div class="slide-inner"><div class="kicker">9.2.3 儀器</div><h2 class="slide-title">原子吸收光譜儀的<span class='hi'>五大組件</span></h2><div class="svgwrap" style="margin-top:6px">
 <svg viewBox="0 0 980 240">
  <defs><marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
@@ -222,12 +226,17 @@ table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--
  <!-- chopper -->
  <circle cx="178" cy="96" r="20" fill="#fff" stroke="#48597a" stroke-width="2.2"/>
  <path d="M178 96 L178 76 A20 20 0 0 1 195 106 Z" fill="#48597a"/>
- <text x="178" y="140" text-anchor="middle" class="lbl">斬光器</text>
+ <text x="178" y="64" text-anchor="middle" class="lbl">斬光器</text>
  <!-- atomizer/flame -->
  <rect x="250" y="70" width="130" height="52" rx="9" fill="#fbeede" stroke="#d9822b" stroke-width="2.4"/>
  <path d="M300 70 q6 -22 12 0 M318 70 q6 -22 12 0" fill="none" stroke="#d94f4f" stroke-width="2.6"/>
  <text x="315" y="96" text-anchor="middle" class="lblb">火焰 / 石墨爐</text>
  <text x="315" y="113" text-anchor="middle" class="lbl">原子化器</text>
+ <!-- reference beam (double-beam): chopper mirror sends light around the flame, recombined before the monochromator -->
+ <path d="M188 110 L214 148 L404 148 L436 104" fill="none" stroke="#d9822b" stroke-width="2" stroke-dasharray="6 4" opacity=".85"/>
+ <line x1="430" y1="84" x2="444" y2="108" stroke="#48597a" stroke-width="3"/>
+ <text x="315" y="162" text-anchor="middle" class="lbl" font-size="11">參考光束（繞過火焰）</text>
+ <text x="438" y="76" text-anchor="middle" class="lbl" font-size="11">合光鏡</text>
  <!-- monochromator -->
  <rect x="470" y="70" width="130" height="52" rx="9" fill="#eef6ff" stroke="#1f6feb" stroke-width="2.4"/>
  <text x="535" y="92" text-anchor="middle" class="lblb">單色器</text>
@@ -263,8 +272,8 @@ table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--
  <!-- Ar gas dots -->
  <g fill="#7e57ff" opacity=".6">
   <circle cx="175" cy="110" r="3"/><circle cx="195" cy="140" r="3"/><circle cx="240" cy="100" r="3"/>
-  <circle cx="265" cy="150" r="3"/><circle cx="225" cy="160" r="3"/><circle cx="285" cy="115" r="3"/></g>
- <text x="300" y="170" text-anchor="middle" class="lbl">Ar / Ne 填充氣</text>
+  <circle cx="265" cy="150" r="3"/><circle cx="228" cy="150" r="3"/><circle cx="285" cy="115" r="3"/></g>
+ <text x="240" y="174" text-anchor="middle" class="lbl">Ar / Ne 填充氣</text>
  <!-- window + beam -->
  <rect x="338" y="108" width="16" height="24" fill="#cfe0f6" stroke="#1f6feb" stroke-width="2"/>
  <line x1="354" y1="120" x2="420" y2="120" stroke="#d9822b" stroke-width="3.4" marker-end="url(#ah2)"/>
@@ -275,29 +284,32 @@ table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--
 </svg></div><div><ul class="clean"><li>陰極由<strong>待測元素</strong>製成，通電後放出該元素的<strong>專屬譜線</strong></li><li>所以每種元素需要<strong>一支對應的燈</strong>(約 60 種元素有商用 HCL)</li><li><strong>斬光器</strong>把燈光調變成交流訊號，扣掉火焰自身的連續發射</li><li>揮發性元素(As、Hg、Cd)可用<strong>無電極放電燈 EDL</strong></li></ul></div></div></div></section><section class="slide" data-slide="13" data-section="維持注意" data-game="g2"><div class="slide-inner"><div class="game no-nav" data-game="g2"><div class="game-head"><span class="tag a">小遊戲 ②</span><span class="gt">AAS 原理即時測驗</span><span class="score" id="g2score">0 / 5</span></div><div class="game-q" id="g2q"></div><div class="opts" id="g2opts"></div><div class="fb" id="g2fb"></div><div class="btnrow"><button class="btn ghost" id="g2next" style="display:none">下一題 →</button></div></div></div></section><section class="slide" data-slide="14" data-section="維持注意"><div class="slide-inner"><div class="kicker">9.2.3.2 原子化器細節</div><h2 class="slide-title">火焰類型與兩種增敏技術</h2><div class="grid3" style="margin-top:18px"><div class="card b"><div class="ic">🔵</div><div class="ct">氧化焰</div><div class="cb">貧燃(過氧)、最熱、藍色清晰</div></div><div class="card a"><div class="ic">🟡</div><div class="ct">還原焰</div><div class="cb">富燃(過燃料)、較冷、黃色</div></div><div class="card g"><div class="ic">⚪</div><div class="ct">化學計量焰</div><div class="cb">燃料與助燃恰好完全燃燒</div></div></div><div class="grid2" style="margin-top:14px"><div class="card b"><div class="ic">💧</div><div class="ct">冷蒸氣法 (Hg)</div><div class="cb">汞可在室溫以自由原子存在；用 SnCl₂ 還原成元素汞，直接送入吸收池——汞分析首選</div></div><div class="card a"><div class="ic">🫧</div><div class="ct">氫化物生成法</div><div class="cb">As、Pb、Sn、Sb、Se… 生成揮發性氫化物後導入，靈敏度大增</div></div></div></div></section><section class="slide" data-slide="15" data-section="維持注意"><div class="slide-inner"><div class="kicker">9.2.4 安全</div><h2 class="slide-title">乙炔是<span class='hi'>爆炸性</span>氣體</h2><div class="grid2" style="margin-top:16px"><div class="card a"><div class="ic">💥</div><div class="ct">為什麼危險</div><div class="cb">空氣-乙炔、笑氣-乙炔是最常用燃料；乙炔可爆，需良好通風</div></div><div class="card b"><div class="ic">🚫</div><div class="ct">鐵律</div><div class="cb">火焰 AAS <strong>運轉中絕不可無人看管</strong>；排氣口應在燃燒頭正上方</div></div></div><div class="note" style="margin-top:18px">操作前務必詳閱儀器商 SOP；避免未燃燃料堆積與有毒煙霧。</div></div></section><section class="slide" data-slide="16" data-section="維持注意"><div class="slide-inner"><div class="kicker">9.2.5 干擾</div><h2 class="slide-title">兩大類：<span class='hi'>光譜性</span>與<span class='hi'>非光譜性</span></h2><div class="grid2" style="margin-top:16px"><div class="card b"><div class="ic">🌈</div><div class="ct">光譜性干擾</div><div class="cb">其他元素/分子在待測波長附近<strong>吸收或放光</strong>。例：Fe 213.856 與 Zn 213.859 nm 重疊；鹼土氧化物背景吸收。用氘燈、Zeeman 校正</div></div><div class="card a"><div class="ic">⚗️</div><div class="ct">非光譜性干擾</div><div class="cb">影響<strong>原子化效率或游離</strong>。含輸送、溶質揮發(磷酸鈣)、化學(難熔氧化物)、游離干擾</div></div></div><div class="note" style="margin-top:14px"><strong>實例：</strong>牛奶測鈣時，磷酸鹽與鈣生成焦磷酸鈣壓低訊號→加<strong>鑭(La)</strong>當釋放劑；鹼金屬易游離→加 K/Cs 當<strong>游離抑制劑</strong>。</div></div></section><section class="slide" data-slide="17" data-section="維持注意" data-game="g3"><div class="slide-inner"><div class="game no-nav" data-game="g3"><div class="game-head"><span class="tag a">小遊戲 ③</span><span class="gt">干擾分類：光譜 vs 非光譜</span><span class="score" id="g3score">0 / 6</span></div><div class="game-q">把 6 種干擾現象分到「光譜性干擾」或「非光譜性干擾」。</div><div class="pool" id="g3pool"></div><div class="buckets" id="g3buckets"></div><div class="fb" id="g3fb"></div><div class="btnrow"><button class="btn" id="g3check">檢查答案</button><button class="btn ghost" id="g3reset">重來</button></div></div></div></section><section class="slide" data-slide="18" data-section="維持注意"><div class="slide-inner"><div class="kicker">9.3 原子發射 AES / ICP-OES</div><h2 class="slide-title">氬電漿：又熱又穩的多元素利器</h2><div class="grid2-1" style="margin-top:8px"><div class="svgwrap">
 <svg viewBox="0 0 380 340">
  <text x="190" y="22" text-anchor="middle" class="lblb" font-size="15">感應耦合電漿 (ICP) 焰炬</text>
- <!-- quartz tubes -->
- <rect x="150" y="90" width="80" height="190" rx="10" fill="#f6f9fd" stroke="#48597a" stroke-width="2"/>
- <rect x="166" y="90" width="48" height="190" rx="8" fill="#eef6ff" stroke="#1f6feb" stroke-width="1.6"/>
- <!-- plasma -->
- <path d="M190 60 C 150 110, 158 170, 190 210 C 222 170, 230 110, 190 60 Z"
-   fill="url(#pg)" stroke="#d9822b" stroke-width="2"/>
- <ellipse cx="190" cy="150" rx="16" ry="40" fill="#d94f4f" opacity=".75"/>
+ <!-- quartz tubes: outer, intermediate, injector -->
+ <rect x="150" y="150" width="80" height="140" rx="8" fill="#f6f9fd" stroke="#48597a" stroke-width="2"/>
+ <rect x="166" y="165" width="48" height="125" rx="6" fill="#eef6ff" stroke="#1f6feb" stroke-width="1.6"/>
+ <rect x="185" y="205" width="10" height="85" rx="3" fill="#f6f9fd" stroke="#48597a" stroke-width="1.4"/>
+ <!-- plasma: fireball inside the coil, tail rising above the torch -->
  <defs><linearGradient id="pg" x1="0" y1="0" x2="0" y2="1">
    <stop offset="0" stop-color="#cfe0f6"/><stop offset="1" stop-color="#7eb6ff"/></linearGradient></defs>
- <!-- load coil -->
+ <path d="M190 48 C 150 105, 154 170, 190 202 C 226 170, 230 105, 190 48 Z"
+   fill="url(#pg)" stroke="#d9822b" stroke-width="2"/>
+ <ellipse cx="190" cy="172" rx="17" ry="24" fill="#d94f4f" opacity=".75"/>
+ <!-- load coil wrapped around the torch mouth -->
  <g stroke="#d9822b" stroke-width="5" fill="none">
-  <path d="M150 240 q40 -14 80 0"/><path d="M150 256 q40 -14 80 0"/><path d="M150 272 q40 -14 80 0"/></g>
- <text x="262" y="262" class="lbl">RF 負載線圈</text>
- <text x="262" y="278" class="lbl">(27/40 MHz)</text>
- <!-- argon arrows -->
- <line x1="190" y1="320" x2="190" y2="282" stroke="#1f9d6b" stroke-width="3" marker-end="url(#ah3)"/>
+  <path d="M146 168 q44 -14 88 0"/><path d="M146 184 q44 -14 88 0"/><path d="M146 200 q44 -14 88 0"/></g>
+ <text x="246" y="186" class="lbl">RF 負載線圈</text>
+ <text x="246" y="203" class="lbl">(27/40 MHz)</text>
+ <!-- argon + aerosol enter from below -->
+ <line x1="190" y1="322" x2="190" y2="294" stroke="#1f9d6b" stroke-width="3" marker-end="url(#ah3)"/>
  <defs><marker id="ah3" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
    <path d="M0 0 L7 3 L0 6 Z" fill="#1f9d6b"/></marker></defs>
- <text x="190" y="335" text-anchor="middle" class="lbl">氬氣 + 樣品氣溶膠</text>
- <!-- temps -->
- <text x="118" y="96" text-anchor="end" class="lblb" fill="#d94f4f">~10000 K</text>
- <text x="280" y="150" class="lblb" fill="#1f6feb">6000–7000 K</text>
- <text x="280" y="168" class="lbl">(分析激發區)</text>
+ <text x="190" y="336" text-anchor="middle" class="lbl">氬氣 + 樣品氣溶膠</text>
+ <!-- temps with leaders -->
+ <line x1="124" y1="170" x2="174" y2="172" stroke="#d94f4f" stroke-width="1.4"/>
+ <text x="120" y="175" text-anchor="end" class="lblb" fill="#d94f4f">~10000 K</text>
+ <line x1="206" y1="96" x2="252" y2="96" stroke="#1f6feb" stroke-width="1.4"/>
+ <text x="256" y="92" class="lblb" fill="#1f6feb">6000–7000 K</text>
+ <text x="256" y="110" class="lbl">(分析激發區)</text>
 </svg></div><div><ul class="clean"><li>AES 不需外部光源——<strong>被激發的原子本身發光</strong>(火焰光度計即屬此類)</li><li><strong>ICP-OES</strong>：氬電漿由 RF 線圈感應加熱，溫度可達 ~10000 K，分析激發 6000–7000 K</li><li>低氧環境→<strong>氧化物少、化學干擾少</strong>；可<strong>同時測多元素</strong>(可達 70 種)</li><li>線性範圍寬達 <strong>6 個數量級</strong></li></ul></div></div></div></section><section class="slide" data-slide="19" data-section="維持注意" data-game="g4"><div class="slide-inner"><div class="game no-nav" data-game="g4"><div class="game-head"><span class="tag a">小遊戲 ④</span><span class="gt">原子化流程排序</span><span class="score" id="g4score">— / 6</span></div><div class="game-q">用 ▲▼ 把樣品「從溶液到離子」的 6 個階段排成正確順序。</div><div class="sortlist" id="g4list"></div><div class="fb" id="g4fb"></div><div class="btnrow"><button class="btn" id="g4check">檢查順序</button><button class="btn ghost" id="g4reset">打亂重排</button></div></div></div></section><section class="slide" data-slide="20" data-section="維持注意"><div class="slide-inner"><div class="kicker">9.5 ICP-MS</div><h2 class="slide-title">不測光，改測<span class='hi'>離子的質荷比</span></h2><div class="grid2" style="margin-top:16px"><div><ul class="clean"><li>Houk 等(1980)：把氬電漿當成<strong>離子源</strong>接上質譜儀</li><li>依離子的<strong>質荷比 m/z</strong> 分離、計數——偵測極限可達 <strong>ppt</strong></li><li>能分辨<strong>同位素</strong>(同元素不同質量)，可做產地溯源</li><li>取樣錐 + 截取錐 + 離子透鏡把離子導入四極桿</li></ul></div><div class="note"><strong>三技術的定位：</strong><br>AAS 便宜、單元素、教學；<br>ICP-OES 多元素、高通量、商業例行；<br>ICP-MS 超痕量、同位素、最佳偵測極限(也最貴)。</div></div></div></section><section class="slide" data-slide="21" data-section="維持注意"><div class="slide-inner"><div class="kicker">9.5.2 ICP-MS 干擾</div><h2 class="slide-title">同質量重疊：<span class='hi'>多原子</span>干擾</h2><div class="grid2-1" style="margin-top:12px"><div>
 <table class="cmp" style="margin-top:8px">
  <thead><tr><th>多原子離子</th><th>m/z</th><th>受干擾的元素</th></tr></thead>
@@ -321,7 +333,25 @@ function show(i){
   secTag.textContent='— '+(slides[cur].dataset.section||'')+' —';
   var ch=slides[cur].dataset.chart; if(ch) initChart(ch);
   var g=slides[cur].dataset.game; if(g) initGame(g);
+  fitSlide(); setTimeout(fitSlide,80);
 }
+/* Scale the active slide down (never up) so it always fits the window,
+   whatever the browser zoom, window size or projector resolution. */
+function fitSlide(){
+  slides.forEach(function(s){var e=s.querySelector('.slide-inner'); if(e){e.style.transform='';}});
+  if(window.innerWidth<=640) return;           /* phones keep the scrolling layout */
+  var s=slides[cur], el=s&&s.querySelector('.slide-inner'); if(!el) return;
+  var cs=getComputedStyle(s);
+  var availH=s.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom);
+  var availW=s.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight);
+  var h=el.scrollHeight, w=el.scrollWidth;
+  if(!h||!w) return;
+  var k=Math.min(1,availH/h,availW/w);
+  if(k<1){el.style.transformOrigin='center center';el.style.transform='scale('+Math.max(k,0.4).toFixed(3)+')';}
+}
+window.addEventListener('resize',fitSlide);
+if(document.fonts&&document.fonts.ready){document.fonts.ready.then(fitSlide);}
+document.addEventListener('click',function(){setTimeout(fitSlide,60)});
 function next(){show(cur+1)} function prev(){show(cur-1)}
 function toggleFs(){if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()}else{document.exitFullscreen&&document.exitFullscreen()}}
 document.addEventListener('keydown',function(e){

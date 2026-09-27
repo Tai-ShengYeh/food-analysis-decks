@@ -103,8 +103,12 @@ table.cmp td.c{color:var(--ink);font-weight:700}
 /* ---------- svg apparatus ---------- */
 .svgwrap{display:flex;align-items:center;justify-content:center}
 .svgwrap svg{max-width:100%;max-height:62vh;height:auto}
-.lbl{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink-2)}
-.lblb{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink);font-weight:700}
+.lbl,.lblb{font-family:"Noto Sans TC",sans-serif}
+.lblb{font-weight:700}
+/* Defaults only: an SVG's own font-size / fill attributes win. */
+.lbl:not([font-size]),.lblb:not([font-size]){font-size:13px}
+.lbl:not([fill]){fill:var(--ink-2)}
+.lblb:not([fill]){fill:var(--ink)}
 /* ---------- minigame ---------- */
 .game{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:24px 26px;
   box-shadow:var(--shadow)}
@@ -327,11 +331,15 @@ table.cmp td.c{color:var(--ink);font-weight:700}
  <path d="M112 138 h56 v92 l-16 18 h-24 l-16 -18 z" fill="url(#glass)" stroke="#1f6feb" stroke-width="2.5"/>
  <rect x="124" y="150" width="32" height="40" rx="4" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
  <text x="118" y="143" class="lbl" font-size="11" text-anchor="middle"> </text>
- <text x="186" y="160" class="lblb">萃取室</text><text x="186" y="178" class="lbl">套筒 thimble</text>
- <text x="186" y="196" class="lbl">+ 樣品</text>
+ <text x="192" y="160" class="lblb">萃取室</text><text x="192" y="178" class="lbl">套筒 thimble</text>
+ <text x="192" y="196" class="lbl">+ 樣品</text>
  <!-- siphon arm -->
- <path d="M112 210 q-22 4 -22 -22 v-28" fill="none" stroke="#1f6feb" stroke-width="2.5"/>
- <text x="20" y="172" class="lbl">虹吸管</text><text x="20" y="188" class="lbl">siphon</text>
+ <!-- siphon: rises from the chamber bottom to just below the thimble top, then returns to the flask -->
+ <path d="M112 226 H100 V168 q0 -10 -10 -10 q-10 0 -10 10 V256 q0 6 6 6 H139" fill="none" stroke="#1f6feb" stroke-width="2.5"/>
+ <text x="20" y="190" class="lbl">虹吸管</text><text x="20" y="210" class="lbl">siphon</text>
+ <!-- vapour arm: solvent vapour bypasses the chamber up to the condenser -->
+ <path d="M141 262 H178 V146 H168" fill="none" stroke="#1f6feb" stroke-width="2.5"/>
+ <text x="184" y="236" class="lbl" font-size="11">蒸氣管</text>
  <!-- boiling flask -->
  <path d="M140 248 v22" stroke="#1f6feb" stroke-width="2.5"/>
  <circle cx="140" cy="320" r="52" fill="url(#glass)" stroke="#1f6feb" stroke-width="2.5"/>
@@ -602,7 +610,25 @@ function show(i){
   secTag.textContent='— '+(slides[cur].dataset.section||'')+' —';
   const ch=slides[cur].dataset.chart; if(ch) initChart(ch);
   const g=slides[cur].dataset.game; if(g) initGame(g);
+  fitSlide(); setTimeout(fitSlide,80);
 }
+/* Scale the active slide down (never up) so it always fits the window,
+   whatever the browser zoom, window size or projector resolution. */
+function fitSlide(){
+  slides.forEach(function(s){var e=s.querySelector('.slide-inner'); if(e){e.style.transform='';}});
+  if(window.innerWidth<=640) return;           /* phones keep the scrolling layout */
+  var s=slides[cur], el=s&&s.querySelector('.slide-inner'); if(!el) return;
+  var cs=getComputedStyle(s);
+  var availH=s.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom);
+  var availW=s.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight);
+  var h=el.scrollHeight, w=el.scrollWidth;
+  if(!h||!w) return;
+  var k=Math.min(1,availH/h,availW/w);
+  if(k<1){el.style.transformOrigin='center center';el.style.transform='scale('+Math.max(k,0.4).toFixed(3)+')';}
+}
+window.addEventListener('resize',fitSlide);
+if(document.fonts&&document.fonts.ready){document.fonts.ready.then(fitSlide);}
+document.addEventListener('click',function(){setTimeout(fitSlide,60)});
 function next(){show(cur+1)} function prev(){show(cur-1)}
 function toggleFs(){ if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()} else {document.exitFullscreen&&document.exitFullscreen()} }
 document.addEventListener('keydown',e=>{

@@ -37,30 +37,36 @@ BLOCK_SVG = """
 QUAD_SVG = """
 <svg viewBox="0 0 560 260">
  <text x="280" y="22" text-anchor="middle" class="lblb" font-size="15">四極桿質量分析器：RF+DC 電場當「質量篩」</text>
- <!-- 4 rods (2 shown as ellipses pairs) -->
- <ellipse cx="200" cy="80" rx="120" ry="20" fill="#cfe0f6" stroke="#1f6feb" stroke-width="2"/>
- <ellipse cx="200" cy="180" rx="120" ry="20" fill="#cfe0f6" stroke="#1f6feb" stroke-width="2"/>
- <circle cx="90" cy="130" r="20" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
- <circle cx="320" cy="130" r="20" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
- <text x="200" y="70" text-anchor="middle" class="lbl">+ (DC+RF)</text>
- <text x="200" y="200" text-anchor="middle" class="lbl">−</text>
+ <!-- side view: the two rods above/below the axis are one opposite pair (same polarity) -->
+ <rect x="80" y="62" width="260" height="26" rx="13" fill="#cfe0f6" stroke="#1f6feb" stroke-width="2"/>
+ <rect x="80" y="172" width="260" height="26" rx="13" fill="#cfe0f6" stroke="#1f6feb" stroke-width="2"/>
+ <text x="210" y="54" text-anchor="middle" class="lbl">+ (DC+RF)</text>
+ <text x="210" y="216" text-anchor="middle" class="lbl">+ (DC+RF)</text>
  <!-- ion path: stable sine -->
- <path d="M70 130 q30 -28 60 0 q30 28 60 0 q30 -28 60 0 q30 28 60 0" fill="none" stroke="#1f9d6b" stroke-width="3"/>
- <circle cx="70" cy="130" r="6" fill="#1f9d6b"/>
- <text x="40" y="135" text-anchor="end" class="lbl">離子</text>
- <line x1="350" y1="130" x2="420" y2="130" stroke="#1f9d6b" stroke-width="3" marker-end="url(#qm)"/>
+ <path d="M60 130 q35 -24 70 0 q35 24 70 0 q35 -24 70 0 q35 24 70 0" fill="none" stroke="#1f9d6b" stroke-width="3"/>
+ <circle cx="60" cy="130" r="6" fill="#1f9d6b"/>
+ <text x="48" y="135" text-anchor="end" class="lbl">離子</text>
+ <line x1="350" y1="130" x2="410" y2="130" stroke="#1f9d6b" stroke-width="3" marker-end="url(#qm)"/>
  <defs><marker id="qm" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 Z" fill="#1f9d6b"/></marker></defs>
- <text x="430" y="125" class="lblb">穩定路徑</text><text x="430" y="143" class="lbl">→ 偵測器</text>
- <!-- unstable -->
- <path d="M150 230 q20 -18 0 -36" fill="none" stroke="#d94f4f" stroke-width="2" stroke-dasharray="3 3"/>
- <text x="200" y="244" text-anchor="middle" class="lbl">不穩定離子撞上電極被抽走</text>
+ <text x="424" y="125" class="lblb">穩定路徑</text><text x="424" y="143" class="lbl">→ 偵測器</text>
+ <!-- unstable ion: growing oscillation hits a rod -->
+ <path d="M60 130 q30 -30 60 0 q30 38 62 38" fill="none" stroke="#d94f4f" stroke-width="2" stroke-dasharray="4 3"/>
+ <text x="184" y="172" text-anchor="middle" fill="#d94f4f" font-size="14" font-weight="800">✕</text>
+ <!-- end-on inset: four rods, opposite rods share polarity -->
+ <g font-size="11">
+  <circle cx="470" cy="180" r="9" fill="#cfe0f6" stroke="#1f6feb" stroke-width="1.6"/><circle cx="470" cy="226" r="9" fill="#cfe0f6" stroke="#1f6feb" stroke-width="1.6"/>
+  <circle cx="447" cy="203" r="9" fill="#fbeede" stroke="#d9822b" stroke-width="1.6"/><circle cx="493" cy="203" r="9" fill="#fbeede" stroke="#d9822b" stroke-width="1.6"/>
+  <text x="470" y="184" text-anchor="middle" class="lblb" font-size="11">+</text><text x="470" y="230" text-anchor="middle" class="lblb" font-size="11">+</text>
+  <text x="447" y="207" text-anchor="middle" class="lblb" font-size="11">−</text><text x="493" y="207" text-anchor="middle" class="lblb" font-size="11">−</text>
+  <text x="470" y="252" text-anchor="middle" class="lbl" font-size="11">端視：四根桿</text></g>
+ <text x="210" y="244" text-anchor="middle" class="lbl">不穩定離子撞上電極被抽走</text>
 </svg>"""
 
 TQ_SVG = """
 <svg viewBox="0 0 980 230">
  <defs><marker id="tm" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 Z" fill="#1f9d6b"/></marker></defs>
  <text x="490" y="22" text-anchor="middle" class="lblb" font-size="15">三重四極桿 MS/MS：選母離子 → 碰撞碎裂 → 選子離子 (Fig 11.14)</text>
- <line x1="40" y1="120" x2="930" y2="120" stroke="#1f9d6b" stroke-width="3" marker-end="url(#tm)"/>
+ <line x1="40" y1="120" x2="796" y2="120" stroke="#1f9d6b" stroke-width="3" marker-end="url(#tm)"/>
  <rect x="70" y="92" width="150" height="56" rx="9" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2.2"/>
  <text x="145" y="116" text-anchor="middle" class="lblb">Q1</text><text x="145" y="135" text-anchor="middle" class="lbl">選母離子</text>
  <rect x="300" y="92" width="180" height="56" rx="9" fill="#fbeede" stroke="#d9822b" stroke-width="2.2"/>
@@ -82,18 +88,18 @@ ESI_SVG = """
  <text x="95" y="88" text-anchor="middle" class="lbl">LC 流出液 + 高電壓</text>
  <!-- Taylor cone -->
  <path d="M170 95 L210 106 L170 117 Z" fill="#d9822b" opacity=".7"/>
- <text x="200" y="138" text-anchor="middle" class="lbl">Taylor cone</text>
+ <text x="190" y="138" text-anchor="middle" class="lbl">Taylor cone</text>
  <!-- droplets shrinking -->
  <g fill="#1f6feb">
   <circle cx="245" cy="106" r="12" opacity=".5"/><circle cx="300" cy="100" r="8" opacity=".55"/>
   <circle cx="345" cy="112" r="6" opacity=".6"/><circle cx="385" cy="103" r="4" opacity=".7"/></g>
- <text x="300" y="150" text-anchor="middle" class="lbl">帶電液滴蒸發、庫侖爆炸越變越小</text>
+ <text x="315" y="162" text-anchor="middle" class="lbl">帶電液滴蒸發、庫侖爆炸越變越小</text>
  <!-- ions -->
  <g fill="#1f9d6b" font-size="12">
   <text x="440" y="98">＋</text><text x="465" y="112">＋</text><text x="490" y="100">＋</text></g>
  <rect x="520" y="92" width="60" height="30" rx="5" fill="#15233f"/>
  <text x="550" y="112" text-anchor="middle" fill="#fff" font-size="11">進質譜</text>
- <text x="455" y="140" text-anchor="middle" class="lbl">氣相離子(可帶多電荷)</text>
+ <text x="500" y="142" text-anchor="middle" class="lbl">氣相離子(可帶多電荷)</text>
 </svg>"""
 
 # ================================================ 引起動機 ================================================
@@ -134,18 +140,18 @@ MS_SPECTRUM_SVG = """
  </g>
  <text x="20" y="183" text-anchor="middle" class="lbl" transform="rotate(-90 20 183)">相對強度 (%)</text>
  <g stroke="#d9822b" stroke-width="3.4" stroke-linecap="round">
-  <line x1="166" y1="316" x2="166" y2="290"/>
-  <line x1="261" y1="316" x2="261" y2="230"/>
+  <line x1="166" y1="316" x2="166" y2="300"/>
+  <line x1="261" y1="316" x2="261" y2="199"/>
   <line x1="356" y1="316" x2="356" y2="50"/>
   <line x1="450" y1="316" x2="450" y2="303"/>
-  <line x1="457" y1="316" x2="457" y2="235"/>
+  <line x1="457" y1="316" x2="457" y2="284"/>
  </g>
  <g font-size="12" fill="#48597a" text-anchor="middle">
   <text x="166" y="334">15</text><text x="261" y="334">29</text><text x="356" y="334">43</text><text x="457" y="334">58</text>
  </g>
  <text x="300" y="358" text-anchor="middle" class="lbl">m/z</text>
  <text x="356" y="42" text-anchor="middle" class="lblb" fill="#d9822b" font-size="13">43 基峰</text>
- <text x="474" y="228" text-anchor="start" class="lblb" fill="#1f6feb" font-size="12">58 分子離子 M⁺·</text>
+ <text x="462" y="274" text-anchor="middle" class="lblb" fill="#1f6feb" font-size="12">58 分子離子 M⁺·</text>
 </svg>"""
 
 add(MOT, dc.kt("11.3 判讀基礎", "質譜圖怎麼看：<span class='hi'>基峰</span>與<span class='hi'>分子離子</span>") +

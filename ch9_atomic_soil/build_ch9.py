@@ -59,12 +59,17 @@ AAS_SVG = """
  <!-- chopper -->
  <circle cx="178" cy="96" r="20" fill="#fff" stroke="#48597a" stroke-width="2.2"/>
  <path d="M178 96 L178 76 A20 20 0 0 1 195 106 Z" fill="#48597a"/>
- <text x="178" y="140" text-anchor="middle" class="lbl">斬光器</text>
+ <text x="178" y="64" text-anchor="middle" class="lbl">斬光器</text>
  <!-- atomizer/flame -->
  <rect x="250" y="70" width="130" height="52" rx="9" fill="#fbeede" stroke="#d9822b" stroke-width="2.4"/>
  <path d="M300 70 q6 -22 12 0 M318 70 q6 -22 12 0" fill="none" stroke="#d94f4f" stroke-width="2.6"/>
  <text x="315" y="96" text-anchor="middle" class="lblb">火焰 / 石墨爐</text>
  <text x="315" y="113" text-anchor="middle" class="lbl">原子化器</text>
+ <!-- reference beam (double-beam): chopper mirror sends light around the flame, recombined before the monochromator -->
+ <path d="M188 110 L214 148 L404 148 L436 104" fill="none" stroke="#d9822b" stroke-width="2" stroke-dasharray="6 4" opacity=".85"/>
+ <line x1="430" y1="84" x2="444" y2="108" stroke="#48597a" stroke-width="3"/>
+ <text x="315" y="162" text-anchor="middle" class="lbl" font-size="11">參考光束（繞過火焰）</text>
+ <text x="438" y="76" text-anchor="middle" class="lbl" font-size="11">合光鏡</text>
  <!-- monochromator -->
  <rect x="470" y="70" width="130" height="52" rx="9" fill="#eef6ff" stroke="#1f6feb" stroke-width="2.4"/>
  <text x="535" y="92" text-anchor="middle" class="lblb">單色器</text>
@@ -102,8 +107,8 @@ HCL_SVG = """
  <!-- Ar gas dots -->
  <g fill="#7e57ff" opacity=".6">
   <circle cx="175" cy="110" r="3"/><circle cx="195" cy="140" r="3"/><circle cx="240" cy="100" r="3"/>
-  <circle cx="265" cy="150" r="3"/><circle cx="225" cy="160" r="3"/><circle cx="285" cy="115" r="3"/></g>
- <text x="300" y="170" text-anchor="middle" class="lbl">Ar / Ne 填充氣</text>
+  <circle cx="265" cy="150" r="3"/><circle cx="228" cy="150" r="3"/><circle cx="285" cy="115" r="3"/></g>
+ <text x="240" y="174" text-anchor="middle" class="lbl">Ar / Ne 填充氣</text>
  <!-- window + beam -->
  <rect x="338" y="108" width="16" height="24" fill="#cfe0f6" stroke="#1f6feb" stroke-width="2"/>
  <line x1="354" y1="120" x2="420" y2="120" stroke="#d9822b" stroke-width="3.4" marker-end="url(#ah2)"/>
@@ -116,35 +121,38 @@ HCL_SVG = """
 ICP_SVG = """
 <svg viewBox="0 0 380 340">
  <text x="190" y="22" text-anchor="middle" class="lblb" font-size="15">感應耦合電漿 (ICP) 焰炬</text>
- <!-- quartz tubes -->
- <rect x="150" y="90" width="80" height="190" rx="10" fill="#f6f9fd" stroke="#48597a" stroke-width="2"/>
- <rect x="166" y="90" width="48" height="190" rx="8" fill="#eef6ff" stroke="#1f6feb" stroke-width="1.6"/>
- <!-- plasma -->
- <path d="M190 60 C 150 110, 158 170, 190 210 C 222 170, 230 110, 190 60 Z"
-   fill="url(#pg)" stroke="#d9822b" stroke-width="2"/>
- <ellipse cx="190" cy="150" rx="16" ry="40" fill="#d94f4f" opacity=".75"/>
+ <!-- quartz tubes: outer, intermediate, injector -->
+ <rect x="150" y="150" width="80" height="140" rx="8" fill="#f6f9fd" stroke="#48597a" stroke-width="2"/>
+ <rect x="166" y="165" width="48" height="125" rx="6" fill="#eef6ff" stroke="#1f6feb" stroke-width="1.6"/>
+ <rect x="185" y="205" width="10" height="85" rx="3" fill="#f6f9fd" stroke="#48597a" stroke-width="1.4"/>
+ <!-- plasma: fireball inside the coil, tail rising above the torch -->
  <defs><linearGradient id="pg" x1="0" y1="0" x2="0" y2="1">
    <stop offset="0" stop-color="#cfe0f6"/><stop offset="1" stop-color="#7eb6ff"/></linearGradient></defs>
- <!-- load coil -->
+ <path d="M190 48 C 150 105, 154 170, 190 202 C 226 170, 230 105, 190 48 Z"
+   fill="url(#pg)" stroke="#d9822b" stroke-width="2"/>
+ <ellipse cx="190" cy="172" rx="17" ry="24" fill="#d94f4f" opacity=".75"/>
+ <!-- load coil wrapped around the torch mouth -->
  <g stroke="#d9822b" stroke-width="5" fill="none">
-  <path d="M150 240 q40 -14 80 0"/><path d="M150 256 q40 -14 80 0"/><path d="M150 272 q40 -14 80 0"/></g>
- <text x="262" y="262" class="lbl">RF 負載線圈</text>
- <text x="262" y="278" class="lbl">(27/40 MHz)</text>
- <!-- argon arrows -->
- <line x1="190" y1="320" x2="190" y2="282" stroke="#1f9d6b" stroke-width="3" marker-end="url(#ah3)"/>
+  <path d="M146 168 q44 -14 88 0"/><path d="M146 184 q44 -14 88 0"/><path d="M146 200 q44 -14 88 0"/></g>
+ <text x="246" y="186" class="lbl">RF 負載線圈</text>
+ <text x="246" y="203" class="lbl">(27/40 MHz)</text>
+ <!-- argon + aerosol enter from below -->
+ <line x1="190" y1="322" x2="190" y2="294" stroke="#1f9d6b" stroke-width="3" marker-end="url(#ah3)"/>
  <defs><marker id="ah3" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
    <path d="M0 0 L7 3 L0 6 Z" fill="#1f9d6b"/></marker></defs>
- <text x="190" y="335" text-anchor="middle" class="lbl">氬氣 + 樣品氣溶膠</text>
- <!-- temps -->
- <text x="118" y="96" text-anchor="end" class="lblb" fill="#d94f4f">~10000 K</text>
- <text x="280" y="150" class="lblb" fill="#1f6feb">6000–7000 K</text>
- <text x="280" y="168" class="lbl">(分析激發區)</text>
+ <text x="190" y="336" text-anchor="middle" class="lbl">氬氣 + 樣品氣溶膠</text>
+ <!-- temps with leaders -->
+ <line x1="124" y1="170" x2="174" y2="172" stroke="#d94f4f" stroke-width="1.4"/>
+ <text x="120" y="175" text-anchor="end" class="lblb" fill="#d94f4f">~10000 K</text>
+ <line x1="206" y1="96" x2="252" y2="96" stroke="#1f6feb" stroke-width="1.4"/>
+ <text x="256" y="92" class="lblb" fill="#1f6feb">6000–7000 K</text>
+ <text x="256" y="110" class="lbl">(分析激發區)</text>
 </svg>"""
 
 ATOM_SVG = """
 <svg viewBox="0 0 380 360">
- <defs><marker id="au" markerWidth="10" markerHeight="10" refX="4" refY="8" orient="auto">
-   <path d="M4 0 L8 8 L0 8 Z" fill="#1f6feb"/></marker></defs>
+ <defs><marker id="au" markerWidth="6" markerHeight="6" refX="1" refY="3" orient="auto">
+   <path d="M0 0 L6 3 L0 6 Z" fill="#1f6feb"/></marker></defs>
  <line x1="70" y1="330" x2="70" y2="40" stroke="#1f6feb" stroke-width="3" marker-end="url(#au)"/>
  <g font-size="13">
   <rect x="92" y="300" width="220" height="40" rx="8" fill="#f6f9fd" stroke="#48597a" stroke-width="1.8"/>
@@ -163,7 +171,7 @@ ATOM_SVG = """
   <text x="202" y="78" text-anchor="middle" class="lblb">離子 M⁺</text>
   <text x="202" y="94" text-anchor="middle" class="lbl">游離 ionization (過熱→干擾)</text>
  </g>
- <text x="40" y="36" class="lbl">能量↑</text>
+ <text x="84" y="40" class="lbl">能量 ↑</text>
 </svg>"""
 
 POLY_TABLE = """
