@@ -172,13 +172,13 @@ const SCENARIOS = [
   },
   {
     tag: 'CASE 2 · 黃麴毒素',
-    scenario: '花生樣品中可能含有 AFB1（黃麴毒素 B1）。你用 365 nm UV 光照射 TLC 板，AFB1 會放出藍綠色螢光。',
+    scenario: '花生樣品中可能含有 AFB1（黃麴毒素 B1）。你用 365 nm UV 光照射 TLC 板，AFB1 會放出藍色螢光。',
     q: '使用何種光譜法？放射光波長比激發光長／短／相等？',
     blanks: [
       { label: '光譜法名稱', placeholder: '中文：螢光／磷光', ans: ['螢光', 'fluorescence', '螢光光譜'], hint: '奈秒級放光' },
       { label: '放射光波長相對激發光是？', placeholder: '中文：長／短／相等', ans: ['長', '較長', 'longer', '更長'], hint: 'Stokes 位移' },
     ],
-    expl: 'AFB1 吸收 365 nm UV → 放出 425 nm 藍綠光，這是螢光。因 Stokes 位移，放射波長一定 ≥ 激發波長。'
+    expl: 'AFB1 吸收 365 nm UV → 放出約 425–440 nm 藍光，這是螢光。因 Stokes 位移，放射波長通常比激發波長長。'
   },
   {
     tag: 'CASE 3 · 重金屬檢測',

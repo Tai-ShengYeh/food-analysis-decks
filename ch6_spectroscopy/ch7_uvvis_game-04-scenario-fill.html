@@ -223,7 +223,7 @@ const QUESTIONS = [
   {
     "theme": "lab",
     "themeName": "🥛 Bradford 蛋白質定量",
-    "sentence": "用 Bradford 法量牛奶蛋白，波長選 {0} nm。若量到 A = 1.2 超過線性區（0.2–0.8），應該 {1} 後重測。",
+    "sentence": "用 Bradford 法量牛奶蛋白，波長選 {0} nm。若量到 A = 1.2 超過最佳量測範圍（0.2–0.8），應該 {1} 後重測。",
     "answers": [
       "595",
       "稀釋樣品"
@@ -236,7 +236,7 @@ const QUESTIONS = [
       "765",
       "加熱"
     ],
-    "explain": "Bradford 試劑（Coomassie 染料）與蛋白結合後 λmax 紅移至 <strong>595 nm</strong>。A > 0.8 偏離 Beer-Lambert，稀釋 2 倍可拉回線性區。"
+    "explain": "Bradford 試劑（Coomassie 染料）與蛋白結合後 λmax 紅移至 <strong>595 nm</strong>。A > 0.8 相對誤差變大，稀釋 2 倍（A ≈ 0.6）即可回到最佳範圍。"
   },
   {
     "theme": "food",
@@ -295,7 +295,7 @@ const QUESTIONS = [
   {
     "theme": "lab",
     "themeName": "🔬 比色槽選擇",
-    "sentence": "量測蛋白質在 UV 區 280 nm 的吸收，比色槽必須選 {0}，因為一般 {1} 在 350 nm 以下會強烈吸光。",
+    "sentence": "量測蛋白質在 UV 區 280 nm 的吸收，比色槽必須選 {0}，因為一般 {1} 在 350 nm 以下會明顯吸光。",
     "answers": [
       "石英",
       "玻璃"

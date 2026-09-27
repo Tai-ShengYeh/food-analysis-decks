@@ -250,7 +250,7 @@ const QUESTIONS = [
       "升高溫度幫助吸光"
     ],
     "correct": 1,
-    "explain": "A > 0.8 偏離 Beer-Lambert 線性、誤差爆增。線性最佳區間 A = 0.2–0.8，超出要稀釋（稀 2 倍 → A 約 0.9）。"
+    "explain": "A > 0.8 時到達偵測器的光太少、相對誤差變大。最佳量測範圍 A ≈ 0.2–0.8（精密度最佳，並非線性範圍），超出要稀釋（如稀釋 3 倍 → A ≈ 0.6）。"
   },
   {
     "section": "pre",
@@ -274,7 +274,7 @@ const QUESTIONS = [
       "平方"
     ],
     "correct": 2,
-    "explain": "b 與 A 線性正比。加倍 b → A 加倍。若加倍會超過線性區間，反而要稀釋濃度。"
+    "explain": "b 與 A 線性正比。加倍 b → A 加倍。若加倍後 A 超過最佳量測範圍（> 0.8），反而要稀釋。"
   },
   {
     "section": "mid",
@@ -310,7 +310,7 @@ const QUESTIONS = [
       "不鏽鋼槽"
     ],
     "correct": 2,
-    "explain": "玻璃在 < 350 nm 強烈吸光。石英可透到 ~190 nm。塑膠拋棄式只能 Vis 用。"
+    "explain": "玻璃在 < 350 nm 明顯吸光。石英可透到 ~190 nm。塑膠拋棄式只能 Vis 用。"
   },
   {
     "section": "mid",

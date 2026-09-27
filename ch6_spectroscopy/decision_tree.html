@@ -343,9 +343,9 @@ const TREE = {
     name: "UV-Vis 分光光度法",
     en:   "UV-Visible Spectrophotometry (Beer-Lambert)",
     items: [
-      { label: "原理", val: "A = εbc，電子躍遷吸收 200–700 nm" },
+      { label: "原理", val: "A = εbc，電子躍遷吸收 200–780 nm" },
       { label: "靈敏度", val: "ppm（mg/L）級 ★★★" },
-      { label: "線性範圍", val: "A = 0.2–0.8（超過 0.8 必須稀釋！）" },
+      { label: "最佳量測範圍", val: "A ≈ 0.2–0.8（超過 0.8 應稀釋！）" },
       { label: "常用衍生化", val: "Bradford（蛋白質, 595nm）、DNS（還原糖, 540nm）" },
     ],
     case: {
@@ -362,14 +362,14 @@ const TREE = {
     name: "螢光光譜法",
     en:   "Fluorescence Spectroscopy",
     items: [
-      { label: "原理", val: "S₁→S₀ 螢光發射，Stokes shift（發射 > 激發波長）" },
-      { label: "靈敏度", val: "ppb–ppt 級 ★★★★★（比 UV-Vis 高 100–1000 倍）" },
+      { label: "原理", val: "S₁→S₀ 螢光發射，Stokes shift（發射通常 > 激發波長）" },
+      { label: "靈敏度", val: "ppb–ppt 級 ★★★★★（一般比 UV-Vis 高 10–1000 倍）" },
       { label: "典型激發/發射", val: "黃麴毒素 B1：激發 365nm → 發射 440nm" },
-      { label: "注意", val: "高濃度自我淬滅（Inner Filter Effect）→ 必須稀釋！" },
+      { label: "注意", val: "高濃度偏離線性（常見原因：內濾效應）→ 必須稀釋！" },
     ],
     case: {
       title: "🥜 花生黃麴毒素 B1 偵測",
-      desc: "黃麴毒素 B1 在 365 nm UV 燈下發藍紫色螢光（440 nm）。反直覺：濃度太高時螢光反而下降（自我吸收），需稀釋到線性範圍才能定量！",
+      desc: "黃麴毒素 B1 在 365 nm UV 燈下發藍色螢光（440 nm）。反直覺：濃度太高時訊號不再與濃度成正比（曲線趨緩、會低估含量），需稀釋到線性範圍才能定量！",
       bg: "#0F2810",
     },
     predict: "💡 你猜：為什麼螢光的激發波長是 365nm，但偵測的是 440nm？（Jablonski 圖）"
@@ -400,7 +400,7 @@ const TREE = {
     name: "FTIR（傅立葉紅外光譜）",
     en:   "Fourier Transform Infrared Spectroscopy",
     items: [
-      { label: "原理", val: "振動能階吸收（2.5–25 μm），需偶極矩改變" },
+      { label: "原理", val: "振動能階吸收（中紅外 2.5–15 μm），需偶極矩改變" },
       { label: "靈敏度", val: "% 級（適合主成分分析）★★" },
       { label: "特色", val: "掃描快速（< 1 分鐘），不需要液態樣品" },
       { label: "食品應用", val: "三聚氰胺鑑定、脂肪酸組成、奶粉品質管控" },
@@ -436,11 +436,11 @@ const TREE = {
     type: "result",
     color: "#1ABC9C",
     name: "FTIR（現場快篩）",
-    en:   "FTIR / Portable Spectrometer",
+    en:   "Handheld FTIR / NIR / Raman",
     items: [
       { label: "場景", val: "食安事件現場、進口食品邊境查驗" },
-      { label: "優勢", val: "便攜式儀器、固液均可、圖譜庫比對 < 3 分鐘" },
-      { label: "後續確認", val: "陽性樣品送 LC-MS 或 GC-MS 確認結構" },
+      { label: "優勢", val: "手持式 FTIR／NIR／Raman，固液均可、圖譜庫比對 < 3 分鐘" },
+      { label: "後續確認", val: "陽性樣品送實驗室 LC-MS 或 GC-MS 確認結構（非現場快篩工具）" },
       { label: "實例", val: "蘇丹紅（Sudan Red）、塑化劑（DEHP）快速篩查" },
     ],
     case: {

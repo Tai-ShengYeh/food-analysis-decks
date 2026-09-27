@@ -150,7 +150,7 @@ const quizData = [
         question: "4. 螢光法比 UV-Vis 吸收法靈敏，主要原因？",
         options: ["激發光源功率更大", "比色槽更長", "90° 偵測發射光，背景接近零", "樣品需濃縮"],
         correct: 2,
-        explanation: "螢光偵測器置於 90°，避免激發光直接進入；Pf = k·P₀·c，量發射光而非穿透光，背景幾乎零。靈敏度比 UV-Vis 高 100-1000 倍。"
+        explanation: "螢光偵測器置於 90°，避免激發光直接進入；Pf = k·P₀·c，量發射光而非穿透光，背景幾乎零。靈敏度一般比 UV-Vis 高 10–1000 倍（1–3 個數量級）。"
     },
     {
         section: "前測｜喚出迷思",
@@ -177,16 +177,16 @@ const quizData = [
     {
         section: "段落小測｜Beer's Law 與儀器",
         question: "8. 非單色光（寬 bandwidth）導致 Beer's Law？",
-        options: ["更準確", "在高 A 端出現正偏離", "完全無影響", "靈敏度提高"],
+        options: ["更準確", "在高 A 端出現負偏離", "完全無影響", "靈敏度提高"],
         correct: 1,
-        explanation: "非單色光在高吸光端偏離 Beer's Law（向正方向偏離）。狹縫變窄可改善單色性但會降低訊噪比。"
+        explanation: "非單色光中各波長 ε 不同，有效 ε 隨濃度改變，高 A 端出現負偏離（A 偏低、曲線下彎）。狹縫變窄可改善單色性但會降低訊噪比。"
     },
     {
         section: "段落小測｜Beer's Law 與儀器",
         question: "9. UV 波段（200-380 nm）量測須選哪種比色槽？",
         options: ["矽酸鹽玻璃", "拋棄式塑膠", "石英或熔融矽", "鋼鐵槽"],
         correct: 2,
-        explanation: "矽酸鹽玻璃在 < 320 nm 會強烈吸收 UV；UV 範圍必須使用石英 (Quartz) 或熔融矽 (Fused Silica)。"
+        explanation: "矽酸鹽玻璃在 < 350 nm 明顯吸收 UV（課本 7.2.6.1）；UV 範圍必須使用石英 (Quartz) 或熔融矽 (Fused Silica)。"
     },
     {
         section: "段落小測｜Beer's Law 與儀器",

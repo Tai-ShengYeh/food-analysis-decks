@@ -318,7 +318,7 @@ footer { background: var(--bg2); border-top: 1px solid var(--border);
         <label><input type="radio" name="q2" value="d"> 偏小，應增加濃度</label>
       </div>
       <button class="btn btn-outline" style="margin-top:8px;font-size:12px;padding:4px 12px"
-        onclick="checkQ('q2','b','最佳吸光度範圍為 0.2–0.8（Nielsen Table 7.1）。A > 0.8 時，透光率極低，偵測器雜訊相對增大，誤差增加。')">
+        onclick="checkQ('q2','b','最佳吸光度範圍為 0.2–0.8（Nielsen 7.2.5）。A > 0.8 時，透光率極低，偵測器雜訊相對增大，誤差增加。')">
         確認答案
       </button>
       <div class="q-feedback" id="q2-feedback"></div>
@@ -522,8 +522,8 @@ footer { background: var(--bg2); border-top: 1px solid var(--border);
       <div class="mat-item">磁力攪拌器</div>
     </div>
     <div class="highlight-box" style="margin-top:12px;">
-      <p>⚠️ <strong>比色管選擇</strong>：測可見光（400–700 nm）使用玻璃或塑膠比色管即可。
-      若需測 UV（&lt;400 nm），必須使用石英比色管（SiO₂）。</p>
+      <p>⚠️ <strong>比色管選擇</strong>：測可見光（380–780 nm）使用玻璃或塑膠比色管即可（玻璃在 &lt; 350 nm 明顯吸收）。
+      若需測 UV（&lt;380 nm），必須使用石英比色管（SiO₂）。</p>
     </div>
   </div>
 </div>

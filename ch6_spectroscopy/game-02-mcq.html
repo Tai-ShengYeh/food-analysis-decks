@@ -226,13 +226,13 @@ const QUESTIONS = [
     explain: '量子化（quantization）— Planck 與 Bohr 的核心發現，光譜學基礎。' },
   { section: 'mid', q: 'UV-Vis 吸收主要對應哪一類能階躍遷？',
     options: ['核自旋', '轉動', '振動', '電子'], correct: 3,
-    explain: '電子能階 ΔE 最大（~ eV），對應 UV-Vis 波段 200–700 nm。' },
-  { section: 'mid', q: 'IR 吸收（2.5–25 μm）主要對應哪一類躍遷？',
+    explain: '電子能階 ΔE 最大（~ eV），對應 UV-Vis 波段 200–780 nm。' },
+  { section: 'mid', q: '中紅外 IR 吸收（2.5–15 μm）主要對應哪一類躍遷？',
     options: ['電子', '振動', '核自旋', '質量'], correct: 1,
     explain: '振動能階對應 IR 區。記憶口訣：「電子 > 振動 > 轉動 > 核自旋」（能量由大到小）。' },
   { section: 'mid', q: '四類能階中能量差最大的是？',
     options: ['核自旋', '轉動', '振動', '電子'], correct: 3,
-    explain: '電子（UV-Vis）> 振動（IR）> 轉動（遠 IR/微波）> 核自旋（NMR 射頻）。' },
+    explain: '電子（UV-Vis）> 振動（IR）> 轉動（微波）> 核自旋（NMR 射頻）。' },
   { section: 'mid', q: '螢光發射波長通常比激發波長長，原因是？',
     options: ['偵測器放大了', '部分能量先以振動弛豫（熱）散失', '樣品濃度提高', '光速變慢'], correct: 1,
     explain: 'Stokes shift：S₁ 先振動弛豫到最低點才發射，能量比吸收時少 → 波長變長。' },
@@ -257,7 +257,7 @@ const QUESTIONS = [
     explain: 'AAS（原子吸收）對重金屬靈敏度高（ppb 級），是食品安全檢驗的標配。' },
   { section: 'post', q: '七大光譜方法中，靈敏度最高（★★★★★）的是？',
     options: ['UV-Vis', 'IR', 'NMR', '螢光'], correct: 3,
-    explain: '螢光：發射光從零背景上偵測，比 UV-Vis 高 100–1000 倍。例：黃麴毒素 B1 ppb 級偵測。' },
+    explain: '螢光：發射光從零背景上偵測，一般比 UV-Vis 高 10–1000 倍（1–3 個數量級）。例：黃麴毒素 B1 ppb 級偵測。' },
 ];
 
 const SECTION_INFO = {

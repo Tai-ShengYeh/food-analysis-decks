@@ -322,7 +322,7 @@ html,body{width:100%;height:100%;overflow:hidden;
     <div class="stat-card"><div class="stat-val">200</div><div class="stat-label">UV 起點 (nm)</div></div>
     <div class="stat-card"><div class="stat-val">780</div><div class="stat-label">Near-IR 終點 (nm)</div></div>
     <div class="stat-card"><div class="stat-val">0.2–0.8</div><div class="stat-label">最佳吸光度範圍</div></div>
-    <div class="stat-card"><div class="stat-val">10³</div><div class="stat-label">螢光靈敏度倍數</div></div>
+    <div class="stat-card"><div class="stat-val">10–10³</div><div class="stat-label">螢光靈敏度倍數</div></div>
   </div>
 </div>
 </section>
@@ -537,7 +537,7 @@ html,body{width:100%;height:100%;overflow:hidden;
     <div class="card"><div class="card-title">A = 0.450, ε = 27300</div>
       <div class="card-desc" style="font-family:'JetBrains Mono',monospace">c = 0.450/(27300×1)<br>= 1.648×10⁻⁵ mol/L<br>= 16.48 μmol/L</div></div>
     <div class="card"><div class="card-title">若 A > 0.8 怎麼辦？</div>
-      <div class="card-desc" style="color:var(--yellow)">稀釋樣品（例如10倍）後重測，結果乘回稀釋倍數</div></div>
+      <div class="card-desc" style="color:var(--yellow)">稀釋適當倍數（使 A 落在 0.2–0.8）後重測，結果乘回稀釋倍數</div></div>
     <div class="card"><div class="card-title">若 A < 0.2 怎麼辦？</div>
       <div class="card-desc" style="color:var(--yellow)">增加濃縮倍數、使用更長光徑（5cm, 10cm比色管）</div></div>
   </div>
@@ -757,7 +757,7 @@ html,body{width:100%;height:100%;overflow:hidden;
   <div class="card-grid cols3" style="margin-bottom:14px">
     <div class="card">
       <div class="card-title">① 光源</div>
-      <div class="card-desc"><strong>鎢燈</strong>：可見光（320–2500 nm）<br>
+      <div class="card-desc"><strong>鎢燈</strong>：可見光（350–2500 nm）<br>
         <strong>氘燈</strong>：UV（160–380 nm）<br>
         多數儀器兩者兼備，自動切換</div>
     </div>
@@ -875,7 +875,7 @@ html,body{width:100%;height:100%;overflow:hidden;
   <div style="font-size:var(--t1);font-weight:900;background:linear-gradient(90deg,var(--accent),var(--magenta),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:16px;line-height:1.2">螢光光譜學</div>
   <div style="font-size:var(--t3);color:var(--ink2);margin-bottom:28px">Fluorescence Spectroscopy</div>
   <div class="stat-row" style="max-width:500px;margin:0 auto 24px">
-    <div class="stat-card"><div class="stat-val" style="color:var(--magenta)">10³</div><div class="stat-label">靈敏度倍數<br>vs UV-Vis</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:var(--magenta)">10–10³</div><div class="stat-label">靈敏度倍數<br>vs UV-Vis</div></div>
     <div class="stat-card"><div class="stat-val" style="color:var(--gold)">90°</div><div class="stat-label">偵測器<br>放置角度</div></div>
     <div class="stat-card"><div class="stat-val" style="color:var(--accent)">ppb</div><div class="stat-label">偵測<br>極限等級</div></div>
   </div>
@@ -936,7 +936,7 @@ html,body{width:100%;height:100%;overflow:hidden;
         <li>分子吸收激發光（λex = 350 nm）→ 升到激發態 S₂</li>
         <li>快速無輻射鬆弛（IC）→ 落至 S₁ 最低振動能態</li>
         <li>S₁ → S₀ 以光子形式放出能量 → <strong>螢光（λem = 450 nm）</strong></li>
-        <li>λem > λex（損失部分能量為熱）→ <strong>Stokes 位移</strong></li>
+        <li>λem 通常 > λex（損失部分能量為熱）→ <strong>Stokes 位移</strong></li>
       </ul>
       <div class="eq-box" style="margin-top:12px">
         <div class="eq-sub">螢光強度（低濃度近似）：</div>
@@ -998,10 +998,10 @@ html,body{width:100%;height:100%;overflow:hidden;
       <tr><th>比較項目</th><th>UV-Vis 吸光度法</th><th>螢光光譜法</th></tr>
     </thead>
     <tbody>
-      <tr><td>偵測靈敏度</td><td class="ok">中（ppm–ppb）</td><td class="hi">高（ppb–ppt，高 10³ 倍）</td></tr>
+      <tr><td>偵測靈敏度</td><td class="ok">中（ppm–ppb）</td><td class="hi">高（ppb–ppt，高 10–10³ 倍）</td></tr>
       <tr><td>適用物質</td><td class="hi">廣（任何有吸收的物質）</td><td class="lo">窄（需有螢光基團）</td></tr>
       <tr><td>選擇性</td><td class="lo">低（同波長多物質重疊）</td><td class="hi">高（雙波長選擇：λex + λem）</td></tr>
-      <tr><td>線性範圍</td><td class="ok">中（A = 0.2–0.8）</td><td class="hi">廣（低濃度 F ∝ c）</td></tr>
+      <tr><td>線性範圍</td><td class="ok">中（最佳量測 A ≈ 0.2–0.8）</td><td class="hi">廣（低濃度 F ∝ c）</td></tr>
       <tr><td>高濃度行為</td><td class="ok">非線性（真實偏差）</td><td class="lo">Inner filter effect（自吸收）</td></tr>
       <tr><td>儀器成本</td><td class="hi">低（Spectronic 20）</td><td class="lo">高（螢光光譜儀）</td></tr>
       <tr><td>食品應用例</td><td>色素(FD&C)、蛋白質、糖</td><td>奎寧、維生素、農藥殘留</td></tr>
@@ -1212,7 +1212,7 @@ html,body{width:100%;height:100%;overflow:hidden;
       <div class="s-h2">UV-Vis 吸光度法</div>
       <ul class="check-list">
         <li><strong>A = εbc</strong>：吸光度與濃度成正比</li>
-        <li><strong>A = 0.2–0.8</strong>：最佳線性範圍</li>
+        <li><strong>A = 0.2–0.8</strong>：最佳量測範圍（精密度最佳）</li>
         <li><strong>λmax 處測量</strong>：靈敏度最大</li>
         <li>三種偏差：真實／儀器／化學</li>
         <li>校正曲線 R² ≥ 0.999</li>
@@ -1223,7 +1223,7 @@ html,body{width:100%;height:100%;overflow:hidden;
       <div class="s-h2" style="color:var(--magenta)">螢光光譜法</div>
       <ul class="check-list">
         <li><strong>F = kP₀c</strong>：低濃度線性</li>
-        <li>靈敏度高 <strong>10³ 倍</strong>（vs UV-Vis）</li>
+        <li>靈敏度高 <strong>10–10³ 倍</strong>（vs UV-Vis）</li>
         <li>90° 偵測，Stokes 位移</li>
         <li>量子效率 φ 決定螢光強度</li>
         <li>高濃度：inner filter effect</li>
