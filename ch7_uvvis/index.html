@@ -170,7 +170,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);color:va
     <div class="card" style="text-align:center;border-top:4px solid var(--pur)">
       <div style="font-size:2rem;margin:10px 0">04</div>
       <div style="font-weight:700;color:var(--pur);margin-bottom:6px">螢光光譜<br>高靈敏度</div>
-      <div style="font-size:.8rem;color:var(--muted)">比 UV-Vis 強 1000×</div>
+      <div style="font-size:.8rem;color:var(--muted)">比 UV-Vis 靈敏 10–1000×</div>
     </div>
   </div>
   <div class="card" style="background:#122540;text-align:center;padding:12px">
@@ -316,14 +316,14 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);color:va
     </thead>
     <tbody>
       <tr><td style="text-align:left">β-胡蘿蔔素</td><td>465</td><td style="color:var(--hi);font-weight:700">125,000</td><td style="text-align:left">色素定量，高靈敏</td><td>★★★★★</td></tr>
-      <tr><td style="text-align:left">1,3-丁二烯共軛體</td><td>217</td><td style="color:var(--pri);font-weight:700">21,000</td><td style="text-align:left">脂質氧化指標</td><td>★★★★</td></tr>
-      <tr><td style="text-align:left">色胺酸 Trp</td><td>278</td><td>5,579</td><td style="text-align:left">蛋白質定量（278 nm）</td><td>★★★</td></tr>
+      <tr><td style="text-align:left">1,3-丁二烯共軛體</td><td>217</td><td style="color:var(--pri);font-weight:700">21,000</td><td style="text-align:left">共軛二烯（脂質氧化）</td><td>★★★★</td></tr>
+      <tr><td style="text-align:left">吲哚 Indole（Trp 側鏈）</td><td>278</td><td>2,500</td><td style="text-align:left">蛋白質定量（~280 nm）</td><td>★★★</td></tr>
       <tr><td style="text-align:left">苯酚 Phenol</td><td>270</td><td>1,450</td><td style="text-align:left">酚類含量測定</td><td>★★</td></tr>
       <tr><td style="text-align:left">醋酸 R-COOH</td><td>208</td><td style="color:var(--red)">32</td><td style="text-align:left">有機酸（靈敏度極低！）</td><td style="color:var(--red)">★</td></tr>
     </tbody>
   </table>
   <div class="card" style="background:#122540;padding:10px 14px;margin-top:12px;text-align:center">
-    <span style="color:var(--hi)">共軛體系越長 → ε 越大 → λmax 紅移（向長波長移動）→ β-胡蘿蔔素是典型例子</span>
+    <span style="color:var(--hi)">共軛體系越長 → ε 越大 → λmax 紅移（向長波長移動）→ β-胡蘿蔔素是典型例子</span><br><span style="font-size:.78rem;color:var(--muted)">λmax／ε 數值取自課本 Table 7.2（靈敏度星等為教學示意）</span>
   </div>
 </div>
 </section>
@@ -368,7 +368,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);color:va
     <div class="quiz-opt" onclick="doQuiz(this,'wrong')">A　繼續記錄，數字大更準確</div>
     <div class="quiz-opt" onclick="doQuiz(this,'correct')">B　稀釋樣品後重測</div>
     <div class="quiz-opt" onclick="doQuiz(this,'wrong')">C　換波長重測</div>
-    <div class="answer-panel" id="ap8">A = 1.95 遠超 0.8，%T ≈ 1.1%，光幾乎全被吸收，噪音比例極高。正確做法：稀釋（如 10 倍），使 A 落在 0.2–0.8，再回算濃度時乘以稀釋倍數。</div>
+    <div class="answer-panel" id="ap8">A = 1.95 遠超 0.8，%T ≈ 1.1%，光幾乎全被吸收，噪音比例極高。正確做法：稀釋（如 5 倍，A ≈ 0.39），使 A 落在 0.2–0.8，再回算濃度時乘以稀釋倍數。</div>
   </div>
 </div>
 </section>
@@ -417,7 +417,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);color:va
       </div>
     </div>
     <div class="card" style="border-top:3px solid var(--hi)">
-      <div style="font-weight:700;color:var(--hi);margin-bottom:8px">正偏離（A 偏高）</div>
+      <div style="font-weight:700;color:var(--hi);margin-bottom:8px">化學平衡偏離（可正可負）</div>
       <div class="bullet-item"><div class="dot" style="background:var(--hi)"></div><p style="font-size:.9rem">弱酸/弱鹼 pH 改變時，解離/未解離型態比例改變</p></div>
       <div class="bullet-item"><div class="dot" style="background:var(--hi)"></div><p style="font-size:.9rem">兩種型態的 ε 不同</p></div>
       <div class="bullet-item"><div class="dot" style="background:var(--hi)"></div><p style="font-size:.9rem">稀釋改變平衡 → 有效 ε 改變</p></div>
@@ -430,7 +430,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);color:va
     <div style="font-weight:700;color:var(--grn);margin-bottom:8px">偏離②：非單色光（Bandwidth）</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
       <div style="font-size:.9rem"><span style="color:var(--pri);font-weight:700">理想單色光：</span> ε 固定 → A = εbc 嚴格成立 → 完美線性校正曲線</div>
-      <div style="font-size:.9rem"><span style="color:var(--red);font-weight:700">多波長混合：</span> 每個 λ 的 ε 不同 → 平均 ε 隨 A 改變 → 高 A 端正偏離<br><em style="color:var(--muted)">對策：縮小出射狹縫；選 λmax 附近平坦區</em></div>
+      <div style="font-size:.9rem"><span style="color:var(--red);font-weight:700">多波長混合：</span> 每個 λ 的 ε 不同 → 有效 ε 隨濃度改變 → 高 A 端負偏離（A 偏低、曲線下彎）<br><em style="color:var(--muted)">對策：縮小出射狹縫；選 λmax 附近平坦區</em></div>
     </div>
   </div>
 </div>
@@ -499,7 +499,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);color:va
     </div>
     <div class="card2" style="border-left:3px solid var(--hi)">
       <div style="font-weight:700;color:var(--hi);margin-bottom:4px">Q8　非單色光影響</div>
-      <p style="font-size:.85rem;color:var(--muted)">寬 bandwidth → 高 A 端正偏離（非無影響）</p>
+      <p style="font-size:.85rem;color:var(--muted)">寬 bandwidth → 高 A 端負偏離（非無影響）</p>
     </div>
     <div class="card2" style="border-left:3px solid var(--grn)">
       <div style="font-weight:700;color:var(--grn);margin-bottom:4px">Q9　UV 比色槽材質</div>
@@ -619,9 +619,9 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);color:va
   <div class="card2" style="padding:12px">
     <p style="font-weight:700;color:var(--hi);margin-bottom:8px">🎯 測量茶葉中咖啡因（UV 275 nm），用一般玻璃比色槽可以嗎？</p>
     <div class="quiz-opt" onclick="doQuiz(this,'wrong')">A　可以，玻璃透明所以沒問題</div>
-    <div class="quiz-opt" onclick="doQuiz(this,'correct')">B　不行，玻璃在 &lt;320 nm 強烈吸收 UV，必須換石英槽</div>
+    <div class="quiz-opt" onclick="doQuiz(this,'correct')">B　不行，玻璃在 &lt;350 nm 明顯吸收 UV，必須換石英槽</div>
     <div class="quiz-opt" onclick="doQuiz(this,'wrong')">C　可以，但要加校正因子</div>
-    <div class="answer-panel" id="ap15">矽酸鹽玻璃在 &lt;320 nm 有強烈吸收，UV 光無法通過，測量值完全失真。UV 波段（&lt;380 nm）必須使用石英或熔融矽比色槽。</div>
+    <div class="answer-panel" id="ap15">矽酸鹽玻璃在 &lt;350 nm 明顯吸收（課本 7.2.6.1），UV 光無法有效通過，測量值失真。UV 波段（&lt;380 nm）必須使用石英或熔融矽比色槽。</div>
   </div>
 </div>
 </section>
@@ -651,11 +651,12 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);color:va
   <table class="data-table">
     <thead><tr><th>物質</th><th>共軛雙鍵數</th><th>λmax (nm)</th><th>ε</th><th>食品意義</th></tr></thead>
     <tbody>
-      <tr><td style="text-align:left">1,3-丁二烯</td><td>2</td><td>217</td><td>21,000</td><td style="text-align:left">脂質氧化指標</td></tr>
+      <tr><td style="text-align:left">1,3-丁二烯</td><td>2</td><td>217</td><td>21,000</td><td style="text-align:left">共軛二烯（脂質氧化）</td></tr>
       <tr><td style="text-align:left">番茄紅素</td><td>11（開鏈）</td><td>470</td><td>~185,000</td><td style="text-align:left">紅色色素</td></tr>
       <tr><td style="text-align:left">β-胡蘿蔔素</td><td>11（環化）</td><td style="color:var(--hi);font-weight:700">465</td><td style="color:var(--hi);font-weight:700">125,000</td><td style="text-align:left">橘黃色素，高靈敏</td></tr>
     </tbody>
   </table>
+  <p style="font-size:.75rem;color:var(--muted);margin-top:6px">1,3-丁二烯、β-胡蘿蔔素數值取自課本 Table 7.2；番茄紅素（己烷中文獻值）為課外補充</p>
 </div>
 </section>
 
@@ -690,7 +691,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);color:va
 <div class="slide-inner" style="text-align:center">
   <p style="color:var(--muted);font-size:1.1rem;margin-bottom:16px">第三段</p>
   <h2 style="font-size:clamp(2.5rem,5vw,4rem);font-weight:900;color:var(--grn);margin-bottom:12px">螢光光譜法</h2>
-  <p style="font-size:1.4rem;color:var(--txt)">為什麼靈敏度比 UV-Vis 高 1000 倍？</p>
+  <p style="font-size:1.4rem;color:var(--txt)">為什麼靈敏度比 UV-Vis 高 1–3 個數量級？</p>
   <div style="width:160px;height:3px;background:var(--grn);margin:20px auto"></div>
 </div>
 </section>
@@ -701,7 +702,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);color:va
 <section class="slide" data-slide="19" data-section="螢光光譜" style="background:#0D1B2A">
 <div class="slide-inner">
   <div class="badge" style="background:var(--grn);color:var(--bg)">螢光光譜</div>
-  <h2 class="slide-title">螢光光譜 vs UV-Vis：靈敏度差 1000 倍的祕密</h2>
+  <h2 class="slide-title">螢光光譜 vs UV-Vis：靈敏度高 10–1000 倍的祕密</h2>
   <div class="rule" style="background:var(--grn)"></div>
   <table class="data-table" style="margin-bottom:14px">
     <thead>
@@ -718,7 +719,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);color:va
       <tr><td style="text-align:left;color:var(--muted)">靈敏度</td><td>★★★（ppm 級）</td><td style="color:var(--hi);font-weight:700">★★★★★（ppb 級）</td></tr>
       <tr><td style="text-align:left;color:var(--muted)">靈敏度原因</td><td>差值訊號，背景干擾大</td><td style="color:var(--grn)">零背景量測，S/N 極高</td></tr>
       <tr><td style="text-align:left;color:var(--muted)">食品應用</td><td>蛋白質、色素、還原糖</td><td>黃麴毒素、葉綠素、維生素 B₂</td></tr>
-      <tr><td style="text-align:left;color:var(--muted)">限制</td><td>A > 0.01 才可偵測</td><td>需有螢光基團（或衍生化）</td></tr>
+      <tr><td style="text-align:left;color:var(--muted)">限制</td><td>A 太低（&lt;0.2）相對誤差大</td><td>需有螢光基團（或衍生化）</td></tr>
     </tbody>
   </table>
   <div class="card" style="background:#0a2a0a;border-left:4px solid var(--grn);padding:10px 14px">
@@ -740,7 +741,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);color:va
       <div style="font-weight:700;color:var(--grn);margin-bottom:10px">儀器架構特點</div>
       <div class="bullet-item"><div class="dot" style="background:var(--pri)"></div><p style="font-size:.88rem"><span style="color:var(--pri);font-weight:700">兩個單色器：</span>激發波長（λex）+ 發射波長（λem）各一</p></div>
       <div class="bullet-item"><div class="dot" style="background:var(--hi)"></div><p style="font-size:.88rem"><span style="color:var(--hi);font-weight:700">90° 偵測：</span>最小化散射干擾，零背景效果</p></div>
-      <div class="bullet-item"><div class="dot" style="background:var(--grn)"></div><p style="font-size:.88rem"><span style="color:var(--grn);font-weight:700">Pf = k·P₀·c：</span>低濃度時線性；高濃度內濾效應使線性崩潰</p></div>
+      <div class="bullet-item"><div class="dot" style="background:var(--grn)"></div><p style="font-size:.88rem"><span style="color:var(--grn);font-weight:700">Pf = k·P₀·c：</span>低濃度（εbc &lt; 0.01）時線性；高濃度偏離線性（Fig. 7.14）</p></div>
       <div class="bullet-item"><div class="dot" style="background:var(--pur)"></div><p style="font-size:.88rem"><span style="color:var(--pur);font-weight:700">量子效率 φ：</span>發射光子數 ÷ 吸收光子數，越高越靈敏</p></div>
     </div>
     <div class="card" style="border-top:3px solid var(--hi)">
@@ -878,7 +879,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);color:va
     </div>
     <div class="card2" style="padding:10px">
       <div style="font-weight:700;color:var(--red);margin-bottom:6px">螢光數值</div>
-      <p>螢光靈敏 → UV-Vis 100–1000×</p>
+      <p>螢光靈敏 → UV-Vis 10–1000×</p>
       <p>Pf 公式 → k·P₀·c</p>
       <p>量子效率 φ → 發射/吸收光子</p>
       <p>VitB₂ λem → 520 nm</p>
@@ -959,7 +960,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);color:va
     </div>
     <div class="card2" style="display:flex;align-items:center;gap:14px;border-left:4px solid var(--grn)">
       <div style="min-width:32px;height:32px;border-radius:50%;background:var(--grn);display:flex;align-items:center;justify-content:center;font-weight:900;color:var(--bg)">05</div>
-      <p style="font-size:.92rem">螢光光譜 90° 偵測，Pf = kP₀c，靈敏度比 UV-Vis 高 1000×，適合毒素、維生素等微量分析。</p>
+      <p style="font-size:.92rem">螢光光譜 90° 偵測，Pf = kP₀c，靈敏度比 UV-Vis 高 10–1000×（1–3 個數量級），適合毒素、維生素等微量分析。</p>
     </div>
   </div>
 </div>

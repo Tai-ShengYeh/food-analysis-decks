@@ -515,7 +515,7 @@ p,li{font-size:clamp(.9rem,1.3vw,1.1rem); color:var(--ink-2); line-height:1.65}
         </p>
         <div class="card alt" style="margin-bottom:12px">
           <div class="num">基態 ground state</div>
-          <p>能量最低、最穩定的狀態。室溫下 99% 以上的分子都在這。</p>
+          <p>能量最低、最穩定的狀態。一般條件下原子、分子主要處於基態（課本 6.3.1）。</p>
         </div>
         <div class="card alt-2">
           <div class="num">激發態 excited state</div>
@@ -540,19 +540,19 @@ p,li{font-size:clamp(.9rem,1.3vw,1.1rem); color:var(--ink-2); line-height:1.65}
       <div class="card alt">
         <div class="num">ELECTRONIC · 電子</div>
         <h3>價電子跳軌道</h3>
-        <p>ΔE 最大，需要 UV-Vis 範圍光子（200–700 nm）。</p>
+        <p>ΔE 最大，需要 UV-Vis 範圍光子（200–780 nm）。</p>
         <div class="formula" style="font-size:.9rem;margin-top:8px">↔ UV-Vis</div>
       </div>
       <div class="card alt-2">
         <div class="num">VIBRATIONAL · 振動</div>
         <h3>化學鍵伸縮彎曲</h3>
-        <p>ΔE 中等，對應 IR 紅外光（2.5–25 μm）。是分子的「指紋」。</p>
+        <p>ΔE 中等，對應 IR 紅外光（基頻在中紅外 2.5–15 μm）。是分子的「指紋」。</p>
         <div class="formula" style="font-size:.9rem;margin-top:8px">↔ IR</div>
       </div>
       <div class="card alt-3">
         <div class="num">ROTATIONAL · 轉動</div>
         <h3>整個分子旋轉</h3>
-        <p>ΔE 最小，對應微波／遠紅外。氣相分子才看得清楚。</p>
+        <p>ΔE 最小，對應微波（0.75–3.75 mm）。氣相分子才看得清楚。</p>
         <div class="formula" style="font-size:.9rem;margin-top:8px">↔ Microwave</div>
       </div>
     </div>
@@ -633,7 +633,7 @@ p,li{font-size:clamp(.9rem,1.3vw,1.1rem); color:var(--ink-2); line-height:1.65}
     <h2 class="slide-title">為什麼螢光<span class="hl">波長變長</span>？</h2>
 
     <p class="lead" style="margin-bottom:24px">
-      Stokes 位移（Stokes shift）── 螢光放射的波長 <strong>永遠</strong> 比激發光長。
+      Stokes 位移（Stokes shift）── 螢光放射的波長<strong>通常</strong>比激發光長（能量較低）。
     </p>
 
     <div class="three-col">
@@ -657,7 +657,7 @@ p,li{font-size:clamp(.9rem,1.3vw,1.1rem); color:var(--ink-2); line-height:1.65}
     <div style="margin-top:24px;background:rgba(0,212,255,.06);border:1px solid rgba(0,212,255,.2);padding:18px;border-radius:12px">
       <p style="font-size:.95rem">
         <strong style="color:var(--accent)">💡 食品應用：</strong>
-        奎寧（quinine）的藍色螢光、葉綠素的紅色螢光、AFB1（黃麴毒素）的藍綠色螢光──都靠 Stokes 位移分辨。比 UV-Vis 靈敏 100-1000 倍！
+        奎寧（quinine）的藍色螢光、葉綠素的紅色螢光、AFB1（黃麴毒素 B₁）的藍色螢光──都靠 Stokes 位移分辨。一般比 UV-Vis 吸收法靈敏 10–1000 倍（1–3 個數量級，課本 7.3）！
       </p>
     </div>
   </div>
@@ -671,7 +671,7 @@ p,li{font-size:clamp(.9rem,1.3vw,1.1rem); color:var(--ink-2); line-height:1.65}
 
     <div class="two-col">
       <div>
-        <p class="lead" style="margin-bottom:14px">Boltzmann 分布：高能階粒子數佔比 = e<sup>−ΔE/kT</sup></p>
+        <p class="lead" style="margin-bottom:14px">Boltzmann 分布：高／低能階粒子數比 = e<sup>−ΔE/kT</sup></p>
 
         <div class="formula" style="display:block;text-align:center;font-size:1.15rem">N(高) / N(低) = e<sup>−ΔE/kT</sup></div>
 
@@ -679,7 +679,7 @@ p,li{font-size:clamp(.9rem,1.3vw,1.1rem); color:var(--ink-2); line-height:1.65}
           <strong style="color:var(--accent)">UV-Vis：</strong>ΔE 大 → 高能階幾乎是空的 → 大量基態分子可被激發 → <strong style="color:var(--grn)">靈敏度高</strong>
         </p>
         <p style="margin-top:12px">
-          <strong style="color:var(--accent-2)">NMR：</strong>ΔE 極小（射頻能量）→ 兩個能階人口差不到 0.001% → 訊號很弱 → <strong style="color:#e74c3c">靈敏度低</strong>
+          <strong style="color:var(--accent-2)">NMR：</strong>ΔE 極小（射頻能量）→ 兩個能階人口幾乎相同（500 MHz、25 °C 時 N′/N ≈ 0.99992）→ 訊號很弱 → <strong style="color:#e74c3c">靈敏度低</strong>
         </p>
 
         <p style="margin-top:18px; font-size:.9rem; color:var(--ink-3)">
@@ -723,7 +723,7 @@ p,li{font-size:clamp(.9rem,1.3vw,1.1rem); color:var(--ink-2); line-height:1.65}
         </tr>
         <tr>
           <td><strong style="color:var(--warn)">Mid-IR</strong></td>
-          <td class="mono">2.5–25 μm</td>
+          <td class="mono">2.5–15 μm</td>
           <td><span class="tag warn">振動</span></td>
           <td>官能基鑑定、油脂氧化、包裝聚合物 ← Ch.8</td>
         </tr>
@@ -735,7 +735,7 @@ p,li{font-size:clamp(.9rem,1.3vw,1.1rem); color:var(--ink-2); line-height:1.65}
         </tr>
         <tr>
           <td><strong style="color:var(--accent-2)">Raman</strong></td>
-          <td class="mono">可見光散射</td>
+          <td class="mono">雷射散射（可見～近紅外）</td>
           <td><span class="tag alt">振動</span></td>
           <td>穿透包裝鑑定、油脂攙偽</td>
         </tr>
@@ -862,19 +862,21 @@ document.addEventListener('click', e => {
 function renderBoltzmann(){
   const ctx = document.getElementById('chart-boltzmann');
   if(!ctx) return;
-  const dE = [1e-25, 1e-23, 1e-21, 1e-19];  // J
-  const labels = ['NMR\n(射頻)','微波','IR\n(振動)','UV-Vis\n(電子)'];
-  const k = 1.381e-23;
-  const T = 298;
-  const ratio = dE.map(d => Math.exp(-d/(k*T)));
-  const data = ratio.map(r => r * 100);
+  // 示意計算（非課本數據）：ΔE = hν 或 hc/λ，T = 298 K，N′/N = e^(−ΔE/kT)（課本 Eq. 6.5）
+  // 代表值：NMR 500 MHz（課本 6.3.3 例子）、微波 1 mm、中紅外 10 μm（1000 cm⁻¹）、UV-Vis 400 nm
+  const h = 6.626e-34, c = 2.998e8, k = 1.381e-23, T = 298;
+  const dE = [h*500e6, h*c/1e-3, h*c/10e-6, h*c/400e-9];  // J
+  const labels = [['NMR','(500 MHz)'],['微波 · 轉動','(1 mm)'],['中紅外 · 振動','(10 μm)'],['UV-Vis · 電子','(400 nm)']];
+  const data = dE.map(d => Math.exp(-d/(k*T)));
+  const SUP = {'-':'⁻','0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const pow10 = n => n === 0 ? '1' : '10' + String(n).split('').map(ch => SUP[ch]).join('');
 
   new Chart(ctx, {
     type: 'bar',
     data: {
       labels,
       datasets: [{
-        label: '高能階人口佔比 (%)',
+        label: 'N′/N（高／低能階人口比）',
         data,
         backgroundColor: ['#ff006e','#ffb800','#00d4ff','#00e08a'],
         borderRadius: 6,
@@ -884,8 +886,10 @@ function renderBoltzmann(){
       responsive: true, maintainAspectRatio: false,
       scales: {
         y: {
-          type:'logarithmic', min:1e-30, max:200,
-          ticks:{color:'#7a8bb8', font:{family:'JetBrains Mono', size:10}},
+          type:'logarithmic', min:1e-60, max:10,
+          afterBuildTicks: axis => { axis.ticks = [-60,-50,-40,-30,-20,-10,0].map(n => ({value: Math.pow(10, n)})); },
+          ticks:{color:'#7a8bb8', font:{family:'JetBrains Mono', size:10},
+                 callback: v => pow10(Math.round(Math.log10(v)))},
           grid:{color:'rgba(255,255,255,.06)'}
         },
         x: {
@@ -895,8 +899,9 @@ function renderBoltzmann(){
       },
       plugins: {
         legend: { labels:{color:'#eef3ff', font:{size:12}} },
+        tooltip: { callbacks: { label: t => 'N′/N ≈ ' + t.raw.toExponential(2) } },
         title: {
-          display:true, text:'室溫下高能階分子佔比（對數刻度）',
+          display:true, text:['室溫 298 K 的 N′/N（對數刻度）','示意計算，非課本數據'],
           color:'#eef3ff', font:{size:14}
         },
       }

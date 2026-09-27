@@ -624,7 +624,7 @@ input[type="range"].dilution-slider::-moz-range-thumb{
       <div class="card">
         <div style="font-size:2.5rem; margin-bottom:8px;">🍯</div>
         <h3 class="slide-h3" style="color:var(--accent);">蜂蜜真偽</h3>
-        <p>偵測糖漿攙偽、不同植物源、地理產地 — <em>ppb 級</em>檢測限。</p>
+        <p>偵測糖漿攙偽、不同植物源、地理產地 — 攙偽比例（%）可定量。</p>
       </div>
     </div>
     <p style="margin-top:32px; font-size:var(--t3); color:var(--accent);">
@@ -831,7 +831,7 @@ input[type="range"].dilution-slider::-moz-range-thumb{
   <div class="slide-inner">
     <div class="kicker">— §8.2.2 ｜ Molecular Vibrations —</div>
     <h2 class="slide-h2">分子振動的六種模式</h2>
-    <p style="margin-bottom:20px;">以水分子 (H₂O) 為例，原子間有六種振動方式：<em>伸縮</em>頻率比<em>彎曲</em>高，<em>不對稱</em>比<em>對稱</em>更易產生偶極矩變化、更易吸收 IR。</p>
+    <p style="margin-bottom:20px;">課本 Fig. 8.1 以水分子 (H₂O) 圖示伸縮與彎曲等運動方式：<em>伸縮</em>頻率比<em>彎曲</em>高，<em>不對稱</em>比<em>對稱</em>更易產生偶極矩變化、更易吸收 IR。</p>
 
     <div class="grid-2x3" style="gap:16px;">
       <!-- 對稱伸縮 -->
@@ -934,7 +934,7 @@ input[type="range"].dilution-slider::-moz-range-thumb{
       </div>
     </div>
     <p style="margin-top:18px; font-size:.92rem; color:var(--ink-3);">
-      💡 <strong>關鍵：</strong>只有能造成<em>偶極矩變化</em>的振動才會吸收 IR。對稱伸縮 H₂O 中兩個 O-H 鍵的偶極變化相互抵消，<em>不易在 IR 中觀察</em>，但是 Raman 可以！
+      💡 <strong>關鍵：</strong>只有能造成<em>偶極矩變化</em>的振動才會吸收 IR。對稱伸縮偶極變化較小、IR 較弱（H₂O 仍具 IR 活性；CO₂ 的對稱伸縮才<em>完全不吸收 IR</em>，但 Raman 看得到）。
     </p>
   </div>
 </section>
@@ -1072,7 +1072,7 @@ input[type="range"].dilution-slider::-moz-range-thumb{
         </div>
         <div style="margin-top:10px; padding:10px 12px; background:rgba(0,212,255,0.06); border-left:3px solid var(--accent); border-radius:6px; font-size:.82rem;">
           <strong style="color:var(--accent);">FT 三大優勢：</strong>
-          Felgett (多工同時量) ｜ Jacquinot (無狹縫高訊號) ｜ Connes (He-Ne 校正)
+          Fellgett (多工同時量) ｜ Jacquinot (無狹縫高訊號) ｜ Connes (He-Ne 校正)
         </div>
       </div>
     </div>
@@ -1144,7 +1144,7 @@ input[type="range"].dilution-slider::-moz-range-thumb{
         <ul style="font-size:.82rem; margin-top:4px; padding-left:16px; line-height:1.5;">
           <li>樣品<em>直接放在晶體上，免製樣</em></li>
           <li><strong>衰減波</strong>穿入樣品數 μm 被吸收</li>
-          <li>三反射晶體訊號增強 3-25 倍；含水樣品 OK</li>
+          <li>多重內反射（3–25 次）→ 有效光徑 = 反射次數 × 穿透深度；含水樣品 OK</li>
         </ul>
       </div>
     </div>
@@ -1211,7 +1211,7 @@ input[type="range"].dilution-slider::-moz-range-thumb{
     <div style="margin-top:14px; display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:10px;">
       <div class="card" style="padding:10px 12px; border-left:3px solid #ff006e;">
         <strong style="color:#ff006e;">脂肪 Fats</strong>
-        <p style="font-size:.78rem; margin-top:4px;">1740 C=O 酯 ｜ 2950 C-H ｜ 1465 CH₂</p>
+        <p style="font-size:.78rem; margin-top:4px;">1740 C=O 酯 ｜ 3000–2800 C-H ｜ 1465 C-H 彎曲</p>
       </div>
       <div class="card" style="padding:10px 12px; border-left:3px solid #00d4ff;">
         <strong style="color:#00d4ff;">蛋白質 Proteins</strong>
@@ -1219,7 +1219,7 @@ input[type="range"].dilution-slider::-moz-range-thumb{
       </div>
       <div class="card" style="padding:10px 12px; border-left:3px solid #ffb800;">
         <strong style="color:#ffb800;">醣類 Carbs</strong>
-        <p style="font-size:.78rem; margin-top:4px;">1080 C-OH ｜ 1030 澱粉結晶 ｜ 995 醣苷鍵</p>
+        <p style="font-size:.78rem; margin-top:4px;">1080 C-1-H ｜ 1050–1020 澱粉結晶度 ｜ 995 醣苷鍵</p>
       </div>
       <div class="card" style="padding:10px 12px; border-left:3px solid #00e676;">
         <strong style="color:#00e676;">水 Water</strong>
@@ -1359,7 +1359,7 @@ input[type="range"].dilution-slider::-moz-range-thumb{
   <div class="slide-inner">
     <div class="kicker">— §8.5.1 ｜ Raman Principles —</div>
     <h2 class="slide-h2">拉曼散射 = IR 的補位英雄</h2>
-    <p style="margin-bottom:20px;">當光子撞到分子，<em>99.99999%</em> 彈性散射（Rayleigh），但有<strong>百萬分之一</strong>機率交換能量 → 形成 Raman 散射。</p>
+    <p style="margin-bottom:20px;">當光子撞到分子，<em>99.99999%</em> 彈性散射（Rayleigh），但約<strong>千萬分之一（1/10⁷）</strong>機率交換能量 → 形成 Raman 散射。</p>
 
     <div class="grid-2" style="gap:24px;">
       <div class="card" style="padding:18px;">
@@ -1463,7 +1463,7 @@ input[type="range"].dilution-slider::-moz-range-thumb{
       <tbody>
         <tr><td><strong>物理機制</strong></td><td>吸收</td><td>散射</td></tr>
         <tr><td><strong>選律</strong></td><td>偶極矩 (μ) 變化</td><td>極化率 (α) 變化</td></tr>
-        <tr><td><strong>對稱振動</strong> (e.g. C=C, C-C, S-S)</td><td style="color:var(--bad);">看不到 ✗</td><td style="color:var(--good);">看得到 ✓</td></tr>
+        <tr><td><strong>對稱振動</strong> (e.g. C=C, C-C, S-S)</td><td style="color:var(--bad);">弱／常看不到 △</td><td style="color:var(--good);">看得到 ✓</td></tr>
         <tr><td><strong>不對稱振動</strong> (e.g. C=O, O-H)</td><td style="color:var(--good);">看得到 ✓</td><td>較弱</td></tr>
         <tr><td><strong>水中量測</strong></td><td style="color:var(--bad);">水吸收強，難 ✗</td><td style="color:var(--good);">水很弱，OK ✓</td></tr>
         <tr><td><strong>玻璃容器</strong></td><td style="color:var(--bad);">玻璃吸收 ✗</td><td style="color:var(--good);">玻璃透明 ✓</td></tr>
@@ -1484,7 +1484,7 @@ input[type="range"].dilution-slider::-moz-range-thumb{
 <section class="slide" data-slide="16" data-section="維持注意">
   <div class="slide-inner">
     <div class="kicker">— §8.5.3 ｜ Surface-Enhanced Raman Scattering —</div>
-    <h2 class="slide-h2">SERS：把訊號放大 100 億倍</h2>
+    <h2 class="slide-h2">SERS：把訊號放大最高 10¹¹ 倍</h2>
     <p style="margin-bottom:24px;">傳統拉曼太弱，怎麼辦？把分子<em>吸附在金屬奈米結構上</em>，訊號暴增 <strong style="color:var(--accent-2); font-size:1.4em;">10⁴ — 10¹¹</strong> 倍 → 可達<em>單分子偵測</em>。</p>
 
     <div class="grid-2" style="gap:24px;">
@@ -1655,12 +1655,12 @@ input[type="range"].dilution-slider::-moz-range-thumb{
       <div class="card" style="padding:14px;">
         <div style="font-size:1.6rem;">🧀</div>
         <strong style="color:var(--accent);">起司</strong>
-        <p style="font-size:.78rem; color:var(--ink-3);">熟成度、年份分類、福馬林檢測</p>
+        <p style="font-size:.78rem; color:var(--ink-3);">熟成度、依熟成時間分類、福馬林檢測</p>
       </div>
       <div class="card" style="padding:14px;">
         <div style="font-size:1.6rem;">🫒</div>
         <strong style="color:var(--accent-2);">橄欖油</strong>
-        <p style="font-size:.78rem; color:var(--ink-3);">品種、地理來源、攙偽（大豆油、菜籽油）</p>
+        <p style="font-size:.78rem; color:var(--ink-3);">品種、地理來源、儲存時間、攙偽（大豆油）</p>
       </div>
       <div class="card" style="padding:14px;">
         <div style="font-size:1.6rem;">🍷</div>
@@ -1705,13 +1705,13 @@ input[type="range"].dilution-slider::-moz-range-thumb{
       <div class="card" style="padding:14px;">
         <div style="font-size:1.6rem;">🌶️</div>
         <strong>香料</strong>
-        <p style="font-size:.78rem; color:var(--ink-3);">辣椒粉中的蘇丹紅、薑黃、藏紅花攙偽</p>
+        <p style="font-size:.78rem; color:var(--ink-3);">辣椒粉蘇丹紅、番紅花攙偽</p>
       </div>
     </div>
 
     <div style="margin-top:18px; padding:14px; background:rgba(0,212,255,0.06); border-radius:10px; text-align:center;">
-      <strong style="color:var(--accent);">📊 由 Table 8.2 整理：</strong>
-      <span style="font-size:.9rem;">超過 50 種食品 × 多種光譜技術，已在文獻中建立成熟方法。</span>
+      <strong style="color:var(--accent);">📊 由 Table 8.2（中/近紅外 41 項）與 Table 8.4（拉曼）整理：</strong>
+      <span style="font-size:.9rem;">各項應用皆有文獻方法可循。</span>
     </div>
   </div>
 </section>
@@ -1721,7 +1721,7 @@ input[type="range"].dilution-slider::-moz-range-thumb{
   <div class="slide-inner">
     <div class="kicker">— §8.6 ｜ Handheld & Portable —</div>
     <h2 class="slide-h2">把光譜實驗室帶到現場</h2>
-    <p style="margin-bottom:20px;">攜帶型 + 電池供電 + 幾乎免製樣 → <em>30 秒內</em>得到結果，現場攙偽偵測、海關查驗、農場品檢都可用。</p>
+    <p style="margin-bottom:20px;">攜帶型 + 電池供電 + 幾乎免製樣 → <em>數十秒至數分鐘</em>得到結果，現場攙偽偵測、海關查驗、農場品檢都可用。</p>
 
     <div class="grid-4" style="gap:16px;">
       <div class="card">
@@ -2125,9 +2125,9 @@ const SPECTRUM_PEAKS = [
   {x:1740, h:0.85, w:30, group:'C=O 酯 (脂肪 — 三酸甘油酯)', color:'#ff006e', cat:'脂肪'},
   {x:1640, h:0.65, w:40, group:'醯胺 I — C=O (蛋白質)', color:'#00d4ff', cat:'蛋白質'},
   {x:1540, h:0.5, w:35, group:'醯胺 II — N-H 彎曲 (蛋白質)', color:'#00d4ff', cat:'蛋白質'},
-  {x:1465, h:0.35, w:25, group:'CH₂ 彎曲 (脂肪烷基)', color:'#ff006e', cat:'脂肪'},
-  {x:1080, h:0.45, w:40, group:'C-OH (醣類)', color:'#ffb800', cat:'醣類'},
-  {x:1030, h:0.6, w:30, group:'澱粉結晶 (醣類)', color:'#ffb800', cat:'醣類'},
+  {x:1465, h:0.35, w:25, group:'C-H 彎曲 (脂肪；Table 8.1 標為 =C-H cis 彎曲)', color:'#ff006e', cat:'脂肪'},
+  {x:1080, h:0.45, w:40, group:'C-1-H 彎曲 (醣類)', color:'#ffb800', cat:'醣類'},
+  {x:1030, h:0.6, w:30, group:'C-4-OH；1050–1020 區與澱粉結晶度相關 (醣類)', color:'#ffb800', cat:'醣類'},
   {x:995, h:0.4, w:25, group:'醣苷鍵 (醣類)', color:'#ffb800', cat:'醣類'},
 ];
 
@@ -2298,7 +2298,7 @@ const G1_PAIRS = [
   { wn: '3300 cm⁻¹', target: '醯胺 A — N-H 伸縮（蛋白質）', explain: '蛋白質骨架的 N-H 伸縮，常與 O-H 區重疊。' },
   { wn: '1640 cm⁻¹', target: '醯胺 I — C=O（蛋白質）', explain: '蛋白質二級結構鑑定的金標準峰位（α-helix vs β-sheet）。' },
   { wn: '995 cm⁻¹', target: '醣苷鍵（碳水化合物）', explain: 'Glycosidic linkage，醣類間的 C-O-C 鍵結特徵。' },
-  { wn: '3500 cm⁻¹', target: 'O-H 伸縮（水）', explain: '水的 O-H 伸縮，寬而強，常是 NIR 的主導訊號。' },
+  { wn: '3500 cm⁻¹', target: 'O-H 伸縮（水）', explain: '水的 O-H 伸縮（中紅外），寬而強；在近紅外則以 1450 nm（泛音）與 1940 nm（組合帶）出現（Table 8.1）。' },
   { wn: '2950 cm⁻¹', target: 'C-H 伸縮（脂肪烷基鏈）', explain: '長鏈脂肪酸的 -CH₂-、-CH₃ 伸縮，3000-2800 區域。' },
 ];
 
@@ -2435,7 +2435,7 @@ const G2_QUESTIONS = [
     q: '你在乳品工廠的生產線上，要<strong>每分鐘監測一次</strong>原料牛奶的脂肪、蛋白、乳糖含量。樣品是<em>液體 + 高含水</em>。最適合？',
     options: ['Mid-IR (FTIR)', 'Near-IR (NIR)', 'Raman 光譜', '只能用 Kjeldahl 法'],
     answer: 1,
-    explain: 'NIR 在乳品分析是業界標準。穿透深、含水樣品 OK、能同時定量多個成分、線上速度快。Mid-IR 也可（牛奶分析儀），但 NIR 更適合線上連續監測。',
+    explain: 'NIR 可用光纖探頭做線上／在線監測，穿透深、能同時定量多個成分。注意：中紅外牛奶分析儀才是官方方法（每小時可測數百樣品，課本 8.3.3.2），適合實驗室批次檢驗。',
     topic: 'milk_online'
   },
   {
@@ -2456,14 +2456,14 @@ const G2_QUESTIONS = [
     q: '你要做<strong>未知有機化合物</strong>的官能基鑑定，找出它是酮、酯、醯胺、還是酸？樣品是純的固體粉末。最適合？',
     options: ['Mid-IR (FTIR)', 'Near-IR (NIR)', 'UV-Vis 光譜', '原子吸收光譜'],
     answer: 0,
-    explain: 'Mid-IR 是官能基鑑定的黃金區，C=O 在 1700-1750 區域不同位置可分辨酯、酮、酸、醯胺。Near-IR 重疊嚴重，主要用於定量。',
+    explain: 'Mid-IR 是官能基鑑定的黃金區，C=O 在 1640–1750 區域的不同位置可分辨酯、酮、酸、醯胺。Near-IR 重疊嚴重，主要用於定量。',
     topic: 'mid_ir_functional'
   },
   {
-    q: '一袋未開封的<strong>麵粉（紙袋包裝）</strong>進廠，你要快速確認蛋白質含量是否合格 (≥ 11%)。最適合？',
+    q: '一袋未開封的<strong>麵粉（塑膠袋包裝）</strong>進廠，你要快速確認蛋白質含量是否合格 (≥ 11%)。最適合？',
     options: ['打開袋子做 Kjeldahl', '掌上型 NIR 隔袋量測', 'Mid-IR ATR', 'SERS'],
     answer: 1,
-    explain: '掌上型 NIR 可直接打到紙袋表面測（漫反射、穿透深度 mm 級），AACC 已將 NIR 列為穀物蛋白測定的官方方法。Kjeldahl 雖準但慢；Mid-IR ATR 需破袋且 mm-級穿透不足。',
+    explain: '掌上型 NIR 可隔著塑膠膜以漫反射直接量測（課本 8.6：NIR 與 Raman 可穿透玻璃與塑膠膜），AACC 亦有 NIR 穀物蛋白核准方法。Kjeldahl 雖準但慢；Mid-IR ATR 需破袋取樣，且穿透深度只有數 μm。',
     topic: 'nir_grain'
   }
 ];
@@ -2563,7 +2563,7 @@ const G3_QUESTIONS = [
     q: '這份 Mid-IR 光譜最可能屬於？',
     options: ['牛奶（高蛋白）', '純植物油 (大豆油)', '白麵粉（高澱粉）', '蜂蜜（高糖）'],
     answer: 1,
-    explain: '高 C-H (2950, 2850) + 高 C=O 酯 (1740) + 無蛋白 (3300/1640 缺) + 無醣 (1080 缺) → 純脂肪 / 植物油。',
+    explain: '高 C-H (2950, 2850) + 高 C=O 酯 (1740) + 無蛋白 (3300/1640 缺) + 無醣 (1080–1030 缺) → 純脂肪 / 植物油。',
     topic: 'g3_olive_oil'
   },
   {
@@ -2589,25 +2589,25 @@ const G3_QUESTIONS = [
     q: '這份光譜最可能是？',
     options: ['脂肪', '蛋白質', '碳水化合物（澱粉/糖）', '純水'],
     answer: 2,
-    explain: '指紋區 1150-900 的多峰是醣類 C-O-C、C-O-H、醣苷鍵的特徵；1030 強峰是澱粉結晶。',
+    explain: '指紋區 1150-900 的多峰是醣類 C-O-C、C-O-H、醣苷鍵的特徵；1050–1020 區的吸收與澱粉回凝／結晶度相關（Table 8.1）。',
     topic: 'g3_carb'
   },
   {
     title: '光譜 D — 比對：橄欖油 vs 攙偽橄欖油',
-    context: '已知純特級初榨橄欖油在 <em>3009 cm⁻¹</em> (順式 =C-H) 有特徵峰。本樣品在 3009 區域強度<em>明顯降低</em>。',
+    context: '3006 cm⁻¹ 為順式烯烴 =C-H 伸縮（Table 8.1）。與純特級初榨橄欖油相比，本樣品在 3006 區域強度<em>明顯升高</em>。',
     spectrum: [
-      {x:3009,h:0.15,w:25},{x:2950,h:0.7,w:45},{x:2850,h:0.55,w:40},
+      {x:3006,h:0.32,w:25},{x:2950,h:0.7,w:45},{x:2850,h:0.55,w:40},
       {x:1740,h:0.9,w:30},{x:1465,h:0.4,w:25}
     ],
     q: '這份結果暗示什麼？',
     options: [
       '橄欖油是真的',
-      '可能被<em>菜籽油 / 大豆油</em>攙偽（順式雙鍵減少）',
+      '可能被<em>大豆油等多元不飽和油</em>攙偽（順式雙鍵增加）',
       '橄欖油氧化變質',
       '光譜儀校正錯誤'
     ],
     answer: 1,
-    explain: '橄欖油富含油酸（C18:1 順式雙鍵）→ 3009 強。若被高飽和脂肪或反式脂肪取代，3009 訊號會減弱。這是文獻中橄欖油攙偽偵測的關鍵指標之一。',
+    explain: '橄欖油以油酸（C18:1，一個順式雙鍵）為主；大豆油富含亞油酸、次亞麻油酸（2–3 個順式雙鍵），攙入後 3006 cm⁻¹ 訊號增強。氧化則會消耗雙鍵、使此峰減弱。大豆油攙偽屬課本 Table 8.2 所列應用。',
     topic: 'g3_adulteration'
   }
 ];
@@ -3123,14 +3123,14 @@ showSlide(1);
             </tr>
           </thead>
           <tbody>
-            <tr class="dilution-row" data-pct="10" onclick="highlightDilutionRow(10)"><td><span class="badge">10%</span></td><td>1.05</td><td>8.95</td><td style="font-size:.82rem;">麥芽汁 / 低酒精飲料</td></tr>
-            <tr class="dilution-row" data-pct="20" onclick="highlightDilutionRow(20)"><td><span class="badge">20%</span></td><td>2.11</td><td>7.89</td><td style="font-size:.82rem;">啤酒 / 清酒範圍</td></tr>
-            <tr class="dilution-row" data-pct="30" onclick="highlightDilutionRow(30)"><td><span class="badge">30%</span></td><td>3.16</td><td>6.84</td><td style="font-size:.82rem;">米酒 / 葡萄酒下限</td></tr>
-            <tr class="dilution-row" data-pct="40" onclick="highlightDilutionRow(40)"><td><span class="badge">40%</span></td><td>4.21</td><td>5.79</td><td style="font-size:.82rem;">強化葡萄酒</td></tr>
-            <tr class="dilution-row" data-pct="50" onclick="highlightDilutionRow(50)"><td><span class="badge">50%</span></td><td>5.26</td><td>4.74</td><td style="font-size:.82rem;">利口酒 / 中藥酒</td></tr>
-            <tr class="dilution-row" data-pct="60" onclick="highlightDilutionRow(60)"><td><span class="badge">60%</span></td><td>6.32</td><td>3.68</td><td style="font-size:.82rem;">紹興酒 / 白蘭地</td></tr>
-            <tr class="dilution-row" data-pct="70" onclick="highlightDilutionRow(70)"><td><span class="badge">70%</span></td><td>7.37</td><td>2.63</td><td style="font-size:.82rem;">消毒酒精 / 烈酒</td></tr>
-            <tr class="dilution-row" data-pct="80" onclick="highlightDilutionRow(80)"><td><span class="badge">80%</span></td><td>8.42</td><td>1.58</td><td style="font-size:.82rem;">高粱酒 / 伏特加</td></tr>
+            <tr class="dilution-row" data-pct="10" onclick="highlightDilutionRow(10)"><td><span class="badge">10%</span></td><td>1.05</td><td>8.95</td><td style="font-size:.82rem;">葡萄酒（~12%）</td></tr>
+            <tr class="dilution-row" data-pct="20" onclick="highlightDilutionRow(20)"><td><span class="badge">20%</span></td><td>2.11</td><td>7.89</td><td style="font-size:.82rem;">米酒（~19.5%）</td></tr>
+            <tr class="dilution-row" data-pct="30" onclick="highlightDilutionRow(30)"><td><span class="badge">30%</span></td><td>3.16</td><td>6.84</td><td style="font-size:.82rem;">部分利口酒</td></tr>
+            <tr class="dilution-row" data-pct="40" onclick="highlightDilutionRow(40)"><td><span class="badge">40%</span></td><td>4.21</td><td>5.79</td><td style="font-size:.82rem;">伏特加（~40%）</td></tr>
+            <tr class="dilution-row" data-pct="50" onclick="highlightDilutionRow(50)"><td><span class="badge">50%</span></td><td>5.26</td><td>4.74</td><td style="font-size:.82rem;">高度白酒（~50%）</td></tr>
+            <tr class="dilution-row" data-pct="60" onclick="highlightDilutionRow(60)"><td><span class="badge">60%</span></td><td>6.32</td><td>3.68</td><td style="font-size:.82rem;">高粱酒（~58%）</td></tr>
+            <tr class="dilution-row" data-pct="70" onclick="highlightDilutionRow(70)"><td><span class="badge">70%</span></td><td>7.37</td><td>2.63</td><td style="font-size:.82rem;">消毒酒精（~75%）</td></tr>
+            <tr class="dilution-row" data-pct="80" onclick="highlightDilutionRow(80)"><td><span class="badge">80%</span></td><td>8.42</td><td>1.58</td><td style="font-size:.82rem;">校正高濃度端</td></tr>
           </tbody>
         </table>
       </div>
